@@ -16,3 +16,12 @@ class IS_EVENT_MASTER(models.Model):
     EM_UPDATED_BY = models.IntegerField()
     EM_UPDATED_DATE = models.datetime()
 
+class IS_EVENT_SCHEDULER(models.Model):
+    EM_FK_ES_EVENT_ID = models.IntegerField
+    ES_EVENT_DATE = models.datetime()
+    ES_EVENT_VENUE = models.TextField()
+    ES_EVENT_FREQUENCY = models.IntegerField()
+    ES_CREATED_BY = models.IntegerField()
+    ES_CREATED_DATE = models.datetime()
+    ES_UPDATED_BY = models.IntegerField()
+    ES_UPDATED_DATE = models.datetime()
