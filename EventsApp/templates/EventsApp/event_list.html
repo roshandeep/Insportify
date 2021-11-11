@@ -23,6 +23,10 @@
 		{% endfor %}
 		</li>
 </ul>
+</p>
+<div class = "card-footer text-muted">
+	<a href="{% url 'update-event' event.id %}" class="btn btn-outline-secondary btn-sm">Update Event</a>
+</div>
 <br/><br/>
 	{% endfor %}
   </div>
