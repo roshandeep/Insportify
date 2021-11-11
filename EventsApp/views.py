@@ -3,9 +3,21 @@ import calendar
 from calendar import HTMLCalendar
 from datetime import datetime
 from django.http import HttpResponseRedirect
-from .models import Event
+from .models import Event,Venue
 from .forms import VenueForm
 
+def show_venue(request,venue_id):
+	venue = Venue.objects.get(pk=venue_id)
+	return render(request, 'EventsApp/show_venue.html',{
+		'venue':venue,
+		})
+
+
+def list_venues(request):
+	venue_list = Venue.objects.all()
+	return render(request, 'EventsApp/venue.html',{
+		'venue_list':venue_list,
+		})
 def add_venue(request):
 	submitted = False
 	if request.method == "POST":
