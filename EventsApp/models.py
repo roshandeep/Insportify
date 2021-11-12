@@ -24,6 +24,7 @@ class Event(models.Model):
 	name = models.CharField('Event Name', max_length=120)
 	venue = models.ForeignKey(Venue, blank=True, null=True, on_delete=models.CASCADE)
 	event_date = models.DateTimeField('Event Date')
+	category = models.CharField('Category',max_length=20,blank=True)
 	#venue = models.CharField(max_length=120)
 	#manager = models.CharField(max_length=60)
 	manager = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
