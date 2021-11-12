@@ -1,27 +1,37 @@
 from django.db import models
+from django.contrib.auth.models import User
 
-# Create your models here.
+class Venue(models.Model):
+	name =models.CharField('Venue Name', max_length=120)
+	address = models.CharField(max_length=300)
+	zip_code = models.CharField('Zip Code',max_length=20)
+	phone = models.CharField('Contact Number', max_length=20,blank=True)
+	web = models.URLField('Website Address', blank=True)
+	email_address = models.EmailField('Email', blank=True)
 
-class IS_EVENT_MASTER(models.Model):
-    EM_EVENT_ID = models.Auto_Field(primary_key = True)
-    EM_EVENT_TITLE = models.CharField()
-    EM_EVENT_DESC = models.TextField()
-    ETM_FK_EM_EVENT_TYPE_ID = models.IntegerField()
-    EM_COST = models.NumericOutputFieldMixin()
-    EM_GENDER = models.TextField()
-    EM_MIN_AGE = models.NumericOutputFieldMixin()
-    EM_MAX_AGE = models.NumericOutputFieldMixin()
-    EM_CREATED_BY = models.IntegerField()
-    EM_CREATED_DATE = models.datetime()
-    EM_UPDATED_BY = models.IntegerField()
-    EM_UPDATED_DATE = models.datetime()
+	def __str__(self):
+		return self.name
 
-class IS_EVENT_SCHEDULER(models.Model):
-    EM_FK_ES_EVENT_ID = models.IntegerField
-    ES_EVENT_DATE = models.datetime()
-    ES_EVENT_VENUE = models.TextField()
-    ES_EVENT_FREQUENCY = models.IntegerField()
-    ES_CREATED_BY = models.IntegerField()
-    ES_CREATED_DATE = models.datetime()
-    ES_UPDATED_BY = models.IntegerField()
-    ES_UPDATED_DATE = models.datetime()
+class MyEventUser(models.Model):
+	first_name = models.CharField(max_length=30)
+	last_name = models.CharField(max_length=30)
+	email = models.EmailField('User Email')
+
+	def __str__(self):
+		return self.first_name #+ ' ' + self.last_name
+
+class Event(models.Model):
+	name = models.CharField('Event Name', max_length=120)
+	venue = models.ForeignKey(Venue, blank=True, null=True, on_delete=models.CASCADE)
+	event_date = models.DateTimeField('Event Date')
+	category = models.CharField('Category',max_length=20,blank=True)
+	#venue = models.CharField(max_length=120)
+	#manager = models.CharField(max_length=60)
+	manager = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
+	description = models.TextField(blank=True)
+	attendees = models.ManyToManyField(MyEventUser, blank=True)
+
+	def __str__(self):
+		return self.name
+
+
