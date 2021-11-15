@@ -34,4 +34,18 @@ class Event(models.Model):
 	def __str__(self):
 		return self.name
 
+class multistepform(models.Model):
+	name = models.CharField('Event Name', max_length=120)
+	event_date = models.DateTimeField('Event Name', max_length=120)
+	description = models.CharField('Event Name', max_length=120)
+	category = models.CharField('Event Name', max_length=120)
+	venue = models.CharField('Event Name', max_length=120)
+	manager = models.CharField('Event Name', max_length=120)
+	phone = models.CharField('Event Name', max_length=120)
+	email = models.EmailField('email', blank=True)
+	website = models.URLField('Website', blank=True)
+
+	def __str__(self):
+		return self.name
+
 

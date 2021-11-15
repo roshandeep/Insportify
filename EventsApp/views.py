@@ -6,6 +6,30 @@ from django.http import HttpResponseRedirect
 from .models import Event,Venue
 from .forms import VenueForm, EventForm
 
+
+def multistepform(request):
+	return render(request,'EventsApp/multi_step.html',{})
+
+def multistepform_save(request):
+	if request.method!="POST":
+		return HttpResponseRedirect(reverse('multistepform'))
+	else:
+		event_name = request.POST.get("event_name")
+		event_date = request.POST.get("event_date")
+		description = request.POST.get("description")
+		category = request.POST.get('category')
+		venue = request.POST.get("venue")
+		manager = request.POST.get("manager")
+		phone = request.POST.get("phone")
+		email = request.POST.get('email')
+		website = request.POST.get('website')
+		multistepform = MultiStepFormModel(event_name=event_name, event_date=event_date,description=description,category=category,venue=venue,manager=manager,phone=phone,email=email,website=website)
+		multistepform.save()
+		messages.success(request,'Event successful created!!!')
+		return HttpResponseRedirect(reverse('multistepform'))
+
+
+
 def update_event(request,event_id):
 	event = Event.objects.get(pk=event_id)
 	form = EventForm(request.POST or None, instance=event)
