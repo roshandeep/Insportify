@@ -148,7 +148,7 @@ class MultiStepForm(ModelForm):
 			'event_type': forms.TextInput(attrs={'class':'form-control','placeholder' :'Event Type'}),
 			'min_age': forms.TextInput(attrs={'class':'form-control','placeholder' :'Minimum Age'}),
 			'max_age': forms.TextInput(attrs={'class':'form-control','placeholder' :'Maximum Age'}),
-			'date': forms.TextInput(attrs={'class':'form-control','placeholder' :'YYYY-MM-DD HH:MM:SS'}),
+			'date': forms.DateTimeInput(attrs={'class':'form-control','placeholder' :'YYYY-MM-DD HH:MM:SS'}),
 			'start_time': forms.TextInput(attrs={'class':'form-select','placeholder' :'Start Time'}),
 			'end_time': forms.TextInput(attrs={'class':'form-select','placeholder' :'End Time'}),
 			'venue': forms.TextInput(attrs={'class':'form-control','placeholder' :'Venue'}),

@@ -51,7 +51,7 @@ def multiformvalidation(request):
 def event_detail(request):
 	event_list = MultiStep.objects.all()
 	return render(request, 'EventsApp/event_detail.html',{
-		'event_details':event_details,
+		'event_detail':event_detail,
 		})
 
 def update_event(request,event_id):

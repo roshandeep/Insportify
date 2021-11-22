@@ -21,7 +21,7 @@ class MultiStep(models.Model):
 	min_age = models.CharField('Minimum Age',blank=True, max_length=120)
 	#max_age = models.IntegerField('Maximum Age')
 	max_age = models.CharField('Maximum Age',blank=True,max_length=120)
-	date = models.CharField('Date',blank=True,max_length=120)
+	date = models.DateTimeField('Event Date')
 	start_time = models.CharField('Start Time',blank=True,max_length=120)
 	end_time = models.CharField('End Time',blank=True,max_length=120)
 	#venue = models.ForeignKey(Venue, blank=True, null=True, on_delete=models.CASCADE)
