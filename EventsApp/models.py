@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
 class Venue(models.Model):
 	name =models.CharField('Venue Name', max_length=120)
 	address = models.CharField(max_length=300)
@@ -11,6 +12,28 @@ class Venue(models.Model):
 
 	def __str__(self):
 		return self.name
+
+class MultiStep(models.Model):
+	event_title = models.CharField('Event Title', max_length=120)
+	description = models.CharField('Description', max_length=200)
+	event_type = models.CharField('Event Type', max_length=20)
+	#min_age = models.IntegerField('Minimum Age')
+	min_age = models.CharField('Minimum Age',blank=True, max_length=120)
+	#max_age = models.IntegerField('Maximum Age')
+	max_age = models.CharField('Maximum Age',blank=True,max_length=120)
+	date = models.CharField('Date',blank=True,max_length=120)
+	start_time = models.CharField('Start Time',blank=True,max_length=120)
+	end_time = models.CharField('End Time',blank=True,max_length=120)
+	#venue = models.ForeignKey(Venue, blank=True, null=True, on_delete=models.CASCADE)
+	venue = models.CharField('Venue', blank=True, null=True, max_length=120)
+	street = models.CharField('Street', max_length=120,blank=True)
+	city = models.CharField('City', max_length=120,blank=True)
+	province = models.CharField('Province', max_length=120,blank=True)
+	country = models.CharField('Country', max_length=120,blank=True)
+	zip_code = models.CharField('Zip Code', max_length=120,blank=True)
+
+	def __str__(self):
+		return self.event_title
 
 class MyEventUser(models.Model):
 	first_name = models.CharField(max_length=30)
@@ -34,14 +57,13 @@ class Event(models.Model):
 	def __str__(self):
 		return self.name
 
-class multistepform(models.Model):
-	name = models.CharField('Event Name', max_length=120)
-	event_date = models.DateTimeField('Event Name', max_length=120)
-	description = models.CharField('Event Name', max_length=120)
-	category = models.CharField('Event Name', max_length=120)
-	venue = models.CharField('Event Name', max_length=120)
-	manager = models.CharField('Event Name', max_length=120)
-	phone = models.CharField('Event Name', max_length=120)
+class MultiStepFormModel(models.Model):
+	event_name = models.CharField('Event Name', max_length=120)
+	event_date = models.DateTimeField('Event Date', max_length=120)
+	description = models.CharField('description', max_length=120)
+	category = models.CharField('category', max_length=120)
+	manager = models.CharField('manager', max_length=120)
+	phone = models.CharField('phone', max_length=120)
 	email = models.EmailField('email', blank=True)
 	website = models.URLField('Website', blank=True)
 

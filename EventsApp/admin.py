@@ -2,6 +2,7 @@ from django.contrib import admin
 from .models import Venue
 from .models import MyEventUser
 from .models import Event
+from .models import MultiStep
 
 #admin.site.register(Venue)
 admin.site.register(MyEventUser)
@@ -19,3 +20,10 @@ class EventAdmin(admin.ModelAdmin):
 	list_display = ('name','event_date', 'venue')
 	list_filter = ('event_date', 'venue')
 	ordering = ('event_date',)
+
+@admin.register(MultiStep)
+class MultiEventAdmin(admin.ModelAdmin):
+	fields = (('event_title','venue'), 'date','min_age','max_age','start_time','end_time')
+	list_display = ('event_title','venue', 'date')
+	list_filter = ('event_title', 'venue')
+	ordering = ('event_title',)

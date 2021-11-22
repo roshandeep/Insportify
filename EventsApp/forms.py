@@ -1,6 +1,8 @@
 from django import forms
 from django.forms import ModelForm
-from .models import Venue, Event
+from .models import Venue, Event, MultiStep
+
+
 
 #Admin superUser event form
 class EventFormAdmin(ModelForm):
@@ -72,3 +74,87 @@ class VenueForm(ModelForm):
 			'email_address': forms.EmailInput(attrs={'class':'form-control','placeholder' : 'Email'}),
 		}
 
+
+class MultiFormValidation(ModelForm):
+	#sport_type: forms.ChoiceField(choices=CHOICES)
+	#CHOICES = [('R','Recurring day'),('S','Singular day')]
+	#CHOICES1 = [('Private','Private Event'),('Public', 'Public Event'),('F','Free'),('fee','Fee')]
+	#sport_type =forms.CharField(label='Recurring/Day', widget=forms.RadioSelect(choices=CHOICES))
+	#event_type =forms.CharField(label='Event Type', widget=forms.RadioSelect(choices=CHOICES1))
+	class Meta:
+		model = MultiStep
+		fields = ('event_title','description', 'event_type','min_age','max_age','date','start_time','end_time','venue','street','city','province','country','zip_code')
+		labels = {
+			'event_title': '',
+			'description' : '',
+			'event_type' : '',
+			'min_age': '',
+			'max_age' : '',
+			'date' : 'Date',
+			'start_time':'',
+			'end_time':'',
+			'venue' : 'Venue',
+			'street' : '',
+			'city' : '',
+			'province' : '',
+			'country' : '',
+			'zip_code' : '',
+		}
+		widgets = {
+			'event_title': forms.TextInput(attrs={'class':'form-control','placeholder' :'Event Title'}),
+			'description': forms.Textarea(attrs={'class':'form-control','placeholder' :'Description'}),
+			'event_type': forms.TextInput(attrs={'class':'form-select','placeholder' :'Event Type'}),
+			'min_age': forms.TextInput(attrs={'class':'form-control','placeholder' :'Minimum Age'}),
+			'max_age': forms.TextInput(attrs={'class':'form-control','placeholder' :'Maximum Age'}),
+			'date': forms.TextInput(attrs={'class':'form-control','placeholder' :'YYYY-MM-DD HH:MM:SS'}),
+			'start_time': forms.TextInput(attrs={'class':'form-select','placeholder' :'Start Time'}),
+			'end_time': forms.TextInput(attrs={'class':'form-select','placeholder' :'End Time'}),
+			'venue': forms.TextInput(attrs={'class':'form-select','placeholder' :'Venue'}),
+			'street': forms.TextInput(attrs={'class':'form-control','placeholder' :'Street'}),
+			'city': forms.TextInput(attrs={'class':'form-control','placeholder' :'City'}),
+			'province': forms.TextInput(attrs={'class':'form-control','placeholder' :'Province'}),
+			'country': forms.TextInput(attrs={'class':'form-control','placeholder' :'Country'}),
+			'zip_code': forms.TextInput(attrs={'class':'form-control','placeholder' :'Zip Code'}),
+		}
+
+class MultiStepForm(ModelForm):
+	#sport_type: forms.ChoiceField(choices=CHOICES)
+	#CHOICES = [('R','Recurring day'),('S','Singular day')]
+	#CHOICES1 = [('Private','Private Event'),('Public', 'Public Event'),('F','Free'),('fee','Fee')]
+	#sport_type =forms.CharField(label='Recurring/Day', widget=forms.RadioSelect(choices=CHOICES))
+	#event_type =forms.CharField(label='Event Type', widget=forms.RadioSelect(choices=CHOICES1))
+	class Meta:
+		model = MultiStep
+		fields = ('event_title','description', 'event_type','min_age','max_age','date','start_time','end_time','venue','street','city','province','country','zip_code')
+		labels = {
+			'event_title': '',
+			'description' : '',
+			'event_type' : '',
+			'min_age': '',
+			'max_age' : '',
+			'date' : 'Date',
+			'start_time':'',
+			'end_time':'',
+			'venue' : 'Venue',
+			'street' : '',
+			'city' : '',
+			'province' : '',
+			'country' : '',
+			'zip_code' : '',
+		}
+		widgets = {
+			'event_title': forms.TextInput(attrs={'class':'form-control','placeholder' :'Event Title'}),
+			'description': forms.TextInput(attrs={'class':'form-control','placeholder' :'Description'}),
+			'event_type': forms.TextInput(attrs={'class':'form-control','placeholder' :'Event Type'}),
+			'min_age': forms.TextInput(attrs={'class':'form-control','placeholder' :'Minimum Age'}),
+			'max_age': forms.TextInput(attrs={'class':'form-control','placeholder' :'Maximum Age'}),
+			'date': forms.TextInput(attrs={'class':'form-control','placeholder' :'YYYY-MM-DD HH:MM:SS'}),
+			'start_time': forms.TextInput(attrs={'class':'form-select','placeholder' :'Start Time'}),
+			'end_time': forms.TextInput(attrs={'class':'form-select','placeholder' :'End Time'}),
+			'venue': forms.TextInput(attrs={'class':'form-control','placeholder' :'Venue'}),
+			'street': forms.TextInput(attrs={'class':'form-control','placeholder' :'Street'}),
+			'city': forms.TextInput(attrs={'class':'form-control','placeholder' :'City'}),
+			'province': forms.TextInput(attrs={'class':'form-control','placeholder' :'Province'}),
+			'country': forms.TextInput(attrs={'class':'form-control','placeholder' :'Country'}),
+			'zip_code': forms.TextInput(attrs={'class':'form-control','placeholder' :'Zip Code'})
+			}

@@ -16,6 +16,8 @@ Including another URLconf
 
 from django.urls import path
 from .import views
+from django.views.generic import TemplateView
+
 
 urlpatterns = [
     #path Converters
@@ -31,6 +33,11 @@ urlpatterns = [
     path('show_venue/<venue_id>', views.show_venue, name='show-venue'),
     path('add_event/',views.add_event, name='add-event'),
     path('update_event/<event_id>',views.update_event, name='update-event'),
-    path('', views.multistepform, name='multistepform'),
-    path('multistepform_save/', views.multistepform_save, name='multistepform-save')
+    #path('', views.multiformvalidation, name='multiformvalidation'),
+    path('event_detail/',views.event_detail, name='event-detail'),
+    path('', views.multistep, name='multistep'),
+    path('' , TemplateView.as_view(template_name='multi_step.html'),name='multistep')
+    #path('',TemplateView.as_view(template_name='multi_step.html'), name="multi-step"),
+    #path('/multistep', views.multistep, name="multi-form")
+    #path('multistepform_save/', views.multistepform_save, name='multistepform-save')
 ]

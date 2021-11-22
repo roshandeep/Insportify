@@ -1,34 +1,58 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,reverse
 import calendar
 from calendar import HTMLCalendar
 from datetime import datetime
 from django.http import HttpResponseRedirect
-from .models import Event,Venue
-from .forms import VenueForm, EventForm, EventFormAdmin
+from .models import Event, Venue, MultiStep
+from .forms import VenueForm, EventForm, EventFormAdmin,MultiStepForm
+#from formtools.wizard.views import SessionWizardView
+from django.contrib import messages
 
-
-def multistepform(request):
-	return render(request,'EventsApp/multi_step.html',{})
-
-def multistepform_save(request):
-	if request.method!="POST":
-		return HttpResponseRedirect(reverse('multistepform'))
+def multistep(request):
+	submitted = False
+	if request.method == "POST":
+		form = MultiStepForm(request.POST)
+		if form.is_valid():
+			form.save()
+			return HttpResponseRedirect('/?submitted=True')
 	else:
-		event_name = request.POST.get("event_name")
-		event_date = request.POST.get("event_date")
-		description = request.POST.get("description")
-		category = request.POST.get('category')
-		venue = request.POST.get("venue")
-		manager = request.POST.get("manager")
-		phone = request.POST.get("phone")
-		email = request.POST.get('email')
-		website = request.POST.get('website')
-		multistepform = MultiStepFormModel(event_name=event_name, event_date=event_date,description=description,category=category,venue=venue,manager=manager,phone=phone,email=email,website=website)
-		multistepform.save()
-		messages.success(request,'Event successful created!!!')
-		return HttpResponseRedirect(reverse('multistepform'))
+		form = MultiStepForm
+		if 'submitted' in request.GET:
+			submitted = True
+	return render(request, 'EventsApp/multi_step.html',{'form' : form, 'submitted':submitted})
 
+def multiformvalidation(request):
+	submitted = False
+	if request.method == "POST":
+		if request.user.is_superuser:
+			form = MultiFormValidation(request.POST)
+			if form.is_valid():
+				form.save()
+				return HttpResponseRedirect('/event_detail?submitted=True')
+		else:
+			form = MultiFormValidation(request.POST)
+			if form.is_valid():
+				#form.save()
+				event = form.save(commit=False)
+				event.manager = request.user
+				event.save()
+				return HttpResponseRedirect('/event_detail?submitted=True')
 
+	else:
+		if request.user.is_superuser:
+			form = MultiFormValidation
+		else:
+			form = MultiFormValidation
+		if 'submitted' in request.GET:
+			submitted = True
+	form = MultiFormValidation
+	return render(request, 'EventsApp/multi_form.html',{'form' : form, 'submitted':submitted})
+
+def event_detail(request):
+	event_list = MultiStep.objects.all()
+	return render(request, 'EventsApp/event_detail.html',{
+		'event_details':event_details,
+		})
 
 def update_event(request,event_id):
 	event = Event.objects.get(pk=event_id)
@@ -36,12 +60,14 @@ def update_event(request,event_id):
 		form = EventFormAdmin(request.POST or None)
 	else:
 		form = EventForm(request.POST or None, instance=event)
-		
+
 	if form.is_valid():
 		form.save()
 		return redirect('list-events')
 
 	return render(request, 'EventsApp/update_event.html', {'event' : event,'form' : form})
+
+
 
 def add_event(request):
 	submitted = False
