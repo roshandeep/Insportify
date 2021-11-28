@@ -125,9 +125,10 @@ class MultiStepForm(ModelForm):
 	#event_type =forms.CharField(label='Event Type', widget=forms.RadioSelect(choices=CHOICES1))
 	class Meta:
 		model = MultiStep
-		fields = ('event_title','description', 'event_type','min_age','max_age','date','start_time','end_time','venue','street','city','province','country','zip_code')
+		fields = ('event_title','category','description', 'event_type','min_age','max_age','date','start_time','end_time','venue','street','city','province','country','zip_code')
 		labels = {
 			'event_title': '',
+			'category' : '',
 			'description' : '',
 			'event_type' : '',
 			'min_age': '',
@@ -144,6 +145,7 @@ class MultiStepForm(ModelForm):
 		}
 		widgets = {
 			'event_title': forms.TextInput(attrs={'class':'form-control','placeholder' :'Event Title'}),
+			'category' : forms.TextInput(attrs={'class':'form-control','placeholder' :'Select Category'}),
 			'description': forms.TextInput(attrs={'class':'form-control','placeholder' :'Description'}),
 			'event_type': forms.TextInput(attrs={'class':'form-control','placeholder' :'Event Type'}),
 			'min_age': forms.TextInput(attrs={'class':'form-control','placeholder' :'Minimum Age'}),

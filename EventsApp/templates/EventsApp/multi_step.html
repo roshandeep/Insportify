@@ -2,7 +2,7 @@
 
 {% block content %}
 <center>
-<h1> Create your event</h1>
+    <h4 class="fs-title" style="font-size: 40px; background-color: white; padding: 0.5px;width: 350px;">Create Event</h4>
 {% if submitted %}
         Your Event was Submitted
         Successfully!!!
@@ -17,6 +17,12 @@
 @import url(https://fonts.googleapis.com/css?family=Montserrat);
 
 /*basic reset*/
+#third{
+     background: url("/static/img/insportify.jpg") 50% 0 no-repeat fixed;
+     color: white;
+     height: 650px;
+     padding: 100px 0 0 0;   
+     }
 * {
     margin: 0;
     padding: 0;
@@ -24,8 +30,9 @@
 
 html {
     height: 100%;
-    background: #6441A5; /* fallback for old browsers */
+    background: #808080; /* fallback for old browsers */
     background: -webkit-linear-gradient(to left, #6441A5, #2a0845); /* Chrome 10-25, Safari 5.1-6 */
+    background-image: url(static/img/insportify.jpg);
 }
 
 body {
@@ -145,7 +152,7 @@ body {
 
 #progressbar li {
     list-style-type: none;
-    color: white;
+    color: hotpink;
     text-transform: uppercase;
     font-size: 9px;
     width: 33.33%;
@@ -221,23 +228,67 @@ body {
             {% csrf_token %}
             <!-- progressbar -->
             <ul id="progressbar">
-                <li class="active">Event Details</li>
-                <li>Sports Details</li>
-                <li>More details</li>
+                <li class="active"></li>
+                <li></li>
+                <li></li>
             </ul>
             <!-- fieldsets -->
             <fieldset>
-                <h2 class="fs-title">Event information</h2>
+                <h3 class="fs-title" style="background-color: rgba(150, 161, 255);text-align: center; padding: 25px;">Event Information</h3>
                 <h3 class="fs-subtitle">Tell us something more about what you are looking for</h3>
                 <input type="text" name="event_title" placeholder="Event Title"/>
+                <label for="category">Select Category</label>
+                <select name = 'category'>
+                    <option value="Soccer">Soccer</option>
+                    <option value="Baseketball">Baseketball</option>
+                    <option value="Cricket">Cricket</option>
+                    <option value="Hockey">Hockey</option>
+                    <option value="Football">Football</option>
+                    <option value="Swimming">Swimming</option>
+                    <option value="Laccrose">Laccrose</option>
+                    <option value="Tennis">Tennis</option>
+                    <option value="Badminton">Badminton</option>
+                </select>
                 <input type="text" name="description" placeholder="description"/>
-               <input type="text" name="event_type" placeholder="Event Type"><br>
-                <input type="text" name="min_age", placeholder="Minimum age"/>
-                <input type="text" name="max_age", placeholder="Maximum age" />
+                <label for="chkYes"> Does this event costs?
+                <input type="radio" id="chkYes" name="event_type" onclick="ShowHideDiv()" />
+                Fee
+                </label>
+                <label for="chkNo">
+                <input type="radio" id="chkNo" name="event_type" value='free' onclick="ShowHideDiv()" />
+                Free
+                </label>
+                <div id="dvtext" style="display: none">
+                <input type="text" id="chkYes" name = "event_type" placeholder="$" />
+                </div>
+                <div>
+               <label for="min_age">Minimum Age</label>
+                <select name = 'min_age'>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                    <option value="13">13</option>
+                    <option value="14">14</option>
+                    <option value="15">15</option>
+                    <option value="16">16</option>
+                    <option value="17">17</option>
+                    <option value="18">18</option>
+                    <option value="19">19</option>
+                </select>
+                <label for="max_age">Maximum Age</label>
+                <select name = 'max_age'>
+                    <option value="18">18</option>
+                    <option value="19">19</option>
+                    <option value="20">20</option>
+                    <option value="21">21</option>
+                    <option value="22">22</option>
+                    <option value="23">23</option>
+                    <option value="24">24</option>
+                </select>
+            </div>
                 <input type="button" name="next" class="next action-button" value="Next"/>
             </fieldset>
             <fieldset>
-                <h2 class="fs-title">Time and Date</h2>
+                <h3 class="fs-title" style="background-color: rgba(150, 161, 255);text-align: center; padding: 25px;">Time and Date</h3>
                 <h3 class="fs-subtitle">Your presence on the event</h3>
                 <input type="date" name="date" placeholder="Date"/>
                 <p>Start time</p>
@@ -248,7 +299,7 @@ body {
                 <input type="button" name="next" class="next action-button" value="Next"/>
             </fieldset>
             <fieldset>
-                <h2 class="fs-title">Venue</h2>
+                <h2 class="fs-title" style="background-color: rgba(150, 161, 255);text-align: center; padding: 25px;">Venue</h2>
                 <h3 class="fs-subtitle">The Arena</h3>
                 <input type="text" name="venue" placeholder="Venue"/>
                 <input type="text" name="street" placeholder="Street"/>
@@ -257,7 +308,7 @@ body {
                 <input type="text" name="country" placeholder="Country"/>
                 <input type="text"  name = "zip_code"placeholder = "Zip code" />
                 <input type="button" name="previous" class="previous action-button-previous" value="Previous"/>
-                <input type="submit" name="submit" class="btn btn-sucess" value="Submit"/>
+                <input type="submit" name="submit" class="submit action-button" value="Submit"/>
             </fieldset>
         </form>
         {% endif %}
@@ -266,6 +317,12 @@ body {
     </div>
 </div>
 <script>
+    function ShowHideDiv() {
+        var chkYes = document.getElementById("chkYes");
+        var dvtext = document.getElementById("dvtext");
+        var chkNo = "Free"
+        dvtext.style.display = chkYes.checked ? "block" : "none";
+    }
 	//jQuery time
 var current_fs, next_fs, previous_fs; //fieldsets
 var left, opacity, scale; //fieldset properties which we will animate

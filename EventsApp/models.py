@@ -15,8 +15,9 @@ class Venue(models.Model):
 
 class MultiStep(models.Model):
 	event_title = models.CharField('Event Title', max_length=120)
+	category = models.CharField('Category', max_length=120,default='SOME STRING')
 	description = models.CharField('Description', max_length=200)
-	event_type = models.CharField('Event Type', max_length=20)
+	event_type = models.CharField('Free/Fee', max_length=20)
 	#min_age = models.IntegerField('Minimum Age')
 	min_age = models.CharField('Minimum Age',blank=True, max_length=120)
 	#max_age = models.IntegerField('Maximum Age')
