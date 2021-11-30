@@ -23,7 +23,7 @@ class EventAdmin(admin.ModelAdmin):
 
 @admin.register(MultiStep)
 class MultiEventAdmin(admin.ModelAdmin):
-	fields = (('event_title','venue'), 'category','event_type','date','min_age','max_age','start_time','end_time')
+	fields = (('event_title','venue'), 'category','event_type','date','min_age','max_age')
 	list_display = ('event_title','venue', 'date')
 	list_filter = ('event_title', 'venue')
 	ordering = ('event_title',)
