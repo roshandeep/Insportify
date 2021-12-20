@@ -18,7 +18,7 @@
 
 /*basic reset*/
 #third{
-     background: url("/static/img/insportify.jpg") 50% 0 no-repeat fixed;
+     background-color:grey;
      color: white;
      height: 650px;
      padding: 100px 0 0 0;   
@@ -32,7 +32,7 @@ html {
     height: 100%;
     background: #808080; /* fallback for old browsers */
     background: -webkit-linear-gradient(to left, #6441A5, #2a0845); /* Chrome 10-25, Safari 5.1-6 */
-    background-image: url(static/img/insportify.jpg);
+    background-color: #DBF9FC;
 }
 
 body {
@@ -228,27 +228,15 @@ body {
             {% csrf_token %}
             <!-- progressbar -->
             <ul id="progressbar">
-                <li class="active"></li>
-                <li></li>
-                <li></li>
+                <li class="active">Event Information</li>
+                <li>Sport Category</li>
+                <li>Venue</li>
             </ul>
             <!-- fieldsets -->
             <fieldset>
                 <h3 class="fs-title" style="background-color: rgba(150, 161, 255);text-align: center; padding: 25px;">Event Information</h3>
-                <h3 class="fs-subtitle">Tell us something more about what you are looking for</h3>
+                <h3 class="fs-subtitle"></h3>
                 <input type="text" name="event_title" placeholder="Event Title"/>
-                <label for="category">Select Sport</label>
-                <select name = 'category'>
-                    <option value="Soccer">Soccer</option>
-                    <option value="Baseketball">Baseketball</option>
-                    <option value="Cricket">Cricket</option>
-                    <option value="Hockey">Hockey</option>
-                    <option value="Football">Football</option>
-                    <option value="Swimming">Swimming</option>
-                    <option value="Laccrose">Laccrose</option>
-                    <option value="Tennis">Tennis</option>
-                    <option value="Badminton">Badminton</option>
-                </select>
                 <input type="text" name="description" placeholder="description"/>
                 <label for="chkYes"> Does this event costs?
                 <input type="radio" id="chkYes" name="event_type" onclick="ShowHideDiv()" />
@@ -261,9 +249,34 @@ body {
                 <div id="dvtext" style="display: none">
                 <input type="text" id="chkYes" name = "event_type" placeholder="$" />
                 </div>
-                <div>
-               <label for="min_age">Minimum Age</label>
-                <select name = 'min_age'>
+                <input type="text" name="start_time" placeholder="Start Time"/>
+                <input type="text" name="end_time" placeholder="End Time"/>
+                <input type="date" name="date" placeholder="Date"/>
+                <input type="button" name="next" class="next action-button" value="Next"/>
+            </fieldset>
+            <fieldset>
+                <h3 class="fs-title" style="background-color: rgba(150, 161, 255);text-align: center; padding: 25px;">Sports Information</h3>
+                <h3 class="fs-subtitle"></h3>
+                <select name = 'category' class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+                <option selected>Select Sport</option>
+                <option value="Soccer">Soccer</option>
+                <option value="Baseketball">Baseketball</option>
+                <option value="Hockey">Hockey</option>
+                <option value="Football">Football</option>
+                <option value="Cricket">Cricket</option>
+                <option value="Tennis">Tennis</option>
+                </select>
+                <legend>Athelete: </legend>
+                        <input type="radio" name="athelete_level", value="rookie" id="rk">
+                        <label class="form-check-label" for="rk">Rookie</label>
+                        <input type="radio" name="athelete_level", value="recreational",id="rc">
+                        <label class="form-check-label" for="rc">Recreational</label>
+                        <input type="radio" name="athelete_level", value="probound",id="pb">
+                        <label class="form-check-label" for="pb">ProBound</label>
+                        <input type="radio" name="athelete_level", value="competitive",id="cp">
+                        <label class="form-check-label" for="co">Competitive</label>
+                <select name = 'ath_min_age' class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+                    <option selected>Minimum Age</option>
                     <option value="11">11</option>
                     <option value="12">12</option>
                     <option value="13">13</option>
@@ -274,8 +287,8 @@ body {
                     <option value="18">18</option>
                     <option value="19">19</option>
                 </select>
-                <label for="max_age">Maximum Age</label>
-                <select name = 'max_age'>
+                <select name = 'ath_max_age' class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+                    <option selected>Maximum Age</option>
                     <option value="18">18</option>
                     <option value="19">19</option>
                     <option value="20">20</option>
@@ -284,18 +297,35 @@ body {
                     <option value="23">23</option>
                     <option value="24">24</option>
                 </select>
-            </div>
-                <input type="button" name="next" class="next action-button" value="Next"/>
-            </fieldset>
-            <fieldset>
-                <h3 class="fs-title" style="background-color: rgba(150, 161, 255);text-align: center; padding: 25px;">Time and Date</h3>
-                <h3 class="fs-subtitle">Your presence on the event</h3>
-
-                <input type="date" name="date" placeholder="Date"/>
-                <p>Start time</p>
-                <input type="time" name="start_time" placeholder="Start Time"/>
-                <p>End time</p>
-                <input type="time" name="end_time" placeholder="End Time"/>
+                    <legend> Support: </legend>
+                        <input type="radio" name="staff_level", value="minor" id="ms">
+                        <label for="ms">Minor Sport</label>
+                        <input type="radio" name="staff_level", value="competitive",id="cp">
+                        <label  for="cp">Competitve</label>
+                        <input type="radio" name="staff_level", value="volunteer",id="vt">
+                        <label for="vt">Volunteer</label>
+                <select name = 'sup_min_age' class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+                    <option selected>Minimum Age</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                    <option value="13">13</option>
+                    <option value="14">14</option>
+                    <option value="15">15</option>
+                    <option value="16">16</option>
+                    <option value="17">17</option>
+                    <option value="18">18</option>
+                    <option value="19">19</option>
+                </select>
+                <select name = 'sup_max_age' class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+                    <option selected>Maximum Age</option>
+                    <option value="18">18</option>
+                    <option value="19">19</option>
+                    <option value="20">20</option>
+                    <option value="21">21</option>
+                    <option value="22">22</option>
+                    <option value="23">23</option>
+                    <option value="24">24</option>
+                </select>
                 <input type="button" name="previous" class="previous action-button-previous" value="Previous"/>
                 <input type="button" name="next" class="next action-button" value="Next"/>
             </fieldset>
@@ -320,7 +350,6 @@ body {
     function ShowHideDiv() {
         var chkYes = document.getElementById("chkYes");
         var dvtext = document.getElementById("dvtext");
-        var chkNo = "Free"
         dvtext.style.display = chkYes.checked ? "block" : "none";
     }
 	//jQuery time

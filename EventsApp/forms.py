@@ -75,47 +75,7 @@ class VenueForm(ModelForm):
 		}
 
 
-class MultiFormValidation(ModelForm):
-	#sport_type: forms.ChoiceField(choices=CHOICES)
-	#CHOICES = [('R','Recurring day'),('S','Singular day')]
-	#CHOICES1 = [('Private','Private Event'),('Public', 'Public Event'),('F','Free'),('fee','Fee')]
-	#sport_type =forms.CharField(label='Recurring/Day', widget=forms.RadioSelect(choices=CHOICES))
-	#event_type =forms.CharField(label='Event Type', widget=forms.RadioSelect(choices=CHOICES1))
-	class Meta:
-		model = MultiStep
-		fields = ('event_title','description', 'event_type','min_age','max_age','date','start_time','end_time','venue','street','city','province','country','zip_code')
-		labels = {
-			'event_title': '',
-			'description' : '',
-			'event_type' : '',
-			'min_age': '',
-			'max_age' : '',
-			'date' : 'Date',
-			'start_time':'',
-			'end_time':'',
-			'venue' : 'Venue',
-			'street' : '',
-			'city' : '',
-			'province' : '',
-			'country' : '',
-			'zip_code' : '',
-		}
-		widgets = {
-			'event_title': forms.TextInput(attrs={'class':'form-control','placeholder' :'Event Title'}),
-			'description': forms.Textarea(attrs={'class':'form-control','placeholder' :'Description'}),
-			'event_type': forms.TextInput(attrs={'class':'form-select','placeholder' :'Event Type'}),
-			'min_age': forms.TextInput(attrs={'class':'form-control','placeholder' :'Minimum Age'}),
-			'max_age': forms.TextInput(attrs={'class':'form-control','placeholder' :'Maximum Age'}),
-			'date': forms.TextInput(attrs={'class':'form-control','placeholder' :'YYYY-MM-DD HH:MM:SS'}),
-			'start_time': forms.TimeField(),
-			'end_time': forms.TimeField(),
-			'venue': forms.TextInput(attrs={'class':'form-select','placeholder' :'Venue'}),
-			'street': forms.TextInput(attrs={'class':'form-control','placeholder' :'Street'}),
-			'city': forms.TextInput(attrs={'class':'form-control','placeholder' :'City'}),
-			'province': forms.TextInput(attrs={'class':'form-control','placeholder' :'Province'}),
-			'country': forms.TextInput(attrs={'class':'form-control','placeholder' :'Country'}),
-			'zip_code': forms.TextInput(attrs={'class':'form-control','placeholder' :'Zip Code'}),
-		}
+
 
 class MultiStepForm(ModelForm):
 	#sport_type: forms.ChoiceField(choices=CHOICES)
@@ -125,14 +85,16 @@ class MultiStepForm(ModelForm):
 	#event_type =forms.CharField(label='Event Type', widget=forms.RadioSelect(choices=CHOICES1))
 	class Meta:
 		model = MultiStep
-		fields = ('event_title','category','description', 'event_type','min_age','max_age','date','start_time','end_time','venue','street','city','province','country','zip_code')
+		fields = ('event_title','category','description', 'event_type','ath_min_age','ath_max_age','sup_min_age','sup_max_age','date','start_time','end_time','venue','street','city','province','country','zip_code','staff_level','athelete_level')
 		labels = {
 			'event_title': '',
 			'category' : '',
 			'description' : '',
 			'event_type' : '',
-			'min_age': '',
-			'max_age' : '',
+			'ath_min_age': '',
+			'ath_max_age' : '',
+			'sup_min_age' : '',
+			'sup_max_age' : '',
 			'date' : 'Date',
 			'start_time':'',
 			'end_time':'',
@@ -142,14 +104,18 @@ class MultiStepForm(ModelForm):
 			'province' : '',
 			'country' : '',
 			'zip_code' : '',
+			'staff_level' : '',
+			'athelete_level' : '',
 		}
 		widgets = {
 			'event_title': forms.TextInput(attrs={'class':'form-control','placeholder' :'Event Title'}),
 			'category' : forms.TextInput(attrs={'class':'form-control','placeholder' :'Select Category'}),
 			'description': forms.TextInput(attrs={'class':'form-control','placeholder' :'Description'}),
 			'event_type': forms.TextInput(attrs={'class':'form-control','placeholder' :'Event Type'}),
-			'min_age': forms.TextInput(attrs={'class':'form-control','placeholder' :'Minimum Age'}),
-			'max_age': forms.TextInput(attrs={'class':'form-control','placeholder' :'Maximum Age'}),
+			'ath_min_age': forms.TextInput(attrs={'class':'form-control','placeholder' :'Athelete Minimum Age'}),
+			'ath_max_age': forms.TextInput(attrs={'class':'form-control','placeholder' :'Athelete Maximum Age'}),
+			'sup_min_age': forms.TextInput(attrs={'class':'form-control','placeholder' :'Support Minimum Age'}),
+			'sup_max_age': forms.TextInput(attrs={'class':'form-control','placeholder' :'Support Maximum Age'}),
 			'date': forms.DateTimeInput(attrs={'class':'form-control','placeholder' :'YYYY-MM-DD HH:MM:SS'}),
 			'start_time': forms.TextInput(attrs={'class':'form-select','placeholder' :'Start Time'}),
 			'end_time': forms.TextInput(attrs={'class':'form-select','placeholder' :'End Time'}),
@@ -158,5 +124,7 @@ class MultiStepForm(ModelForm):
 			'city': forms.TextInput(attrs={'class':'form-control','placeholder' :'City'}),
 			'province': forms.TextInput(attrs={'class':'form-control','placeholder' :'Province'}),
 			'country': forms.TextInput(attrs={'class':'form-control','placeholder' :'Country'}),
-			'zip_code': forms.TextInput(attrs={'class':'form-control','placeholder' :'Zip Code'})
+			'zip_code': forms.TextInput(attrs={'class':'form-control','placeholder' :'Zip Code'}),
+			'staff_level': forms.TextInput(attrs={'class':'form-control','placeholder' :'Staff level'}),
+			'athelete_level': forms.TextInput(attrs={'class':'form-control','placeholder' :'Athelete level'}),
 			}

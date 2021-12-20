@@ -19,12 +19,13 @@ class MultiStep(models.Model):
 	description = models.CharField('Description', max_length=200)
 	event_type = models.CharField('Free/Fee', max_length=20)
 	#min_age = models.IntegerField('Minimum Age')
-	min_age = models.CharField('Minimum Age',blank=True, max_length=120)
-	#max_age = models.IntegerField('Maximum Age')
-	max_age = models.CharField('Maximum Age',blank=True,max_length=120)
+	ath_min_age = models.CharField('Athelete Minimum Age',blank=True, max_length=120)
+	ath_max_age = models.CharField('Athelete Maximum Age',blank=True,max_length=120)
+	sup_min_age = models.CharField('Support Minimum Age',blank=True, max_length=120)
+	sup_max_age = models.CharField('Support Maximum Age',blank=True, max_length=120)
 	date = models.DateTimeField('Event Date')
-	start_time = models.DurationField('Start Time', null=True)
-	end_time = models.DurationField('End Time',null=True)
+	start_time = models.CharField('Start Time', null=True,max_length=120)
+	end_time = models.CharField('End Time',null=True,max_length=120)
 	#venue = models.ForeignKey(Venue, blank=True, null=True, on_delete=models.CASCADE)
 	venue = models.CharField('Venue', blank=True, null=True, max_length=120)
 	street = models.CharField('Street', max_length=120,blank=True)
@@ -32,6 +33,10 @@ class MultiStep(models.Model):
 	province = models.CharField('Province', max_length=120,blank=True)
 	country = models.CharField('Country', max_length=120,blank=True)
 	zip_code = models.CharField('Zip Code', max_length=120,blank=True)
+	staff_level = models.CharField('Staff Level', max_length=50, blank=True)
+	athelete_level = models.CharField('Athelete Level', max_length=50, blank=True)
+
+
 
 	def __str__(self):
 		return self.event_title
