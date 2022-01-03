@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+#from django.utils import timezone
+from datetime import datetime 
 
 
 class Venue(models.Model):
@@ -14,27 +16,25 @@ class Venue(models.Model):
 		return self.name
 
 class MultiStep(models.Model):
-	event_title = models.CharField('Event Title', max_length=120)
-	category = models.CharField('Category', max_length=120,default='SOME STRING')
-	description = models.CharField('Description', max_length=200)
-	event_type = models.CharField('Free/Fee', max_length=20)
-	#min_age = models.IntegerField('Minimum Age')
-	ath_min_age = models.CharField('Athelete Minimum Age',blank=True, max_length=120)
-	ath_max_age = models.CharField('Athelete Maximum Age',blank=True,max_length=120)
-	sup_min_age = models.CharField('Support Minimum Age',blank=True, max_length=120)
-	sup_max_age = models.CharField('Support Maximum Age',blank=True, max_length=120)
-	date = models.DateTimeField('Event Date')
-	start_time = models.CharField('Start Time', null=True,max_length=120)
-	end_time = models.CharField('End Time',null=True,max_length=120)
-	#venue = models.ForeignKey(Venue, blank=True, null=True, on_delete=models.CASCADE)
-	venue = models.CharField('Venue', blank=True, null=True, max_length=120)
-	street = models.CharField('Street', max_length=120,blank=True)
-	city = models.CharField('City', max_length=120,blank=True)
-	province = models.CharField('Province', max_length=120,blank=True)
-	country = models.CharField('Country', max_length=120,blank=True)
-	zip_code = models.CharField('Zip Code', max_length=120,blank=True)
-	staff_level = models.CharField('Staff Level', max_length=50, blank=True)
-	athelete_level = models.CharField('Athelete Level', max_length=50, blank=True)
+	event_title = models.CharField('Event Title', max_length=30, null=True)
+	category = models.CharField('Category', max_length=30,default='SOME STRING', null=True)
+	description = models.CharField('Description', max_length=200, null=True)
+	event_type = models.CharField('Free/Fee', max_length=20,null=True)
+	#min_age = models.IntegerField('Minimum Age',null=True)
+	ath_min_age = models.CharField(null=True,max_length=20)
+	ath_max_age = models.CharField(null=True, max_length=20)
+	sup_min_age = models.CharField(null=True, max_length=20)
+	sup_max_age = models.CharField(null=True,max_length=20)
+	event_time = models.CharField('Event Time', max_length=20,null=True)
+	event_date = models.CharField(blank=True, max_length=20,null=True)	#venue = models.ForeignKey(Venue, blank=True, null=True, on_delete=models.CASCADE)
+	venue = models.CharField('Venue', blank=True, null=True, max_length=30)
+	street = models.CharField('Street', max_length=30,blank=True,null=True)
+	city = models.CharField('City', max_length=30,blank=True,null=True)
+	province = models.CharField('Province', max_length=30,blank=True,null=True)
+	country = models.CharField('Country', max_length=30,blank=True,null=True)
+	zip_code = models.CharField('Zip Code', max_length=30,blank=True,null=True)
+	staff_level = models.CharField('Staff Level', max_length=30, blank=True,null=True)
+	athelete_level = models.CharField('Athelete Level', max_length=30, blank=True,null=True)
 
 
 

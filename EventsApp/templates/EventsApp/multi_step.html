@@ -220,7 +220,11 @@ body {
     background: #C5C5F1;
     text-decoration: none;
 }
+
+
 </style>
+<script src="http://cdn.jsdelivr.net/timepicker.js/latest/timepicker.min.js"></script>
+<link href="http://cdn.jsdelivr.net/timepicker.js/latest/timepicker.min.css" rel="stylesheet"/>
 <!-- MultiStep Form -->
 <div class="row">
     <div class="col-md-6 col-md-offset-3">
@@ -240,25 +244,25 @@ body {
                 <input type="text" name="description" placeholder="description"/>
                 <label for="chkYes"> Does this event costs?
                 <input type="radio" id="chkYes" name="event_type" onclick="ShowHideDiv()" />
-                Fee
+                Yes
                 </label>
                 <label for="chkNo">
                 <input type="radio" id="chkNo" name="event_type" value='free' onclick="ShowHideDiv()" />
-                Free
+                No
                 </label>
                 <div id="dvtext" style="display: none">
                 <input type="text" id="chkYes" name = "event_type" placeholder="$" />
                 </div>
-                <input type="text" name="start_time" placeholder="Start Time"/>
-                <input type="text" name="end_time" placeholder="End Time"/>
-                <input type="date" name="date" placeholder="Date"/>
+                <div>
+                <input type="text" id=time name="start_time" placeholder="event Time"/>
+                </div>
+                <input type="text" name="date" placeholder="Date"/>
                 <input type="button" name="next" class="next action-button" value="Next"/>
             </fieldset>
             <fieldset>
                 <h3 class="fs-title" style="background-color: rgba(150, 161, 255);text-align: center; padding: 25px;">Sports Information</h3>
                 <h3 class="fs-subtitle"></h3>
                 <select name = 'category' class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
-                <option selected>Select Sport</option>
                 <option value="Soccer">Soccer</option>
                 <option value="Baseketball">Baseketball</option>
                 <option value="Hockey">Hockey</option>
@@ -275,57 +279,18 @@ body {
                         <label class="form-check-label" for="pb">ProBound</label>
                         <input type="radio" name="athelete_level", value="competitive",id="cp">
                         <label class="form-check-label" for="co">Competitive</label>
-                <select name = 'ath_min_age' class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
-                    <option selected>Minimum Age</option>
-                    <option value="11">11</option>
-                    <option value="12">12</option>
-                    <option value="13">13</option>
-                    <option value="14">14</option>
-                    <option value="15">15</option>
-                    <option value="16">16</option>
-                    <option value="17">17</option>
-                    <option value="18">18</option>
-                    <option value="19">19</option>
-                </select>
-                <select name = 'ath_max_age' class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
-                    <option selected>Maximum Age</option>
-                    <option value="18">18</option>
-                    <option value="19">19</option>
-                    <option value="20">20</option>
-                    <option value="21">21</option>
-                    <option value="22">22</option>
-                    <option value="23">23</option>
-                    <option value="24">24</option>
-                </select>
-                    <legend> Support: </legend>
+               <input type="text" name="ath_min_age" placeholder="Minimum Age">
+                <input type="text" name="ath_max_age" placeholder="Maximum Age">
+                <input type="text" name="staff_level" placeholder="Staff Level">
+                    <!-- <legend> Support: </legend>
                         <input type="radio" name="staff_level", value="minor" id="ms">
                         <label for="ms">Minor Sport</label>
                         <input type="radio" name="staff_level", value="competitive",id="cp">
                         <label  for="cp">Competitve</label>
                         <input type="radio" name="staff_level", value="volunteer",id="vt">
-                        <label for="vt">Volunteer</label>
-                <select name = 'sup_min_age' class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
-                    <option selected>Minimum Age</option>
-                    <option value="11">11</option>
-                    <option value="12">12</option>
-                    <option value="13">13</option>
-                    <option value="14">14</option>
-                    <option value="15">15</option>
-                    <option value="16">16</option>
-                    <option value="17">17</option>
-                    <option value="18">18</option>
-                    <option value="19">19</option>
-                </select>
-                <select name = 'sup_max_age' class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
-                    <option selected>Maximum Age</option>
-                    <option value="18">18</option>
-                    <option value="19">19</option>
-                    <option value="20">20</option>
-                    <option value="21">21</option>
-                    <option value="22">22</option>
-                    <option value="23">23</option>
-                    <option value="24">24</option>
-                </select>
+                        <label for="vt">Volunteer</label> -->
+                <input type="text" name="sup_min_age" placeholder="Minimum Age">
+                <input type="text" name="sup_max_age" placeholder="Maximum Age">
                 <input type="button" name="previous" class="previous action-button-previous" value="Previous"/>
                 <input type="button" name="next" class="next action-button" value="Next"/>
             </fieldset>
@@ -346,7 +311,27 @@ body {
         <!-- /.link to designify.me code snippets -->
     </div>
 </div>
+
+
+
 <script>
+
+    //time picker starts here
+var timepicker = new TimePicker('time', {
+  lang: 'en',
+  theme: 'dark'
+});
+
+var input = document.getElementById('time');
+
+timepicker.on('change', function(evt) {
+  
+  var value = (evt.hour || '00') + ':' + (evt.minute || '00');
+  evt.element.value = value;
+
+});
+//time picker ends here
+
     function ShowHideDiv() {
         var chkYes = document.getElementById("chkYes");
         var dvtext = document.getElementById("dvtext");

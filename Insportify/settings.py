@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'EventsApp',
-    'formtools'
+    'formtools',
+    'bootstrap_datepicker_plus'
 ]
 
 MIDDLEWARE = [
@@ -77,8 +78,17 @@ WSGI_APPLICATION = 'Insportify.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+
+        'NAME': 'Insportify',
+
+        'USER': 'postgres',
+
+        'PASSWORD': 'Kupeshejig',
+
+        'HOST': 'localhost',
+
+        'PORT': '5432',
     }
 }
 

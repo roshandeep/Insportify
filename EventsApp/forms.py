@@ -1,6 +1,7 @@
 from django import forms
 from django.forms import ModelForm
 from .models import Venue, Event, MultiStep
+#from bootstrap_datepicker_plus.widgets import DatePickerInput, TimePickerInput, DateTimePickerInput, MonthPickerInput
 
 
 
@@ -85,7 +86,7 @@ class MultiStepForm(ModelForm):
 	#event_type =forms.CharField(label='Event Type', widget=forms.RadioSelect(choices=CHOICES1))
 	class Meta:
 		model = MultiStep
-		fields = ('event_title','category','description', 'event_type','ath_min_age','ath_max_age','sup_min_age','sup_max_age','date','start_time','end_time','venue','street','city','province','country','zip_code','staff_level','athelete_level')
+		fields = ('event_title','category','description', 'event_type','ath_min_age','ath_max_age','sup_min_age','sup_max_age','event_time','event_date','venue','street','city','province','country','zip_code','staff_level','athelete_level')
 		labels = {
 			'event_title': '',
 			'category' : '',
@@ -95,9 +96,8 @@ class MultiStepForm(ModelForm):
 			'ath_max_age' : '',
 			'sup_min_age' : '',
 			'sup_max_age' : '',
-			'date' : 'Date',
-			'start_time':'',
-			'end_time':'',
+			'event_time':'',
+			'event_date' : '',
 			'venue' : 'Venue',
 			'street' : '',
 			'city' : '',
@@ -109,16 +109,15 @@ class MultiStepForm(ModelForm):
 		}
 		widgets = {
 			'event_title': forms.TextInput(attrs={'class':'form-control','placeholder' :'Event Title'}),
-			'category' : forms.TextInput(attrs={'class':'form-control','placeholder' :'Select Category'}),
+			'category' : forms.TextInput(attrs={'class':'form-select','placeholder' :'Select Category'}),
 			'description': forms.TextInput(attrs={'class':'form-control','placeholder' :'Description'}),
 			'event_type': forms.TextInput(attrs={'class':'form-control','placeholder' :'Event Type'}),
-			'ath_min_age': forms.TextInput(attrs={'class':'form-control','placeholder' :'Athelete Minimum Age'}),
-			'ath_max_age': forms.TextInput(attrs={'class':'form-control','placeholder' :'Athelete Maximum Age'}),
-			'sup_min_age': forms.TextInput(attrs={'class':'form-control','placeholder' :'Support Minimum Age'}),
-			'sup_max_age': forms.TextInput(attrs={'class':'form-control','placeholder' :'Support Maximum Age'}),
-			'date': forms.DateTimeInput(attrs={'class':'form-control','placeholder' :'YYYY-MM-DD HH:MM:SS'}),
-			'start_time': forms.TextInput(attrs={'class':'form-select','placeholder' :'Start Time'}),
-			'end_time': forms.TextInput(attrs={'class':'form-select','placeholder' :'End Time'}),
+			'ath_min_age': forms.TextInput(attrs={'class': 'form-control'}),
+			'ath_max_age': forms.TextInput(attrs={'class': 'form-control'}),
+			'sup_min_age': forms.TextInput(attrs={'class': 'form-control'}),
+			'sup_max_age': forms.TextInput(attrs={'class': 'form-control'}),
+			'event_time': forms.TextInput(attrs={'class':'form-control','placeholder' :'Event Time'}),
+			'event_date': forms.TextInput(attrs={'class':'form-control','placeholder' :'Event Date'}),
 			'venue': forms.TextInput(attrs={'class':'form-control','placeholder' :'Venue'}),
 			'street': forms.TextInput(attrs={'class':'form-control','placeholder' :'Street'}),
 			'city': forms.TextInput(attrs={'class':'form-control','placeholder' :'City'}),
