@@ -36,6 +36,7 @@ urlpatterns = [
     #path('', views.multiformvalidation, name='multiformvalidation'),
     path('event_detail/',views.event_detail, name='event-detail'),
     path('', views.multistep, name='multistep'),
+    path('test/', TemplateView.as_view(template_name='index.html'), name='index'),
     path('' , TemplateView.as_view(template_name='multi_step.html'),name='multistep')
     #path('',TemplateView.as_view(template_name='multi_step.html'), name="multi-step"),
     #path('/multistep', views.multistep, name="multi-form")

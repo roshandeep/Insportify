@@ -157,3 +157,6 @@ def home(request,year=datetime.now().year,month=datetime.now().strftime('%B')):
 		})
 
 # Create your views here.
+
+def index(request):
+	return render(request, "index.html")

@@ -17,14 +17,10 @@ class Venue(models.Model):
 
 class MultiStep(models.Model):
 	event_title = models.CharField('Event Title', max_length=30, null=True)
-	category = models.CharField('Category', max_length=30,default='SOME STRING', null=True)
-	description = models.CharField('Description', max_length=200, null=True)
+	description = models.TextField('Description', max_length=200, null=True)
 	event_type = models.CharField('Free/Fee', max_length=20,null=True)
 	#min_age = models.IntegerField('Minimum Age',null=True)
-	ath_min_age = models.CharField(null=True,max_length=20)
-	ath_max_age = models.CharField(null=True, max_length=20)
-	sup_min_age = models.CharField(null=True, max_length=20)
-	sup_max_age = models.CharField(null=True,max_length=20)
+	category = models.CharField('Category', max_length=30,default='SOME STRING', null=True)
 	event_time = models.CharField('Event Time', max_length=20,null=True)
 	event_date = models.CharField(blank=True, max_length=20,null=True)	#venue = models.ForeignKey(Venue, blank=True, null=True, on_delete=models.CASCADE)
 	venue = models.CharField('Venue', blank=True, null=True, max_length=30)
@@ -33,11 +29,6 @@ class MultiStep(models.Model):
 	province = models.CharField('Province', max_length=30,blank=True,null=True)
 	country = models.CharField('Country', max_length=30,blank=True,null=True)
 	zip_code = models.CharField('Zip Code', max_length=30,blank=True,null=True)
-	staff_level = models.CharField('Staff Level', max_length=30, blank=True,null=True)
-	athelete_level = models.CharField('Athelete Level', max_length=30, blank=True,null=True)
-
-
-
 	def __str__(self):
 		return self.event_title
 
@@ -63,17 +54,8 @@ class Event(models.Model):
 	def __str__(self):
 		return self.name
 
-class MultiStepFormModel(models.Model):
-	event_name = models.CharField('Event Name', max_length=120)
-	event_date = models.DateTimeField('Event Date', max_length=120)
-	description = models.CharField('description', max_length=120)
-	category = models.CharField('category', max_length=120)
-	manager = models.CharField('manager', max_length=120)
-	phone = models.CharField('phone', max_length=120)
-	email = models.EmailField('email', blank=True)
-	website = models.URLField('Website', blank=True)
 
-	def __str__(self):
-		return self.name
+
+
 
 

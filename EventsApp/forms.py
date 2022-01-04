@@ -86,12 +86,12 @@ class MultiStepForm(ModelForm):
 	#event_type =forms.CharField(label='Event Type', widget=forms.RadioSelect(choices=CHOICES1))
 	class Meta:
 		model = MultiStep
-		fields = ('event_title','category','description', 'event_type','ath_min_age','ath_max_age','sup_min_age','sup_max_age','event_time','event_date','venue','street','city','province','country','zip_code','staff_level','athelete_level')
+		fields = ('event_title','category','description', 'event_type','event_time','event_date','venue','street','city','province','country','zip_code')
 		labels = {
 			'event_title': '',
-			'category' : '',
 			'description' : '',
 			'event_type' : '',
+			'category' : '',
 			'ath_min_age': '',
 			'ath_max_age' : '',
 			'sup_min_age' : '',
@@ -104,18 +104,12 @@ class MultiStepForm(ModelForm):
 			'province' : '',
 			'country' : '',
 			'zip_code' : '',
-			'staff_level' : '',
-			'athelete_level' : '',
 		}
 		widgets = {
 			'event_title': forms.TextInput(attrs={'class':'form-control','placeholder' :'Event Title'}),
-			'category' : forms.TextInput(attrs={'class':'form-select','placeholder' :'Select Category'}),
 			'description': forms.TextInput(attrs={'class':'form-control','placeholder' :'Description'}),
+			'category' : forms.TextInput(attrs={'class':'form-select','placeholder' :'Select Category'}),
 			'event_type': forms.TextInput(attrs={'class':'form-control','placeholder' :'Event Type'}),
-			'ath_min_age': forms.TextInput(attrs={'class': 'form-control'}),
-			'ath_max_age': forms.TextInput(attrs={'class': 'form-control'}),
-			'sup_min_age': forms.TextInput(attrs={'class': 'form-control'}),
-			'sup_max_age': forms.TextInput(attrs={'class': 'form-control'}),
 			'event_time': forms.TextInput(attrs={'class':'form-control','placeholder' :'Event Time'}),
 			'event_date': forms.TextInput(attrs={'class':'form-control','placeholder' :'Event Date'}),
 			'venue': forms.TextInput(attrs={'class':'form-control','placeholder' :'Venue'}),
@@ -124,6 +118,4 @@ class MultiStepForm(ModelForm):
 			'province': forms.TextInput(attrs={'class':'form-control','placeholder' :'Province'}),
 			'country': forms.TextInput(attrs={'class':'form-control','placeholder' :'Country'}),
 			'zip_code': forms.TextInput(attrs={'class':'form-control','placeholder' :'Zip Code'}),
-			'staff_level': forms.TextInput(attrs={'class':'form-control','placeholder' :'Staff level'}),
-			'athelete_level': forms.TextInput(attrs={'class':'form-control','placeholder' :'Athelete level'}),
 			}
