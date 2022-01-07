@@ -36,8 +36,10 @@ urlpatterns = [
     #path('', views.multiformvalidation, name='multiformvalidation'),
     path('event_detail/',views.event_detail, name='event-detail'),
     path('', views.multistep, name='multistep'),
-    path('test/', TemplateView.as_view(template_name='index.html'), name='index'),
-    path('' , TemplateView.as_view(template_name='multi_step.html'),name='multistep')
+#    path('add/', views.person_create_view, name='person_add'),
+#    path('<int:pk>/', views.person_update_view, name='person_change'),
+    path('' , TemplateView.as_view(template_name='multi_step.html'),name='multistep'),
+#    path('ajax/load-cities/', views.load_cities, name='ajax_load_cities'), # AJAX
     #path('',TemplateView.as_view(template_name='multi_step.html'), name="multi-step"),
     #path('/multistep', views.multistep, name="multi-form")
     #path('multistepform_save/', views.multistepform_save, name='multistepform-save')

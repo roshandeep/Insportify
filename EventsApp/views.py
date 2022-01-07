@@ -3,23 +3,55 @@ import calendar
 from calendar import HTMLCalendar
 from datetime import datetime
 from django.http import HttpResponseRedirect
-from .models import Event, Venue, MultiStep
+#from .models import Event, Venue, MultiStep, City, Person
 from .forms import VenueForm, EventForm, EventFormAdmin,MultiStepForm
 #from formtools.wizard.views import SessionWizardView
 from django.contrib import messages
+from django.views.generic.base import TemplateView
 
 def multistep(request):
 	submitted = False
 	if request.method == "POST":
 		form = MultiStepForm(request.POST)
+		print('form is going to be validated')
 		if form.is_valid():
+			print('form validated')
 			form.save()
 			return HttpResponseRedirect('/?submitted=True')
 	else:
 		form = MultiStepForm
 		if 'submitted' in request.GET:
 			submitted = True
+	#print('not validated', messages.error)
 	return render(request, 'EventsApp/multi_step.html',{'form' : form, 'submitted':submitted})
+
+# def person_create_view(request):
+#     form = PersonCreationForm()
+#     if request.method == 'POST':
+#         form = PersonCreationForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('person_add')
+#     return render(request, 'EventsApp/index.html', {'form': form})
+
+# def person_update_view(request, pk):
+#     person = get_object_or_404(Person, pk=pk)
+#     form = PersonCreationForm(instance=person)
+#     if request.method == 'POST':
+#         form = PersonCreationForm(request.POST, instance=person)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('person_change', pk=pk)
+#     return render(request, 'EventsApp/index.html', {'form': form})
+
+# # AJAX
+# def load_cities(request):
+#     country_id = request.GET.get('country_id')
+#     cities = City.objects.filter(country_id=country_id).all()
+#     return render(request, 'EventsApp/city_dropdown_list_options.html', {'cities': cities})
+#     #return render(request, 'EventsApp/multi_step.html', {'result': cities})
+
+
 
 def multiformvalidation(request):
 	submitted = False

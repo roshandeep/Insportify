@@ -2,7 +2,6 @@
 
 {% block content %}
 <center>
-    <h4 class="fs-title" style="font-size: 40px; background-color: white; padding: 0.5px;width: 350px;">Create Event</h4>
 {% if submitted %}
         Your Event was Submitted
         Successfully!!!
@@ -35,6 +34,15 @@
             font-family: montserrat, arial, verdana;
             background: transparent;
         }
+
+        /* Style the header */
+        header {
+        background-color: #666;
+        padding: 20px;
+        text-align: center;
+        font-size: 35px;
+        color: white;
+                }
 
         /*form styles*/
         #msform {
@@ -218,11 +226,24 @@
     </style>
 </head>
 <body>
+    <header>
+  <h2>Create events</h2>
+</header>
 <!-- MultiStep Form -->
 <div class="row">
     <div class="col-md-6 col-md-offset-3">
         <form id="msform" action="{% url 'multistep'%}" method="post">
             {% csrf_token %}
+{% if form.errors %}
+<div class="alert alert-danger" role="alert">
+    {% for field, errors in form.errors.items %}
+    {% for error in errors %}
+    <b>{{ field }}</b>: {{ error }}
+    {% endfor %}
+    {% endfor %}
+</div>
+{% endif %}
+
             <!-- progressbar -->
             <ul id="progressbar">
                 <li class="active">Event Information</li>
@@ -235,8 +256,21 @@
                 <h3 class="fs-subtitle"></h3>
                 <input type="text" name="event_title" placeholder="Event Title"/>
                 <input type="text" name="description" placeholder="description"/>
-                <label for="chkYes"> Does this event costs?
-                <input type="radio" id="chkYes" name="event_type" onclick="ShowHideDiv()" />
+                 <span>Does this event cost?</span>
+                <label for="chkYes">
+                    <input type="radio" id="chkYes" name="event_type" />
+                    Yes
+                </label>
+                <label for="chkNo">
+                    <input type="radio" id="chkNo" name="event_type" />
+                    No
+                </label>
+                <hr />
+                <div id="dvPassport" style="display: none">
+                    CAD($)
+                    <input type="number" id="txtPassportNumber" name="event_type" />
+                </div>
+                <!-- <input type="radio" id="chkYes" name="event_type" onclick="ShowHideDiv()" />
                 Yes
                 </label>
                 <label for="chkNo">
@@ -245,26 +279,73 @@
                 </label>
                 <div id="dvtext" style="display: none">
                 <input type="text" id="chkYes" name = "event_type" placeholder="$" />
-                </div>
+                </div> -->
+
                 <div>
                 <!-- <input type="text" id=time name="start_time" placeholder="event Time"/> -->
                 <input type="text" name="event_time" placeholder="event">
                 </div>
-                <input type="text" name="date" placeholder="Date"/>
+                <input type="date" name="event_date" placeholder="Date"/>
                 <input type="button" name="next" class="next action-button" value="Next"/>
             </fieldset>
             <fieldset>
                 <h3 class="fs-title" style="background-color: rgba(150, 161, 255);text-align: center; padding: 25px;">Sports Information</h3>
-                <h3 class="fs-subtitle"></h3>
-                <input type="select" name="category" placeholder="Sport Category">
-                <!--<select name = 'category' class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
-                <option value="Soccer">Soccer</option>
-                <option value="Baseketball">Baseketball</option>
+
+<!-- <p><b> Sport Category </b>
+            <select name= 'category' class = 'form-control' id="personForm">
+                {% for cities in result %}
+                <option value=" {{cities.id}}"> {{cities.name}}</option>
+                {% endfor %}
+                
+            </select> -->
+                <select name = 'sport_category' class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+                    <option selected disabled>Choose Sport Category</option>
                 <option value="Hockey">Hockey</option>
-                <option value="Football">Football</option>
-                <option value="Cricket">Cricket</option>
-                <option value="Tennis">Tennis</option>
-                </select> -->
+                <option value="Targeting">Targeting</option>
+                <option value="Combat Sport">Combat Sport</option>
+                <option value="Dance">Dance</option>
+                <option value="Fitness">Fitness</option>
+                </select>
+
+                <select name= 'sport_type' class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+                    <option selected disabled>Choose Sport Type</option>
+                <option value="Muay Thai">Muay Thai</option>
+                <option value="MMA">MMA</option>
+                <option value="Paintball">Paintball</option>
+                <option value="Boxing">Boxing</option>
+                </select>
+                <select name = 'position' class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+                    <option selected disabled>Choose a position</option>
+                <option value="Athelete">Athelete</option>
+                <option value="Coach">Coach</option>
+                <option value="Combatant">Combatant</option>
+                </select>
+                <select name = 'skill' class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+                    <option selected disabled>Choose a Skill Level</option>
+                <option value="Rookie">Rookie</option>
+                <option value="Recreational">Recreational</option>
+                <option value="Competitive">Competitive</option>
+                <option value="Pro-Bound">Pro-Bound</option>
+                </select>
+                <input type="number" name="min_age" placeholder="Minimum Age">
+                <input type="number" name="max_age" placeholder="Maximum Age">
+                <!-- <label><input type="radio" name="type" class="radio" value="">Free</label>
+                <label><input type="radio" name="type" class="radio other" value=""> Yes</label>
+                <input type="number" id="custom_amount" disabled="true" placeholder="If,yes"> -->
+                <span>Is there any cost on the position?</span>
+                <label for="chkYes">
+                    <input type="radio" id="chkYes1" name="position_price" />
+                    Yes
+                </label>
+                <label for="chkNo">
+                    <input type="radio" id="chkNo1" name="position_price"/>
+                    No
+                </label>
+                <hr />
+                <div id="dvPassport1" style="display: none">
+                    CAD($)
+                    <input type="number" id="txtPassportNumber" name="position_price" />
+                </div>
                 <!-- <legend>Athelete: </legend>
                         <input type="radio" name="athelete_level", value="rookie" id="rk">
                         <label class="form-check-label" for="rk">Rookie</label>
@@ -286,7 +367,7 @@
             </fieldset>
             <fieldset>
                 <h2 class="fs-title" style="background-color: rgba(150, 161, 255);text-align: center; padding: 25px;">Venue</h2>
-                <input type="text" name="Venue" placeholder="Venue"/>
+                <input type="text" name="venue" placeholder="Venue"/>
                 <input type="text" name="street" placeholder="Street"/>
                 <input type="text" name="city" placeholder="City"/>
                 <input type="text" name="province" placeholder="Province"/>
@@ -297,7 +378,54 @@
             </fieldset>
         </form>
         {% endif %}
+        
 <script>
+$(function () {
+        $("input[name='event_type']").click(function () {
+            if ($("#chkYes").is(":checked")) {
+                $("#dvPassport").show();
+            } else {
+                $("#dvPassport").hide();
+            }
+        });
+    });
+$(function () {
+        $("input[name='position_price']").click(function () {
+            if ($("#chkYes1").is(":checked")) {
+                $("#dvPassport1").show();
+            } else {
+                $("#dvPassport1").hide();
+            }
+        });
+    });
+
+$('.radio').change(function() {
+  $('#custom_amount').prop('disabled', !$(this).is('.other'));
+});
+
+    $("#id_country").change(function () {
+        const url = $("#personForm");  // get the url of the `load_cities` view
+        const countryId = $(this).val();  // get the selected country ID from the HTML input
+
+        $.ajax({                       // initialize an AJAX request
+            url: url,                    // set the url of the request (= /persons/ajax/load-cities/ )
+            data: {
+                'country_id': countryId       // add the country id to the GET parameters
+            },
+            success: function (data) {   // `data` is the return of the `load_cities` view function
+                $("#id_city").html(data);  // replace the contents of the city input with the data that came from the server
+
+                let html_data = '<option value="">---------</option>';
+                data.forEach(function (city) {
+                    html_data += `<option value="${city.id}">${city.name}</option>`
+                });
+                console.log(html_data);
+                $("#id_city").html(html_data);
+
+            }
+        });
+
+    });
 
     //jQuery time
     var current_fs, next_fs, previous_fs; //fieldsets

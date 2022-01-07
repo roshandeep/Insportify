@@ -1,6 +1,7 @@
 from django import forms
 from django.forms import ModelForm
 from .models import Venue, Event, MultiStep
+#from EventsApp.models import Person, City, Country
 #from bootstrap_datepicker_plus.widgets import DatePickerInput, TimePickerInput, DateTimePickerInput, MonthPickerInput
 
 
@@ -86,36 +87,65 @@ class MultiStepForm(ModelForm):
 	#event_type =forms.CharField(label='Event Type', widget=forms.RadioSelect(choices=CHOICES1))
 	class Meta:
 		model = MultiStep
-		fields = ('event_title','category','description', 'event_type','event_time','event_date','venue','street','city','province','country','zip_code')
+		#fields = "__all__"
+		fields = ('event_title','description', 'sport_type','position','skill','position_price','min_age','max_age','event_time','event_date','sport_category','venue','street','province','country','zip_code','city', 'event_type')
 		labels = {
 			'event_title': '',
 			'description' : '',
-			'event_type' : '',
-			'category' : '',
-			'ath_min_age': '',
-			'ath_max_age' : '',
-			'sup_min_age' : '',
-			'sup_max_age' : '',
 			'event_time':'',
 			'event_date' : '',
+			'sport_category' : '',
 			'venue' : 'Venue',
 			'street' : '',
-			'city' : '',
 			'province' : '',
+			'city' : '',
 			'country' : '',
 			'zip_code' : '',
+			'sport_type' : '',
+			'position' : '',
+			'skill' : '',
+			'position_price' : 'position_price',
+			'min_age' : '',
+			'max_age' : '',
+			'event_type' : '',
 		}
+
 		widgets = {
 			'event_title': forms.TextInput(attrs={'class':'form-control','placeholder' :'Event Title'}),
 			'description': forms.TextInput(attrs={'class':'form-control','placeholder' :'Description'}),
-			'category' : forms.TextInput(attrs={'class':'form-select','placeholder' :'Select Category'}),
-			'event_type': forms.TextInput(attrs={'class':'form-control','placeholder' :'Event Type'}),
 			'event_time': forms.TextInput(attrs={'class':'form-control','placeholder' :'Event Time'}),
-			'event_date': forms.TextInput(attrs={'class':'form-control','placeholder' :'Event Date'}),
+			'event_date': forms.DateTimeInput(attrs={'class':'form-control','placeholder' :'YYYY-MM-DD HH:MM:SS'}),
+			'sport_category' : forms.TextInput(attrs={'class':'form-control','placeholder' :'Sport Name'}),
 			'venue': forms.TextInput(attrs={'class':'form-control','placeholder' :'Venue'}),
 			'street': forms.TextInput(attrs={'class':'form-control','placeholder' :'Street'}),
-			'city': forms.TextInput(attrs={'class':'form-control','placeholder' :'City'}),
 			'province': forms.TextInput(attrs={'class':'form-control','placeholder' :'Province'}),
+			'city': forms.TextInput(attrs={'class':'form-control','placeholder' :'city'}),
 			'country': forms.TextInput(attrs={'class':'form-control','placeholder' :'Country'}),
 			'zip_code': forms.TextInput(attrs={'class':'form-control','placeholder' :'Zip Code'}),
+			'event_type': forms.NumberInput(),
+			'sport_category': forms.TextInput(attrs={'class':'form-control','placeholder' :'Sport Category'}),
+			'sport_type' : forms.TextInput(attrs={'class':'form-control','placeholder' :'Sport Type'}),
+			'skill' : forms.TextInput(attrs={'class':'form-control','placeholder' :'Skill Level'}),
+			'position_price' : forms.NumberInput(),
+			'min_age' : forms.NumberInput(),
+			'max_age' : forms.NumberInput(),
 			}
+
+
+# class PersonCreationForm(forms.ModelForm):
+#     class Meta:
+#         model = Person
+#         fields = '__all__'
+
+#     def __init__(self, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
+#         self.fields['city'].queryset = City.objects.none()
+
+#         if 'country' in self.data:
+#             try:
+#                 country_id = int(self.data.get('country'))
+#                 self.fields['city'].queryset = City.objects.filter(country_id=country_id).order_by('name')
+#             except (ValueError, TypeError):
+#                 pass  # invalid input from the client; ignore and fallback to empty City queryset
+#         elif self.instance.pk:
+#             self.fields['city'].queryset = self.instance.country.city_set.order_by('name')

@@ -3,10 +3,16 @@ from .models import Venue
 from .models import MyEventUser
 from .models import Event
 from .models import MultiStep
+#from .models import City, Country, Person
+
+
 
 #admin.site.register(Venue)
 admin.site.register(MyEventUser)
 #admin.site.register(Event)
+admin.site.register(MultiStep)
+
+
 
 @admin.register(Venue)
 class VenueAdmin(admin.ModelAdmin):
@@ -21,9 +27,9 @@ class EventAdmin(admin.ModelAdmin):
 	list_filter = ('event_date', 'venue')
 	ordering = ('event_date',)
 
-@admin.register(MultiStep)
-class MultiEventAdmin(admin.ModelAdmin):
-	fields = (('event_title'), 'category','event_type','athelete_level','staff_level')
-	list_display = ('event_title','venue')
-	list_filter = ('event_title', 'venue')
-	ordering = ('event_title',)
+#@admin.register(MultiStep)
+#class MultiEventAdmin(admin.ModelAdmin):
+#	fields = (('event_title'), 'category','event_type','athelete_level','staff_level')
+#	list_display = ('event_title','venue')
+#	list_filter = ('event_title', 'venue')
+#	ordering = ('event_title',)

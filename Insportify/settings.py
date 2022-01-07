@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'EventsApp',
     'formtools',
-    'bootstrap_datepicker_plus'
 ]
 
 MIDDLEWARE = [
