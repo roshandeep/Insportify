@@ -14,6 +14,11 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+      <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script> -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />  
     <style>
                 /*custom font*/
         @import url(https://fonts.googleapis.com/css?family=Montserrat);
@@ -229,6 +234,239 @@
     <header>
   <h2>Create events</h2>
 </header>
+<script>
+ var sportsObject = {
+    "Targeting": {
+            "Archery":[],
+            "Wheelchair Archery":[]
+          },
+    "Combat Sport": {
+           "Mauy Thai/Kick Boxing":[],
+           "Mixed Martial Arts":[],
+           "Paintball":[],
+             "Red Rover":[]
+     },
+     "Dance": {
+            "Dance":[]
+          },
+      "Combat Sport": {
+           "Aerobics":[],
+           "Gymnastics":[],
+             "Multisport":[],
+           "Park Program":[],
+           "Spin":[],
+           "Weight Training":[],
+           "Yoga":[]
+     },
+     "Football/Rugby": {
+           "Wheelchair Rugby":[],
+           "Flag Football":[],
+             "Football":[],
+           "Rugby":[],
+           "Touch Football":[]
+     },
+     "Racquet/Volleying": {
+           "Handball":[],
+           "Badminton":[],
+             "Wheelchair Badminton":[],
+           "Pickleball":[],
+           "Round Ball":[],
+           "Sitting Volleyball":[],
+           "Squash":[],
+           "Table Tennis":[],
+           "Wheelchair Table Tennis":[],
+           "Tennis":[],
+           "Wheelchair Tennis":[],
+           "Volleyball":[]
+     },
+     "Riding(Equestrian, Vehicular, Paddling)": {
+"Bobsledding":[],
+"Dog Sledding":[],
+"Luge":[],
+"Skateboarding/Scootering":[],
+"Skim Boarding":[],
+"Surfing/Wind Surfing":[],
+"Base Jumping":[],
+"BMX":[],
+"Canoeing":[],
+"Cart":[],
+"Dragon Boat":[],
+"Equestrian":[],
+"Fishing":[],
+"Indoor Skydiving":[],
+"Kayaking":[],
+"Motorcross":[],
+"Outdoor Skydiving":[],
+"Paddle Boarding":[],
+"ParaGliding/ParaSailing":[],
+"Polo":[],
+"Rafting":[],
+"Rowing":[],
+"Sailing/Boating":[]
+},
+"Running/Track/Parkour": {
+"Cross Country Running":[],
+"Discus":[],
+"High Jump":[],
+"Hurling":[],
+"Javelin":[],
+"Marathoning":[],
+"Mudder":[],
+"Parkour":[],
+"Pole Vault":[],
+"Running":[],
+"Shot Put":[],
+"Track Running":[],
+"Trekking":[]
+},
+
+"Swimming": {
+"Water Aerobics":[],
+"Water Polo":[],
+"Diving":[],
+"Scuba":[],
+"Swimming":[],
+"Synchro Swimming":[],
+},
+
+"Trampolining": {
+"Trampolining":[]
+},
+
+"Baseball": {
+  "Fastball":[],
+"Soccer Baseball":[],
+"Softball":[],
+"T-Ball":[],
+"Basketball":[],
+"Wheelchair Basketball":[],
+"Climbing":[]
+},
+
+"Climbing": {
+"Ninja Camp":[],
+"Climbing":[]
+},
+
+"Cricket": {
+"Cricket":[]
+},
+
+"Frisbee": {
+"Disk Golf":[],
+"Ultimate Frisbee":[],
+"Ultimate Para-frisbee":[]
+},
+
+"Golf": {
+"Golf":[]
+},
+
+"Hockey/Skating/Blading": {
+  "Amputee Hockey":[],
+"Ball/Floor Hockey":[],
+"Blind Hockey":[],
+"Field Hockey":[],
+"Figure Skating":[],
+"Ice Hockey":[],
+"Ice Skating":[],
+"Inline/Roller Hockey":[],
+"Ringette":[],
+"Shinny":[],
+"Sledge Hockey":[],
+"Speed Skating":[],
+"Stick & Puck":[]
+
+},
+
+"Lacrosse": {
+"Box Lacrosse":[],
+"Field Lacrosse":[],
+"Boss":[]
+},
+
+"Skiing (Water, Terrestrial, Boarding)": {
+  "Cross Country Skiing":[],
+"Downhill/Alpine":[],
+"Skiing":[],
+"Paraskiing":[],
+"Snowboarding":[]
+},
+
+"Soccer": {
+  "Beach Soccer":[],
+"Bubble Soccer":[],
+"Soccer":[],
+"ParaSoccer":[]
+
+},
+
+"Strategy": {
+"Board Game":[],
+"Panic Room":[],
+"First Responding":[]
+},
+
+"Basketball": {
+  "Basketball":[],
+"Wheelchair Basketball":[],
+
+},
+
+}
+ // var positionObject = {
+ //    "Athelete": {
+ //            "Rookie":[],
+ //            "Recreational":[],
+ //            "Competitive" : [],
+ //            "Pro-Bound" : []
+ //          },
+ //    "Attendee": {
+ //           "Open" : []
+ //       },
+ //    "Coach" : {
+ //            "Minor Sports" : [],
+ //            "Competitive" : [],
+ //            "Volunteer" : []
+ //    }
+  
+  window.onload = function() {
+  var catgeorySel = document.getElementById("category");
+  var sportsSel = document.getElementById("sports");
+  for (var x in sportsObject) {
+    catgeorySel.options[catgeorySel.options.length] = new Option(x, x);
+  }
+  catgeorySel.onchange = function() {
+    //empty Chapters- and Topics- dropdowns
+    sportsSel.length = 1;
+    //display correct values
+    for (var y in sportsObject[this.value]) {
+      sportsSel.options[sportsSel.options.length] = new Option(y, y);
+
+    }
+  } 
+}
+//   window.onload = function() {
+//   var positionSel = document.getElementById('position');
+//   var skillSel = document.getElementById('skill')
+//   for (var z in positionObject) {
+//     positionSel.options[positionSel.options.length] = new Option(z, z);
+//   }
+//   positionSel.onchange = function() {
+//     //empty Chapters- and Topics- dropdowns
+//     skill.length = 1;
+//     //display correct values
+//     for (var a in positionsObject[this.value]) {
+//       skillSel.options[skillSel.options.length] = new Option(a, a);
+
+//     }
+//   } 
+// }
+
+
+  </script>
+
+
 <!-- MultiStep Form -->
 <div class="row">
     <div class="col-md-6 col-md-offset-3">
@@ -258,17 +496,17 @@
                 <input type="text" name="description" placeholder="description"/>
                  <span>Does this event cost?</span>
                 <label for="chkYes">
-                    <input type="radio" id="chkYes" name="event_type" />
+                    <input type="radio" id="chkYes" name="event_cost" />
                     Yes
                 </label>
                 <label for="chkNo">
-                    <input type="radio" id="chkNo" name="event_type" />
+                    <input type="radio" value="" id="chkNo" name="event_cost" />
                     No
                 </label>
                 <hr />
                 <div id="dvPassport" style="display: none">
                     CAD($)
-                    <input type="number" id="txtPassportNumber" name="event_type" />
+                    <input type="number" id="txtPassportNumber" name="event_type"/>
                 </div>
                 <!-- <input type="radio" id="chkYes" name="event_type" onclick="ShowHideDiv()" />
                 Yes
@@ -280,12 +518,7 @@
                 <div id="dvtext" style="display: none">
                 <input type="text" id="chkYes" name = "event_type" placeholder="$" />
                 </div> -->
-
-                <div>
-                <!-- <input type="text" id=time name="start_time" placeholder="event Time"/> -->
-                <input type="text" name="event_time" placeholder="event">
-                </div>
-                <input type="date" name="event_date" placeholder="Date"/>
+                <input type="text" name="datetimes" placeholder="Date & Time" />
                 <input type="button" name="next" class="next action-button" value="Next"/>
             </fieldset>
             <fieldset>
@@ -298,41 +531,70 @@
                 {% endfor %}
                 
             </select> -->
-                <select name = 'sport_category' class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
-                    <option selected disabled>Choose Sport Category</option>
-                <option value="Hockey">Hockey</option>
-                <option value="Targeting">Targeting</option>
-                <option value="Combat Sport">Combat Sport</option>
-                <option value="Dance">Dance</option>
-                <option value="Fitness">Fitness</option>
+                <select name = 'sport_category' id="category" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+                    <option selected>Choose Sport Category</option>
                 </select>
 
-                <select name= 'sport_type' class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+                <select name= 'sport_type' id="sports" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
                     <option selected disabled>Choose Sport Type</option>
-                <option value="Muay Thai">Muay Thai</option>
-                <option value="MMA">MMA</option>
-                <option value="Paintball">Paintball</option>
-                <option value="Boxing">Boxing</option>
                 </select>
-                <select name = 'position' class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
-                    <option selected disabled>Choose a position</option>
+                <select name='position' class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+                    <option>Athelete</option>
+                </select>
+        
+    
+    <script>
+
+    $(document).ready(function() {
+    var max_fields      = 10; //maximum input boxes allowed
+    var wrapper         = $("#input_fields_wrap"); //Fields wrapper
+    var add_button      = $("#add_field_button"); //Add button ID
+   
+    var x = 1; //initlal text box count
+    
+    
+   $(add_button).click(function(e){ //on add input button click
+        e.preventDefault();
+        if(x < max_fields){ //max input box allowed
+    
+             //text box increment
+            $(wrapper).append('<div><select name = skill class="form-select form-select-lg mb-3" aria-label=".form-select-lg example"><option>Rookie</option><option>Recreational</option><option>Competitve</option><option>Pro-Bound</option></select><input name="no_of_position" type="number" placeholder = "Number of Positions" min=0><input type="number" name ="position_cost" placeholder="Position Cost"><input type="number" name="min_age" placeholder= "Minimum Age" min=><input name="max_age" type="number" min=0 name="mytext2[]" placeholder= "Maximum Age"><a href="#" class="remove_field">Remove</a></div>'); //add input box
+            x++; 
+      }
+    });
+   
+    $(wrapper).on("click",".remove_field", function(e){ //user click on remove text
+       
+        e.preventDefault(); 
+        $(this).parent('div').remove(); 
+        x--;
+    })
+});
+
+    
+    </script>
+    <body>
+     <div id="input_fields_wrap">
+    <button id="add_field_button">Add Position</button> 
+                </div>
+                    <!-- <option selected disabled>Choose a position</option>
                 <option value="Athelete">Athelete</option>
                 <option value="Coach">Coach</option>
                 <option value="Combatant">Combatant</option>
-                </select>
-                <select name = 'skill' class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+                </select> -->
+<!--                 <select name = 'skill' id = skill class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
                     <option selected disabled>Choose a Skill Level</option>
                 <option value="Rookie">Rookie</option>
                 <option value="Recreational">Recreational</option>
                 <option value="Competitive">Competitive</option>
                 <option value="Pro-Bound">Pro-Bound</option>
-                </select>
-                <input type="number" name="min_age" placeholder="Minimum Age">
-                <input type="number" name="max_age" placeholder="Maximum Age">
+                </select> -->
+<!--                 <input type="number" name="min_age" placeholder="Minimum Age">
+                <input type="number" name="max_age" placeholder="Maximum Age"> -->
                 <!-- <label><input type="radio" name="type" class="radio" value="">Free</label>
                 <label><input type="radio" name="type" class="radio other" value=""> Yes</label>
                 <input type="number" id="custom_amount" disabled="true" placeholder="If,yes"> -->
-                <span>Is there any cost on the position?</span>
+<!--                 <span>Is there any cost on the position?</span>
                 <label for="chkYes">
                     <input type="radio" id="chkYes1" name="position_price" />
                     Yes
@@ -345,7 +607,7 @@
                 <div id="dvPassport1" style="display: none">
                     CAD($)
                     <input type="number" id="txtPassportNumber" name="position_price" />
-                </div>
+                </div> -->
                 <!-- <legend>Athelete: </legend>
                         <input type="radio" name="athelete_level", value="rookie" id="rk">
                         <label class="form-check-label" for="rk">Rookie</label>
@@ -378,10 +640,22 @@
             </fieldset>
         </form>
         {% endif %}
-        
+  
 <script>
+$(function() {
+  $('input[name="datetimes"]').daterangepicker({
+    timePicker: true,
+    startDate: moment().startOf('hour'),
+    endDate: moment().startOf('hour').add(32, 'hour'),
+    locale: {
+      format: 'MM/DD/YYYY hh:mm A'
+    }
+  });
+});
+
+
 $(function () {
-        $("input[name='event_type']").click(function () {
+        $("input[name='event_cost']").click(function () {
             if ($("#chkYes").is(":checked")) {
                 $("#dvPassport").show();
             } else {
@@ -403,29 +677,29 @@ $('.radio').change(function() {
   $('#custom_amount').prop('disabled', !$(this).is('.other'));
 });
 
-    $("#id_country").change(function () {
-        const url = $("#personForm");  // get the url of the `load_cities` view
-        const countryId = $(this).val();  // get the selected country ID from the HTML input
+    // $("#id_country").change(function () {
+    //     const url = $("#personForm");  // get the url of the `load_cities` view
+    //     const countryId = $(this).val();  // get the selected country ID from the HTML input
 
-        $.ajax({                       // initialize an AJAX request
-            url: url,                    // set the url of the request (= /persons/ajax/load-cities/ )
-            data: {
-                'country_id': countryId       // add the country id to the GET parameters
-            },
-            success: function (data) {   // `data` is the return of the `load_cities` view function
-                $("#id_city").html(data);  // replace the contents of the city input with the data that came from the server
+    //     $.ajax({                       // initialize an AJAX request
+    //         url: url,                    // set the url of the request (= /persons/ajax/load-cities/ )
+    //         data: {
+    //             'country_id': countryId       // add the country id to the GET parameters
+    //         },
+    //         success: function (data) {   // `data` is the return of the `load_cities` view function
+    //             $("#id_city").html(data);  // replace the contents of the city input with the data that came from the server
 
-                let html_data = '<option value="">---------</option>';
-                data.forEach(function (city) {
-                    html_data += `<option value="${city.id}">${city.name}</option>`
-                });
-                console.log(html_data);
-                $("#id_city").html(html_data);
+    //             let html_data = '<option value="">---------</option>';
+    //             data.forEach(function (city) {
+    //                 html_data += `<option value="${city.id}">${city.name}</option>`
+    //             });
+    //             console.log(html_data);
+    //             $("#id_city").html(html_data);
 
-            }
-        });
+    //         }
+    //     });
 
-    });
+    // });
 
     //jQuery time
     var current_fs, next_fs, previous_fs; //fieldsets

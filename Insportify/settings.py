@@ -79,7 +79,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
 
-        'NAME': 'Insportify',
+        'NAME': 'insportify_db',
 
         'USER': 'postgres',
 
