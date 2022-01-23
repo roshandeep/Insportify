@@ -10,6 +10,7 @@ from django.contrib import messages
 from django.views.generic.base import TemplateView
 from .models import master_table
 
+
 def multistep(request):
 	submitted = False
 	if request.method == "POST":
@@ -30,6 +31,17 @@ def all_events(request):
 	event_list = master_table.objects.all()
 	return render (request, 'EventsApp/event_list.html', {'event_list' : event_list})
 
+# def register_request(request):
+# 	if request.method == "POST":
+# 		form = NewUserForm(request.POST)
+# 		if form.is_valid():
+# 			user = form.save()
+# 			login(request, user)
+# 			messages.success(request, "Registration successful." )
+# 			return redirect("main:homepage")
+# 		messages.error(request, "Unsuccessful registration. Invalid information.")
+# 	form = NewUserForm()
+# 	return render (request=request, template_name="EventsApp/register.html", context={"register_form":form})
 
 # def person_create_view(request):
 #     form = PersonCreationForm()

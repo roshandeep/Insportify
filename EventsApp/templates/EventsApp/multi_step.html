@@ -1,6 +1,8 @@
 {% extends 'EventsApp/base.html' %}
 
 {% block content %}
+
+{% if user.is_authenticated %}
 <center>
 {% if submitted %}
         Your Event was Submitted
@@ -466,7 +468,6 @@
 
   </script>
 
-
 <!-- MultiStep Form -->
 <div class="row">
     <div class="col-md-6 col-md-offset-3">
@@ -780,5 +781,13 @@ $('.radio').change(function() {
     });
 
 </script>
+
+{% else %}
+You're not allowed to do that before login 
+</br></br>
+<h3 class="text-center">If you already have an account, <a href="{% url 'login' %}">login</a> first or if you don't <a href="{% url 'register' %}">Register</a></h3>
+
+{% endif %}
+
 
 {% endblock %}

@@ -1,0 +1,18 @@
+{% extends 'EventsApp/base.html' %}
+{% block title %} Login {% endblock %}
+{% block content %}
+
+<h1>Login</h1>
+<br/><br/>
+
+<div class = "container py-5">
+	<hi>Register</hi>
+	<form method="POST">
+		{% csrf_token %}
+		{{ register_form|crispy}}
+		<button class="btn btn-primary" type="submit">Register</button>
+	</form>
+	<p class="text-center">If you already have an account, <a href="/login">login</a> instead.</p>
+</div>
+
+{% endblock %}

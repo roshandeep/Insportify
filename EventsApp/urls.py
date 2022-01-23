@@ -27,7 +27,7 @@ urlpatterns = [
     #slug : hyphen-and_underscores_stuff
     #path('', views.home, name="home"),
 #    path('<int:year>/<str:month>/', views.home, name="home"),
-    path('events/', views.all_events, name="list-events"),
+    path('', views.all_events, name="list-events"),
     # path('add_venue/',views.add_venue, name='add-venue'),
     # path('list_venues/',views.list_venues, name='list-venues'),
     # path('show_venue/<venue_id>', views.show_venue, name='show-venue'),
@@ -35,10 +35,10 @@ urlpatterns = [
     # path('update_event/<event_id>',views.update_event, name='update-event'),
     # #path('', views.multiformvalidation, name='multiformvalidation'),
     #path('event_detail/',views.event_detail, name='event-detail'),
-    path('', views.multistep, name='multistep'),
+    path('create/', views.multistep, name='multistep'),
 #    path('add/', views.person_create_view, name='person_add'),
 #    path('<int:pk>/', views.person_update_view, name='person_change'),
-    path('' , TemplateView.as_view(template_name='multi_step.html'),name='multistep'),
+    path('create/' , TemplateView.as_view(template_name='multi_step.html'),name='multistep'),
 #    path('ajax/load-cities/', views.load_cities, name='ajax_load_cities'), # AJAX
     #path('',TemplateView.as_view(template_name='multi_step.html'), name="multi-step"),
     #path('/multistep', views.multistep, name="multi-form")

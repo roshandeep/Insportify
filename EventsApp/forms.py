@@ -3,8 +3,9 @@ from django.forms import ModelForm
 from .models import master_table, Test_Person, Test_City
 #from EventsApp.models import Person, City, Country
 #from bootstrap_datepicker_plus.widgets import DatePickerInput, TimePickerInput, DateTimePickerInput, MonthPickerInput
-
-
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 
 # #Admin superUser event form
 # class EventFormAdmin(ModelForm):
@@ -76,7 +77,19 @@ from .models import master_table, Test_Person, Test_City
 # 			'email_address': forms.EmailInput(attrs={'class':'form-control','placeholder' : 'Email'}),
 # 		}
 
+# class NewUserForm(UserCreationForm):
+# 	email = forms.EmailField(required=True)
 
+# 	class Meta:
+# 		model = User
+# 		fields = ("username", "email", "password1","password2")
+
+# 	def save(self, commit=True):
+# 		user = super(NewUserForm, self).save(commit=False)
+# 		user.email = self.cleaned_date['email']
+# 		if commit:
+# 			user.save()
+# 		return user
 
 
 class MultiStepForm(ModelForm):
@@ -109,7 +122,14 @@ class MultiStepForm(ModelForm):
 			'position_cost' : ''
 			#'name' : '',
 			}
+class RegisterForm(UserCreationForm):
+    class Meta:
+        model = get_user_model()
+        fields = ('email', 'username', 'password1', 'password2')
 
+
+class LoginForm(AuthenticationForm):
+    username = forms.CharField(label='Email / Username')
 		# }
 
 		# widgets = {

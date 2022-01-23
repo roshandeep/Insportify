@@ -4,6 +4,7 @@
 
 
 <h1>Events</h1>
+{% if user.is_authenticated %}
 
 {% for event in event_list %}
 	<strong>{{ event }}</strong>
@@ -13,6 +14,9 @@
     <li>{{event.venue}}</li>
   </ul>
 	{% endfor %}
+	{% else %}
 
+	<p>Login First....</p>
+{% endif %}
 
 {% endblock %}
