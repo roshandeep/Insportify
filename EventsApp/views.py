@@ -31,6 +31,8 @@ def all_events(request):
 	event_list = master_table.objects.all()
 	return render (request, 'EventsApp/event_list.html', {'event_list' : event_list})
 
+def user_profile(request):
+	return render(request, 'EventsApp/user_profile.html')
 # def register_request(request):
 # 	if request.method == "POST":
 # 		form = NewUserForm(request.POST)

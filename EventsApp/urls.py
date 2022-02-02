@@ -35,6 +35,7 @@ urlpatterns = [
     # path('update_event/<event_id>',views.update_event, name='update-event'),
     # #path('', views.multiformvalidation, name='multiformvalidation'),
     #path('event_detail/',views.event_detail, name='event-detail'),
+    path('profile/', views.user_profile, name='user_profile'),
     path('create/', views.multistep, name='multistep'),
 #    path('add/', views.person_create_view, name='person_add'),
 #    path('<int:pk>/', views.person_update_view, name='person_change'),

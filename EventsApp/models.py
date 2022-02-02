@@ -1,6 +1,7 @@
 # import the standard Django Model
 # from built-in library
 from django.db import models
+from django.contrib.auth.models import User
   
 # # declare a new model with a name "GeeksModel"
 # class Is_Event_Master(models.Model):
@@ -36,6 +37,14 @@ class master_table(models.Model):
         # with their title name
     def __str__(self):
         return self.event_title
+
+# class Profile(models.Model):
+#     user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
+#     bio = models.TextField()
+
+#     def __str__(self):
+#         return str(self.user)
+
 
 class Test_City(models.Model):
     test_country = models.ForeignKey(master_table, on_delete=models.CASCADE)
