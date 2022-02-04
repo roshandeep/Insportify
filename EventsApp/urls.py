@@ -20,6 +20,7 @@ from django.views.generic import TemplateView
 
 
 urlpatterns = [
+    path('', views.User_Account.as_view(), name='user_account'),
     #path Converters
     #int : numbers
     #str : strings
@@ -27,7 +28,7 @@ urlpatterns = [
     #slug : hyphen-and_underscores_stuff
     #path('', views.home, name="home"),
 #    path('<int:year>/<str:month>/', views.home, name="home"),
-    path('', views.all_events, name="list-events"),
+    path('show/', views.all_events, name="list-events"),
     # path('add_venue/',views.add_venue, name='add-venue'),
     # path('list_venues/',views.list_venues, name='list-venues'),
     # path('show_venue/<venue_id>', views.show_venue, name='show-venue'),

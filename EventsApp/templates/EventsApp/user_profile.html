@@ -498,40 +498,40 @@
                 <input placeholder="DOB" class="textbox-n" type="text" onfocus="(this.type='date')" id="date">
                  <span><strong>Tell us how we can contact you?</strong></span>
                 <label for="chkYes">
-                    <input type="radio" id="chkYes" name="event_cost" />
+                    <input type="radio" id="chkYes" name="contact" />
                     Email
-                    <input type="radio" id="chkYes1" name="event_cost" />
+                    <input type="radio" id="chkYes1" name="contact" />
                     Phone
-                    <input type="radio" id="chkYes2" name="event_cost" />
+                    <input type="radio" id="chkYes2" name="contact" />
                     Provider
                 </label>
                 <hr/>
                 <div id="dvPassport" style="display: none">
                     Email
-                    <input type="text" id="txtPassportNumber" name="event_type"/>
+                    <input type="text" id="txtPassportNumber" name="contact"/>
                 </div>
                 <div id="dvPassport1" style="display: none">
                     Phone
-                    <input type="number" id="txtPassportNumber1" name="event_type"/>
+                    <input type="number" id="txtPassportNumber1" name="contact"/>
                 </div>
                 <div id="dvPassport2" style="display: none">
                     Provider
-                    <input type="text" id="txtPassportNumber2" name="event_type"/>
+                    <input type="text" id="txtPassportNumber2" name="contact"/>
                 </div>
                 <span><strong>I am interested in participating in ?</strong></span>
                 <div class="some-class"> 
-                    <input type="radio" class='radio' id='male' name="gender">
+                    <input type="radio" class='radio' id='male' name="participate" value="Male">
                     <label for="male">male</label>
-                    <input type="radio" class='radio' id='female' name="gender">
+                    <input type="radio" value="Female" class='radio' id='female' name="participate">
                     <label for="female">female</label>
-                    <input type="radio" class='radio' id='coed' name="gender">
+                    <input type="radio" class='radio' value="Coed" id='coed' name="participate">
                     <label for="coed">coed</label>
                 </div>
                 <span><strong>Have you ever suffered concussion?</strong></span>
                 <div class="some-class"> 
-                    <input type="radio" class='radio' id='male' name="gender">
+                    <input type="radio" value="Yes" class='radio' id='male' name="is_concussion">
                     <label for="male">Yes</label>
-                    <input type="radio" class='radio' id='female' name="gender">
+                    <input type="radio" value="No" class='radio' id='female' name="is_concussion">
                     <label for="female">No</label>
                 </div>
 
@@ -575,7 +575,7 @@
         if(x < max_fields){ //max input box allowed
     
              //text box increment
-            $(wrapper).append('<div><input name="city" type="text" placeholder = "City" min=0><input type="text" name ="province" placeholder="Province/State"><input type="text" name="country" placeholder= "Country"><a href="#" class="remove_field">Remove</a></div>'); //add input box
+            $(wrapper).append('<div><input name="city" type="text" placeholder = "City" name="pref_city"><input type="text" name ="pref_province" placeholder="Province/State"><input type="text" name="pref_country" placeholder= "Country"><a href="#" class="remove_field">Remove</a></div>'); //add input box
             x++; 
       }
     });
@@ -663,7 +663,7 @@
         if(x < max_fields){ //max input box allowed
     
              //text box increment
-            $(wrapper).append('<div><input name="category" type="text" placeholder = "Category"><input type="text" name ="sports" placeholder="Sports"><input type="text" name="position" placeholder= "Position"><input type="text" name="skill" placeholder= "SKill"><a href="#" class="remove_field1">Remove</a></div>'); //add input box
+            $(wrapper).append('<div><input type="text" name ="pref_sports" placeholder="Sports"><input type="text" name="pref_position" placeholder= "Position"><a href="#" class="remove_field1">Remove</a></div>'); //add input box
             x++; 
       }
     });

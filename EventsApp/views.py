@@ -9,6 +9,7 @@ from .forms import MultiStepForm
 from django.contrib import messages
 from django.views.generic.base import TemplateView
 from .models import master_table
+from django.views.generic import View
 
 
 def multistep(request):
@@ -29,10 +30,19 @@ def multistep(request):
 
 def all_events(request):
 	event_list = master_table.objects.all()
-	return render (request, 'EventsApp/event_list.html', {'event_list' : event_list})
+	return render(request, 'EventsApp/event_list.html', {'event_list' : event_list})
 
 def user_profile(request):
 	return render(request, 'EventsApp/user_profile.html')
+
+class User_Account(View):
+	def get(self, request, *args, **kwargs):
+		return render(request, 'EventsApp/user_profile.html')
+
+	def post(self, request, *args, **kwargs):
+		form = UserForm(request.POST())
+		if form.is_valid():
+			return redirect('user_account')
 # def register_request(request):
 # 	if request.method == "POST":
 # 		form = NewUserForm(request.POST)
