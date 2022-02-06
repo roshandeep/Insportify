@@ -20,7 +20,8 @@ from django.views.generic import TemplateView
 
 
 urlpatterns = [
-    path('', views.User_Account.as_view(), name='user_account'),
+    path('', views.home, name='home'),
+    #path('', views.User_Account.as_view(), name='user_account'),
     #path Converters
     #int : numbers
     #str : strings
@@ -38,7 +39,7 @@ urlpatterns = [
     #path('event_detail/',views.event_detail, name='event-detail'),
     path('profile/', views.user_profile, name='user_profile'),
     path('create/', views.multistep, name='multistep'),
-#    path('add/', views.person_create_view, name='person_add'),
+#    path('add/', views.person_c    reate_view, name='person_add'),
 #    path('<int:pk>/', views.person_update_view, name='person_change'),
     path('create/' , TemplateView.as_view(template_name='multi_step.html'),name='multistep'),
 #    path('ajax/load-cities/', views.load_cities, name='ajax_load_cities'), # AJAX

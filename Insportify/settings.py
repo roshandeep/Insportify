@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'EventsApp',
-    'formtools',
     'UserRegister',
 ]
 
@@ -80,11 +79,11 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
 
-        'NAME': 'insportify_db',
+        'NAME': 'insportify',
 
         'USER': 'postgres',
 
-        'PASSWORD': 'Kupeshejig',
+        'PASSWORD': 'admin',
 
         'HOST': 'localhost',
 

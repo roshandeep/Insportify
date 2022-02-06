@@ -1,3 +1,6 @@
+from django.http import HttpResponse
+from django.template import loader
+from typing import Any
 from django.shortcuts import render,redirect,reverse
 import calendar
 from calendar import HTMLCalendar
@@ -8,8 +11,12 @@ from .forms import MultiStepForm
 #from formtools.wizard.views import SessionWizardView
 from django.contrib import messages
 from django.views.generic.base import TemplateView
-from .models import master_table
+from .models import IsSportsMaster, IsVenueMaster, master_table
 from django.views.generic import View
+from django.db import connection, transaction
+from .models import IsEventTypeMaster
+import sys
+from django.views.generic import ListView, CreateView, UpdateView
 
 
 def multistep(request):
@@ -190,33 +197,24 @@ class User_Account(View):
 # 		'event_list':event_list,
 # 		})
 
-# def home(request,year=datetime.now().year,month=datetime.now().strftime('%B')):
-# 	name = 'Don'
-# 	month = month.capitalize()
-# 	#Convert month from name to number
-# 	month_number = list(calendar.month_name).index(month)
-# 	month_number = int(month_number)
+# Added by Pooja for homepage design and Integration with rest of the flow - 04 FEB 2022
 
-# 	#Create a calendar
-# 	cal = HTMLCalendar().formatmonth(
-# 		year,
-# 		month_number)
+def home(request):
+	results = IsEventTypeMaster.objects.values('etm_id','etm_category')
+	sports = IsSportsMaster.objects.values('sm_id','sm_sports_name')
+	venues = IsVenueMaster.objects.values('vm_id','vm_name')
+	context = {
+		'event_types':results,
+		'sports_list':sports,
+		'venues_list':venues
+	}
+	html_template = loader.get_template('EventsApp/home.html')
+	return HttpResponse(html_template.render(context, request))
 
-# 	#get current year/time
-# 	now = datetime.now()
-# 	current_year = now.year
 
-# 	#get current time
-# 	time = now.strftime('%I:%M %p')
-# 	return render(request, 'EventsApp/home.html',{
-# 		"name" : name,
-# 		"year" : year,
-# 		"month": month,
-# 		"month_number" : month_number,
-# 		"cal": cal,
-# 		"current_year": current_year,
-# 		"time": time
-# 		})
+
+
+
 
 # # Create your views here.
 
