@@ -1,14 +1,14 @@
 from django.http import HttpResponse
 from django.template import loader
 from typing import Any
-from django.shortcuts import render,redirect,reverse
+from django.shortcuts import render, redirect, reverse
 import calendar
 from calendar import HTMLCalendar
 from datetime import datetime
 from django.http import HttpResponseRedirect
-#from .models import Is_Event_Master
-from .forms import MultiStepForm
-#from formtools.wizard.views import SessionWizardView
+# from .models import Is_Event_Master
+from .forms import MultiStepForm, UserForm
+# from formtools.wizard.views import SessionWizardView
 from django.contrib import messages
 from django.views.generic.base import TemplateView
 from .models import IsSportsMaster, IsVenueMaster, master_table
@@ -20,36 +20,41 @@ from django.views.generic import ListView, CreateView, UpdateView
 
 
 def multistep(request):
-	submitted = False
-	if request.method == "POST":
-		form = MultiStepForm(request.POST)
-		print('form is going to be validated')
-		if form.is_valid():
-			print('form validated')
-			form.save()
-			return HttpResponseRedirect('/?submitted=True')
-	else:
-		form = MultiStepForm
-		if 'submitted' in request.GET:
-			submitted = True
-	#print('not validated', messages.error)
-	return render(request, 'EventsApp/multi_step.html',{'form' : form, 'submitted':submitted})
+    submitted = False
+    if request.method == "POST":
+        form = MultiStepForm(request.POST)
+        print('form is going to be validated')
+        if form.is_valid():
+            print('form validated')
+            form.save()
+            return HttpResponseRedirect('/?submitted=True')
+    else:
+        form = MultiStepForm
+        if 'submitted' in request.GET:
+            submitted = True
+    # print('not validated', messages.error)
+    return render(request, 'EventsApp/multi_step.html', {'form': form, 'submitted': submitted})
+
 
 def all_events(request):
-	event_list = master_table.objects.all()
-	return render(request, 'EventsApp/event_list.html', {'event_list' : event_list})
+    event_list = master_table.objects.all()
+    return render(request, 'EventsApp/event_list.html', {'event_list': event_list})
+
 
 def user_profile(request):
-	return render(request, 'EventsApp/user_profile.html')
+    return render(request, 'EventsApp/user_profile.html')
+
 
 class User_Account(View):
-	def get(self, request, *args, **kwargs):
-		return render(request, 'EventsApp/user_profile.html')
+    def get(self, request, *args, **kwargs):
+        return render(request, 'EventsApp/user_profile.html')
 
-	def post(self, request, *args, **kwargs):
-		form = UserForm(request.POST())
-		if form.is_valid():
-			return redirect('user_account')
+    def post(self, request, *args, **kwargs):
+        form = UserForm(request.POST())
+        if form.is_valid():
+            return redirect('user_account')
+
+
 # def register_request(request):
 # 	if request.method == "POST":
 # 		form = NewUserForm(request.POST)
@@ -87,7 +92,6 @@ class User_Account(View):
 #     cities = City.objects.filter(country_id=country_id).all()
 #     return render(request, 'EventsApp/city_dropdown_list_options.html', {'cities': cities})
 #     #return render(request, 'EventsApp/multi_step.html', {'result': cities})
-
 
 
 # def multiformvalidation(request):
@@ -135,7 +139,6 @@ class User_Account(View):
 # 		return redirect('list-events')
 
 # 	return render(request, 'EventsApp/update_event.html', {'event' : event,'form' : form})
-
 
 
 # def add_event(request):
@@ -200,21 +203,16 @@ class User_Account(View):
 # Added by Pooja for homepage design and Integration with rest of the flow - 04 FEB 2022
 
 def home(request):
-	results = IsEventTypeMaster.objects.values('etm_id','etm_category')
-	sports = IsSportsMaster.objects.values('sm_id','sm_sports_name')
-	venues = IsVenueMaster.objects.values('vm_id','vm_name')
-	context = {
-		'event_types':results,
-		'sports_list':sports,
-		'venues_list':venues
-	}
-	html_template = loader.get_template('EventsApp/home.html')
-	return HttpResponse(html_template.render(context, request))
-
-
-
-
-
+    results = IsEventTypeMaster.objects.values('etm_id', 'etm_category')
+    sports = IsSportsMaster.objects.values('sm_id', 'sm_sports_name')
+    venues = IsVenueMaster.objects.values('vm_id', 'vm_name')
+    context = {
+        'event_types': results,
+        'sports_list': sports,
+        'venues_list': venues
+    }
+    html_template = loader.get_template('EventsApp/home.html')
+    return HttpResponse(html_template.render(context, request))
 
 # # Create your views here.
 
