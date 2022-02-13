@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <title>Insportify</title>
+</head>
+<body>
+<nav class="col-1">
+    <ul>
+        {% if request.user.is_authenticated %}
+        <li>
+            <a href="{% url 'list-events' %}">
+                <p>Show Events</p>
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'multistep' %}">
+                <p>Events</p>
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'user_profile' %}">
+                <p>User Profile</p>
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'edit_profile' %}">
+                <p>Edit Profile</p>
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+<div class="col-2">
+    <header>
+        <div>
+            <ul>
+                {% if user.is_authenticated %}
+                <li>
+                    <a class="nav-link" href="{% url 'logout' %}"><p>Logout</p></a>
+                </li>
+                {% else %}
+                <li>
+                    <a class="nav-link" href="{% url 'register' %}">Register</a>
+                </li>
+                <li>
+                    <a class="nav-link" href="{% url 'login' %}">Login</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </header>
+    <hr>
+    <main class="content">
+        <article>
+            {% block content %}
+            {% endblock %}
+        </article>
+    </main>
+    <footer><p class="copyright">
+        &copy; <a target="_blank" href="">INSPORTIFY</a>
+    </p></footer>
+</div>
+</body>
+<style>
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: row;
+    margin: 0;
+  }
+  .col-1 {
+    flex: 1;
+  }
+  .col-2 {
+    display: flex;
+    flex-direction: column;
+    flex: 5;
+  }
+  .content {
+    display: flex;
+    flex-direction: row;
+  }
+  .content > article {
+    flex: 4;
+    min-height: 60vh;
+  }
+  header, footer {
+    height: 20vh;
+  }
+  header, footer, article, nav {
+    padding: 1em;
+  }
+
+
+</style>
+</html>
