@@ -1,16 +1,15 @@
-{% block title %} Edit Profile {% endblock %}
+{% extends 'base.html' %}
+
+{% load widget_tweaks %}
+
 {% block content %}
-
-<h1>Edit Profile</h1>  <button class="btn btn-secondary">Update</button>
-
-<br/><br/>
 
 <div class = "form-group">
 	<form method="POST">
 		{% csrf_token %}
 		{{ form.as_p }}
-		
-
+		<button class="btn btn-secondary">Update</button>
+	</form>
 </div>
 
 {% endblock %}

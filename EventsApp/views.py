@@ -1,22 +1,12 @@
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.template import loader
-from typing import Any
-from django.shortcuts import render, redirect, reverse
-import calendar
-from calendar import HTMLCalendar
-from datetime import datetime
+from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
-# from .models import Is_Event_Master
 from .forms import MultiStepForm, UserForm
-# from formtools.wizard.views import SessionWizardView
-from django.contrib import messages
-from django.views.generic.base import TemplateView
 from .models import IsSportsMaster, IsVenueMaster, master_table
 from django.views.generic import View
-from django.db import connection, transaction
 from .models import IsEventTypeMaster
-import sys
-from django.views.generic import ListView, CreateView, UpdateView
 
 
 def multistep(request):
@@ -35,7 +25,7 @@ def multistep(request):
     # print('not validated', messages.error)
     return render(request, 'EventsApp/multi_step.html', {'form': form, 'submitted': submitted})
 
-
+@login_required
 def all_events(request):
     event_list = master_table.objects.all()
     return render(request, 'EventsApp/event_list.html', {'event_list': event_list})
