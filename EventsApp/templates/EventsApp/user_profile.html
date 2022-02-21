@@ -1,30 +1,169 @@
+{% extends 'base.html' %}
+
+{% load widget_tweaks %}
+{% load static %}
+
 {% block content %}
 
 {% if user.is_authenticated %}
 <center>
-{% if submitted %}
-        Your Event was Submitted
-        Successfully!!!
-        {% else %}
+    {% if submitted %}
+    Your Event was Submitted
+    Successfully!!!
+    {% else %}
 </center>
-<meta charset="UTF-8">
-    <title>Multi Step Form</title>
-          <meta name="viewport" content="width=device-width, initial-scale=1">
-   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
-      <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script> -->
+
+<div class="row">
+    <div class="col-6 mx-auto">
+        <form id="msform" action="{% url 'multistep'%}" method="post">
+            {% csrf_token %}
+            {% if form.errors %}
+            <div class="alert alert-danger" role="alert">
+                {% for field, errors in form.errors.items %}
+                {% for error in errors %}
+                <b>{{ field }}</b>: {{ error }}
+                {% endfor %}
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- progressbar -->
+            <!--            <ul id="progressbar">-->
+            <!--                <li class="active">Basic Information</li>-->
+            <!--                <li>Location</li>-->
+            <!--                <li>Preference</li>-->
+            <!--            </ul>-->
+            <!-- fieldsets -->
+            <fieldset class="p-2">
+                <div class="card shadow">
+                    <h3 class="card-header text-center text-white"
+                        style="background: linear-gradient(to bottom left, #1bc2bf, #0ddff6, #26bbcc);">
+                        Basic Information</h3>
+                    <div class="card-body">
+                        <div class="form-row p-2">
+                            <input type="text" class="form-control" name="first_name" placeholder="First Name"/>
+                        </div>
+                        <div class="form-row p-2">
+                            <input type="text" class="form-control" name="last_name" placeholder="Last Name"/>
+                        </div>
+                        <div class="form-row p-2">
+                            <input placeholder="DOB" class="form-control textbox-n" type="text"
+                                   onfocus="(this.type='date')"
+                                   id="date">
+                        </div>
+                        <div class="form-row p-2">
+                            <label for="chkYes">Tell us how we can contact you?</label>
+                            <input type="radio" id="chkYes" name="contact"/>
+                            Email
+                            <input type="radio" id="chkYes1" name="contact"/>
+                            Phone
+                            <input type="radio" id="chkYes2" name="contact"/>
+                            Provider
+                        </div>
+                        <div class="form-row p-2" id="dvPassport" style="display: none">
+                            Email
+                            <input type="text" class="form-control" id="txtPassportNumber" name="contact"/>
+                        </div>
+                        <div class="form-row p-2" id="dvPassport1" style="display: none">
+                            Phone
+                            <input type="number" class="form-control" id="txtPassportNumber1" name="contact"/>
+                        </div>
+                        <div class="form-row p-2" id="dvPassport2" style="display: none">
+                            Provider
+                            <input type="text" class="form-control" id="txtPassportNumber2" name="contact"/>
+                        </div>
+                        <div class="form-row p-2">
+                            <label>I am interested in participating in ?</label>
+                            <input type="radio" class='radio' id='male' name="participate" value="Male">
+                            <label for="male">male</label>
+                            <input type="radio" value="Female" class='radio' id='female' name="participate">
+                            <label for="female">female</label>
+                            <input type="radio" class='radio' value="Coed" id='coed' name="participate">
+                            <label for="coed">coed</label>
+                        </div>
+                        <div class="form-row p-2">
+                            <label>Have you ever suffered concussion?</label>
+                            <input type="radio" value="Yes" class='radio' name="is_concussion">
+                            <label for="male">Yes</label>
+                            <input type="radio" value="No" class='radio' name="is_concussion">
+                            <label for="female">No</label>
+                        </div>
+                        <div class="form-row p-2 text-center">
+                            <input type="button" name="next" class="next action-button btn btn-primary"
+                                   style="background: #ff6f3d; border: none;" value="Next"/>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset class="p-2">
+                <div class="card shadow">
+                    <h3 class="card-header text-center text-white"
+                        style="background: linear-gradient(to bottom left, #1bc2bf, #0ddff6, #26bbcc);">Location</h3>
+                    <div class="card-body">
+                        <div class="form-row p-2">
+                            <label>List your locations where you can participate in </label>
+                        </div>
+
+                        <div class="form-row p-2" id="input_fields_wrap">
+                            <button id="add_field_button" class="btn btn-primary"
+                                    style="background: #ff6f3d; border: none;">Add Location
+                            </button>
+                        </div>
+                        <div class="form-row p-2 text-center">
+                            <input type="button" name="previous" class="previous action-button-previous btn btn-primary"
+                                   style="background: #ff6f3d; border: none;" value="Previous"/>
+                            <input type="button" name="next" class="next action-button btn btn-primary"
+                                   style="background: #ff6f3d; border: none;" value="Next"/>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset class="p-2">
+                <div class="card shadow">
+                    <h3 class="card-header text-center text-white"
+                        style="background: linear-gradient(to bottom left, #1bc2bf, #0ddff6, #26bbcc);">
+                        Sport Preference</h3>
+                    <div class="card-body">
+                        <div class="form-row p-2">
+                            <label>Add sports you love to play</label>
+                        </div>
+                        <div class="form-row p-2" id="input_fields_wrap1">
+                            <button id="add_field_button1" class="btn btn-primary"
+                                    style="background: #ff6f3d; border: none;">Add Sports
+                            </button>
+                        </div>
+                        <div class="form-row p-2 text-center">
+                            <input type="button" name="previous" class="previous action-button-previous btn btn-primary"
+                                   style="background: #ff6f3d; border: none;" value="Previous"/>
+                            <input type="submit" name="submit" class="submit action-button btn btn-primary"
+                                   style="background: #ff6f3d; border: none;" value="Submit"/>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+
+            {% endif %}
+        </form>
+    </div>
+</div>
+
+{% else %}
+You're not allowed to do that before login
+</br></br>
+<h3 class="text-center">If you already have an account, <a href="{% url 'login' %}">login</a> first or if you
+    don't <a href="{% url 'register' %}">Register</a></h3>
+
+{% endif %}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />  
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"/>
 
-</head>
-<body>
-    <header>
-  <h2>Profile</h2>
-</header>
 <script>
  var sportsObject = {
     "Targeting": {
@@ -205,22 +344,8 @@
 },
 
 }
- // var positionObject = {
- //    "Athelete": {
- //            "Rookie":[],
- //            "Recreational":[],
- //            "Competitive" : [],
- //            "Pro-Bound" : []
- //          },
- //    "Attendee": {
- //           "Open" : []
- //       },
- //    "Coach" : {
- //            "Minor Sports" : [],
- //            "Competitive" : [],
- //            "Volunteer" : []
- //    }
-  
+
+
   window.onload = function() {
   var catgeorySel = document.getElementById("category");
   var sportsSel = document.getElementById("sports");
@@ -235,250 +360,66 @@
       sportsSel.options[sportsSel.options.length] = new Option(y, y);
 
     }
-  } 
+  }
 }
-//   window.onload = function() {
-//   var positionSel = document.getElementById('position');
-//   var skillSel = document.getElementById('skill')
-//   for (var z in positionObject) {
-//     positionSel.options[positionSel.options.length] = new Option(z, z);
-//   }
-//   positionSel.onchange = function() {
-//     //empty Chapters- and Topics- dropdowns
-//     skill.length = 1;
-//     //display correct values
-//     for (var a in positionsObject[this.value]) {
-//       skillSel.options[skillSel.options.length] = new Option(a, a);
-
-//     }
-//   } 
-// }
 
 
-  </script>
-
-<!-- MultiStep Form -->
-<div class="row">
-    <div class="col-md-6 col-md-offset-3">
-        <form id="msform" action="{% url 'multistep'%}" method="post">
-            {% csrf_token %}
-{% if form.errors %}
-<div class="alert alert-danger" role="alert">
-    {% for field, errors in form.errors.items %}
-    {% for error in errors %}
-    <b>{{ field }}</b>: {{ error }}
-    {% endfor %}
-    {% endfor %}
-</div>
-{% endif %}
-
-            <!-- progressbar -->
-            <ul id="progressbar">
-                <li class="active">Basic Information</li>
-                <li>Location</li>
-                <li>Preference</li>
-            </ul>
-            <!-- fieldsets -->
-            <fieldset>
-                <h3 class="fs-title" style="background-color: rgba(150, 161, 255);text-align: center; padding: 25px;">Basic Information</h3>
-                <h3 class="fs-subtitle"></h3>
-                <input type="text" name="first_name" placeholder="First Name"/>
-                <input type="text" name="last_name" placeholder="Last Name"/>
-                <input placeholder="DOB" class="textbox-n" type="text" onfocus="(this.type='date')" id="date">
-                 <span><strong>Tell us how we can contact you?</strong></span>
-                <label for="chkYes">
-                    <input type="radio" id="chkYes" name="contact" />
-                    Email
-                    <input type="radio" id="chkYes1" name="contact" />
-                    Phone
-                    <input type="radio" id="chkYes2" name="contact" />
-                    Provider
-                </label>
-                <hr/>
-                <div id="dvPassport" style="display: none">
-                    Email
-                    <input type="text" id="txtPassportNumber" name="contact"/>
-                </div>
-                <div id="dvPassport1" style="display: none">
-                    Phone
-                    <input type="number" id="txtPassportNumber1" name="contact"/>
-                </div>
-                <div id="dvPassport2" style="display: none">
-                    Provider
-                    <input type="text" id="txtPassportNumber2" name="contact"/>
-                </div>
-                <span><strong>I am interested in participating in ?</strong></span>
-                <div class="some-class"> 
-                    <input type="radio" class='radio' id='male' name="participate" value="Male">
-                    <label for="male">male</label>
-                    <input type="radio" value="Female" class='radio' id='female' name="participate">
-                    <label for="female">female</label>
-                    <input type="radio" class='radio' value="Coed" id='coed' name="participate">
-                    <label for="coed">coed</label>
-                </div>
-                <span><strong>Have you ever suffered concussion?</strong></span>
-                <div class="some-class"> 
-                    <input type="radio" value="Yes" class='radio' id='male' name="is_concussion">
-                    <label for="male">Yes</label>
-                    <input type="radio" value="No" class='radio' id='female' name="is_concussion">
-                    <label for="female">No</label>
-                </div>
-
-                <!-- <input type="radio" id="chkYes" name="event_type" onclick="ShowHideDiv()" />
-                Yes
-                </label>
-                <label for="chkNo">
-                <input type="radio" id="chkNo" name="event_type" value='free' onclick="ShowHideDiv()" />
-                No
-                </label>
-                <div id="dvtext" style="display: none">
-                <input type="text" id="chkYes" name = "event_type" placeholder="$" />
-                </div> -->
-                <input type="button" name="next" class="next action-button" value="Next"/>
-            </fieldset>
-            <fieldset>
-                <h3 class="fs-title" style="background-color: rgba(150, 161, 255);text-align: center; padding: 25px;">Location</h3>
-
-<!-- <p><b> Sport Category </b>
-            <select name= 'category' class = 'form-control' id="personForm">
-                {% for cities in result %}
-                <option value=" {{cities.id}}"> {{cities.name}}</option>
-                {% endfor %}
-                
-            </select> -->
-         <span><strong>List your locations where you can participate in </strong></span>
-        
-    
-    <script>
 
     $(document).ready(function() {
     var max_fields      = 10; //maximum input boxes allowed
     var wrapper         = $("#input_fields_wrap"); //Fields wrapper
     var add_button      = $("#add_field_button"); //Add button ID
-   
+
     var x = 1; //initlal text box count
-    
-    
+
+
    $(add_button).click(function(e){ //on add input button click
         e.preventDefault();
         if(x < max_fields){ //max input box allowed
-    
+
              //text box increment
-            $(wrapper).append('<div><input name="city" type="text" placeholder = "City" name="pref_city"><input type="text" name ="pref_province" placeholder="Province/State"><input type="text" name="pref_country" placeholder= "Country"><a href="#" class="remove_field">Remove</a></div>'); //add input box
-            x++; 
+            $(wrapper).append('<div class="form-row p-2"><input class="form-control" name="city" type="text" placeholder = "City" name="pref_city"><input class="form-control" type="text" name ="pref_province" placeholder="Province/State"><input class="form-control" type="text" name="pref_country" placeholder= "Country"><a href="#" class="remove_field">Remove</a></div>'); //add input box
+            x++;
       }
     });
-   
+
     $(wrapper).on("click",".remove_field", function(e){ //user click on remove text
-       
-        e.preventDefault(); 
-        $(this).parent('div').remove(); 
+
+        e.preventDefault();
+        $(this).parent('div').remove();
         x--;
     })
 });
 
-    
-    </script>
-    <body>
-     <div id="input_fields_wrap">
-    <button id="add_field_button">Add Location</button> 
-                </div>
 
-                    <!-- <option selected disabled>Choose a position</option>
-                <option value="Athelete">Athelete</option>
-                <option value="Coach">Coach</option>
-                <option value="Combatant">Combatant</option>
-                </select> -->
-<!--                 <select name = 'skill' id = skill class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
-                    <option selected disabled>Choose a Skill Level</option>
-                <option value="Rookie">Rookie</option>
-                <option value="Recreational">Recreational</option>
-                <option value="Competitive">Competitive</option>
-                <option value="Pro-Bound">Pro-Bound</option>
-                </select> -->
-<!--                 <input type="number" name="min_age" placeholder="Minimum Age">
-                <input type="number" name="max_age" placeholder="Maximum Age"> -->
-                <!-- <label><input type="radio" name="type" class="radio" value="">Free</label>
-                <label><input type="radio" name="type" class="radio other" value=""> Yes</label>
-                <input type="number" id="custom_amount" disabled="true" placeholder="If,yes"> -->
-<!--                 <span>Is there any cost on the position?</span>
-                <label for="chkYes">
-                    <input type="radio" id="chkYes1" name="position_price" />
-                    Yes
-                </label>
-                <label for="chkNo">
-                    <input type="radio" id="chkNo1" name="position_price"/>
-                    No
-                </label>
-                <hr />
-                <div id="dvPassport1" style="display: none">
-                    CAD($)
-                    <input type="number" id="txtPassportNumber" name="position_price" />
-                </div> -->
-                <!-- <legend>Athelete: </legend>
-                        <input type="radio" name="athelete_level", value="rookie" id="rk">
-                        <label class="form-check-label" for="rk">Rookie</label>
-                        <input type="radio" name="athelete_level", value="recreational",id="rc">
-                        <label class="form-check-label" for="rc">Recreational</label>
-                        <input type="radio" name="athelete_level", value="probound",id="pb">
-                        <label class="form-check-label" for="pb">ProBound</label>
-                        <input type="radio" name="athelete_level", value="competitive",id="cp">
-                        <label class="form-check-label" for="co">Competitive</label> -->
-                    <!-- <legend> Support: </legend>
-                        <input type="radio" name="staff_level", value="minor" id="ms">
-                        <label for="ms">Minor Sport</label>
-                        <input type="radio" name="staff_level", value="competitive",id="cp">
-                        <label  for="cp">Competitve</label>
-                        <input type="radio" name="staff_level", value="volunteer",id="vt">
-                        <label for="vt">Volunteer</label> -->
-                <input type="button" name="previous" class="previous action-button-previous" value="Previous"/>
-                <input type="button" name="next" class="next action-button" value="Next"/>
-            </fieldset>
-            <fieldset>
-                <h2 class="fs-title" style="background-color: rgba(150, 161, 255);text-align: center; padding: 25px;">Sport Preference</h2>
-                <span><strong>Add sports you love to play</strong></span>
-                   <script>
 
     $(document).ready(function() {
     var max_fields      = 10; //maximum input boxes allowed
     var wrapper         = $("#input_fields_wrap1"); //Fields wrapper
     var add_button      = $("#add_field_button1"); //Add button ID
-   
+
     var x = 1; //initlal text box count
-    
-    
+
+
    $(add_button).click(function(e){ //on add input button click
         e.preventDefault();
         if(x < max_fields){ //max input box allowed
-    
+
              //text box increment
-            $(wrapper).append('<div><input type="text" name ="pref_sports" placeholder="Sports"><input type="text" name="pref_position" placeholder= "Position"><a href="#" class="remove_field1">Remove</a></div>'); //add input box
-            x++; 
+            $(wrapper).append('<div class="form-row p-2"><input class="form-control" type="text" name ="pref_sports" placeholder="Sports"><input class="form-control" type="text" name="pref_position" placeholder= "Position"><a href="#" class="remove_field1">Remove</a></div>'); //add input box
+            x++;
       }
     });
-   
+
     $(wrapper).on("click",".remove_field1", function(e){ //user click on remove text
-       
-        e.preventDefault(); 
-        $(this).parent('div').remove(); 
+
+        e.preventDefault();
+        $(this).parent('div').remove();
         x--;
     })
 });
 
-    
-    </script>
-    <body>
-     <div id="input_fields_wrap1">
-    <button id="add_field_button1">Add Sports</button> 
-                </div>
-                <input type="button" name="previous" class="previous action-button-previous" value="Previous"/>
-                <input type="submit" name="submit" class="submit action-button" value="Submit"/>
-            </fieldset>
-        </form>
-        {% endif %}
-  
-<script>
-$(function() {
+    $(function() {
   $('input[name="datetimes"]').daterangepicker({
     timePicker: true,
     startDate: moment().startOf('hour'),
@@ -633,14 +574,21 @@ $('.radio').change(function() {
         });
     });
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </script>
-
-{% else %}
-You're not allowed to do that before login 
-</br></br>
-<h3 class="text-center">If you already have an account, <a href="{% url 'login' %}">login</a> first or if you don't <a href="{% url 'register' %}">Register</a></h3>
-
-{% endif %}
-
-
 {% endblock %}
