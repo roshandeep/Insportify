@@ -1,5 +1,8 @@
 {% extends 'base.html' %}
 
+{% load widget_tweaks %}
+{% load static %}
+
 {% block content %}
 
 {% if user.is_authenticated %}
@@ -11,9 +14,8 @@
 {% else %}
 
 
-<!-- MultiStep Form -->
 <div class="row">
-    <div class="col-md-6 col-md-offset-3">
+    <div class="col-6 mx-auto">
         <form id="msform" action="{% url 'multistep'%}" method="post">
             {% csrf_token %}
             {% if form.errors %}
@@ -27,81 +29,120 @@
             {% endif %}
 
             <!-- progressbar -->
-            <ul id="progressbar">
-                <li class="active">Event Information</li>
-                <li>Sport Category</li>
-                <li>Venue</li>
-            </ul>
+            <!--            <ul id="progressbar">-->
+            <!--                <li class="active">Event Information</li>-->
+            <!--                <li>Sport Category</li>-->
+            <!--                <li>Venue</li>-->
+            <!--            </ul>-->
             <!-- fieldsets -->
-            <fieldset>
-                <h3 class="fs-title" style="background-color: rgba(150, 161, 255);text-align: center; padding: 25px;">
-                    Event Information</h3>
-                <h3 class="fs-subtitle"></h3>
-                <input type="text" name="event_title" placeholder="Event Title"/>
-                <input type="text" name="description" placeholder="description"/>
-                <span>Does this event cost?</span>
-                <label for="chkYes">
-                    <input type="radio" id="chkYes" name="event_cost"/>
-                    Yes
-                </label>
-                <label for="chkNo">
-                    <input type="radio" value="" id="chkNo" name="event_cost"/>
-                    No
-                </label>
-                <hr/>
-                <div id="dvPassport" style="display: none">
-                    CAD($)
-                    <input type="number" id="txtPassportNumber" name="event_type"/>
-                </div>
-                <!-- <input type="radio" id="chkYes" name="event_type" onclick="ShowHideDiv()" />
-                Yes
-                </label>
-                <label for="chkNo">
-                <input type="radio" id="chkNo" name="event_type" value='free' onclick="ShowHideDiv()" />
-                No
-                </label>
-                <div id="dvtext" style="display: none">
-                <input type="text" id="chkYes" name = "event_type" placeholder="$" />
-                </div> -->
-                <input type="text" name="datetimes" placeholder="Date & Time"/>
-                <input type="button" name="next" class="next action-button" value="Next"/>
-            </fieldset>
-            <fieldset>
-                <h3 class="fs-title" style="background-color: rgba(150, 161, 255);text-align: center; padding: 25px;">
-                    Sports Information</h3>
-
-                <select name='sport_category' id="category" class="form-select form-select-lg mb-3"
-                        aria-label=".form-select-lg example">
-                    <option selected>Choose Sport Category</option>
-                </select>
-
-                <select name='sport_type' id="sports" class="form-select form-select-lg mb-3"
-                        aria-label=".form-select-lg example">
-                    <option selected disabled>Choose Sport Type</option>
-                </select>
-                <select name='position' class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
-                    <option>Athelete</option>
-                </select>
-
-
-                <div id="input_fields_wrap">
-                    <button id="add_field_button">Add Position</button>
+            <fieldset class="p-2">
+                <div class="card shadow">
+                    <h3 class="card-header text-white"
+                        style="background: linear-gradient(to bottom left, #1bc2bf, #0ddff6, #26bbcc);">Event
+                        Information</h3>
+                    <div class="card-body">
+                        <div class="form-row p-2">
+                            <input type="text" class="form-control" name="event_title" placeholder="Event Title"/>
+                        </div>
+                        <div class="form-row p-2">
+                            <input type="text" class="form-control" name="description" placeholder="description"/>
+                        </div>
+                        <div class="form-row p-2">
+                            <label>Does this event cost? &nbsp &nbsp</label>
+                            <input type="radio" id="chkYes" name="event_cost">Yes</input>
+                            <input type="radio" value="" id="chkNo" name="event_cost"> No </input>
+                        </div>
+                        <div class="form-row p-2" id="dvPassport" style="display: none">
+                            <input type="number" class="form-control" id="txtPassportNumber" name="event_type"
+                                   placeholder="CAD($)"/>
+                        </div>
+                        <div class="form-row p-2">
+                            <input type="text" class="form-control" name="datetimes" placeholder="Date & Time"/>
+                        </div>
+                        <div class="form-row p-2">
+                            <input type="button" name="next" class="next action-button btn btn-primary"
+                                   style="background: #ff6f3d; border: none;" value="Next"/>
+                        </div>
+                    </div>
                 </div>
 
-                <input type="button" name="previous" class="previous action-button-previous" value="Previous"/>
-                <input type="button" name="next" class="next action-button" value="Next"/>
             </fieldset>
-            <fieldset>
-                <h2 class="fs-title" style="background-color: rgba(150, 161, 255);text-align: center; padding: 25px;">
-                    Venue</h2>
-                <input type="text" name="venue" placeholder="Venue"/>
-                <input type="text" name="street" placeholder="Street"/>
-                <input type="text" name="city" placeholder="City"/>
-                <input type="text" name="province" placeholder="Province"/>
-                <input type="text" name="country" placeholder="Country"/>
-                <input type="text" name="zip_code" placeholder="Zip code"/>
-                <input type="button" name="previous" class="previous action-button-previous" value="Previous"/>
-                <input type="submit" name="submit" class="submit action-button" value="Submit"/>
+
+            <fieldset class="p-2">
+                <div class="card shadow">
+                    <h3 class="card-header text-white"
+                        style="background: linear-gradient(to bottom left, #1bc2bf, #0ddff6, #26bbcc);">
+                        Sports Information</h3>
+                    <div class="card-body">
+                        <div class="form-row p-2">
+                            <select name='sport_category' id="category" class="form-select"
+                                    aria-label=".form-select-lg example">
+                                <option selected>Choose Sport Category</option>
+                            </select>
+                        </div>
+                        <div class="form-row p-2">
+                            <select name='sport_type' id="sports" class="form-select"
+                                    aria-label=".form-select-lg example">
+                                <option selected disabled>Choose Sport Type</option>
+                            </select>
+                        </div>
+                        <div class="form-row p-2">
+                            <select name='position' class="form-select"
+                                    aria-label=".form-select-lg example">
+                                <option>Athelete</option>
+                            </select>
+                        </div>
+                        <div class="form-row p-2">
+                            <div id="input_fields_wrap">
+                                <button class="btn btn-primary" style="background: #ff6f3d; border: none;"
+                                        id="add_field_button">Add Position
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-row p-2">
+                            <input type="button" name="previous"
+                                   class="previous action-button-previous btn btn-primary"
+                                   style="background: #ff6f3d; border: none;" value="Previous"/>
+                            <input type="button" name="next" class="next action-button btn btn-primary"
+                                   style="background: #ff6f3d; border: none;" value="Next"/>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset class="p-2">
+                <div class="card shadow">
+                    <h2 class="card-header text-white"
+                        style="background: linear-gradient(to bottom left, #1bc2bf, #0ddff6, #26bbcc);">Venue</h2>
+                    <div class="card-body">
+                        <div class="form-row p-2">
+                            <input type="text" class="form-control" name="venue" placeholder="Venue"/>
+                        </div>
+                        <div class="form-row p-2">
+                            <input type="text" class="form-control" name="street" placeholder="Street"/>
+                        </div>
+                        <div class="form-row p-2">
+                            <input type="text" class="form-control" name="city" placeholder="City"/>
+                        </div>
+                        <div class="form-row p-2">
+                            <input type="text" class="form-control" name="province" placeholder="Province"/>
+                        </div>
+                        <div class="form-row p-2">
+                            <input type="text" class="form-control" name="country" placeholder="Country"/>
+                        </div>
+                        <div class="form-row p-2">
+                            <input type="text" class="form-control" name="zip_code" placeholder="Zip code"/>
+                        </div>
+                        <div class="form-row p-2">
+                            <input type="button" name="previous"
+                                   class="previous action-button-previous btn btn-primary"
+                                   style="background: #ff6f3d; border: none;" value="Previous"/>
+
+                            <input type="submit" name="submit" class="submit action-button btn btn-primary"
+                                   style="background: #ff6f3d; border: none;" value="Submit"/>
+                        </div>
+                    </div>
+                </div>
             </fieldset>
         </form>
         {% endif %}
@@ -110,6 +151,12 @@
 
 {% endif %}
 
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script src='http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/jquery-ui.min.js'></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"/>
 
 <script>
 
@@ -126,7 +173,7 @@
         if(x < max_fields){ //max input box allowed
 
              //text box increment
-            $(wrapper).append('<div><select name = skill class="form-select form-select-lg mb-3" aria-label=".form-select-lg example"><option>Rookie</option><option>Recreational</option><option>Competitve</option><option>Pro-Bound</option></select><input name="no_of_position" type="number" placeholder = "Number of Positions" min=0><input type="number" name ="position_cost" placeholder="Position Cost"><input type="number" name="min_age" placeholder= "Minimum Age" min=><input name="max_age" type="number" min=0 name="mytext2[]" placeholder= "Maximum Age"><a href="#" class="remove_field">Remove</a></div>'); //add input box
+            $(wrapper).append('<div><select name = skill class="form-select p-2" aria-label=".form-select-lg example"><option>Rookie</option><option>Recreational</option><option>Competitve</option><option>Pro-Bound</option></select><input name="no_of_position" class="form-control" type="number" placeholder = "Number of Positions" min=0><input type="number" class="form-control" name ="position_cost" placeholder="Position Cost"><input type="number" class="form-control" name="min_age" placeholder= "Minimum Age" min=0><input name="max_age" class="form-control" type="number" min=0 name="mytext2[]" placeholder= "Maximum Age"><a href="#" class="remove_field">Remove</a></div>'); //add input box
             x++;
       }
     });
@@ -450,6 +497,24 @@ $('.radio').change(function() {
             easing: 'easeInOutBack'
         });
     });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 </script>
 
