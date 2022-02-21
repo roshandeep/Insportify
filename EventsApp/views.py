@@ -9,6 +9,7 @@ from django.views.generic import View
 from .models import IsEventTypeMaster
 
 
+@login_required
 def multistep(request):
     submitted = False
     if request.method == "POST":
@@ -31,6 +32,7 @@ def all_events(request):
     return render(request, 'EventsApp/event_list.html', {'event_list': event_list})
 
 
+@login_required
 def user_profile(request):
     return render(request, 'EventsApp/user_profile.html')
 
@@ -192,6 +194,7 @@ class User_Account(View):
 
 # Added by Pooja for homepage design and Integration with rest of the flow - 04 FEB 2022
 
+@login_required
 def home(request):
     results = IsEventTypeMaster.objects.values('etm_id', 'etm_category')
     sports = IsSportsMaster.objects.values('sm_id', 'sm_sports_name')

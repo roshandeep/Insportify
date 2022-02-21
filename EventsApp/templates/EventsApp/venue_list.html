@@ -1,6 +1,8 @@
-{% block content %}
+{% extends 'base.html' %}
 
-<h1>Venue</h1>
+{% load widget_tweaks %}
+
+{% block content %}
 
 {% for venue in venue_list %}
 <div class="card">
