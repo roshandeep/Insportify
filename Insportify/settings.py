@@ -74,29 +74,31 @@ WSGI_APPLICATION = 'Insportify.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'insportify',
-        'USER': 'postgres',
-        'PASSWORD': 'admin',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
-}
-
-## Prod DB Configurations
+## Dev DB Configurations
 
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'insportify-db1',
+#         'NAME': 'insportify',
 #         'USER': 'postgres',
-#         'PASSWORD': 'Admin2022',
-#         'HOST': 'insportify-db1.cz5lufvg1olp.ca-central-1.rds.amazonaws.com',
+#         'PASSWORD': 'admin',
+#         'HOST': 'localhost',
 #         'PORT': '5432',
 #     }
 # }
+
+## Prod DB Configurations
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'insportify-db1',
+        'USER': 'postgres',
+        'PASSWORD': 'Admin2022',
+        'HOST': 'insportify-db1.cz5lufvg1olp.ca-central-1.rds.amazonaws.com',
+        'PORT': '5432',
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
