@@ -85,6 +85,19 @@ DATABASES = {
     }
 }
 
+## Prod DB Configurations
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'insportify-db1',
+#         'USER': 'postgres',
+#         'PASSWORD': 'Admin2022',
+#         'HOST': 'insportify-db1.cz5lufvg1olp.ca-central-1.rds.amazonaws.com',
+#         'PORT': '5432',
+#     }
+# }
+
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
