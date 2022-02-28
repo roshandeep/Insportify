@@ -2,6 +2,7 @@ certifi==2021.10.8
 colorama==0.4.1
 Django==3.2.12
 django-crispy-forms==1.14.0
+django-widget-tweaks==1.4.8
 docx2txt==0.8
 EbookLib==0.17.1
 extract-msg==0.23.1
