@@ -24,7 +24,7 @@ SECRET_KEY = 'django-insecure-ck(g2(+&@t-o2-mssd@xbx4@+offxrv1o-c&2u-lvts2&1%g+w
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['3.99.34.61', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['35.182.44.234', '127.0.0.1', 'localhost']
 
 # Application definition
 
@@ -92,7 +92,7 @@ WSGI_APPLICATION = 'Insportify.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'insportify-db1',
+        'NAME': 'postgres',
         'USER': 'postgres',
         'PASSWORD': 'Admin2022',
         'HOST': 'insportify-db1.cz5lufvg1olp.ca-central-1.rds.amazonaws.com',
