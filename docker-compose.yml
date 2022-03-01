@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+    db:
+        image: postgres
+        
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: Admin2022
+            POSTGRES_DB: insportify-db1
+            POSTGRES_HOST: insportify-db1.cz5lufvg1olp.ca-central-1.rds.amazonaws.com
+            POSTGRES_PORT: 5432 
+
+    app:
+        build: .
+        
+        volumes:
+            - .:/app
+        ports:
+            - "8000:8000"
+        command: >
+            sh -c "python manage.py runserver --insecure 0.0.0.0:8000"
