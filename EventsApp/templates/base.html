@@ -36,15 +36,17 @@
                     <p>Create Events</p>
                 </a>
             </li>
+            {% if request.user.is_organization  == True %}
             <li class="nav-item">
+                <a class="nav-link link-secondary text-white" href="{% url 'organization_profile' %}">
+                    <p>Organization Profile</p>
+                </a>
+                {% else %}
+                <li class="nav-item">
                 <a class="nav-link link-secondary text-white" href="{% url 'user_profile' %}">
-                    <p>User Profile</p>
+                    <p>Individual Profile</p>
                 </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link link-secondary text-white" href="{% url 'edit_profile' %}">
-                    <p>Edit Profile</p>
-                </a>
+                {% endif %}
             </li>
             {% endif %}
         </ul>

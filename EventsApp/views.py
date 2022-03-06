@@ -207,7 +207,3 @@ def home(request):
     html_template = loader.get_template('EventsApp/home.html')
     return HttpResponse(html_template.render(context, request))
 
-# # Create your views here.
-
-# def index(request):
-# 	return render(request, "index.html")

@@ -1,7 +1,6 @@
-# import the standard Django Model
-# from built-in library
-from django.core import checks
 from django.db import models
+from django.contrib.auth.models import AbstractUser
+
 
 class master_table(models.Model):
     event_title = models.CharField(max_length=30, blank=True, null=True)
@@ -12,7 +11,6 @@ class master_table(models.Model):
     sport_type = models.CharField(max_length=30, blank=True, null=True)
     position = models.CharField(max_length=30, blank=True, null=True)
     city = models.CharField(max_length=30, blank=True, null=True)
-    # name = models.CharField(max_length=30,blank=True, null=True)
     skill = models.CharField(max_length=30, blank=True, null=True)
     max_age = models.IntegerField(blank=True, null=True)
     min_age = models.IntegerField(blank=True, null=True)
@@ -20,7 +18,6 @@ class master_table(models.Model):
     country = models.CharField(max_length=30, blank=True, null=True)
     province = models.CharField(max_length=30, blank=True, null=True)
     country = models.CharField(max_length=30, blank=True, null=True)
-    # name = models.CharField(max_length=30,blank=True,null=True)
     no_of_position = models.IntegerField(blank=True, null=True)
     position_cost = models.IntegerField(blank=True, null=True)
 
@@ -58,6 +55,27 @@ class Test_Person(models.Model):
     class Meta:
         managed = True
         db_table = 'Test_Person'
+
+
+class User(AbstractUser):
+    is_individual = models.BooleanField(default=False)
+    is_organization = models.BooleanField(default=False)
+    first_name = models.CharField(max_length=40, null=True)
+    last_name = models.CharField(max_length=40, null=True)
+
+
+class Individual(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+    first_name = models.CharField(max_length=50, null=True)
+    last_name = models.CharField(max_length=50, null=True)
+    phone = models.CharField(max_length=50, null=True)
+
+
+class Organization(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+    first_name = models.CharField(max_length=50, null=True)
+    last_name = models.CharField(max_length=50, null=True)
+    phone = models.CharField(max_length=50, null=True)
 
 
 class EventsappMasterTable(models.Model):
@@ -310,4 +328,3 @@ class IsVenueMaster(models.Model):
     class Meta:
         managed = True
         db_table = 'is_venue_master'
-

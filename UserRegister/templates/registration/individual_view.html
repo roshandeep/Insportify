@@ -38,28 +38,39 @@
             <!-- fieldsets -->
             <fieldset class="p-2">
                 <div class="card shadow">
-                    <h3 class="card-header text-white"
-                        style="background: linear-gradient(to bottom left, #1bc2bf, #0ddff6, #26bbcc);">Event
-                        Information</h3>
+                    <h4 class="card-header text-white"
+                        style="background: linear-gradient(to bottom left, #1bc2bf, #0ddff6, #26bbcc);">Tell us little about you</h4>
                     <div class="card-body">
                         <div class="form-row p-2">
-                            <input type="text" class="form-control" name="event_title" placeholder="Event Title"/>
+                            <input type="text" class="form-control" name="first_name" placeholder="First Name"/>
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" class="form-control" name="description" placeholder="description"/>
+                            <input type="text" class="form-control" name="last_name" placeholder="Last Name"/>
                         </div>
                         <div class="form-row p-2">
-                            <label>Does this event cost? &nbsp &nbsp</label>
-                            <input type="radio" id="chkYes" name="event_cost">Yes</input>
-                            <input type="radio" id="chkNo" name="event_cost"> No </input>
-                        </div>
-                        <div class="form-row p-2" id="dvPassport" style="display: none">
-                            <input type="number" class="form-control" id="txtPassportNumber" name="event_type"
-                                   placeholder="CAD($)"/>
+                            <input type="date" class="form-control" name="dob" placeholder="DoB"/>
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" class="form-control" name="datetimes" placeholder="Date & Time"/>
+                            <input type="text" class="form-control" name="contact_email" placeholder="Contact Email"/>
                         </div>
+                        <div class="form-row p-2">
+                            <input type="text" class="form-control" name="mobile" placeholder="Mobile"/>
+                        </div>
+                        <div class="form-row p-2">
+                            <input type="text" class="form-control" name="provider" placeholder="Provider"/>
+                        </div>
+                        <div class="form-row p-2">
+                            <label>I am interest in participating in ?</label>
+                            <input type="radio" id="chkYes" name="interest_gender">Male</input>
+                            <input type="radio" value="" id="chkNo" name="interest_gender"> Female </input>
+                            <input type="radio" value="" id="chkNo" name="interest_gender"> Coed </input>
+                        </div>
+                        <div class="form-row p-2">
+                            <label>Have you ever suffered concussion?</label>
+                            <input type="radio" id="chkYes" name="is_concussion">Yes</input>
+                            <input type="radio" value="" id="chkNo" name="is_concussion"> No</input>
+                        </div>
+                        
                         <div class="form-row p-2">
                             <input type="button" name="next" class="next action-button btn btn-primary"
                                    style="background: #ff6f3d; border: none;" value="Next"/>
@@ -71,10 +82,34 @@
 
             <fieldset class="p-2">
                 <div class="card shadow">
-                    <h3 class="card-header text-white"
+                    <h4 class="card-header text-white"
                         style="background: linear-gradient(to bottom left, #1bc2bf, #0ddff6, #26bbcc);">
-                        Sports Information</h3>
-                    <div class="card-body">
+                        Hey {{ user.first_name }} list your locations where you can participate in </h4>
+                        <label></label>
+                        <div class="form-row p-2">
+                            <input type="text" class="form-control" name="city" placeholder="City"/>
+                        </div>
+                        <div class="form-row p-2">
+                            <input type="text" class="form-control" name="province" placeholder="Province"/>
+                        </div>
+                        <div class="form-row p-2">
+                            <input type="text" class="form-control" name="Country" placeholder="Country"/>
+                        </div>
+                        <div class="form-row p-2">
+                            <div id="input_fields_wrap">
+                                <button class="btn btn-primary" style="background: #ff6f3d; border: none;"
+                                        id="add_field_button">Add location
+                                </button>
+                            </div>
+                        </div>
+                    
+            </fieldset>
+
+            <fieldset class="p-2">
+                <div class="card shadow">
+                    <h4 class="card-header text-white"
+                        style="background: linear-gradient(to bottom left, #1bc2bf, #0ddff6, #26bbcc);">{{ user.first_name }} , add sports you love to play and the ones you would love to play</h4>
+                        <div class="card-body">
                         <div class="form-row p-2">
                             <select name='sport_category' id="category" class="form-select"
                                     aria-label=".form-select-lg example">
@@ -107,56 +142,13 @@
                             </select>
                         </div>
                         <div class="form-row p-2">
-                            <div id="input_fields_wrap">
+                            <div id="input_fields">
                                 <button class="btn btn-primary" style="background: #ff6f3d; border: none;"
-                                        id="add_field_button">Add Position
+                                        id="add_button">Add Position
                                 </button>
                             </div>
                         </div>
-                        <div class="form-row p-2">
-                            <input type="button" name="previous"
-                                   class="previous action-button-previous btn btn-primary"
-                                   style="background: #ff6f3d; border: none;" value="Previous"/>
-                            <input type="button" name="next" class="next action-button btn btn-primary"
-                                   style="background: #ff6f3d; border: none;" value="Next"/>
-                        </div>
-                    </div>
-                </div>
-            </fieldset>
-
-            <fieldset class="p-2">
-                <div class="card shadow">
-                    <h2 class="card-header text-white"
-                        style="background: linear-gradient(to bottom left, #1bc2bf, #0ddff6, #26bbcc);">Venue</h2>
-                    <div class="card-body">
-                        <div class="form-row p-2">
-                            <input type="text" class="form-control" name="venue" placeholder="Venue"/>
-                        </div>
-                        <div class="form-row p-2">
-                            <input type="text" class="form-control" name="street" placeholder="Street"/>
-                        </div>
-                        <div class="form-row p-2">
-                            <input type="text" class="form-control" name="city" placeholder="City"/>
-                        </div>
-                        <div class="form-row p-2">
-                            <input type="text" class="form-control" name="province" placeholder="Province"/>
-                        </div>
-                        <div class="form-row p-2">
-                            <input type="text" class="form-control" name="country" placeholder="Country"/>
-                        </div>
-                        <div class="form-row p-2">
-                            <input type="text" class="form-control" name="zip_code" placeholder="Zip code"/>
-                        </div>
-                        <div class="form-row p-2">
-                            <input type="button" name="previous"
-                                   class="previous action-button-previous btn btn-primary"
-                                   style="background: #ff6f3d; border: none;" value="Previous"/>
-
-                            <input type="submit" name="submit" class="submit action-button btn btn-primary"
-                                   style="background: #ff6f3d; border: none;" value="Submit"/>
-                        </div>
-                    </div>
-                </div>
+                    
             </fieldset>
         </form>
         {% endif %}
@@ -187,7 +179,7 @@
         if(x < max_fields){ //max input box allowed
 
              //text box increment
-            $(wrapper).append('<div><select name = skill class="form-select p-2" aria-label=".form-select-lg example"><option>Rookie</option><option>Recreational</option><option>Competitve</option><option>Pro-Bound</option></select><input name="no_of_position" class="form-control" type="number" placeholder = "Number of Positions" min=0><input type="number" class="form-control" name ="position_cost" placeholder="Position Cost"><input type="number" class="form-control" name="min_age" placeholder= "Minimum Age" min=0><input name="max_age" class="form-control" type="number" min=0 name="mytext2[]" placeholder= "Maximum Age"><a href="#" class="remove_field">Remove</a></div>'); //add input box
+            $(wrapper).append('<div><input name="city" class="form-control" type="text" placeholder = "City"><input type="text" class="form-control" name ="province" placeholder="Province"><input type="text" class="form-control" name="country" placeholder= "Country"><a href="#" class="remove_field">Remove</a></div>'); //add input box
             x++;
       }
     });
@@ -200,6 +192,31 @@
     })
 });
 
+    $(document).ready(function() {
+    var max_fields      = 10; //maximum input boxes allowed
+    var wrapper         = $("#input_fields"); //Fields wrapper
+    var add_button      = $("#add_button"); //Add button ID
+
+    var x = 1; //initlal text box count
+
+
+   $(add_button).click(function(e){ //on add input button click
+        e.preventDefault();
+        if(x < max_fields){ //max input box allowed
+
+             //text box increment
+            $(wrapper).append('<div><select name="sport_category" id="category" class="form-select" aria-label=".form-select-lg example"><option selected disabled>Choose Sport Category</option></select><select name="sport_types" id="sports" class="form-select" aria-label=".form-select-lg example"><option selected disabled>Choose Sport Type</option></select><select name="position" class="form-select" aria-label=".form-select-lg example"><option selected disabled>Choose position</option><option>Athelete</option><option>Coach</option><option>Attendee</option><a href="#" class="remove_field">Remove</a></div>'); //add input box
+            x++;
+      }
+    });
+
+    $(wrapper).on("click",".remove_field", function(e){ //user click on remove text
+
+        e.preventDefault();
+        $(this).parent('div').remove();
+        x--;
+    })
+});
  var sportsObject = {
     "Targeting": {
             "Archery":[],

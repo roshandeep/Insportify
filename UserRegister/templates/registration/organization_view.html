@@ -1,0 +1,811 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% if user.is_authenticated %}
+<center>
+{% if submitted %}
+        Your Event was Submitted
+        Successfully!!!
+        {% else %}
+</center>
+<meta charset="UTF-8">
+    <title>Multi Step Form</title>
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+      <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script> -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />  
+    <style>
+                /*custom font*/
+        @import url(https://fonts.googleapis.com/css?family=Montserrat);
+
+        /*basic reset*/
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            height: 100%;
+            background: #6441A5; /* fallback for old browsers */
+            background: -webkit-linear-gradient(to left, #6441A5, #2a0845); /* Chrome 10-25, Safari 5.1-6 */
+        }
+
+        body {
+            font-family: montserrat, arial, verdana;
+            background: transparent;
+        }
+
+        /* Style the header */
+        header {
+        background-color: #666;
+        padding: 20px;
+        text-align: center;
+        font-size: 35px;
+        color: white;
+                }
+
+        /*form styles*/
+        #msform {
+            text-align: center;
+            position: relative;
+            margin-top: 30px;
+        }
+
+        #msform fieldset {
+            background: white;
+            border: 0 none;
+            border-radius: 0px;
+            box-shadow: 0 0 15px 1px rgba(0, 0, 0, 0.4);
+            padding: 20px 30px;
+            box-sizing: border-box;
+            width: 80%;
+            margin: 0 10%;
+
+            /*stacking fieldsets above each other*/
+            position: relative;
+        }
+
+        /*Hide all except first fieldset*/
+        #msform fieldset:not(:first-of-type) {
+            display: none;
+        }
+
+        /*inputs*/
+        #msform input, #msform textarea {
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 0px;
+            margin-bottom: 10px;
+            width: 100%;
+            box-sizing: border-box;
+            font-family: montserrat;
+            color: #2C3E50;
+            font-size: 13px;
+        }
+
+        #msform input:focus, #msform textarea:focus {
+            -moz-box-shadow: none !important;
+            -webkit-box-shadow: none !important;
+            box-shadow: none !important;
+            border: 1px solid #ee0979;
+            outline-width: 0;
+            transition: All 0.5s ease-in;
+            -webkit-transition: All 0.5s ease-in;
+            -moz-transition: All 0.5s ease-in;
+            -o-transition: All 0.5s ease-in;
+        }
+
+        /*buttons*/
+        #msform .action-button {
+            width: 100px;
+            background: #ee0979;
+            font-weight: bold;
+            color: white;
+            border: 0 none;
+            border-radius: 25px;
+            cursor: pointer;
+            padding: 10px 5px;
+            margin: 10px 5px;
+        }
+
+        #msform .action-button:hover, #msform .action-button:focus {
+            box-shadow: 0 0 0 2px white, 0 0 0 3px #ee0979;
+        }
+
+        #msform .action-button-previous {
+            width: 100px;
+            background: #C5C5F1;
+            font-weight: bold;
+            color: white;
+            border: 0 none;
+            border-radius: 25px;
+            cursor: pointer;
+            padding: 10px 5px;
+            margin: 10px 5px;
+        }
+
+        #msform .action-button-previous:hover, #msform .action-button-previous:focus {
+            box-shadow: 0 0 0 2px white, 0 0 0 3px #C5C5F1;
+        }
+
+        /*headings*/
+        .fs-title {
+            font-size: 18px;
+            text-transform: uppercase;
+            color: #2C3E50;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+            font-weight: bold;
+        }
+
+        .fs-subtitle {
+            font-weight: normal;
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        /*progressbar*/
+        #progressbar {
+            margin-bottom: 30px;
+            overflow: hidden;
+            /*CSS counters to number the steps*/
+            counter-reset: step;
+        }
+
+        #progressbar li {
+            list-style-type: none;
+            color: white;
+            text-transform: uppercase;
+            font-size: 9px;
+            width: 33.33%;
+            float: left;
+            position: relative;
+            letter-spacing: 1px;
+        }
+
+        #progressbar li:before {
+            content: counter(step);
+            counter-increment: step;
+            width: 24px;
+            height: 24px;
+            line-height: 26px;
+            display: block;
+            font-size: 12px;
+            color: #333;
+            background: white;
+            border-radius: 25px;
+            margin: 0 auto 10px auto;
+        }
+
+        /*progressbar connectors*/
+        #progressbar li:after {
+            content: '';
+            width: 100%;
+            height: 2px;
+            background: white;
+            position: absolute;
+            left: -50%;
+            top: 9px;
+            z-index: -1; /*put it behind the numbers*/
+        }
+
+        #progressbar li:first-child:after {
+            /*connector not needed before the first step*/
+            content: none;
+        }
+
+        /*marking active/completed steps green*/
+        /*The number of the step and the connector before it = green*/
+        #progressbar li.active:before, #progressbar li.active:after {
+            background: #ee0979;
+            color: white;
+        }
+
+
+        /* Not relevant to this form */
+        .dme_link {
+            margin-top: 30px;
+            text-align: center;
+        }
+        .dme_link a {
+            background: #FFF;
+            font-weight: bold;
+            color: #ee0979;
+            border: 0 none;
+            border-radius: 25px;
+            cursor: pointer;
+            padding: 5px 25px;
+            font-size: 12px;
+        }
+
+        .dme_link a:hover, .dme_link a:focus {
+            background: #C5C5F1;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+  <h2>Organization Profile</h2>
+</header>
+<script>
+ var sportsObject = {
+    "Targeting": {
+            "Archery":[],
+            "Wheelchair Archery":[]
+          },
+    "Combat Sport": {
+           "Mauy Thai/Kick Boxing":[],
+           "Mixed Martial Arts":[],
+           "Paintball":[],
+             "Red Rover":[]
+     },
+     "Dance": {
+            "Dance":[]
+          },
+      "Combat Sport": {
+           "Aerobics":[],
+           "Gymnastics":[],
+             "Multisport":[],
+           "Park Program":[],
+           "Spin":[],
+           "Weight Training":[],
+           "Yoga":[]
+     },
+     "Football/Rugby": {
+           "Wheelchair Rugby":[],
+           "Flag Football":[],
+             "Football":[],
+           "Rugby":[],
+           "Touch Football":[]
+     },
+     "Racquet/Volleying": {
+           "Handball":[],
+           "Badminton":[],
+             "Wheelchair Badminton":[],
+           "Pickleball":[],
+           "Round Ball":[],
+           "Sitting Volleyball":[],
+           "Squash":[],
+           "Table Tennis":[],
+           "Wheelchair Table Tennis":[],
+           "Tennis":[],
+           "Wheelchair Tennis":[],
+           "Volleyball":[]
+     },
+     "Riding(Equestrian, Vehicular, Paddling)": {
+"Bobsledding":[],
+"Dog Sledding":[],
+"Luge":[],
+"Skateboarding/Scootering":[],
+"Skim Boarding":[],
+"Surfing/Wind Surfing":[],
+"Base Jumping":[],
+"BMX":[],
+"Canoeing":[],
+"Cart":[],
+"Dragon Boat":[],
+"Equestrian":[],
+"Fishing":[],
+"Indoor Skydiving":[],
+"Kayaking":[],
+"Motorcross":[],
+"Outdoor Skydiving":[],
+"Paddle Boarding":[],
+"ParaGliding/ParaSailing":[],
+"Polo":[],
+"Rafting":[],
+"Rowing":[],
+"Sailing/Boating":[]
+},
+"Running/Track/Parkour": {
+"Cross Country Running":[],
+"Discus":[],
+"High Jump":[],
+"Hurling":[],
+"Javelin":[],
+"Marathoning":[],
+"Mudder":[],
+"Parkour":[],
+"Pole Vault":[],
+"Running":[],
+"Shot Put":[],
+"Track Running":[],
+"Trekking":[]
+},
+
+"Swimming": {
+"Water Aerobics":[],
+"Water Polo":[],
+"Diving":[],
+"Scuba":[],
+"Swimming":[],
+"Synchro Swimming":[],
+},
+
+"Trampolining": {
+"Trampolining":[]
+},
+
+"Baseball": {
+  "Fastball":[],
+"Soccer Baseball":[],
+"Softball":[],
+"T-Ball":[],
+"Basketball":[],
+"Wheelchair Basketball":[],
+"Climbing":[]
+},
+
+"Climbing": {
+"Ninja Camp":[],
+"Climbing":[]
+},
+
+"Cricket": {
+"Cricket":[]
+},
+
+"Frisbee": {
+"Disk Golf":[],
+"Ultimate Frisbee":[],
+"Ultimate Para-frisbee":[]
+},
+
+"Golf": {
+"Golf":[]
+},
+
+"Hockey/Skating/Blading": {
+  "Amputee Hockey":[],
+"Ball/Floor Hockey":[],
+"Blind Hockey":[],
+"Field Hockey":[],
+"Figure Skating":[],
+"Ice Hockey":[],
+"Ice Skating":[],
+"Inline/Roller Hockey":[],
+"Ringette":[],
+"Shinny":[],
+"Sledge Hockey":[],
+"Speed Skating":[],
+"Stick & Puck":[]
+
+},
+
+"Lacrosse": {
+"Box Lacrosse":[],
+"Field Lacrosse":[],
+"Boss":[]
+},
+
+"Skiing (Water, Terrestrial, Boarding)": {
+  "Cross Country Skiing":[],
+"Downhill/Alpine":[],
+"Skiing":[],
+"Paraskiing":[],
+"Snowboarding":[]
+},
+
+"Soccer": {
+  "Beach Soccer":[],
+"Bubble Soccer":[],
+"Soccer":[],
+"ParaSoccer":[]
+
+},
+
+"Strategy": {
+"Board Game":[],
+"Panic Room":[],
+"First Responding":[]
+},
+
+"Basketball": {
+  "Basketball":[],
+"Wheelchair Basketball":[],
+
+},
+
+}
+ // var positionObject = {
+ //    "Athelete": {
+ //            "Rookie":[],
+ //            "Recreational":[],
+ //            "Competitive" : [],
+ //            "Pro-Bound" : []
+ //          },
+ //    "Attendee": {
+ //           "Open" : []
+ //       },
+ //    "Coach" : {
+ //            "Minor Sports" : [],
+ //            "Competitive" : [],
+ //            "Volunteer" : []
+ //    }
+  
+  window.onload = function() {
+  var catgeorySel = document.getElementById("category");
+  var sportsSel = document.getElementById("sports");
+  for (var x in sportsObject) {
+    catgeorySel.options[catgeorySel.options.length] = new Option(x, x);
+  }
+  catgeorySel.onchange = function() {
+    //empty Chapters- and Topics- dropdowns
+    sportsSel.length = 1;
+    //display correct values
+    for (var y in sportsObject[this.value]) {
+      sportsSel.options[sportsSel.options.length] = new Option(y, y);
+
+    }
+  } 
+}
+//   window.onload = function() {
+//   var positionSel = document.getElementById('position');
+//   var skillSel = document.getElementById('skill')
+//   for (var z in positionObject) {
+//     positionSel.options[positionSel.options.length] = new Option(z, z);
+//   }
+//   positionSel.onchange = function() {
+//     //empty Chapters- and Topics- dropdowns
+//     skill.length = 1;
+//     //display correct values
+//     for (var a in positionsObject[this.value]) {
+//       skillSel.options[skillSel.options.length] = new Option(a, a);
+
+//     }
+//   } 
+// }
+
+  </script>
+
+<!-- MultiStep Form -->
+<div class="row">
+    <div class="col-md-6 col-md-offset-3">
+        <form id="msform" action="{% url 'multistep'%}" method="post">
+            {% csrf_token %}
+{% if form.errors %}
+<div class="alert alert-danger" role="alert">
+    {% for field, errors in form.errors.items %}
+    {% for error in errors %}
+    <b>{{ field }}</b>: {{ error }}
+    {% endfor %}
+    {% endfor %}
+</div>
+{% endif %}
+
+            <!-- progressbar -->
+<!--             <ul id="progressbar">
+                <li class="active">Type of Organization</li>
+                <li class="active">Organization Information</li>
+                <li>Contacts</li>
+                <li>Program types</li>
+            </ul> -->
+            <!-- fieldsets -->
+                        <fieldset>
+                <h3 class="fs-title" style="background-color: rgba(150, 161, 255);text-align: center; padding: 25px;">Type of Organization</h3>
+                <h3 class="fs-subtitle"></h3>
+                <span>Type of organization?</span>
+                <input type="radio" name="type_of_organization" value='charity'/>
+                <label for='Charity'>Charity</label>
+                <input type="radio" name="type_of_organization"  value='facility'/>
+                <label for='facility'>Facility</label>
+                <input type="radio" name="type_of_organization"  value='muncipal/government'/>
+                <label for='muncipal/government'>Municipal/Government</label><br/>
+                <input type="radio" name="type_of_organization"  value='sponsor/partner'/>
+                <label for='sponsor/partner'>Sponsor/Partner</label><br/>
+                <input type="radio" name="gender"  value='muncipal/government'/>
+                <label for='muncipal/government'>League/Association</label><br/>
+                <input type="radio" name="gender"  value='muncipal/government'/>
+                <label for='muncipal/government'>Developer/Trainer</label><br/>
+                <input type="button" name="next" class="next action-button" value="Next"/>
+            </fieldset>
+            
+            <fieldset>
+                <h3 class="fs-title" style="background-color: rgba(150, 161, 255);text-align: center; padding: 25px;">Organization Information</h3>
+                <h3 class="fs-subtitle"></h3>
+                <input type="text" name="company_name" placeholder="Organization Name"/>
+                <input type="text" name="parent_organization" placeholder="Parent Organization"/>
+                <input type="number" name="registration" placeholder="Registration #">
+                 <span>Which year were you eastablished?</span>
+                <select id="year" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+                    <option selected>Select Year</option>
+                </select>
+                <span>Office location</span>
+                <input type="text" name="street_name" placeholder="Street">
+                <input type="text" name="city" placeholder="City">
+                <input type="text" name="province" placeholder="Province">
+                <input type="text" name="country" placeholder="Country">
+                <input type="text" name="postal_code" placeholder="Postal Code">
+                <input type="button" name="previous" class="previous action-button-previous" value="Previous"/>
+                <input type="button" name="next" class="next action-button" value="Next"/>
+                <!-- <input type="radio" id="chkYes" name="event_type" onclick="ShowHideDiv()" />
+                Yes
+                </label>
+                <label for="chkNo">
+                <input type="radio" id="chkNo" name="event_type" value='free' onclick="ShowHideDiv()" />
+                No
+                </label>
+                <div id="dvtext" style="display: none">
+                <input type="text" id="chkYes" name = "event_type" placeholder="$" />
+                </div> -->
+            </fieldset>
+            <fieldset>
+                <h3 class="fs-title" style="background-color: rgba(150, 161, 255);text-align: center; padding: 25px;">Contacts</h3>
+
+<!-- <p><b> Sport Category </b>
+            <select name= 'category' class = 'form-control' id="personForm">
+                {% for cities in result %}
+                <option value=" {{cities.id}}"> {{cities.name}}</option>
+                {% endfor %}
+                
+            </select> -->
+                <span>What is the most appropriate contact info for the atheletes and the organizer to contact you?</span>
+                <input type="text" name="email" placeholder="Email">
+                <input type="text" name="phone" placeholder="Phone">
+                <input type="text" name="website" placeholder="Website">
+                <input type="button" name="previous" class="previous action-button-previous" value="Previous"/>
+                <input type="button" name="next" class="next action-button" value="Next"/>
+            </fieldset>
+            <fieldset>
+                <h2 class="fs-title" style="background-color: rgba(150, 161, 255);text-align: center; padding: 25px;">Program types</h2>
+                <span>Your focus?</span>
+                <input type="radio" name="gender" id='male' value='male'/>
+                <label for='male'>Male</label>
+                <input type="radio" name="gender" id='female' value='female'/>
+                <label for='female'>Female</label>
+                <input type="radio" name="gender" id='coed' value='coed'/>
+                <label for='male'>Coed</label><br/>
+                <span>Age Group?</span>
+                <select id="select-state" name='age_group' placeholder="Pick a state...">
+                    <option value="">Select an Age group</option>
+                <option value="youth">youth</option>
+                <option value="adult">adult</option>
+                <option value="senior">senior</option>
+                </select>
+                <br/>
+                <br/>
+                <input type="button" name="previous" class="previous action-button-previous" value="Previous"/>
+                <input type="submit" name="submit" class="submit action-button" value="Submit"/>
+            </fieldset>
+        </form>
+        {% endif %}
+
+
+
+
+<script type="text/javascript">
+for(y = 1900; y <= 2022; y++) {
+        var optn = document.createElement("OPTION");
+        optn.text = y;
+        optn.value = y;
+        
+        // if year is 2015 selected
+        if (y == 2022) {
+            optn.selected = true;
+        }
+        
+        document.getElementById('year').options.add(optn);
+}
+</script>
+
+<script>
+var subjectObject = {
+  "Front-end": {
+    "HTML": ["Links", "Images", "Tables", "Lists"],
+    "CSS": ["Borders", "Margins", "Backgrounds", "Float"],
+    "JavaScript": ["Variables", "Operators", "Functions", "Conditions"]    
+  },
+  "Back-end": {
+    "PHP": ["Variables", "Strings", "Arrays"],
+    "SQL": ["SELECT", "UPDATE", "DELETE"]
+  }
+}
+window.onload = function() {
+  var subjectSel = document.getElementById("subject");
+  var topicSel = document.getElementById("topic");
+  var chapterSel = document.getElementById("chapter");
+  for (var x in subjectObject) {
+    subjectSel.options[subjectSel.options.length] = new Option(x, x);
+  }
+  subjectSel.onchange = function() {
+    //empty Chapters- and Topics- dropdowns
+    chapterSel.length = 1;
+    topicSel.length = 1;
+    //display correct values
+    for (var y in subjectObject[this.value]) {
+      topicSel.options[topicSel.options.length] = new Option(y, y);
+    }
+  }
+  topicSel.onchange = function() {
+    //empty Chapters dropdown
+    chapterSel.length = 1;
+    //display correct values
+    var z = subjectObject[subjectSel.value][this.value];
+    for (var i = 0; i < z.length; i++) {
+      chapterSel.options[chapterSel.options.length] = new Option(z[i], z[i]);
+    }
+  }
+}
+</script>
+  
+<script>
+
+$(document).ready(function() {
+    $('#generate').click(function() {
+        var values = ["dog", "cat", "parrot", "rabbit"];
+ 
+    var select = $('<select>').prop('id', 'pets')
+                    .prop('name', 'pets');
+ 
+    $(values).each(function() {
+        select.append($("<option>")
+        .prop('value', this)
+        .text(this.charAt(0).toUpperCase() + this.slice(1)));
+    });
+ 
+    var label = $("<label>").prop('for', 'pets')
+                    .text("Choose your pets: ");
+ 
+    var br = $("<br>");
+ 
+    $('#container').append(label).append(select).append(br);
+    })
+});
+
+$(function() {
+  $('input[name="datetimes"]').daterangepicker({
+    timePicker: true,
+    startDate: moment().startOf('hour'),
+    endDate: moment().startOf('hour').add(32, 'hour'),
+    locale: {
+      format: 'MM/DD/YYYY hh:mm A'
+    }
+  });
+});
+
+
+$(function () {
+        $("input[name='event_cost']").click(function () {
+            if ($("#chkYes").is(":checked")) {
+                $("#dvPassport").show();
+            } else {
+                $("#dvPassport").hide();
+            }
+        });
+    });
+$(function () {
+        $("input[name='position_price']").click(function () {
+            if ($("#chkYes1").is(":checked")) {
+                $("#dvPassport1").show();
+            } else {
+                $("#dvPassport1").hide();
+            }
+        });
+    });
+
+$('.radio').change(function() {
+  $('#custom_amount').prop('disabled', !$(this).is('.other'));
+});
+
+    // $("#id_country").change(function () {
+    //     const url = $("#personForm");  // get the url of the `load_cities` view
+    //     const countryId = $(this).val();  // get the selected country ID from the HTML input
+
+    //     $.ajax({                       // initialize an AJAX request
+    //         url: url,                    // set the url of the request (= /persons/ajax/load-cities/ )
+    //         data: {
+    //             'country_id': countryId       // add the country id to the GET parameters
+    //         },
+    //         success: function (data) {   // `data` is the return of the `load_cities` view function
+    //             $("#id_city").html(data);  // replace the contents of the city input with the data that came from the server
+
+    //             let html_data = '<option value="">---------</option>';
+    //             data.forEach(function (city) {
+    //                 html_data += `<option value="${city.id}">${city.name}</option>`
+    //             });
+    //             console.log(html_data);
+    //             $("#id_city").html(html_data);
+
+    //         }
+    //     });
+
+    // });
+
+    //jQuery time
+    var current_fs, next_fs, previous_fs; //fieldsets
+    var left, opacity, scale; //fieldset properties which we will animate
+    var animating; //flag to prevent quick multi-click glitches
+
+    $(".next").click(function(){
+        if(animating) return false;
+        animating = true;
+
+        current_fs = $(this).parent();
+        next_fs = $(this).parent().next();
+
+        //activate next step on progressbar using the index of next_fs
+        $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
+
+        //show the next fieldset
+        next_fs.show();
+        //hide the current fieldset with style
+        current_fs.animate({opacity: 0}, {
+            step: function(now, mx) {
+                //as the opacity of current_fs reduces to 0 - stored in "now"
+                //1. scale current_fs down to 80%
+                scale = 1 - (1 - now) * 0.2;
+                //2. bring next_fs from the right(50%)
+                left = (now * 50)+"%";
+                //3. increase opacity of next_fs to 1 as it moves in
+                opacity = 1 - now;
+                current_fs.css({
+            'transform': 'scale('+scale+')',
+            'position': 'absolute'
+          });
+                next_fs.css({'left': left, 'opacity': opacity});
+            },
+            duration: 800,
+            complete: function(){
+                current_fs.hide();
+                animating = false;
+            },
+            //this comes from the custom easing plugin
+            easing: 'easeInOutBack'
+        });
+    });
+
+    $(".previous").click(function(){
+        if(animating) return false;
+        animating = true;
+
+        current_fs = $(this).parent();
+        previous_fs = $(this).parent().prev();
+
+        //de-activate current step on progressbar
+        $("#progressbar li").eq($("fieldset").index(current_fs)).removeClass("active");
+
+        //show the previous fieldset
+        previous_fs.show();
+        //hide the current fieldset with style
+        current_fs.animate({opacity: 0}, {
+            step: function(now, mx) {
+                //as the opacity of current_fs reduces to 0 - stored in "now"
+                //1. scale previous_fs from 80% to 100%
+                scale = 0.8 + (1 - now) * 0.2;
+                //2. take current_fs to the right(50%) - from 0%
+                left = ((1-now) * 50)+"%";
+                //3. increase opacity of previous_fs to 1 as it moves in
+                opacity = 1 - now;
+                current_fs.css({'left': left});
+                previous_fs.css({'transform': 'scale('+scale+')', 'opacity': opacity});
+            },
+            duration: 800,
+            complete: function(){
+                current_fs.hide();
+                animating = false;
+            },
+            //this comes from the custom easing plugin
+            easing: 'easeInOutBack'
+        });
+    });
+
+</script>
+
+{% else %}
+You're not allowed to do that before login 
+</br></br>
+<h3 class="text-center">If you already have an account, <a href="{% url 'login' %}">login</a> first or if you don't <a href="{% url 'register' %}">Register</a></h3>
+
+{% endif %}
+
+
+{% endblock %}

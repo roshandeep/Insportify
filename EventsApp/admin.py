@@ -1,12 +1,11 @@
 from django.contrib import admin
-from .models import master_table, Test_City, Test_Person, IsEventTypeMaster, IsEventsDetails, IsEventsMaster, \
+from EventsApp.models import master_table, User, IsEventTypeMaster, IsEventsDetails, IsEventsMaster, \
     IsEventsNotification, IsEventsScheduler, IsNotificationMaster, IsSportsCategory, IsSportsDetails, IsSportsMaster, \
     IsSportsPosition, IsVenueMaster, IsSportsProficiency
 
 
 admin.site.register(master_table)
-admin.site.register(Test_City)
-admin.site.register(Test_Person)
+admin.site.register(User)
 admin.site.register(IsEventTypeMaster)
 admin.site.register(IsEventsDetails)
 admin.site.register(IsEventsMaster)

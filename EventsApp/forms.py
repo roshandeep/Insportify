@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import ModelForm
-from .models import master_table, Test_Person, Test_City
+from .models import master_table
 #from EventsApp.models import Person, City, Country
 #from bootstrap_datepicker_plus.widgets import DatePickerInput, TimePickerInput, DateTimePickerInput, MonthPickerInput
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
