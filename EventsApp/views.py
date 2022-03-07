@@ -3,9 +3,11 @@ from django.http import HttpResponse
 from django.template import loader
 from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
+from django.urls import reverse_lazy
+
 from .forms import MultiStepForm, UserForm
 from .models import IsSportsMaster, IsVenueMaster, master_table
-from django.views.generic import View
+from django.views.generic import View, FormView
 from .models import IsEventTypeMaster
 
 
@@ -26,6 +28,7 @@ def multistep(request):
     # print('not validated', messages.error)
     return render(request, 'EventsApp/multi_step.html', {'form': form, 'submitted': submitted})
 
+
 @login_required
 def all_events(request):
     event_list = master_table.objects.all()
@@ -34,18 +37,37 @@ def all_events(request):
 
 @login_required
 def user_profile(request):
-    return render(request, 'EventsApp/user_profile.html')
+    context = {
+        'user': request.user
+    }
+    return render(request, 'registration/individual_view.html', context)
 
 
-class User_Account(View):
-    def get(self, request, *args, **kwargs):
-        return render(request, 'EventsApp/user_profile.html')
+def organization_profile(request):
+    context = {
+        'user': request.user
+    }
+    return render(request, 'registration/organization_view.html', context)
 
-    def post(self, request, *args, **kwargs):
-        form = UserForm(request.POST())
-        if form.is_valid():
-            return redirect('user_account')
 
+class UserProfileView(FormView):
+    form_class = UserForm
+    template_name = 'EventsApp/user_profile.html'
+    success_url = reverse_lazy('multistep')
+
+
+@login_required
+def home(request):
+    results = IsEventTypeMaster.objects.values('etm_id', 'etm_category')
+    sports = IsSportsMaster.objects.values('sm_id', 'sm_sports_name')
+    venues = IsVenueMaster.objects.values('vm_id', 'vm_name')
+    context = {
+        'event_types': results,
+        'sports_list': sports,
+        'venues_list': venues
+    }
+    html_template = loader.get_template('EventsApp/home.html')
+    return HttpResponse(html_template.render(context, request))
 
 # def register_request(request):
 # 	if request.method == "POST":
@@ -193,17 +215,3 @@ class User_Account(View):
 # 		})
 
 # Added by Pooja for homepage design and Integration with rest of the flow - 04 FEB 2022
-
-@login_required
-def home(request):
-    results = IsEventTypeMaster.objects.values('etm_id', 'etm_category')
-    sports = IsSportsMaster.objects.values('sm_id', 'sm_sports_name')
-    venues = IsVenueMaster.objects.values('vm_id', 'vm_name')
-    context = {
-        'event_types': results,
-        'sports_list': sports,
-        'venues_list': venues
-    }
-    html_template = loader.get_template('EventsApp/home.html')
-    return HttpResponse(html_template.render(context, request))
-

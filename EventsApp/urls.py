@@ -21,7 +21,8 @@ from django.views.generic import TemplateView
 urlpatterns = [
     path('', views.home, name='home'),
     path('show/', views.all_events, name="list-events"),
-    path('profile/', views.user_profile, name='user_profile'),
+    path('individual/profile/', views.user_profile, name='user_profile'),
+    path('organization/profile/', views.organization_profile, name='organization_profile'),
     # path('', views.multistep, name='multistep'),
     path('create/', views.multistep, name='multistep'),
     path('create/', TemplateView.as_view(template_name='multi_step.html'), name='multistep'),
