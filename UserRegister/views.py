@@ -1,6 +1,7 @@
+from django.contrib import messages
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import generic
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm, AuthenticationForm
 from django.urls import reverse_lazy
 from .forms import SignUpForm, EditProfileForm
 from django.contrib.auth.views import PasswordChangeView
