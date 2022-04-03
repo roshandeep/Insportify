@@ -6,11 +6,15 @@
 {% block content %}
 
 {% if user.is_authenticated %}
-<center>
-    {% if submitted %}
-    Your Event was Submitted
-    Successfully!!!
-</center>
+<div class="row">
+    <div class="col mx-auto">
+        <center>
+            {% if submitted %}
+            Your Event was Submitted
+            Successfully!!!
+        </center>
+    </div>
+</div>
 {% else %}
 
 
@@ -255,6 +259,7 @@
 #progressbar li.active:after {
     background: #ff6f3d
 }
+
 
 </style>
 
@@ -648,6 +653,7 @@ $('.radio').change(function() {
     }
   }
 }
+
 
 
 

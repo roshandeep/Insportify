@@ -56,15 +56,17 @@ class UserProfileView(FormView):
     success_url = reverse_lazy('multistep')
 
 
-@login_required
 def home(request):
     results = IsEventTypeMaster.objects.values('etm_id', 'etm_category')
     sports = IsSportsMaster.objects.values('sm_id', 'sm_sports_name')
     venues = IsVenueMaster.objects.values('vm_id', 'vm_name')
+    events = master_table.objects.all()
+    events = [events[i:i + 3] for i in range(0, len(events), 3)]
     context = {
         'event_types': results,
         'sports_list': sports,
-        'venues_list': venues
+        'venues_list': venues,
+        'events': events
     }
     html_template = loader.get_template('EventsApp/home.html')
     return HttpResponse(html_template.render(context, request))

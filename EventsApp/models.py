@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractUser
 
 class master_table(models.Model):
     event_title = models.CharField(max_length=30, blank=True, null=True)
-    description = models.CharField(max_length=30, blank=True, null=True)
+    description = models.CharField(max_length=300, blank=True, null=True)
     event_type = models.IntegerField(blank=True, null=True)
     datetimes = models.CharField(max_length=50, blank=True, null=True)
     sport_category = models.CharField(max_length=30, blank=True, null=True)
