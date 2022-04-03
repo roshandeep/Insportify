@@ -65,10 +65,29 @@ class User(AbstractUser):
 
 
 class Individual(models.Model):
+    Concussion_Choices = [('Yes', 'Yes'), ('No', 'No')]
+    PaticipationInterest_Choices = (('Male', 'Male'), ('Female', 'Female'), ('Coed', 'Coed'))
+    Province_Choices = (('AB', 'Alberta'), ('BC', 'British Columbia'), ('MB', 'Manitoba'),
+                        ('NB', 'New Brunswick'), ('NB', 'Newfoundland and Labrador'),
+                        ('NS', 'Nova Scotia'), ('ON', 'Ontario'), ('PE', 'Prince Edward Island'),
+                        ('QC', 'Quebec'), ('SK', 'Saskatchewan'))
+
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     first_name = models.CharField(max_length=50, null=True)
     last_name = models.CharField(max_length=50, null=True)
     phone = models.CharField(max_length=50, null=True)
+    # email = models.CharField(max_length=50, null=True)
+    # provider = models.CharField(max_length=50, null=True)
+    # dob = models.CharField(max_length=50, blank=True, null=True)
+    # concussion = models.CharField(max_length=100, choices=Concussion_Choices, blank=True, null=True)
+    # participation_interest = models.CharField(max_length=100, choices=PaticipationInterest_Choices, blank=True, null=True)
+    # city = models.CharField(verbose_name="City", max_length=50, blank=True, null=True)
+    # province = models.CharField(max_length=100, choices=Province_Choices, blank=True, null=True)
+    # country = models.CharField(max_length=250, blank=True, null=True)
+    # sports_category = models.CharField(max_length=50, null=True)
+    # sports_type = models.CharField(max_length=50, null=True)
+    # sports_position = models.CharField(max_length=50, null=True)
+    # sports_skill = models.CharField(max_length=50, null=True)
 
 
 class Organization(models.Model):
