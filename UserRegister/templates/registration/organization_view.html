@@ -5,17 +5,6 @@
 
 {% block content %}
 
-{% if user.is_authenticated %}
-<div class="row">
-    <div class="col mx-auto">
-        <center>
-            {% if submitted %}
-            Your Event was Submitted
-            Successfully!!!
-        </center>
-    </div>
-</div>
-{% else %}
 
 
 <div class="row">
@@ -31,16 +20,15 @@
 
 <div class="row">
     <div class="col-6 mx-auto">
-        <form id="msform" action="{% url 'multistep'%}" method="post">
+        <form id="msform" method="post">
             {% csrf_token %}
-            {% if form.errors %}
-            <div class="alert alert-danger" role="alert">
-                {% for field, errors in form.errors.items %}
-                {% for error in errors %}
-                <b>{{ field }}</b>: {{ error }}
-                {% endfor %}
-                {% endfor %}
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert {{ message.tags }} alert-dismissible" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
             </div>
+            {% endfor %}
             {% endif %}
 
 

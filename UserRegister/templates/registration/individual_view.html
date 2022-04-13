@@ -5,32 +5,17 @@
 
 {% block content %}
 
-
-{% if user.is_authenticated %}
-<div class="row">
-    <div class="col mx-auto">
-        <center>
-            {% if submitted %}
-            Your Event was Submitted
-            Successfully!!!
-        </center>
-    </div>
-</div>
-{% else %}
-
-
 <div class="row">
     <div class="col-6 mx-auto">
-        <form id="msform" action="{% url 'multistep'%}" method="post">
+        <form id="msform" method="post">
             {% csrf_token %}
-            {% if form.errors %}
-            <div class="alert alert-danger" role="alert">
-                {% for field, errors in form.errors.items %}
-                {% for error in errors %}
-                <b>{{ field }}</b>: {{ error }}
-                {% endfor %}
-                {% endfor %}
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert {{ message.tags }} alert-dismissible" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
             </div>
+            {% endfor %}
             {% endif %}
 
 
@@ -66,14 +51,14 @@
                         </div>
                         <div class="form-row p-2">
                             <label>I am interest in participating in ?</label>
-                            <input type="radio" id="chkYes" name="interest_gender">Male</input>
-                            <input type="radio" value="" id="chkNo" name="interest_gender"> Female </input>
-                            <input type="radio" value="" id="chkNo" name="interest_gender"> Coed </input>
+                            <input type="radio" id="Male" name="interest_gender">Male</input>
+                            <input type="radio" id="Female" name="interest_gender"> Female </input>
+                            <input type="radio" id="Coed" name="interest_gender"> Coed </input>
                         </div>
                         <div class="form-row p-2">
                             <label>Have you ever suffered concussion?</label>
-                            <input type="radio" id="chkYes" name="is_concussion">Yes</input>
-                            <input type="radio" value="" id="chkNo" name="is_concussion"> No</input>
+                            <input type="radio" id="Yes" name="is_concussion">Yes</input>
+                            <input type="radio" value="" id="No" name="is_concussion"> No</input>
                         </div>
 
                         <div class="form-row p-2">
@@ -120,7 +105,8 @@
             <fieldset class="p-2" id="tab-3">
                 <div class="card shadow">
                     <h4 class="card-header text-white"
-                        style="background: linear-gradient(to bottom left, #1bc2bf, #0ddff6, #26bbcc);">{{ user.first_name }} ,
+                        style="background: linear-gradient(to bottom left, #1bc2bf, #0ddff6, #26bbcc);">{{
+                        user.first_name }} ,
                         add sports you love to play and the ones you would love to play</h4>
                     <div class="card-body">
                         <div class="form-row p-2">
@@ -235,6 +221,7 @@
 #progressbar li.active:after {
     background: #ff6f3d
 }
+
 
 
 </style>
@@ -574,6 +561,7 @@ $(function () {
 $('.radio').change(function() {
   $('#custom_amount').prop('disabled', !$(this).is('.other'));
 });
+
 
 
 
