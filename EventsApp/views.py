@@ -7,7 +7,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
 
 from .forms import MultiStepForm, UserForm
-from .models import IsSportsMaster, IsVenueMaster, master_table, Individual
+from .models import IsSportsMaster, IsVenueMaster, master_table, Individual, Organization
 from django.views.generic import View, FormView
 from .models import IsEventTypeMaster
 
@@ -71,6 +71,26 @@ def organization_profile(request):
     context = {
         'user': request.user
     }
+    if request.method == "POST":
+        response = request.POST.dict()
+        obj = Organization()
+        obj.user = request.user
+        obj.type_of_organization = response["type_of_organization"]
+        obj.organization_name = response["company_name"]
+        obj.parent_organization_name = response["parent_organization"]
+        obj.registration_no = response["registration"]
+        obj.street = response["street_name"]
+        obj.city = response["city"]
+        obj.province = response["province"]
+        obj.country = response["country"]
+        obj.postal_code = response["postal_code"]
+        obj.email = response["email"]
+        obj.phone = response["phone"]
+        obj.website = response["website"]
+        obj.gender_focus = response["gender"]
+        obj.age_group = response["age_group"]
+        obj.save()
+        messages.success(request, 'Organization details updated!')
     return render(request, 'registration/organization_view.html', context)
 
 

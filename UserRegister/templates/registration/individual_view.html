@@ -11,9 +11,9 @@
             {% csrf_token %}
             {% if messages %}
             {% for message in messages %}
-            <div class="alert {{ message.tags }} alert-dismissible" role="alert">
+            <div class="alert {{ message.tags }} alert-dismissible fade show" role="alert">
                 {{ message }}
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
             {% endfor %}
             {% endif %}
@@ -28,7 +28,7 @@
             <fieldset class="p-2" id="tab-1">
                 <div class="card shadow">
                     <h4 class="card-header text-white"
-                        style="background: linear-gradient(to bottom left, #1bc2bf, #0ddff6, #26bbcc);">Tell us little
+                        style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">Tell us little
                         about you</h4>
                     <div class="card-body">
                         <div class="form-row p-2">
@@ -73,7 +73,7 @@
             <fieldset class="p-2" id="tab-2">
                 <div class="card shadow">
                     <h4 class="card-header text-white"
-                        style="background: linear-gradient(to bottom left, #1bc2bf, #0ddff6, #26bbcc);">
+                        style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">
                         Hey {{ user.first_name }} list your locations where you can participate in </h4>
                     <label></label>
                     <div class="form-row p-2">
@@ -105,7 +105,7 @@
             <fieldset class="p-2" id="tab-3">
                 <div class="card shadow">
                     <h4 class="card-header text-white"
-                        style="background: linear-gradient(to bottom left, #1bc2bf, #0ddff6, #26bbcc);">{{
+                        style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">{{
                         user.first_name }} ,
                         add sports you love to play and the ones you would love to play</h4>
                     <div class="card-body">
@@ -159,11 +159,9 @@
                 </div>
             </fieldset>
         </form>
-        {% endif %}
     </div>
 </div>
 
-{% endif %}
 
 
 <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>

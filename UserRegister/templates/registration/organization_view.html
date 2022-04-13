@@ -24,9 +24,9 @@
             {% csrf_token %}
             {% if messages %}
             {% for message in messages %}
-            <div class="alert {{ message.tags }} alert-dismissible" role="alert">
+            <div class="alert {{ message.tags }} alert-dismissible fade show" role="alert">
                 {{ message }}
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
             {% endfor %}
             {% endif %}
@@ -34,12 +34,12 @@
 
             <fieldset id="tab-1" class="p-2">
                 <div class="card shadow">
-                    <h3 class="card-header text-white"
-                        style="background: linear-gradient(to bottom left, #1bc2bf, #0ddff6, #26bbcc);">
+                    <h3 class="card-header text-white text-center"
+                        style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">
                         Type of Organization
                     </h3>
                     <div class="card-body">
-                        <div class="form-row p-2">
+                        <div class="form-row p-2 text-center">
                             <input type="radio" name="type_of_organization" value='charity'/>
                             <label for='Charity'>Charity</label>
                             <br/>
@@ -58,7 +58,7 @@
                             <input type="radio" name="gender" value='muncipal/government'/>
                             <label for='muncipal/government'>Developer/Trainer</label>
                             <br/>
-                            <div class="form-row p-2">
+                            <div class="form-row p-2 text-center">
                                 <input type="button" name="next" class="next action-button btn btn-primary"
                                        style="background: #ff6f3d; border: none;" value="Next" id="next-tab-1"/>
                             </div>
@@ -69,8 +69,8 @@
 
             <fieldset id="tab-2" class="p-2">
                 <div class="card shadow">
-                    <h3 class="card-header text-white"
-                        style="background: linear-gradient(to bottom left, #1bc2bf, #0ddff6, #26bbcc);">Organization
+                    <h3 class="card-header text-white text-center"
+                        style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">Organization
                         Information</h3>
                     <div class="card-body">
                         <div class="form-row p-2">
@@ -106,7 +106,7 @@
                         <div class="form-row p-2">
                             <input type="text" name="postal_code" class="form-control" placeholder="Postal Code">
                         </div>
-                        <div class="form-row p-2">
+                        <div class="form-row p-2 text-center">
                             <input type="button" name="previous"
                                    class="previous action-button-previous btn btn-primary"
                                    style="background: #ff6f3d; border: none;" value="Previous" id="previous-tab-2"/>
@@ -119,8 +119,8 @@
 
             <fieldset id="tab-3" class="p-2">
                 <div class="card shadow">
-                    <h3 class="card-header text-white"
-                        style="background: linear-gradient(to bottom left, #1bc2bf, #0ddff6, #26bbcc);">
+                    <h3 class="card-header text-white text-center"
+                        style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">
                         Sports</h3>
                     <div class="card-body">
                         <div class="form-row p-2">
@@ -133,7 +133,7 @@
                         <div class="form-row p-2">
                             <input type="text" name="website" class="form-control" placeholder="Website">
                         </div>
-                        <div class="form-row p-2">
+                        <div class="form-row p-2 text-center">
                             <input type="button" name="previous"
                                    class="previous action-button-previous btn btn-primary"
                                    style="background: #ff6f3d; border: none;" value="Previous" id="previous-tab-3"/>
@@ -146,8 +146,8 @@
 
             <fieldset id="tab-4" class="p-2">
                 <div class="card shadow">
-                    <h3 class="card-header text-white"
-                        style="background: linear-gradient(to bottom left, #1bc2bf, #0ddff6, #26bbcc);">
+                    <h3 class="card-header text-white text-center"
+                        style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">
                         Program Types</h3>
                     <div class="card-body">
                         <div class="form-row p-2">
@@ -168,7 +168,7 @@
                                 <option value="senior">senior</option>
                             </select>
                         </div>
-                        <div class="form-row p-2">
+                        <div class="form-row p-2 text-center">
                             <input type="button" name="previous"
                                    class="previous action-button-previous btn btn-primary"
                                    style="background: #ff6f3d; border: none;" value="Previous" id="previous-tab-4"/>
@@ -181,12 +181,9 @@
             </fieldset>
 
         </form>
-        {% endif %}
 
     </div>
 </div>
-
-{% endif %}
 
 <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>

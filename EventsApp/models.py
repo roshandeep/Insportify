@@ -31,31 +31,6 @@ class master_table(models.Model):
         db_table = 'master_table'
 
 
-class Test_City(models.Model):
-    test_country = models.ForeignKey(master_table, on_delete=models.CASCADE)
-    name = models.CharField(max_length=30, null=True)
-
-    class Meta:
-        managed = True
-        db_table = 'Test_City'
-
-
-class Test_Person(models.Model):
-    name = models.CharField(max_length=30, null=True)
-    birthdate = models.DateField(null=True, blank=True)
-    test_country = models.ForeignKey(master_table, on_delete=models.SET_NULL, null=True)
-    test_city = models.ForeignKey(Test_City, on_delete=models.SET_NULL, null=True)
-
-    def __str__(self):
-        return self.name
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        managed = True
-        db_table = 'Test_Person'
-
 
 class User(AbstractUser):
     is_individual = models.BooleanField(default=False)
@@ -88,9 +63,21 @@ class Individual(models.Model):
 
 class Organization(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
-    first_name = models.CharField(max_length=50, null=True)
-    last_name = models.CharField(max_length=50, null=True)
+    organization_name = models.CharField(max_length=50, null=True)
+    parent_organization_name = models.CharField(max_length=50, null=True)
+    registration_no = models.CharField(max_length=50, null=True)
+    type_of_organization = models.CharField(max_length=50, blank=True, null=True)
+    year_established = models.CharField(max_length=50, blank=True, null=True)
+    street = models.CharField(max_length=50, blank=True, null=True)
+    city = models.CharField(max_length=50, blank=True, null=True)
+    province = models.CharField(max_length=100, blank=True, null=True)
+    country = models.CharField(max_length=250, blank=True, null=True)
+    postal_code = models.CharField(max_length=6, blank=True, null=True)
     phone = models.CharField(max_length=50, null=True)
+    email = models.CharField(max_length=50, null=True)
+    website = models.CharField(max_length=50, null=True)
+    gender_focus = models.CharField(max_length=50, null=True)
+    age_group = models.CharField(max_length=50, null=True)
 
 
 class EventsappMasterTable(models.Model):
