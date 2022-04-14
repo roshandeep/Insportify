@@ -27,7 +27,7 @@
 
             <fieldset class="p-2" id="tab-1">
                 <div class="card shadow">
-                    <h4 class="card-header text-white"
+                    <h4 class="card-header text-white text-center"
                         style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">Tell us little
                         about you</h4>
                     <div class="card-body">
@@ -38,7 +38,7 @@
                             <input type="text" class="form-control" name="last_name" placeholder="Last Name"/>
                         </div>
                         <div class="form-row p-2">
-                            <input type="date" class="form-control" name="dob" placeholder="DoB"/>
+                            <input placeholder="DOB" class="textbox-n form-control" type="text" onfocus="(this.type='date')" onblur="(this.type='text')" name="dob" />
                         </div>
                         <div class="form-row p-2">
                             <input type="text" class="form-control" name="contact_email" placeholder="Contact Email"/>
@@ -61,9 +61,9 @@
                             <input type="radio" value="" id="No" name="is_concussion"> No</input>
                         </div>
 
-                        <div class="form-row p-2">
+                        <div class="form-row p-2 text-center">
                             <input type="button" name="next" class="next action-button btn btn-primary"
-                                   style="background: #ff6f3d; border: none;" value="Next" id="next-tab-1"/>
+                                    value="Next" id="next-tab-1"/>
                         </div>
                     </div>
                 </div>
@@ -72,7 +72,7 @@
 
             <fieldset class="p-2" id="tab-2">
                 <div class="card shadow">
-                    <h4 class="card-header text-white"
+                    <h4 class="card-header text-white text-center"
                         style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">
                         Hey {{ user.first_name }} list your locations where you can participate in </h4>
                     <label></label>
@@ -87,24 +87,24 @@
                     </div>
                     <div class="form-row p-2">
                         <div id="input_fields_wrap">
-                            <button class="btn btn-primary" style="background: #ff6f3d; border: none;"
+                            <button class="btn btn-primary" 
                                     id="add_field_button">Add location
                             </button>
                         </div>
                     </div>
-                    <div class="form-row p-2">
+                    <div class="form-row p-2 text-center">
                         <input type="button" name="previous"
                                class="previous action-button-previous btn btn-primary"
-                               style="background: #ff6f3d; border: none;" value="Previous" id="previous-tab-2"/>
+                                value="Previous" id="previous-tab-2"/>
                         <input type="button" name="next" class="next action-button btn btn-primary"
-                               style="background: #ff6f3d; border: none;" value="Next" id="next-tab-2"/>
+                                value="Next" id="next-tab-2"/>
                     </div>
                 </div>
             </fieldset>
 
             <fieldset class="p-2" id="tab-3">
                 <div class="card shadow">
-                    <h4 class="card-header text-white"
+                    <h4 class="card-header text-white text-center"
                         style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">{{
                         user.first_name }} ,
                         add sports you love to play and the ones you would love to play</h4>
@@ -142,18 +142,18 @@
                         </div>
                         <div class="form-row p-2">
                             <div id="input_fields">
-                                <button class="btn btn-primary" style="background: #ff6f3d; border: none;"
+                                <button class="btn btn-primary" 
                                         id="add_button">Add Position
                                 </button>
                             </div>
                         </div>
-                        <div class="form-row p-2">
+                        <div class="form-row p-2 text-center">
                             <input type="button" name="previous"
                                    class="previous action-button-previous btn btn-primary"
-                                   style="background: #ff6f3d; border: none;" value="Previous" id="previous-tab-3"/>
+                                    value="Previous" id="previous-tab-3"/>
 
                             <input type="submit" name="submit" class="submit action-button btn btn-primary"
-                                   style="background: #ff6f3d; border: none;" value="Submit"/>
+                                    value="Submit"/>
                         </div>
                     </div>
                 </div>
@@ -171,6 +171,15 @@
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"/>
 
 <style>
+.btn-primary {
+  color: #fff;
+  background-color: #ff6f3d;
+  border-color: #ff6f3d; }
+  .btn-primary:hover {
+    color: #fff;
+    background-color: #d74715;
+    border-color: #d74715; }
+
    #progressbar {
     margin-bottom: 30px;
     overflow: hidden;

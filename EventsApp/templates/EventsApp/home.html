@@ -71,8 +71,10 @@
                         <img src="{% static 'images/football.jpg' %}" class="card-img-top" alt="...">
                         <div class="card-body">
                             <h5 class="card-title">{{event.event_title}}</h5>
-                            <p class="card-text">{{event.description}}</p>
-                            <a href="#" class="btn btn-primary" style="background: #ff6f3d; border: none;">Details</a>
+                            <p class="card-text">{{event.venue}}, {{event.city}}, {{event.province}}
+                            <p class="text-secondary"><i class="bi bi-calendar"></i> {{event.datetimes}}
+                            </p>
+                            <a href="{{event.pk}}/" class="btn btn-primary">Details >></a>
                         </div>
                     </div>
                     {% endfor %}
@@ -94,6 +96,15 @@
 </div>
 
 <style>
+.btn-primary {
+  color: #fff;
+  background-color: #ff6f3d;
+  border-color: #ff6f3d; }
+  .btn-primary:hover {
+    color: #fff;
+    background-color: #d74715;
+    border-color: #d74715; }
+
 .cards-wrapper {
   display: flex;
   justify-content: center;
@@ -124,6 +135,13 @@
   .card img {
     height: 11em;
   }
+}
+
+.card:hover {
+    box-shadow: 5px 6px 6px 2px #e9ecef;
+    transform: scale(1.05);
+    transition: all .4s ease;
+-webkit-transition: all .4s ease;
 }
 </style>
 

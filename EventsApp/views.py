@@ -14,26 +14,32 @@ from .models import IsEventTypeMaster
 
 @login_required
 def multistep(request):
-    submitted = False
     if request.method == "POST":
         form = MultiStepForm(request.POST)
         print('form is going to be validated')
         if form.is_valid():
             print('form validated')
             form.save()
-            return HttpResponseRedirect('/?submitted=True')
+            messages.success(request, 'Event Created')
+            return render(request, 'EventsApp/multi_step.html', {'form': form})
     else:
         form = MultiStepForm
         if 'submitted' in request.GET:
             submitted = True
-    # print('not validated', messages.error)
-    return render(request, 'EventsApp/multi_step.html', {'form': form, 'submitted': submitted})
+
+    return render(request, 'EventsApp/multi_step.html', {'form': form})
 
 
 @login_required
 def all_events(request):
     event_list = master_table.objects.all()
     return render(request, 'EventsApp/event_list.html', {'event_list': event_list})
+
+
+def event_by_id(request, event_id):
+    event = master_table.objects.get(pk=event_id)
+    print(event.description)
+    return render(request, 'EventsApp/event_detail.html', {'event': event})
 
 
 @login_required

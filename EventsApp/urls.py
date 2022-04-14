@@ -23,7 +23,6 @@ urlpatterns = [
     path('show/', views.all_events, name="list-events"),
     path('individual/profile/', views.user_profile, name='user_profile'),
     path('organization/profile/', views.organization_profile, name='organization_profile'),
-    # path('', views.multistep, name='multistep'),
     path('create/', views.multistep, name='multistep'),
-    path('create/', TemplateView.as_view(template_name='multi_step.html'), name='multistep'),
+    path('<int:event_id>/', views.event_by_id, name='event_by_id'),
 ]

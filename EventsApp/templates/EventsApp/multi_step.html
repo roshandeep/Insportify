@@ -5,32 +5,17 @@
 
 {% block content %}
 
-
-{% if user.is_authenticated %}
-<div class="row">
-    <div class="col mx-auto">
-        <center>
-            {% if submitted %}
-            Your Event was Submitted
-            Successfully!!!
-        </center>
-    </div>
-</div>
-{% else %}
-
-
 <div class="row">
     <div class="col-6 mx-auto">
         <form id="msform" action="{% url 'multistep'%}" method="post">
             {% csrf_token %}
-            {% if form.errors %}
-            <div class="alert alert-danger" role="alert">
-                {% for field, errors in form.errors.items %}
-                {% for error in errors %}
-                <b>{{ field }}</b>: {{ error }}
-                {% endfor %}
-                {% endfor %}
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert {{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
+            {% endfor %}
             {% endif %}
 
 
@@ -66,7 +51,7 @@
                         </div>
                         <div class="form-row p-2">
                             <input type="button" name="next" class="next action-button btn btn-primary"
-                                   style="background: #ff6f3d; border: none;" value="Next"
+                                    value="Next"
                                    id="next-tab-1"/>
                         </div>
                     </div>
@@ -113,7 +98,7 @@
                         </div>
                         <div class="form-row p-2">
                             <div id="input_fields_wrap">
-                                <button class="btn btn-primary" style="background: #ff6f3d; border: none;"
+                                <button class="btn btn-primary" 
                                         id="add_field_button">Add Position
                                 </button>
                             </div>
@@ -121,9 +106,9 @@
                         <div class="form-row p-2">
                             <input type="button" name="previous"
                                    class="previous action-button-previous btn btn-primary"
-                                   style="background: #ff6f3d; border: none;" value="Previous" id="previous-tab-2"/>
+                                    value="Previous" id="previous-tab-2"/>
                             <input type="button" name="next" class="next action-button btn btn-primary"
-                                   style="background: #ff6f3d; border: none;" value="Next" id="next-tab-2"/>
+                                    value="Next" id="next-tab-2"/>
                         </div>
                     </div>
                 </div>
@@ -155,20 +140,18 @@
                         <div class="form-row p-2">
                             <input type="button" name="previous"
                                    class="previous action-button-previous btn btn-primary"
-                                   style="background: #ff6f3d; border: none;" value="Previous" id="previous-tab-3"/>
+                                    value="Previous" id="previous-tab-3"/>
 
                             <input type="submit" name="submit" class="submit action-button btn btn-primary"
-                                   style="background: #ff6f3d; border: none;" value="Submit"/>
+                                    value="Submit"/>
                         </div>
                     </div>
                 </div>
             </fieldset>
         </form>
-        {% endif %}
     </div>
 </div>
 
-{% endif %}
 
 
 <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
@@ -178,6 +161,15 @@
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"/>
 
 <style>
+.btn-primary {
+  color: #fff;
+  background-color: #ff6f3d;
+  border-color: #ff6f3d; }
+  .btn-primary:hover {
+    color: #fff;
+    background-color: #d74715;
+    border-color: #d74715; }
+
    #progressbar {
     margin-bottom: 30px;
     overflow: hidden;

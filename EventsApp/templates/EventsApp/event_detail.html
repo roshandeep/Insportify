@@ -1,10 +1,38 @@
-<!-- {% extends 'EventsApp/base.html' %}
+{% extends 'base.html' %}
 
+{% load widget_tweaks %}
+{% load static %}
 {% block content %}
 
-<h1>Events</h1>
+<div class="row">
+    <div class="col">
+        <div class="card shadow mx-auto" style="width: 400px">
+            <h5 class="card-header text-center">
+                {{event.event_title}}
+            </h5>
+            <p class="card-text">
+                {{event.datetimes}}
+            </p>
+            <div class="card-body">
+                {{event.description}}
+            </div>
+            <button class="btn btn-primary">Add to cart</button>
+        </div>
+    </div>
+</div>
 
-{{ event_detail }}
+<style>
+
+.btn-primary {
+  color: #fff;
+  background-color: #ff6f3d;
+  border-color: #ff6f3d; }
+  .btn-primary:hover {
+    color: #fff;
+    background-color: #d74715;
+    border-color: #d74715; }
 
 
-{% endblock %} -->
+</style>
+
+{% endblock %}
