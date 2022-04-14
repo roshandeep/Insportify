@@ -266,3 +266,19 @@ class IsVenueMaster(models.Model):
     class Meta:
         managed = True
         db_table = 'is_venue_master'
+
+
+class SportsCategory(models.Model):
+    sports_catgeory_text = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.sports_catgeory_text
+
+
+
+class SportsType(models.Model):
+    sports_category = models.ForeignKey(SportsCategory, on_delete=models.CASCADE)
+    sports_type_text = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.sports_type_text
