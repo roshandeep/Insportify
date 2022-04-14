@@ -6,7 +6,6 @@
 {% block content %}
 
 
-
 <div class="row">
     <div class="col-9 mx-auto">
         <ul id="progressbar" class="mx-auto text-center" style="padding-left: 0px;">
@@ -40,27 +39,33 @@
                     </h3>
                     <div class="card-body">
                         <div class="form-row p-2 text-center">
-                            <input type="radio" name="type_of_organization" value='charity'/>
-                            <label for='Charity'>Charity</label>
+                            <input type="radio" name="type_of_organization" value='Charity'
+                                   {% if organization.type_of_organization == "Charity" %} checked {% endif %}>Charity
+                            </input>
                             <br/>
-                            <input type="radio" name="type_of_organization" value='facility'/>
-                            <label for='facility'>Facility</label>
+                            <input type="radio" name="type_of_organization" value='Facility'
+                                {% if organization.type_of_organization == "Facility" %} checked {% endif %}> Facility
+                            </input>
                             <br/>
-                            <input type="radio" name="type_of_organization" value='muncipal/government'/>
-                            <label for='muncipal/government'>Municipal/Government</label>
+                            <input type="radio" name="type_of_organization" value='Municipal/Government'
+                            {% if organization.type_of_organization == "Municipal/Government" %} checked {% endif %}>
+                            Municipal/Government</input>
                             <br/>
-                            <input type="radio" name="type_of_organization" value='sponsor/partner'/>
-                            <label for='sponsor/partner'>Sponsor/Partner</label>
+                            <input type="radio" name="type_of_organization" value='Sponsor/Partner'
+                            {% if organization.type_of_organization == "Sponsor/Partner" %} checked {% endif %}>
+                            Sponsor/Partner</input>
                             <br/>
-                            <input type="radio" name="gender" value='muncipal/government'/>
-                            <label for='muncipal/government'>League/Association</label>
+                            <input type="radio" name="type_of_organization" value='League/Association'
+                            {% if organization.type_of_organization == "League/Association" %} checked {% endif %}>
+                            League/Association</input>
                             <br/>
-                            <input type="radio" name="gender" value='muncipal/government'/>
-                            <label for='muncipal/government'>Developer/Trainer</label>
+                            <input type="radio" name="type_of_organization" value='Developer/Trainer'
+                            {% if organization.type_of_organization == "Developer/Trainer" %} checked {% endif %}>
+                            Developer/Trainer</input>
                             <br/>
                             <div class="form-row p-2 text-center">
                                 <input type="button" name="next" class="next action-button btn btn-primary"
-                                        value="Next" id="next-tab-1"/>
+                                       value="Next" id="next-tab-1"/>
                             </div>
                         </div>
                     </div>
@@ -70,19 +75,23 @@
             <fieldset id="tab-2" class="p-2">
                 <div class="card shadow">
                     <h3 class="card-header text-white text-center"
-                        style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">Organization
+                        style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">
+                        Organization
                         Information</h3>
                     <div class="card-body">
                         <div class="form-row p-2">
                             <input type="text" name="company_name" class="form-control"
-                                   placeholder="Organization Name"/>
+                                   placeholder="Organization Name"
+                            value="{% if organization.organization_name %} {{organization.organization_name}} {% endif %}"/>
                         </div>
                         <div class="form-row p-2">
                             <input type="text" name="parent_organization" class="form-control"
-                                   placeholder="Parent Organization"/>
+                                   placeholder="Parent Organization"
+                            value="{% if organization.parent_organization_name %} {{organization.parent_organization_name}} {% endif %}"/>
                         </div>
                         <div class="form-row p-2">
-                            <input type="number" name="registration" class="form-control" placeholder="Registration #">
+                            <input type="number" name="registration" class="form-control" placeholder="Registration #"
+                            value="{% if organization.registration_no %} {{organization.registration_no}} {% endif %}">
                         </div>
                         <div class="form-row p-2">
                             <span>Which year were you eastablished?</span>
@@ -92,26 +101,31 @@
                         </div>
                         <div class="form-row p-2">
                             <span>Office location</span>
-                            <input type="text" name="street_name" class="form-control" placeholder="Street">
+                            <input type="text" name="street_name" class="form-control" placeholder="Street"
+                            value="{% if organization.street %} {{organization.street}} {% endif %}">
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" name="city" class="form-control" placeholder="City">
+                            <input type="text" name="city" class="form-control" placeholder="City"
+                            value="{% if organization.city %} {{organization.city}} {% endif %}">
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" name="province" class="form-control" placeholder="Province">
+                            <input type="text" name="province" class="form-control" placeholder="Province"
+                            value="{% if organization.province %} {{organization.province}} {% endif %}">
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" name="country" class="form-control" placeholder="Country">
+                            <input type="text" name="country" class="form-control" placeholder="Country"
+                            value="{% if organization.country %} {{organization.country}} {% endif %}">
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" name="postal_code" class="form-control" placeholder="Postal Code">
+                            <input type="text" name="postal_code" class="form-control" placeholder="Postal Code"
+                            value="{% if organization.postal_code %} {{organization.postal_code}} {% endif %}">
                         </div>
                         <div class="form-row p-2 text-center">
                             <input type="button" name="previous"
                                    class="previous action-button-previous btn btn-primary"
-                                    value="Previous" id="previous-tab-2"/>
+                                   value="Previous" id="previous-tab-2"/>
                             <input type="button" name="next" class="next action-button btn btn-primary"
-                                    value="Next" id="next-tab-2"/>
+                                   value="Next" id="next-tab-2"/>
                         </div>
                     </div>
                 </div>
@@ -125,20 +139,23 @@
                     <div class="card-body">
                         <div class="form-row p-2">
                             <span>What is the most appropriate contact info for the atheletes and the organizer to contact you?</span>
-                            <input type="text" name="email" class="form-control" placeholder="Email">
+                            <input type="text" name="email" class="form-control" placeholder="Email"
+                            value="{% if organization.email %} {{organization.email}} {% endif %}">
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" name="phone" class="form-control" placeholder="Phone">
+                            <input type="text" name="phone" class="form-control" placeholder="Phone"
+                            value="{% if organization.phone %} {{organization.phone}} {% endif %}">
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" name="website" class="form-control" placeholder="Website">
+                            <input type="text" name="website" class="form-control" placeholder="Website"
+                            value="{% if organization.website %} {{organization.website}} {% endif %}">
                         </div>
                         <div class="form-row p-2 text-center">
                             <input type="button" name="previous"
                                    class="previous action-button-previous btn btn-primary"
-                                    value="Previous" id="previous-tab-3"/>
+                                   value="Previous" id="previous-tab-3"/>
                             <input type="button" name="next" class="next action-button btn btn-primary"
-                                    value="Next" id="next-tab-3"/>
+                                   value="Next" id="next-tab-3"/>
                         </div>
                     </div>
                 </div>
@@ -152,29 +169,32 @@
                     <div class="card-body">
                         <div class="form-row p-2">
                             <span>Your focus?</span>
-                            <input type="radio" name="gender" id='male' value='male'/>
-                            <label for='male'>Male</label>
-                            <input type="radio" name="gender" id='female' value='female'/>
-                            <label for='female'>Female</label>
-                            <input type="radio" name="gender" id='coed' value='coed'/>
-                            <label for='male'>Coed</label>
+                            <input type="radio" id="Male" name="gender"
+                            {% if organization.gender_focus == "Male" %} checked {% endif %}>Male</input>
+                            <input type="radio" id="Female" name="gender"
+                            {% if organization.gender_focus == "Female" %} checked {% endif %}> Female </input>
+                            <input type="radio" id="Coed" name="gender"
+                            {% if organization.gender_focus == "Coed" %} checked {% endif %}> Coed </input>
                         </div>
                         <div class="form-row p-2">
                             <select id="select-state" name='age_group' class="form-select"
                                     placeholder="Pick a state...">
                                 <option value="">Select an Age group</option>
-                                <option value="youth">youth</option>
-                                <option value="adult">adult</option>
-                                <option value="senior">senior</option>
+                                <option value="Youth"
+                                {% if organization.age_group == "Youth" %} selected {% endif %}>Youth</option>
+                                <option value="Adult"
+                                {% if organization.age_group == "Adult" %} selected {% endif %}>Adult</option>
+                                <option value="Senior"
+                                {% if organization.age_group == "Senior" %} selected {% endif %}>Senior</option>
                             </select>
                         </div>
                         <div class="form-row p-2 text-center">
                             <input type="button" name="previous"
                                    class="previous action-button-previous btn btn-primary"
-                                    value="Previous" id="previous-tab-4"/>
+                                   value="Previous" id="previous-tab-4"/>
 
                             <input type="submit" name="submit" class="submit action-button btn btn-primary"
-                                    value="Submit"/>
+                                   value="Submit"/>
                         </div>
                     </div>
                 </div>
@@ -244,6 +264,8 @@
 #progressbar li.active:after {
     background: #ff6f3d
 }
+
+
 
 
 </style>
@@ -638,6 +660,8 @@ $('.radio').change(function() {
     }
   }
 }
+
+
 
 
 

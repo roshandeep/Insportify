@@ -47,7 +47,12 @@ def user_profile(request):
     context = {
         'user': request.user
     }
-    if request.method == "POST":
+    if request.method == "GET":
+        individual = Individual.objects.get(user=request.user)
+        context['individual'] = individual
+        return render(request, 'registration/individual_view.html', context)
+
+    elif request.method == "POST":
         response = request.POST.dict()
         obj = Individual()
         obj.user = request.user
@@ -77,6 +82,11 @@ def organization_profile(request):
     context = {
         'user': request.user
     }
+    if request.method == "GET":
+        organization = Organization.objects.get(user=request.user)
+        context['organization'] = organization
+        return render(request, 'registration/organization_view.html', context)
+
     if request.method == "POST":
         response = request.POST.dict()
         obj = Organization()

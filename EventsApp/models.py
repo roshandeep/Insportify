@@ -79,6 +79,9 @@ class Organization(models.Model):
     gender_focus = models.CharField(max_length=50, null=True)
     age_group = models.CharField(max_length=50, null=True)
 
+    def __str__(self):
+        return self.organization_name
+
 
 class EventsappMasterTable(models.Model):
     id = models.BigAutoField(primary_key=True)
@@ -114,16 +117,6 @@ class EventsappTestCity(models.Model):
         db_table = 'EventsApp_test_city'
 
 
-class EventsappTestPerson(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    name = models.CharField(max_length=30, blank=True, null=True)
-    birthdate = models.DateField(blank=True, null=True)
-    test_city = models.ForeignKey(EventsappTestCity, models.DO_NOTHING, blank=True, null=True)
-    test_country = models.ForeignKey(EventsappMasterTable, models.DO_NOTHING, blank=True, null=True)
-
-    class Meta:
-        managed = True
-        db_table = 'EventsApp_test_person'
 
 
 class IsEventTypeMaster(models.Model):
@@ -239,36 +232,6 @@ class IsNotificationMaster(models.Model):
         db_table = 'is_notification_master'
 
 
-class IsSportsCategory(models.Model):
-    sc_id = models.IntegerField()
-    sc_sports_catgeory = models.CharField(max_length=100)
-    sc_created_by = models.IntegerField(blank=True, null=True)
-    sc_created_date = models.DateTimeField(blank=True, null=True)
-    sc_updated_by = models.IntegerField(blank=True, null=True)
-    sc_updated_date = models.DateTimeField(blank=True, null=True)
-    is_active = models.CharField(max_length=1, blank=True, null=True)
-
-    class Meta:
-        managed = True
-        db_table = 'is_sports_category'
-
-
-class IsSportsDetails(models.Model):
-    sd_id = models.IntegerField()
-    sd_fk_sc_id = models.IntegerField(blank=True, null=True)
-    sd_fk_sm_id = models.IntegerField(blank=True, null=True)
-    sd_fk_sp_id = models.IntegerField(blank=True, null=True)
-    sd_created_by = models.IntegerField(blank=True, null=True)
-    sd_created_date = models.DateTimeField(blank=True, null=True)
-    sd_updated_by = models.IntegerField(blank=True, null=True)
-    sd_updated_date = models.DateTimeField(blank=True, null=True)
-    is_active = models.CharField(max_length=1, blank=True, null=True)
-
-    class Meta:
-        managed = True
-        db_table = 'is_sports_details'
-
-
 class IsSportsMaster(models.Model):
     sm_id = models.IntegerField()
     sm_sports_name = models.CharField(max_length=100)
@@ -283,33 +246,6 @@ class IsSportsMaster(models.Model):
         managed = True
         db_table = 'is_sports_master'
 
-
-class IsSportsPosition(models.Model):
-    sp_id = models.IntegerField()
-    sp_fk_sc_id = models.IntegerField(blank=True, null=True)
-    sp_position_name = models.CharField(max_length=100)
-    sp_created_by = models.IntegerField(blank=True, null=True)
-    sp_created_date = models.DateTimeField(blank=True, null=True)
-    sp_updated_by = models.IntegerField(blank=True, null=True)
-    sp_updated_date = models.DateTimeField(blank=True, null=True)
-    is_active = models.CharField(max_length=1, blank=True, null=True)
-
-    class Meta:
-        managed = True
-        db_table = 'is_sports_position'
-
-
-class IsSportsProficiency(models.Model):
-    spc_id = models.IntegerField(blank=False, null=False)
-    spc_prof_name = models.CharField(max_length=100, blank=True, null=True)
-    spc_created_date = models.DateTimeField(blank=True, null=True)
-    spc_updated_by = models.IntegerField(blank=True, null=True)
-    spc_updated_date = models.DateTimeField(blank=True, null=True)
-    is_active = models.CharField(max_length=1, blank=True, null=True)
-
-    class Meta:
-        managed = True
-        db_table = 'is_sports_proficiency'
 
 
 class IsVenueMaster(models.Model):

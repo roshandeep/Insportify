@@ -28,42 +28,55 @@
             <fieldset class="p-2" id="tab-1">
                 <div class="card shadow">
                     <h4 class="card-header text-white text-center"
-                        style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">Tell us little
+                        style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">
+                        Tell us little
                         about you</h4>
                     <div class="card-body">
                         <div class="form-row p-2">
-                            <input type="text" class="form-control" name="first_name" placeholder="First Name"/>
+                            <input type="text" class="form-control" name="first_name" placeholder="First Name"
+                                   value="{% if individual.first_name %} {{individual.first_name}} {% else %} None {% endif %}"/>
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" class="form-control" name="last_name" placeholder="Last Name"/>
+                            <input type="text" class="form-control" name="last_name" placeholder="Last Name"
+                                   value="{% if individual.last_name %} {{individual.last_name}} {% endif %}"/>
                         </div>
                         <div class="form-row p-2">
-                            <input placeholder="DOB" class="textbox-n form-control" type="text" onfocus="(this.type='date')" onblur="(this.type='text')" name="dob" />
+                            <input placeholder="DOB" class="textbox-n form-control" type="text"
+                                   onfocus="(this.type='date')" onblur="(this.type='text')" name="dob"
+                                   value="{% if individual.dob %} {{individual.dob}} {% endif %}"/>
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" class="form-control" name="contact_email" placeholder="Contact Email"/>
+                            <input type="text" class="form-control" name="contact_email" placeholder="Contact Email"
+                            value="{% if individual.email %} {{individual.email}} {% endif %}"/>
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" class="form-control" name="mobile" placeholder="Mobile"/>
+                            <input type="text" class="form-control" name="mobile" placeholder="Mobile"
+                            value="{% if individual.phone %} {{individual.phone}} {% endif %}"/>
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" class="form-control" name="provider" placeholder="Provider"/>
+                            <input type="text" class="form-control" name="provider" placeholder="Provider"
+                            value="{% if individual.provider %} {{individual.provider}} {% endif %}"/>
                         </div>
                         <div class="form-row p-2">
                             <label>I am interest in participating in ?</label>
-                            <input type="radio" id="Male" name="interest_gender">Male</input>
-                            <input type="radio" id="Female" name="interest_gender"> Female </input>
-                            <input type="radio" id="Coed" name="interest_gender"> Coed </input>
+                            <input type="radio" id="Male" name="interest_gender"
+                            {% if individual.participation_interest == "Male" %} checked {% endif %}>Male</input>
+                            <input type="radio" id="Female" name="interest_gender"
+                            {% if individual.participation_interest == "Female" %} checked {% endif %}> Female </input>
+                            <input type="radio" id="Coed" name="interest_gender"
+                            {% if individual.participation_interest == "Coed" %} checked {% endif %}> Coed </input>
                         </div>
                         <div class="form-row p-2">
                             <label>Have you ever suffered concussion?</label>
-                            <input type="radio" id="Yes" name="is_concussion">Yes</input>
-                            <input type="radio" value="" id="No" name="is_concussion"> No</input>
+                            <input type="radio" id="Yes" name="is_concussion"
+                            {% if individual.concussion == "Yes" %} checked {% endif %}>Yes</input>
+                            <input type="radio" id="No" name="is_concussion"
+                            {% if individual.concussion == "No" %} checked {% endif %}> No</input>
                         </div>
 
                         <div class="form-row p-2 text-center">
                             <input type="button" name="next" class="next action-button btn btn-primary"
-                                    value="Next" id="next-tab-1"/>
+                                   value="Next" id="next-tab-1"/>
                         </div>
                     </div>
                 </div>
@@ -77,17 +90,20 @@
                         Hey {{ user.first_name }} list your locations where you can participate in </h4>
                     <label></label>
                     <div class="form-row p-2">
-                        <input type="text" class="form-control" name="city" placeholder="City"/>
+                        <input type="text" class="form-control" name="city" placeholder="City"
+                               value="{% if individual.city %} {{individual.city}} {% endif %}"/>
                     </div>
                     <div class="form-row p-2">
-                        <input type="text" class="form-control" name="province" placeholder="Province"/>
+                        <input type="text" class="form-control" name="province" placeholder="Province"
+                               value="{% if individual.province %} {{individual.province}} {% endif %}"/>
                     </div>
                     <div class="form-row p-2">
-                        <input type="text" class="form-control" name="Country" placeholder="Country"/>
+                        <input type="text" class="form-control" name="Country" placeholder="Country"
+                               value="{% if individual.country %} {{individual.country}} {% endif %}"/>
                     </div>
-                    <div class="form-row p-2">
+                    <div class="form-row p-2 text-center">
                         <div id="input_fields_wrap">
-                            <button class="btn btn-primary" 
+                            <button class="btn btn-primary"
                                     id="add_field_button">Add location
                             </button>
                         </div>
@@ -95,9 +111,9 @@
                     <div class="form-row p-2 text-center">
                         <input type="button" name="previous"
                                class="previous action-button-previous btn btn-primary"
-                                value="Previous" id="previous-tab-2"/>
+                               value="Previous" id="previous-tab-2"/>
                         <input type="button" name="next" class="next action-button btn btn-primary"
-                                value="Next" id="next-tab-2"/>
+                               value="Next" id="next-tab-2"/>
                     </div>
                 </div>
             </fieldset>
@@ -140,9 +156,9 @@
                                 <option>Pro-Bound</option>
                             </select>
                         </div>
-                        <div class="form-row p-2">
+                        <div class="form-row p-2 text-center">
                             <div id="input_fields">
-                                <button class="btn btn-primary" 
+                                <button class="btn btn-primary"
                                         id="add_button">Add Position
                                 </button>
                             </div>
@@ -150,10 +166,10 @@
                         <div class="form-row p-2 text-center">
                             <input type="button" name="previous"
                                    class="previous action-button-previous btn btn-primary"
-                                    value="Previous" id="previous-tab-3"/>
+                                   value="Previous" id="previous-tab-3"/>
 
                             <input type="submit" name="submit" class="submit action-button btn btn-primary"
-                                    value="Submit"/>
+                                   value="Submit"/>
                         </div>
                     </div>
                 </div>
@@ -161,7 +177,6 @@
         </form>
     </div>
 </div>
-
 
 
 <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
@@ -220,6 +235,7 @@
 #progressbar li.active:after {
     background: #ff6f3d
 }
+
 
 
 
@@ -560,6 +576,7 @@ $(function () {
 $('.radio').change(function() {
   $('#custom_amount').prop('disabled', !$(this).is('.other'));
 });
+
 
 
 
