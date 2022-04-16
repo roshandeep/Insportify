@@ -1,3 +1,4 @@
+import openpyxl
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
@@ -7,7 +8,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
 
 from .forms import MultiStepForm, UserForm
-from .models import IsSportsMaster, IsVenueMaster, master_table, Individual, Organization
+from .models import master_table, Individual, Organization, Venues, SportsCategory
 from django.views.generic import View, FormView
 from .models import IsEventTypeMaster
 
@@ -117,16 +118,35 @@ class UserProfileView(FormView):
 
 
 def home(request):
-    results = IsEventTypeMaster.objects.values('etm_id', 'etm_category')
-    sports = IsSportsMaster.objects.values('sm_id', 'sm_sports_name')
-    venues = IsVenueMaster.objects.values('vm_id', 'vm_name')
+    sports = SportsCategory.objects.values('pk', 'sports_catgeory_text')
+    venues = Venues.objects.values('pk', 'vm_name')
+    load_venues_excel()
     events = master_table.objects.all()
     events = [events[i:i + 3] for i in range(0, len(events), 3)]
     context = {
-        'event_types': results,
         'sports_list': sports,
         'venues_list': venues,
         'events': events
     }
     html_template = loader.get_template('EventsApp/home.html')
     return HttpResponse(html_template.render(context, request))
+
+
+def load_venues_excel():
+    path = "./venue.xlsx"
+    wb_obj = openpyxl.load_workbook(path)
+    sheet_obj = wb_obj.active
+    # Venues.objects.all().delete()
+    for i in range(1, sheet_obj.max_row+1):
+        if sheet_obj.cell(row=i, column=5).value.strip() == "ON":
+            vm_name = sheet_obj.cell(row=i, column=1).value.strip()
+            vm_venue_description = sheet_obj.cell(row=i, column=2).value.strip()
+            vm_venue_street = sheet_obj.cell(row=i, column=3).value.strip()
+            vm_venuecity = sheet_obj.cell(row=i, column=4).value.strip()
+            vm_venue_province = sheet_obj.cell(row=i, column=5).value.strip()
+            vm_venue_country = sheet_obj.cell(row=i, column=6).value.strip()
+            vm_venue_zip = sheet_obj.cell(row=i, column=7).value.strip()
+            obj = Venues(vm_name=vm_name, vm_venue_description=vm_venue_description, vm_venue_street=vm_venue_street,
+                         vm_venuecity=vm_venuecity, vm_venue_province=vm_venue_province,
+                         vm_venue_country=vm_venue_country, vm_venue_zip=vm_venue_zip)
+            # obj.save()

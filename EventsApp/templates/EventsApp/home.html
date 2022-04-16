@@ -33,16 +33,22 @@
     <div class="col">
         <select class="form-select" name="events-types">
             <option value="" selected="selected">Select Event Type</option>
-            {% for results in event_types %}
-            <option value="{{results.etm_id}}">{{results.etm_category}}</option>
-            {% endfor %}
+            <option value="Camp">Camp</option>
+            <option value="Charity">Charity</option>
+            <option value="Conditioning">Conditioning</option>
+            <option value="Development">Development</option>
+            <option value="Game/Session">Game/Session</option>
+            <option value="Online">Online</option>
+            <option value="Registration">Registration</option>
+            <option value="Social">Social</option>
+            <option value="Tournament">Tournament</option>
         </select>
     </div>
     <div class="col">
         <select class="form-select" name="sports">
             <option value="" selected="selected">Select Sport</option>
             {% for sports in sports_list %}
-            <option value="{{sports.sm_id}}">{{sports.sm_sports_name}}</option>
+            <option value="{{sports.pk}}">{{sports.sports_catgeory_text}}</option>
             {% endfor %}
         </select>
     </div>
@@ -54,7 +60,7 @@
         <select class="form-select" name="venues">
             <option value="" selected="selected">Select Venue</option>
             {% for venues in venues_list %}
-            <option value="{{venues.vm_id}}">{{venues.vm_name}}</option>
+            <option value="{{venues.pk}}">{{venues.vm_name}}</option>
             {% endfor %}
         </select>
     </div>

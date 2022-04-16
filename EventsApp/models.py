@@ -31,7 +31,6 @@ class master_table(models.Model):
         db_table = 'master_table'
 
 
-
 class User(AbstractUser):
     is_individual = models.BooleanField(default=False)
     is_organization = models.BooleanField(default=False)
@@ -117,8 +116,6 @@ class EventsappTestCity(models.Model):
         db_table = 'EventsApp_test_city'
 
 
-
-
 class IsEventTypeMaster(models.Model):
     etm_id = models.IntegerField()
     etm_category = models.CharField(max_length=100, blank=True, null=True)
@@ -159,21 +156,6 @@ class IsEventsDetails(models.Model):
         db_table = 'is_events_details'
 
 
-class IsEventsMaster(models.Model):
-    em_id = models.IntegerField()
-    em_title = models.CharField(max_length=100, blank=True, null=True)
-    em_desc = models.CharField(max_length=250, blank=True, null=True)
-    em_fk_etm_id = models.IntegerField(blank=True, null=True)
-    em_gender = models.CharField(max_length=10, blank=True, null=True)
-    em_isactive = models.CharField(max_length=1, blank=True, null=True)
-    em_created_date = models.DateTimeField(blank=True, null=True)
-    em_created_by = models.IntegerField(blank=True, null=True)
-    em_updated_by = models.IntegerField(blank=True, null=True)
-    em_updated_date = models.DateTimeField(blank=True, null=True)
-
-    class Meta:
-        managed = True
-        db_table = 'is_events_master'
 
 
 class IsEventsNotification(models.Model):
@@ -232,40 +214,17 @@ class IsNotificationMaster(models.Model):
         db_table = 'is_notification_master'
 
 
-class IsSportsMaster(models.Model):
-    sm_id = models.IntegerField()
-    sm_sports_name = models.CharField(max_length=100)
-    sm_created_by = models.IntegerField(blank=True, null=True)
-    sm_created_date = models.DateTimeField(blank=True, null=True)
-    sm_updated_by = models.IntegerField(blank=True, null=True)
-    sm_updated_date = models.DateTimeField(blank=True, null=True)
-    is_active = models.CharField(max_length=1, blank=True, null=True)
-    sm_fk_sc_id = models.IntegerField(blank=True, null=True)
+class Venues(models.Model):
+    vm_name = models.CharField(max_length=500, blank=True, null=True)
+    vm_venue_description = models.CharField(max_length=500, blank=True, null=True)
+    vm_venue_street = models.CharField(max_length=500, blank=True, null=True)
+    vm_venuecity = models.CharField(max_length=500, blank=True, null=True)
+    vm_venue_province = models.CharField(max_length=500, blank=True, null=True)
+    vm_venue_country = models.CharField(max_length=500, blank=True, null=True)
+    vm_venue_zip = models.CharField(max_length=500, blank=True, null=True)
 
-    class Meta:
-        managed = True
-        db_table = 'is_sports_master'
-
-
-
-class IsVenueMaster(models.Model):
-    vm_id = models.IntegerField()
-    vm_name = models.CharField(max_length=100, blank=True, null=True)
-    vm_venue_description = models.CharField(max_length=250, blank=True, null=True)
-    vm_venue_street = models.CharField(max_length=250, blank=True, null=True)
-    vm_venuecity = models.CharField(max_length=50, blank=True, null=True)
-    vm_venue_province = models.CharField(max_length=50, blank=True, null=True)
-    vm_venue_country = models.CharField(max_length=50, blank=True, null=True)
-    vm_venue_zip = models.CharField(max_length=6, blank=True, null=True)
-    vm_isactive = models.CharField(max_length=1, blank=True, null=True)
-    vm_created_by = models.IntegerField(blank=True, null=True)
-    vm_updated_by = models.IntegerField(blank=True, null=True)
-    vm_updated_date = models.DateTimeField(blank=True, null=True)
-    venu_name = models.CharField(max_length=17, blank=True, null=True)
-
-    class Meta:
-        managed = True
-        db_table = 'is_venue_master'
+    def __str__(self):
+        return self.vm_name
 
 
 class SportsCategory(models.Model):
@@ -273,7 +232,6 @@ class SportsCategory(models.Model):
 
     def __str__(self):
         return self.sports_catgeory_text
-
 
 
 class SportsType(models.Model):
