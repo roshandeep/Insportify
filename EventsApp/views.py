@@ -1,14 +1,14 @@
 import openpyxl
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.template import loader
 from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
 
 from .forms import MultiStepForm, UserForm
-from .models import master_table, Individual, Organization, Venues, SportsCategory
+from .models import master_table, Individual, Organization, Venues, SportsCategory, SportsType
 from django.views.generic import View, FormView
 from .models import IsEventTypeMaster
 
@@ -48,35 +48,77 @@ def user_profile(request):
     context = {
         'user': request.user
     }
+    sports_category = SportsCategory.objects.all()
+    sports_type = SportsType.objects.all()
+    context['sports_category'] = sports_category
+    context['sports_type'] = sports_type
+
     if request.method == "GET":
         individual = Individual.objects.get(user=request.user)
+        # print(individual.__dict__)
         context['individual'] = individual
         return render(request, 'registration/individual_view.html', context)
 
     elif request.method == "POST":
+        individual = Individual.objects.filter(user=request.user)
         response = request.POST.dict()
-        obj = Individual()
-        obj.user = request.user
-        obj.first_name = response["first_name"]
-        obj.last_name = response["last_name"]
-        obj.phone = response["mobile"]
-        obj.email = response["contact_email"]
-        obj.provider = response["provider"]
-        obj.dob = response["dob"]
-        obj.concussion = response["is_concussion"]
-        obj.participation_interest = response["interest_gender"]
-        obj.city = response["city"]
-        obj.province = response["province"]
-        obj.country = response["Country"]
-        obj.sports_category = response["sport_category"]
-        obj.sports_type = response["sport_type"]
-        obj.sports_position = response["position"]
-        obj.sports_skill = response["skill"]
-        obj.save()
+        if individual.exists():
+            individual = Individual.objects.get(user=request.user)
+            individual.user = request.user
+            individual.first_name = response["first_name"].strip()
+            individual.last_name = response["last_name"].strip()
+            individual.phone = response["mobile"].strip()
+            individual.email = response["contact_email"].strip()
+            individual.provider = response["provider"].strip()
+            individual.dob = response["dob"].strip()
+            individual.concussion = response["is_concussion"].strip()
+            individual.participation_interest = response["interest_gender"].strip()
+            individual.city = response["city"].strip()
+            individual.province = response["province"].strip()
+            individual.country = response["Country"].strip()
+            individual.sports_category = response["sport_category"].strip()
+            individual.sports_type = response["sport_type"].strip()
+            individual.sports_position = response["position"].strip()
+            individual.sports_skill = response["skill"].strip()
+            individual.save()
+            context['individual'] = individual
+        else:
+            obj = Individual()
+            obj.user = request.user
+            obj.first_name = response["first_name"].strip()
+            obj.last_name = response["last_name"].strip()
+            obj.phone = response["mobile"].strip()
+            obj.email = response["contact_email"].strip()
+            obj.provider = response["provider"].strip()
+            obj.dob = response["dob"].strip()
+            obj.concussion = response["is_concussion"].strip()
+            obj.participation_interest = response["interest_gender"].strip()
+            obj.city = response["city"].strip()
+            obj.province = response["province"].strip()
+            obj.country = response["Country"].strip()
+            obj.sports_category = response["sport_category"].strip()
+            obj.sports_type = response["sport_type"].strip()
+            obj.sports_position = response["position"].strip()
+            obj.sports_skill = response["skill"].strip()
+            obj.save()
+            context['individual'] = obj
         messages.success(request, 'Individual details updated!')
 
     return render(request, 'registration/individual_view.html', context)
 
+
+def get_selected_sports_type(request):
+    data = {}
+    if request.method == "POST":
+        selected_category = request.POST['selected_category_text']
+        try:
+            print(selected_category)
+            selected_type = SportsType.objects.filter(sports_category__sports_catgeory_text=selected_category)
+            print(selected_type)
+        except Exception:
+            data['error_message'] = 'error'
+            return JsonResponse(data)
+        return JsonResponse(list(selected_type.values('pk', 'sports_type_text')), safe=False)
 
 @login_required
 def organization_profile(request):
@@ -85,28 +127,51 @@ def organization_profile(request):
     }
     if request.method == "GET":
         organization = Organization.objects.get(user=request.user)
+        print(organization.__dict__)
         context['organization'] = organization
         return render(request, 'registration/organization_view.html', context)
 
     if request.method == "POST":
+        organization = Organization.objects.filter(user=request.user)
         response = request.POST.dict()
-        obj = Organization()
-        obj.user = request.user
-        obj.type_of_organization = response["type_of_organization"]
-        obj.organization_name = response["company_name"]
-        obj.parent_organization_name = response["parent_organization"]
-        obj.registration_no = response["registration"]
-        obj.street = response["street_name"]
-        obj.city = response["city"]
-        obj.province = response["province"]
-        obj.country = response["country"]
-        obj.postal_code = response["postal_code"]
-        obj.email = response["email"]
-        obj.phone = response["phone"]
-        obj.website = response["website"]
-        obj.gender_focus = response["gender"]
-        obj.age_group = response["age_group"]
-        obj.save()
+        if organization.exists():
+            organization = Organization.objects.get(user=request.user)
+            organization.user = request.user
+            organization.type_of_organization = response["type_of_organization"].strip()
+            organization.organization_name = response["company_name"].strip()
+            organization.parent_organization_name = response["parent_organization"].strip()
+            organization.registration_no = response["registration"].strip()
+            organization.street = response["street_name"].strip()
+            organization.city = response["city"].strip()
+            organization.province = response["province"].strip()
+            organization.country = response["country"].strip()
+            organization.postal_code = response["postal_code"].strip()
+            organization.email = response["email"].strip()
+            organization.phone = response["phone"].strip()
+            organization.website = response["website"].strip()
+            organization.gender_focus = response["gender"].strip()
+            organization.age_group = response["age_group"].strip()
+            organization.save()
+            context['organization'] = organization
+        else:
+            obj = Organization()
+            obj.user = request.user
+            obj.type_of_organization = response["type_of_organization"].strip()
+            obj.organization_name = response["company_name"].strip()
+            obj.parent_organization_name = response["parent_organization"].strip()
+            obj.registration_no = response["registration"].strip()
+            obj.street = response["street_name"].strip()
+            obj.city = response["city"].strip()
+            obj.province = response["province"].strip()
+            obj.country = response["country"].strip()
+            obj.postal_code = response["postal_code"].strip()
+            obj.email = response["email"].strip()
+            obj.phone = response["phone"].strip()
+            obj.website = response["website"].strip()
+            obj.gender_focus = response["gender"].strip()
+            obj.age_group = response["age_group"].strip()
+            obj.save()
+            context['organization'] = obj
         messages.success(request, 'Organization details updated!')
     return render(request, 'registration/organization_view.html', context)
 

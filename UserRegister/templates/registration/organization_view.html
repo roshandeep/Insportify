@@ -90,7 +90,7 @@
                             value="{% if organization.parent_organization_name %} {{organization.parent_organization_name}} {% endif %}"/>
                         </div>
                         <div class="form-row p-2">
-                            <input type="number" name="registration" class="form-control" placeholder="Registration #"
+                            <input type="text" name="registration" class="form-control" placeholder="Registration No."
                             value="{% if organization.registration_no %} {{organization.registration_no}} {% endif %}">
                         </div>
                         <div class="form-row p-2">
@@ -169,11 +169,11 @@
                     <div class="card-body">
                         <div class="form-row p-2">
                             <span>Your focus?</span>
-                            <input type="radio" id="Male" name="gender"
+                            <input type="radio" id="Male" name="gender" value="Male"
                             {% if organization.gender_focus == "Male" %} checked {% endif %}>Male</input>
-                            <input type="radio" id="Female" name="gender"
+                            <input type="radio" id="Female" name="gender" value="Female"
                             {% if organization.gender_focus == "Female" %} checked {% endif %}> Female </input>
-                            <input type="radio" id="Coed" name="gender"
+                            <input type="radio" id="Coed" name="gender" value="Coed"
                             {% if organization.gender_focus == "Coed" %} checked {% endif %}> Coed </input>
                         </div>
                         <div class="form-row p-2">
@@ -355,78 +355,16 @@ $(document).ready(function(){
 });
 
 for(y = 1900; y <= 2022; y++) {
-        var optn = document.createElement("OPTION");
-        optn.text = y;
-        optn.value = y;
-        
-        // if year is 2015 selected
-        if (y == 2022) {
-            optn.selected = true;
-        }
-        
-        document.getElementById('year').options.add(optn);
-}
-
-var subjectObject = {
-  "Front-end": {
-    "HTML": ["Links", "Images", "Tables", "Lists"],
-    "CSS": ["Borders", "Margins", "Backgrounds", "Float"],
-    "JavaScript": ["Variables", "Operators", "Functions", "Conditions"]    
-  },
-  "Back-end": {
-    "PHP": ["Variables", "Strings", "Arrays"],
-    "SQL": ["SELECT", "UPDATE", "DELETE"]
-  }
-}
-window.onload = function() {
-  var subjectSel = document.getElementById("subject");
-  var topicSel = document.getElementById("topic");
-  var chapterSel = document.getElementById("chapter");
-  for (var x in subjectObject) {
-    subjectSel.options[subjectSel.options.length] = new Option(x, x);
-  }
-  subjectSel.onchange = function() {
-    //empty Chapters- and Topics- dropdowns
-    chapterSel.length = 1;
-    topicSel.length = 1;
-    //display correct values
-    for (var y in subjectObject[this.value]) {
-      topicSel.options[topicSel.options.length] = new Option(y, y);
+    var selected_year = "{{organization.year_established}}";
+    var optn = document.createElement("OPTION");
+    optn.text = y;
+    optn.value = y;
+    if (y == selected_year) {
+        optn.selected = true;
     }
-  }
-  topicSel.onchange = function() {
-    //empty Chapters dropdown
-    chapterSel.length = 1;
-    //display correct values
-    var z = subjectObject[subjectSel.value][this.value];
-    for (var i = 0; i < z.length; i++) {
-      chapterSel.options[chapterSel.options.length] = new Option(z[i], z[i]);
-    }
-  }
+    document.getElementById('year').options.add(optn);
 }
 
-
-$(document).ready(function() {
-    $('#generate').click(function() {
-        var values = ["dog", "cat", "parrot", "rabbit"];
- 
-    var select = $('<select>').prop('id', 'pets')
-                    .prop('name', 'pets');
- 
-    $(values).each(function() {
-        select.append($("<option>")
-        .prop('value', this)
-        .text(this.charAt(0).toUpperCase() + this.slice(1)));
-    });
- 
-    var label = $("<label>").prop('for', 'pets')
-                    .text("Choose your pets: ");
- 
-    var br = $("<br>");
- 
-    $('#container').append(label).append(select).append(br);
-    })
-});
 
 $(function() {
   $('input[name="datetimes"]').daterangepicker({
@@ -462,211 +400,6 @@ $(function () {
 $('.radio').change(function() {
   $('#custom_amount').prop('disabled', !$(this).is('.other'));
 });
-
- var sportsObject = {
-    "Targeting": {
-            "Archery":[],
-            "Wheelchair Archery":[]
-          },
-    "Combat Sport": {
-           "Mauy Thai/Kick Boxing":[],
-           "Mixed Martial Arts":[],
-           "Paintball":[],
-             "Red Rover":[]
-     },
-     "Dance": {
-            "Dance":[]
-          },
-      "Combat Sport": {
-           "Aerobics":[],
-           "Gymnastics":[],
-             "Multisport":[],
-           "Park Program":[],
-           "Spin":[],
-           "Weight Training":[],
-           "Yoga":[]
-     },
-     "Football/Rugby": {
-           "Wheelchair Rugby":[],
-           "Flag Football":[],
-             "Football":[],
-           "Rugby":[],
-           "Touch Football":[]
-     },
-     "Racquet/Volleying": {
-           "Handball":[],
-           "Badminton":[],
-             "Wheelchair Badminton":[],
-           "Pickleball":[],
-           "Round Ball":[],
-           "Sitting Volleyball":[],
-           "Squash":[],
-           "Table Tennis":[],
-           "Wheelchair Table Tennis":[],
-           "Tennis":[],
-           "Wheelchair Tennis":[],
-           "Volleyball":[]
-     },
-     "Riding(Equestrian, Vehicular, Paddling)": {
-"Bobsledding":[],
-"Dog Sledding":[],
-"Luge":[],
-"Skateboarding/Scootering":[],
-"Skim Boarding":[],
-"Surfing/Wind Surfing":[],
-"Base Jumping":[],
-"BMX":[],
-"Canoeing":[],
-"Cart":[],
-"Dragon Boat":[],
-"Equestrian":[],
-"Fishing":[],
-"Indoor Skydiving":[],
-"Kayaking":[],
-"Motorcross":[],
-"Outdoor Skydiving":[],
-"Paddle Boarding":[],
-"ParaGliding/ParaSailing":[],
-"Polo":[],
-"Rafting":[],
-"Rowing":[],
-"Sailing/Boating":[]
-},
-"Running/Track/Parkour": {
-"Cross Country Running":[],
-"Discus":[],
-"High Jump":[],
-"Hurling":[],
-"Javelin":[],
-"Marathoning":[],
-"Mudder":[],
-"Parkour":[],
-"Pole Vault":[],
-"Running":[],
-"Shot Put":[],
-"Track Running":[],
-"Trekking":[]
-},
-
-"Swimming": {
-"Water Aerobics":[],
-"Water Polo":[],
-"Diving":[],
-"Scuba":[],
-"Swimming":[],
-"Synchro Swimming":[],
-},
-
-"Trampolining": {
-"Trampolining":[]
-},
-
-"Baseball": {
-  "Fastball":[],
-"Soccer Baseball":[],
-"Softball":[],
-"T-Ball":[],
-"Basketball":[],
-"Wheelchair Basketball":[],
-"Climbing":[]
-},
-
-"Climbing": {
-"Ninja Camp":[],
-"Climbing":[]
-},
-
-"Cricket": {
-"Cricket":[]
-},
-
-"Frisbee": {
-"Disk Golf":[],
-"Ultimate Frisbee":[],
-"Ultimate Para-frisbee":[]
-},
-
-"Golf": {
-"Golf":[]
-},
-
-"Hockey/Skating/Blading": {
-  "Amputee Hockey":[],
-"Ball/Floor Hockey":[],
-"Blind Hockey":[],
-"Field Hockey":[],
-"Figure Skating":[],
-"Ice Hockey":[],
-"Ice Skating":[],
-"Inline/Roller Hockey":[],
-"Ringette":[],
-"Shinny":[],
-"Sledge Hockey":[],
-"Speed Skating":[],
-"Stick & Puck":[]
-
-},
-
-"Lacrosse": {
-"Box Lacrosse":[],
-"Field Lacrosse":[],
-"Boss":[]
-},
-
-"Skiing (Water, Terrestrial, Boarding)": {
-  "Cross Country Skiing":[],
-"Downhill/Alpine":[],
-"Skiing":[],
-"Paraskiing":[],
-"Snowboarding":[]
-},
-
-"Soccer": {
-  "Beach Soccer":[],
-"Bubble Soccer":[],
-"Soccer":[],
-"ParaSoccer":[]
-
-},
-
-"Strategy": {
-"Board Game":[],
-"Panic Room":[],
-"First Responding":[]
-},
-
-"Basketball": {
-  "Basketball":[],
-"Wheelchair Basketball":[],
-
-},
-
-}
-
-
-  window.onload = function() {
-  var catgeorySel = document.getElementById("category");
-  var sportsSel = document.getElementById("sports");
-  for (var x in sportsObject) {
-    catgeorySel.options[catgeorySel.options.length] = new Option(x, x);
-  }
-  catgeorySel.onchange = function() {
-    //empty Chapters- and Topics- dropdowns
-    sportsSel.length = 1;
-    //display correct values
-    for (var y in sportsObject[this.value]) {
-      sportsSel.options[sportsSel.options.length] = new Option(y, y);
-
-    }
-  }
-}
-
-
-
-
-
-
-
 
 </script>
 

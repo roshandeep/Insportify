@@ -59,18 +59,18 @@
                         </div>
                         <div class="form-row p-2">
                             <label>I am interest in participating in ?</label>
-                            <input type="radio" id="Male" name="interest_gender"
+                            <input type="radio" id="Male" name="interest_gender" value="Male"
                             {% if individual.participation_interest == "Male" %} checked {% endif %}>Male</input>
-                            <input type="radio" id="Female" name="interest_gender"
+                            <input type="radio" id="Female" name="interest_gender" value="Female"
                             {% if individual.participation_interest == "Female" %} checked {% endif %}> Female </input>
-                            <input type="radio" id="Coed" name="interest_gender"
+                            <input type="radio" id="Coed" name="interest_gender" value="Coed"
                             {% if individual.participation_interest == "Coed" %} checked {% endif %}> Coed </input>
                         </div>
                         <div class="form-row p-2">
                             <label>Have you ever suffered concussion?</label>
-                            <input type="radio" id="Yes" name="is_concussion"
+                            <input type="radio" id="Yes" name="is_concussion" value="Yes"
                             {% if individual.concussion == "Yes" %} checked {% endif %}>Yes</input>
-                            <input type="radio" id="No" name="is_concussion"
+                            <input type="radio" id="No" name="is_concussion" value="No"
                             {% if individual.concussion == "No" %} checked {% endif %}> No</input>
                         </div>
 
@@ -128,32 +128,51 @@
                         <div class="form-row p-2">
                             <select name='sport_category' id="category" class="form-select"
                                     aria-label=".form-select-lg example">
-                                <option selected>Choose Sport Category</option>
+                                <option selected> Choose Sport Category</option>
+                                {% for sc in sports_category %}
+                                    <option value="{{sc}}">{{sc}}</option>
+                                {% endfor %}
                             </select>
                         </div>
                         <div class="form-row p-2">
                             <select name='sport_type' id="sports" class="form-select"
                                     aria-label=".form-select-lg example">
-                                <option selected disabled>Choose Sport Type</option>
+                                <option value="" selected>Choose Sport Type</option>
                             </select>
                         </div>
                         <div class="form-row p-2">
                             <select name='position' class="form-select"
                                     aria-label=".form-select-lg example">
-                                <option selected disabled>Choose position</option>
-                                <option>Athelete</option>
-                                <option>Coach</option>
-                                <option>Attendee</option>
+                                <option value=""
+                                        {% if individual.sports_position == "" %} selected {% endif %}>
+                                Choose position</option>
+                                <option value="Athelete"
+                                        {% if individual.sports_position == "Athelete" %} selected {% endif %}>
+                                Athelete</option>
+                                <option value="Coach"
+                                        {% if individual.sports_position == "Coach" %} selected {% endif %}>
+                                Coach</option>
+                                <option value="Attendee"
+                                        {% if individual.sports_position == "Attendee" %} selected {% endif %}>
+                                Attendee</option>
                             </select>
                         </div>
                         <div class="form-row p-2">
                             <select name='skill' class="form-select"
                                     aria-label=".form-select-lg example">
-                                <option selected disabled>Choose Skill</option>
-                                <option>Rookie</option>
-                                <option>Recreational</option>
-                                <option>Competitive</option>
-                                <option>Pro-Bound</option>
+                                <option value="" selected>Choose Skill</option>
+                                <option value="Rookie"
+                                        {% if individual.sports_skill == "Attendee" %} selected {% endif %}>
+                                Rookie</option>
+                                <option value="Recreational"
+                                        {% if individual.sports_skill == "Recreational" %} selected {% endif %}>
+                                Recreational</option>
+                                <option value="Competitive"
+                                        {% if individual.sports_skill == "Competitive" %} selected {% endif %}>
+                                Competitive</option>
+                                <option value="Pro-Bound"
+                                        {% if individual.sports_skill == "Pro-Bound" %} selected {% endif %}>
+                                Pro-Bound</option>
                             </select>
                         </div>
                         <div class="form-row p-2 text-center">
@@ -175,6 +194,8 @@
                 </div>
             </fieldset>
         </form>
+
+
     </div>
 </div>
 
@@ -292,6 +313,26 @@ $(document).ready(function(){
 
 });
 
+$("#category").change(function () {
+        var selected_category_value = $("#category option:selected");
+        var selected_category_text = selected_category_value.text();
+        $.ajax({
+            type: "POST",
+            url: '{% url "get_selected_sports_type" %}',
+            data: {
+                'selected_category_text': selected_category_text,
+                'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
+            },
+            success: function (data) {
+                let html_data = '';
+                data.forEach(function (data) {
+                    html_data += `<option value="${data.sports_type_text}">${data.sports_type_text}</option>`
+                });
+                $("#sports").html(html_data);
+            }
+        });
+    });
+
 
     $(document).ready(function() {
     var max_fields      = 10; //maximum input boxes allowed
@@ -344,202 +385,6 @@ $(document).ready(function(){
         x--;
     })
 });
- var sportsObject = {
-    "Targeting": {
-            "Archery":[],
-            "Wheelchair Archery":[]
-          },
-    "Combat Sport": {
-           "Mauy Thai/Kick Boxing":[],
-           "Mixed Martial Arts":[],
-           "Paintball":[],
-             "Red Rover":[]
-     },
-     "Dance": {
-            "Dance":[]
-          },
-      "Combat Sport": {
-           "Aerobics":[],
-           "Gymnastics":[],
-             "Multisport":[],
-           "Park Program":[],
-           "Spin":[],
-           "Weight Training":[],
-           "Yoga":[]
-     },
-     "Football/Rugby": {
-           "Wheelchair Rugby":[],
-           "Flag Football":[],
-             "Football":[],
-           "Rugby":[],
-           "Touch Football":[]
-     },
-     "Racquet/Volleying": {
-           "Handball":[],
-           "Badminton":[],
-             "Wheelchair Badminton":[],
-           "Pickleball":[],
-           "Round Ball":[],
-           "Sitting Volleyball":[],
-           "Squash":[],
-           "Table Tennis":[],
-           "Wheelchair Table Tennis":[],
-           "Tennis":[],
-           "Wheelchair Tennis":[],
-           "Volleyball":[]
-     },
-     "Riding(Equestrian, Vehicular, Paddling)": {
-"Bobsledding":[],
-"Dog Sledding":[],
-"Luge":[],
-"Skateboarding/Scootering":[],
-"Skim Boarding":[],
-"Surfing/Wind Surfing":[],
-"Base Jumping":[],
-"BMX":[],
-"Canoeing":[],
-"Cart":[],
-"Dragon Boat":[],
-"Equestrian":[],
-"Fishing":[],
-"Indoor Skydiving":[],
-"Kayaking":[],
-"Motorcross":[],
-"Outdoor Skydiving":[],
-"Paddle Boarding":[],
-"ParaGliding/ParaSailing":[],
-"Polo":[],
-"Rafting":[],
-"Rowing":[],
-"Sailing/Boating":[]
-},
-"Running/Track/Parkour": {
-"Cross Country Running":[],
-"Discus":[],
-"High Jump":[],
-"Hurling":[],
-"Javelin":[],
-"Marathoning":[],
-"Mudder":[],
-"Parkour":[],
-"Pole Vault":[],
-"Running":[],
-"Shot Put":[],
-"Track Running":[],
-"Trekking":[]
-},
-
-"Swimming": {
-"Water Aerobics":[],
-"Water Polo":[],
-"Diving":[],
-"Scuba":[],
-"Swimming":[],
-"Synchro Swimming":[],
-},
-
-"Trampolining": {
-"Trampolining":[]
-},
-
-"Baseball": {
-  "Fastball":[],
-"Soccer Baseball":[],
-"Softball":[],
-"T-Ball":[],
-"Basketball":[],
-"Wheelchair Basketball":[],
-"Climbing":[]
-},
-
-"Climbing": {
-"Ninja Camp":[],
-"Climbing":[]
-},
-
-"Cricket": {
-"Cricket":[]
-},
-
-"Frisbee": {
-"Disk Golf":[],
-"Ultimate Frisbee":[],
-"Ultimate Para-frisbee":[]
-},
-
-"Golf": {
-"Golf":[]
-},
-
-"Hockey/Skating/Blading": {
-  "Amputee Hockey":[],
-"Ball/Floor Hockey":[],
-"Blind Hockey":[],
-"Field Hockey":[],
-"Figure Skating":[],
-"Ice Hockey":[],
-"Ice Skating":[],
-"Inline/Roller Hockey":[],
-"Ringette":[],
-"Shinny":[],
-"Sledge Hockey":[],
-"Speed Skating":[],
-"Stick & Puck":[]
-
-},
-
-"Lacrosse": {
-"Box Lacrosse":[],
-"Field Lacrosse":[],
-"Boss":[]
-},
-
-"Skiing (Water, Terrestrial, Boarding)": {
-  "Cross Country Skiing":[],
-"Downhill/Alpine":[],
-"Skiing":[],
-"Paraskiing":[],
-"Snowboarding":[]
-},
-
-"Soccer": {
-  "Beach Soccer":[],
-"Bubble Soccer":[],
-"Soccer":[],
-"ParaSoccer":[]
-
-},
-
-"Strategy": {
-"Board Game":[],
-"Panic Room":[],
-"First Responding":[]
-},
-
-"Basketball": {
-  "Basketball":[],
-"Wheelchair Basketball":[],
-
-},
-
-}
-
-  window.onload = function() {
-  var catgeorySel = document.getElementById("category");
-  var sportsSel = document.getElementById("sports");
-  for (var x in sportsObject) {
-    catgeorySel.options[catgeorySel.options.length] = new Option(x, x);
-  }
-  catgeorySel.onchange = function() {
-    //empty Chapters- and Topics- dropdowns
-    sportsSel.length = 1;
-    //display correct values
-    for (var y in sportsObject[this.value]) {
-      sportsSel.options[sportsSel.options.length] = new Option(y, y);
-
-    }
-  }
-}
 
 
 $(function() {
