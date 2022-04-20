@@ -62,6 +62,7 @@ def user_profile(request):
     elif request.method == "POST":
         individual = Individual.objects.filter(user=request.user)
         response = request.POST.dict()
+        print(response)
         if individual.exists():
             individual = Individual.objects.get(user=request.user)
             individual.user = request.user
@@ -119,6 +120,18 @@ def get_selected_sports_type(request):
             data['error_message'] = 'error'
             return JsonResponse(data)
         return JsonResponse(list(selected_type.values('pk', 'sports_type_text')), safe=False)
+
+
+def get_sports_category(request):
+    data = {}
+    if request.method == "GET":
+        try:
+            selected_type = SportsCategory.objects.all()
+        except Exception:
+            data['error_message'] = 'error'
+            return JsonResponse(data)
+        return JsonResponse(list(selected_type.values('pk', 'sports_catgeory_text')), safe=False)
+
 
 @login_required
 def organization_profile(request):

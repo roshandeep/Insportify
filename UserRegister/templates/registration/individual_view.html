@@ -361,72 +361,85 @@ $("#category").change(function () {
 });
 
     $(document).ready(function() {
-    var max_fields      = 10; //maximum input boxes allowed
-    var wrapper         = $("#input_fields"); //Fields wrapper
-    var add_button      = $("#add_button"); //Add button ID
+    var max_fields      = 4;
+    var wrapper         = $("#input_fields");
+    var add_button      = $("#add_button");
 
-    var x = 1; //initlal text box count
+    var x = 1;
 
 
-   $(add_button).click(function(e){ //on add input button click
+   $(add_button).click(function(e){
         e.preventDefault();
-        if(x < max_fields){ //max input box allowed
+        if(x < max_fields){
+            var category_id = "category_" + x;
+            var type_id = "type_" + x;
+            var position_id = "position_" + x;
 
-             //text box increment
-            $(wrapper).append('<div><select name="sport_category" id="category" class="form-select" aria-label=".form-select-lg example"><option selected disabled>Choose Sport Category</option></select><select name="sport_types" id="sports" class="form-select" aria-label=".form-select-lg example"><option selected disabled>Choose Sport Type</option></select><select name="position" class="form-select" aria-label=".form-select-lg example"><option selected disabled>Choose position</option><option>Athelete</option><option>Coach</option><option>Attendee</option><a href="#" class="remove_field">Remove</a></div>'); //add input box
+            var html='';
+            html += '<div>'
+            html += '<select name="' + category_id + '" id="' + category_id + '" class="form-select" onchange="populate_sportstype()">'
+            html += '<option selected disabled>Choose Sport Category</option></select>'
+            html += '<select name="' + type_id + '" id="' + type_id + '" class="form-select">'
+            html += '<option selected disabled>Choose Sport Type</option>'
+            html += '</select>'
+            html += '<select name="' + position_id + '" id="' + position_id + '" class="form-select">'
+            html += '<option selected disabled>Choose position</option>'
+            html += '<option>Athelete</option><option>Coach</option>'
+            html += '<option>Attendee</option>'
+            html += '</select>'
+            html += '<a href="#" class="remove_field">Remove</a>'
+            html += '</div>'
+            $(wrapper).append(html);
             x++;
+            populate_sportscategory(category_id)
       }
     });
 
-    $(wrapper).on("click",".remove_field", function(e){ //user click on remove text
-
+    $(wrapper).on("click",".remove_field", function(e){
         e.preventDefault();
         $(this).parent('div').remove();
         x--;
     })
-});
 
-
-$(function() {
-  $('input[name="datetimes"]').daterangepicker({
-    timePicker: true,
-    startDate: moment().startOf('hour'),
-    endDate: moment().startOf('hour').add(32, 'hour'),
-    locale: {
-      format: 'MM/DD/YYYY hh:mm A'
+   function populate_sportscategory(category_id) {
+    $.ajax({
+        type: "GET",
+        url: '{% url "get_sports_category" %}',
+        data: {
+            'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
+        },
+        success: function (data) {
+            let html_data = '';
+            data.forEach(function (data) {
+                html_data += `<option value="${data.sports_catgeory_text}">${data.sports_catgeory_text}</option>`
+            });
+            $("#"+category_id).html(html_data);
+        }
+    });
     }
-  });
+
+
 });
 
-
-$(function () {
-        $("input[name='event_cost']").click(function () {
-            if ($("#chkYes").is(":checked")) {
-                $("#dvPassport").show();
-            } else {
-                $("#dvPassport").hide();
-            }
+function populate_sportstype(){
+    var selected_category_value = $("#category_1 option:selected");
+    var selected_category_text = selected_category_value.text();
+    $.ajax({
+    type: "POST",
+    url: '{% url "get_selected_sports_type" %}',
+    data: {
+        'selected_category_text': selected_category_text,
+        'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
+    },
+    success: function (data) {
+        let html_data = '';
+        data.forEach(function (data) {
+            html_data += `<option value="${data.sports_type_text}">${data.sports_type_text}</option>`
         });
-    });
-$(function () {
-        $("input[name='position_price']").click(function () {
-            if ($("#chkYes1").is(":checked")) {
-                $("#dvPassport1").show();
-            } else {
-                $("#dvPassport1").hide();
-            }
-        });
-    });
-
-$('.radio').change(function() {
-  $('#custom_amount').prop('disabled', !$(this).is('.other'));
+        $("#type_1").html(html_data);
+    }
 });
-
-
-
-
-
-
+}
 
 </script>
 
