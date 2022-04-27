@@ -1,20 +1,19 @@
+import json
+
 import openpyxl
 import stripe
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
 from django.template import loader
-from django.shortcuts import render, redirect
-from django.http import HttpResponseRedirect
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy, reverse
-from django.views import generic
 from django.views.decorators.csrf import csrf_exempt
 
 from Insportify import settings
 from .forms import MultiStepForm, UserForm
 from .models import master_table, Individual, Organization, Venues, SportsCategory, SportsType
 from django.views.generic import View, FormView
-from .models import IsEventTypeMaster
 
 
 @login_required
@@ -44,8 +43,11 @@ def all_events(request):
 @login_required
 def event_by_id(request, event_id):
     event = master_table.objects.get(pk=event_id)
-    print(event.description)
-    return render(request, 'EventsApp/event_detail.html', {'event': event})
+    context = {
+        'STRIPE_PUBLISHABLE_KEY': settings.STRIPE_PUBLISHABLE_KEY,
+        'event': event
+    }
+    return render(request, 'EventsApp/event_detail.html', context)
 
 
 @login_required
@@ -215,46 +217,41 @@ def home(request):
     return HttpResponse(html_template.render(context, request))
 
 
-def order_summary(request, pk):
-    event = master_table.objects.get(pk=pk)
-    context = {
-        'STRIPE_PUBLISHABLE_KEY': settings.STRIPE_PUBLISHABLE_KEY,
-        'event': event,
-    }
+# def order_summary(request, pk):
+#     event = master_table.objects.get(pk=pk)
+#     context = {
+#         'STRIPE_PUBLISHABLE_KEY': settings.STRIPE_PUBLISHABLE_KEY,
+#         'event': event,
+#     }
+#
+#     return render(request, "EventsApp/checkout.html", context)
 
-    return render(request, "EventsApp/checkout.html", context)
+@csrf_exempt
+def create_checkout_session(request, id):
 
-
-class CheckoutSessionView(View):
-    def post(self, request, *args, **kwargs):
-        event_id = self.kwargs["pk"]
-        event = master_table.objects.get(pk=event_id)
-        unit_amount = round(event.position_cost/100)
-
-        stripe.api_key = settings.STRIPE_SECRET_KEY
-        stripe_pk = settings.STRIPE_PUBLISHABLE_KEY
-        DOMAIN = "http://127.0.0.1:8000"
-        checkout_session = stripe.checkout.Session.create(
-            payment_method_types=['card'],
-            line_items=[
-                {
-                    'price_data': {
-                        'currency': 'cad',
-                        'unit_amount': unit_amount,
-                        'product_data': {
-                            'name': event.event_title
-                        }
+    event = get_object_or_404(master_table, pk=id)
+    unit_amount = round(event.position_cost)
+    stripe.api_key = settings.STRIPE_SECRET_KEY
+    checkout_session = stripe.checkout.Session.create(
+        payment_method_types=['card'],
+        line_items=[
+            {
+                'price_data': {
+                    'currency': 'usd',
+                    'product_data': {
+                        'name': event.event_title,
                     },
-                    'quantity': 1,
+                    'unit_amount': int(unit_amount),
                 },
-            ],
-            mode='payment',
-            success_url=DOMAIN + "/payment-success/",
-            cancel_url=DOMAIN + "/payment-cancel/",
-        )
-        return JsonResponse({
-            'id': checkout_session.id
-        })
+                'quantity': 1,
+            }
+        ],
+        mode='payment',
+        success_url=request.build_absolute_uri(reverse('EventsApp:payment-success')) + "?session_id={CHECKOUT_SESSION_ID}",
+        cancel_url=request.build_absolute_uri(reverse('EventsApp:payment-cancel')),
+    )
+    return JsonResponse({'sessionId': checkout_session.id})
+
 
 
 def paymentSuccess(request):
@@ -266,7 +263,7 @@ def paymentSuccess(request):
 
 def paymentCancel(request):
     context = {
-        "payment_status": "success"
+        "payment_status": "fail"
     }
     return render(request, "EventsApp/confirmation.html", context)
 
