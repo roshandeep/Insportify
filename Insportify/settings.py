@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -58,7 +58,7 @@ ROOT_URLCONF = 'Insportify.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -144,9 +144,6 @@ LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'list-events'
 LOGOUT_REDIRECT_URL = 'login'
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MESSAGE_TAGS = {
@@ -159,3 +156,13 @@ MESSAGE_TAGS = {
 
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10240
+
+
+# DEV
+STRIPE_PUBLISHABLE_KEY = 'pk_test_cBzZxJm1Sk4UFJ5i0nypvIEv00HazZHrCi'
+STRIPE_SECRET_KEY = 'sk_test_L940ji4j5UAJZm9qmsKICL1Z00Xel3ppet'
+STRIPE_WEBHOOK_KEY = ''
+
+# PROD
+# STRIPE_PUBLISHABLE_KEY = 'pk_test_cBzZxJm1Sk4UFJ5i0nypvIEv00HazZHrCi'
+# STRIPE_SECRET_KEY = 'sk_test_L940ji4j5UAJZm9qmsKICL1Z00Xel3ppet'

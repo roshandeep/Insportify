@@ -18,6 +18,10 @@ from django.urls import path
 from . import views
 from django.views.generic import TemplateView
 
+from .views import CheckoutSessionView
+
+app_name = 'EventsApp'
+
 urlpatterns = [
     path('', views.home, name='home'),
     path('show/', views.all_events, name="list-events"),
@@ -27,4 +31,9 @@ urlpatterns = [
     path('<int:event_id>/', views.event_by_id, name='event_by_id'),
     path('get_selected_sports_type/', views.get_selected_sports_type, name='get_selected_sports_type'),
     path('get_sports_category/', views.get_sports_category, name='get_sports_category'),
+
+    path('orderSummary/<pk>/', views.order_summary, name='orderSummary'),
+    path('payment-success/', views.paymentSuccess, name='payment-success'),
+    path('payment-cancel/', views.paymentCancel, name='payment-cancel'),
+    path('create-checkout-session/<pk>/', CheckoutSessionView.as_view(), name='create-checkout-session'),
 ]

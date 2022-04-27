@@ -20,9 +20,11 @@
                 <p class="card-text"><i class="bi bi-cash-stack" style="padding-right: 20px;"></i>
                     {{event.position_cost}}$</p>
                 <p class="card-text"><i class="bi bi-geo-alt-fill" style="padding-right: 20px;"></i>
-                    {{event.venue}}, {{event.city}}, {{event.country}}</p>
+                    {{event.venue}}, {{event.city}}, {{event.country}}
+                </p>
+
                 <div class="card-body mx-auto text-center">
-                    <button type="button" class="btn btn-primary">Add To Cart</button>
+                    <a class="btn btn-primary" href="{% url 'EventsApp:orderSummary' event.pk %}">Add To Cart</a>
                 </div>
             </div>
         </div>

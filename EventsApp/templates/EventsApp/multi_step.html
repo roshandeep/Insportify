@@ -7,7 +7,7 @@
 
 <div class="row">
     <div class="col-6 mx-auto">
-        <form id="msform" action="{% url 'multistep'%}" method="post">
+        <form id="msform" action="{% url 'EventsApp:multistep'%}" method="post">
             {% csrf_token %}
             {% if messages %}
             {% for message in messages %}

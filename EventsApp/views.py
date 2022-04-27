@@ -1,12 +1,16 @@
 import openpyxl
+import stripe
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
 from django.template import loader
 from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
+from django.views import generic
+from django.views.decorators.csrf import csrf_exempt
 
+from Insportify import settings
 from .forms import MultiStepForm, UserForm
 from .models import master_table, Individual, Organization, Venues, SportsCategory, SportsType
 from django.views.generic import View, FormView
@@ -37,6 +41,7 @@ def all_events(request):
     return render(request, 'EventsApp/event_list.html', {'event_list': event_list})
 
 
+@login_required
 def event_by_id(request, event_id):
     event = master_table.objects.get(pk=event_id)
     print(event.description)
@@ -210,12 +215,68 @@ def home(request):
     return HttpResponse(html_template.render(context, request))
 
 
+def order_summary(request, pk):
+    event = master_table.objects.get(pk=pk)
+    context = {
+        'STRIPE_PUBLISHABLE_KEY': settings.STRIPE_PUBLISHABLE_KEY,
+        'event': event,
+    }
+
+    return render(request, "EventsApp/checkout.html", context)
+
+
+class CheckoutSessionView(View):
+    def post(self, request, *args, **kwargs):
+        event_id = self.kwargs["pk"]
+        event = master_table.objects.get(pk=event_id)
+        unit_amount = round(event.position_cost/100)
+
+        stripe.api_key = settings.STRIPE_SECRET_KEY
+        stripe_pk = settings.STRIPE_PUBLISHABLE_KEY
+        DOMAIN = "http://127.0.0.1:8000"
+        checkout_session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=[
+                {
+                    'price_data': {
+                        'currency': 'cad',
+                        'unit_amount': unit_amount,
+                        'product_data': {
+                            'name': event.event_title
+                        }
+                    },
+                    'quantity': 1,
+                },
+            ],
+            mode='payment',
+            success_url=DOMAIN + "/payment-success/",
+            cancel_url=DOMAIN + "/payment-cancel/",
+        )
+        return JsonResponse({
+            'id': checkout_session.id
+        })
+
+
+def paymentSuccess(request):
+    context = {
+        "payment_status": "success"
+    }
+    return render(request, "EventsApp/confirmation.html", context)
+
+
+def paymentCancel(request):
+    context = {
+        "payment_status": "success"
+    }
+    return render(request, "EventsApp/confirmation.html", context)
+
+
 def load_venues_excel():
     path = "./venue.xlsx"
     wb_obj = openpyxl.load_workbook(path)
     sheet_obj = wb_obj.active
     # Venues.objects.all().delete()
-    for i in range(1, sheet_obj.max_row+1):
+    for i in range(1, sheet_obj.max_row + 1):
         if sheet_obj.cell(row=i, column=5).value.strip() == "ON":
             vm_name = sheet_obj.cell(row=i, column=1).value.strip()
             vm_venue_description = sheet_obj.cell(row=i, column=2).value.strip()
