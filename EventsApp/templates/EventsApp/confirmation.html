@@ -6,10 +6,24 @@
 
 <div class="row">
     <div class="col">
-        {% if paymet_status == "success" %}
-        <p>Order Booked</p>
+        {% if payment_status == "success" %}
+        <div class="jumbotron jumbotron-fluid ">
+            <div class="container">
+                <h1 class="text-success">Payment Successful</h1>
+                <p class="lead">Please check your email for the booking confirmation. You can now close this window or use the
+            link below to explore mre amazing events around you.</p>
+                <a href="{% url 'EventsApp:home' %}">home page</a>.
+            </div>
+        </div>
         {% else %}
-        <p>Somthing went wrong</p>
+        <div class="jumbotron jumbotron-fluid text-center mt-5">
+            <div class="container">
+                <h1 class="text-danger">Payment Failed</h1>
+                <p class="lead">We didn't receive your order. You can now close this window or use the
+            link below to try again.
+            <a href="{% url 'EventsApp:home' %}">home page</a>.</p>
+            </div>
+        </div>
         {% endif %}
     </div>
 </div>

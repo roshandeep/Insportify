@@ -255,6 +255,7 @@ def create_checkout_session(request, id):
 
 
 def paymentSuccess(request):
+    print("Success ho gaya")
     context = {
         "payment_status": "success"
     }
@@ -262,6 +263,7 @@ def paymentSuccess(request):
 
 
 def paymentCancel(request):
+    print("cancel ho gaya")
     context = {
         "payment_status": "fail"
     }
