@@ -1,3 +1,4 @@
+import datetime
 import json
 
 import openpyxl
@@ -12,7 +13,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from Insportify import settings
 from .forms import MultiStepForm, UserForm
-from .models import master_table, Individual, Organization, Venues, SportsCategory, SportsType
+from .models import master_table, Individual, Organization, Venues, SportsCategory, SportsType, Order, User
 from django.views.generic import View, FormView
 
 
@@ -228,10 +229,10 @@ def home(request):
 
 @csrf_exempt
 def create_checkout_session(request, id):
-
     event = get_object_or_404(master_table, pk=id)
     unit_amount = round(event.position_cost)
     stripe.api_key = settings.STRIPE_SECRET_KEY
+
     checkout_session = stripe.checkout.Session.create(
         payment_method_types=['card'],
         line_items=[
@@ -247,12 +248,29 @@ def create_checkout_session(request, id):
             }
         ],
         mode='payment',
-        success_url=request.build_absolute_uri(reverse('EventsApp:payment-success')) + "?session_id={CHECKOUT_SESSION_ID}",
+        success_url=request.build_absolute_uri(
+            reverse('EventsApp:payment-success')) + "?session_id={CHECKOUT_SESSION_ID}",
         cancel_url=request.build_absolute_uri(reverse('EventsApp:payment-cancel')),
     )
+
+    order = Order()
+    order.customer = User.objects.get(username=request.user.username)
+    order.event = event
+    order.order_date = datetime.datetime.now()
+    order.order_amount = int(unit_amount)
+    order.save()
+
     return JsonResponse({'sessionId': checkout_session.id})
 
 
+def saveOrder(request):
+    # order = Order
+    # order.customer = request.user
+    # order.event = event
+    # order.stripe_payment_intent = checkout_session['payment_intent']
+    # order.amount = int(unit_amount)
+    # order.save()
+    return
 
 def paymentSuccess(request):
     print("Success ho gaya")

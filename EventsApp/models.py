@@ -21,8 +21,6 @@ class master_table(models.Model):
     no_of_position = models.IntegerField(blank=True, null=True)
     position_cost = models.IntegerField(blank=True, null=True)
 
-    # renames the instances of the model
-    # with their title name
     def __str__(self):
         return self.event_title
 
@@ -240,3 +238,13 @@ class SportsType(models.Model):
 
     def __str__(self):
         return self.sports_type_text
+
+
+class Order(models.Model):
+    customer = models.ForeignKey(User, on_delete=models.CASCADE)
+    event = models.ForeignKey(master_table, on_delete=models.CASCADE)
+    order_date = models.DateTimeField()
+    order_amount = models.IntegerField()
+
+    def __str__(self):
+        return self.customer.first_name + " " + self.event.event_title
