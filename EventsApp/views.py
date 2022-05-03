@@ -12,8 +12,9 @@ from django.urls import reverse_lazy, reverse
 from django.views.decorators.csrf import csrf_exempt
 
 from Insportify import settings
-from .forms import MultiStepForm, UserForm
-from .models import master_table, Individual, Organization, Venues, SportsCategory, SportsType, Order, User
+from .forms import MultiStepForm, UserForm, AvailabilityForm
+from .models import master_table, Individual, Organization, Venues, SportsCategory, SportsType, Order, User, \
+    Availability
 from django.views.generic import View, FormView
 
 
@@ -280,6 +281,33 @@ def paymentCancel(request):
         "payment_status": "fail"
     }
     return render(request, "EventsApp/confirmation.html", context)
+
+
+def add_availability(request):
+    context = {}
+    form = AvailabilityForm(request.POST or None,
+                            instance=Availability(),
+                            initial={'user': request.user})
+
+    context['form'] = form
+    user = User.objects.get(username=request.user.username)
+    user_avaiability = Availability.objects.filter(user=user)
+    context["user_availability"] = user_avaiability
+
+    if request.POST:
+        if form.is_valid():
+            obj = Availability(user=user,
+                               day_of_week=form.cleaned_data['day_of_week'],
+                               start_time=form.cleaned_data['start_time'],
+                               end_time=form.cleaned_data['end_time'])
+            obj.save()
+            user_avaiability = Availability.objects.filter(user=user)
+            context["user_availability"] = user_avaiability
+            messages.success(request, "New Availability Added!")
+        else:
+            print(form.errors)
+
+    return render(request, "EventsApp/add_availability.html", context)
 
 
 def load_venues_excel():

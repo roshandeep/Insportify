@@ -31,6 +31,7 @@ urlpatterns = [
     path('<int:event_id>/', views.event_by_id, name='event_by_id'),
     path('get_selected_sports_type/', views.get_selected_sports_type, name='get_selected_sports_type'),
     path('get_sports_category/', views.get_sports_category, name='get_sports_category'),
+    path('add_availability/', views.add_availability, name='add_availability'),
 
     # path('orderSummary/<pk>/', views.order_summary, name='orderSummary'),
     path('payment-success/', views.paymentSuccess, name='payment-success'),

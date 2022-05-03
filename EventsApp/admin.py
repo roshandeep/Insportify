@@ -1,7 +1,7 @@
 from django.contrib import admin
 from EventsApp.models import master_table, User, IsEventTypeMaster, IsEventsDetails, \
     IsEventsNotification, IsEventsScheduler, IsNotificationMaster,\
-     Individual, Organization, SportsCategory, SportsType, Venues
+     Individual, Organization, SportsCategory, SportsType, Venues, Availability
 
 admin.site.register(master_table)
 admin.site.register(User)
@@ -15,3 +15,4 @@ admin.site.register(SportsType)
 admin.site.register(Individual)
 admin.site.register(Organization)
 admin.site.register(Venues)
+admin.site.register(Availability)

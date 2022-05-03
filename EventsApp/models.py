@@ -248,3 +248,19 @@ class Order(models.Model):
 
     def __str__(self):
         return self.customer.first_name + " " + self.event.event_title
+
+
+class Availability(models.Model):
+    class Day(models.IntegerChoices):
+        SUNDAY = 1
+        MONDAY = 2
+        TUESDAY = 3
+        WEDNESDAY = 4
+        THURSDAY = 5
+        FRIDAY = 6
+        SATURDAY = 7
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    day_of_week = models.IntegerField(choices=Day.choices)
+    start_time = models.TimeField()
+    end_time = models.TimeField()
