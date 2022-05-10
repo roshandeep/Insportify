@@ -12,7 +12,7 @@ class MultiStepForm(ModelForm):
     class Meta:
         model = master_table
         fields = (
-        'event_title', 'description', 'sport_type', 'position', 'skill', 'min_age', 'max_age', 'sport_category',
+        'event_title', 'description','event_type', 'sport_type', 'position', 'skill', 'min_age', 'max_age', 'sport_category',
         'venue', 'province', 'country', 'city', 'datetimes', 'no_of_position', 'position_cost')
         labels = {
             'event_title': '',
@@ -32,7 +32,6 @@ class MultiStepForm(ModelForm):
             'event_type': '',
             'no_of_position': '',
             'position_cost': ''
-            # 'name' : '',
         }
 
 

@@ -3,9 +3,13 @@ from django.contrib.auth.models import AbstractUser
 
 
 class master_table(models.Model):
+    EVENT_TYPE_CHOICES = (('Camp', 'Camp'), ('Charity', 'Charity'), ('Conditioning', 'Conditioning'),
+                          ('Development', 'Development'), ('Game/Session', 'Game/Session'), ('Online', 'Online'),
+                          ('Registration', 'Registration'), ('Social', 'Social'), ('Tournament', 'Tournament'))
+
     event_title = models.CharField(max_length=30, blank=True, null=True)
     description = models.CharField(max_length=300, blank=True, null=True)
-    event_type = models.IntegerField(blank=True, null=True)
+    event_type = models.CharField(max_length=50, choices=EVENT_TYPE_CHOICES, blank=True, null=True)
     datetimes = models.CharField(max_length=50, blank=True, null=True)
     sport_category = models.CharField(max_length=30, blank=True, null=True)
     sport_type = models.CharField(max_length=30, blank=True, null=True)
@@ -252,13 +256,13 @@ class Order(models.Model):
 
 class Availability(models.Model):
     class Day(models.IntegerChoices):
-        SUNDAY = 1
-        MONDAY = 2
-        TUESDAY = 3
-        WEDNESDAY = 4
-        THURSDAY = 5
-        FRIDAY = 6
-        SATURDAY = 7
+        MONDAY = 1
+        TUESDAY = 2
+        WEDNESDAY = 3
+        THURSDAY = 4
+        FRIDAY = 5
+        SATURDAY = 6
+        SUNDAY = 7
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     day_of_week = models.IntegerField(choices=Day.choices)
