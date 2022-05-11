@@ -39,7 +39,6 @@ def multistep(request):
 @login_required
 def all_events(request):
     event_list = master_table.objects.all()
-    get_recommended_events(request)
     return render(request, 'EventsApp/event_list.html', {'event_list': event_list})
 
 
@@ -210,6 +209,7 @@ def home(request):
     venues = Venues.objects.values('pk', 'vm_name')
     load_venues_excel()
     events = master_table.objects.all()
+    recommended_events = get_recommended_events(request)
 
     if request.GET.get('events_types'):
         selected_events_types = request.GET.get('events_types')
@@ -225,14 +225,17 @@ def home(request):
         events = events.filter(venue=selected_venues)
 
     if request.GET.get('date_range'):
-        selected_date_range = request.GET.get('date_range')
-        print(selected_date_range)
+        selected_date = request.GET.get('date_range')
+        selected_date = datetime.strptime(selected_date.strip(), '%Y-%m-%d').date()
+        events = get_events_by_date(events, selected_date)
 
+    recommended_events = [recommended_events[i:i + 3] for i in range(0, len(recommended_events), 3)]
     events = [events[i:i + 3] for i in range(0, len(events), 3)]
     context = {
         'sports_list': sports,
         'venues_list': venues,
-        'events': events
+        'events': events,
+        'recommended_events': recommended_events
     }
     html_template = loader.get_template('EventsApp/home.html')
     return HttpResponse(html_template.render(context, request))
@@ -258,9 +261,20 @@ def get_recommended_events(request):
                     if avail.start_time <= end_datetime.time() or avail.end_time >= start_datetime.time():
                         recommended_events.add(event)
 
-    print(list(recommended_events))
+    # print(list(recommended_events))
 
-    return
+    return list(recommended_events)
+
+
+def get_events_by_date(events, selected_date):
+    for event in events:
+        time = event.datetimes.split("-")
+        start_date = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p').date()
+        end_date = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p').date()
+        if selected_date < start_date or selected_date > end_date:
+            events = events.exclude(pk=event.id)
+
+    return events
 
 
 @csrf_exempt

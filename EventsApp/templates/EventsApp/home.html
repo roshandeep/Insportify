@@ -83,6 +83,8 @@
 </form>
 
 <div class="row p-3">
+    <h5>All Events</h5>
+    <hr class="my-2">
     <div id="carouselExampleControls" class="carousel slide" data-ride="carousel" data-interval="false">
         <div class="carousel-inner" role="listbox">
             {% for sublist in events %}
@@ -110,6 +112,43 @@
             <span class="visually-hidden">Previous</span>
         </button>
         <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls"
+                data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+</div>
+
+<div class="row p-3">
+    <h5>Recommended Events For You</h5>
+    <hr class="my-2">
+    <div id="carouselExampleControls2" class="carousel slide" data-ride="carousel" data-interval="false">
+        <div class="carousel-inner" role="listbox">
+            {% for sublist in recommended_events %}
+            <div class="carousel-item {% if forloop.counter0 == 0 %}active{% endif %}">
+                <div class="cards-wrapper">
+                    {% for event in sublist %}
+                    <div class="card {% if forloop.counter0 != 0 %}d-none d-md-block{% endif %} col-4">
+                        <img src="{% static 'images/football.jpg' %}" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title">{{event.event_title}}</h5>
+                            <p class="card-text">{{event.venue}}, {{event.city}}, {{event.province}}
+                            <p class="text-secondary"><i class="bi bi-calendar"></i> {{event.datetimes}}
+                            </p>
+                            <a href="/{{event.pk}}/" class="btn btn-primary">Details >></a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls2"
+                data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls2"
                 data-bs-slide="next">
             <span class="carousel-control-next-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Next</span>
