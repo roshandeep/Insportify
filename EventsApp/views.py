@@ -1,5 +1,5 @@
 import calendar
-import datetime
+from datetime import datetime, timedelta
 import json
 
 import openpyxl
@@ -39,6 +39,7 @@ def multistep(request):
 @login_required
 def all_events(request):
     event_list = master_table.objects.all()
+    get_recommended_events(request)
     return render(request, 'EventsApp/event_list.html', {'event_list': event_list})
 
 
@@ -235,6 +236,31 @@ def home(request):
     }
     html_template = loader.get_template('EventsApp/home.html')
     return HttpResponse(html_template.render(context, request))
+
+
+def get_recommended_events(request):
+    user = User.objects.get(username=request.user.username)
+    user_avaiability = Availability.objects.filter(user=user)
+    events = master_table.objects.all()
+    week_days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    recommended_events=set()
+    for event in events:
+        time = event.datetimes.split("-")
+        start_datetime = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
+        end_datetime = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p')
+
+        for i in range((end_datetime - start_datetime).days):
+            # print(i, calendar.day_name[(start_time + timedelta(days=i+1)).weekday()])
+            days_between = calendar.day_name[(start_datetime + timedelta(days=i + 1)).weekday()]
+            for avail in user_avaiability:
+                if week_days[avail.day_of_week - 1] == days_between:
+                    # print("day match",week_days[avail.day_of_week-1], days_between)
+                    if avail.start_time <= end_datetime.time() or avail.end_time >= start_datetime.time():
+                        recommended_events.add(event)
+
+    print(list(recommended_events))
+
+    return
 
 
 @csrf_exempt
