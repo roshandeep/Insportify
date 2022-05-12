@@ -10,12 +10,11 @@
             <div class="card-body">
                 <table class="table table-striped">
                     <thead>
-                    <tr>
-                        <th>EVENT</th>
-                        <th>DESCRIPTION</th>
-                        <th>DATETIME</th>
-                        <th>VENUE</th>
-                        <th>ACTION</th>
+                    <th>EVENT</th>
+                    <th>DESCRIPTION</th>
+                    <th>DATETIME</th>
+                    <th>VENUE</th>
+                    <th>ACTION</th>
                     </thead>
                     <tbody>
                     {% for event in event_list %}
@@ -25,7 +24,7 @@
                         <td>{{event.datetimes }}</td>
                         <td>{{event.venue}}</td>
                         <td class="text-center">
-                            <a href="/{{event.pk}}/">
+                            <a href="/delete/{{event.pk}}/">
                                 <i class="bi bi-trash" style="color:red"></i>
                             </a>
                         </td>
@@ -64,5 +63,6 @@ td .id::before {
 td .id:hover::before {
   transform: scaleX(1);
 }
+
 </style>
 {% endblock %}

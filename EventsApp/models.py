@@ -3,9 +3,13 @@ from django.contrib.auth.models import AbstractUser
 
 
 class master_table(models.Model):
+    EVENT_TYPE_CHOICES = (('Camp', 'Camp'), ('Charity', 'Charity'), ('Conditioning', 'Conditioning'),
+                          ('Development', 'Development'), ('Game/Session', 'Game/Session'), ('Online', 'Online'),
+                          ('Registration', 'Registration'), ('Social', 'Social'), ('Tournament', 'Tournament'))
+
     event_title = models.CharField(max_length=30, blank=True, null=True)
     description = models.CharField(max_length=300, blank=True, null=True)
-    event_type = models.IntegerField(blank=True, null=True)
+    event_type = models.CharField(max_length=50, choices=EVENT_TYPE_CHOICES, blank=True, null=True)
     datetimes = models.CharField(max_length=50, blank=True, null=True)
     sport_category = models.CharField(max_length=30, blank=True, null=True)
     sport_type = models.CharField(max_length=30, blank=True, null=True)
@@ -21,8 +25,6 @@ class master_table(models.Model):
     no_of_position = models.IntegerField(blank=True, null=True)
     position_cost = models.IntegerField(blank=True, null=True)
 
-    # renames the instances of the model
-    # with their title name
     def __str__(self):
         return self.event_title
 
@@ -242,3 +244,29 @@ class SportsType(models.Model):
 
     def __str__(self):
         return self.sports_type_text
+
+
+class Order(models.Model):
+    customer = models.ForeignKey(User, on_delete=models.CASCADE)
+    event = models.ForeignKey(master_table, on_delete=models.CASCADE)
+    order_date = models.DateTimeField()
+    order_amount = models.IntegerField()
+
+    def __str__(self):
+        return self.customer.first_name + " " + self.event.event_title
+
+
+class Availability(models.Model):
+    class Day(models.IntegerChoices):
+        MONDAY = 1
+        TUESDAY = 2
+        WEDNESDAY = 3
+        THURSDAY = 4
+        FRIDAY = 5
+        SATURDAY = 6
+        SUNDAY = 7
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    day_of_week = models.IntegerField(choices=Day.choices)
+    start_time = models.TimeField()
+    end_time = models.TimeField()

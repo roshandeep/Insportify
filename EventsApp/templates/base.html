@@ -7,46 +7,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
-            crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
-            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+
     <title>Insportify</title>
     <link rel="icon" href="{% static 'img/favicon.jpg' %}" type="image/x-icon">
 </head>
 <body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
 <nav class="col-1 shadow p-3 bg-body rounded" class="navbar navbar-expand-lg"
      style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">
     <div class="container-fluid" style="margin:10px;">
-        <a class="navbar-brand" href="{% url 'home' %}">
+        <a class="navbar-brand" href="{% url 'EventsApp:home' %}">
             <img src="{% static 'img/logo.PNG' %}" alt="Logo" style="width: 200px;"/>
         </a>
         <hr>
         <ul class="navbar-nav">
             {% if request.user.is_authenticated %}
             <li class="nav-item">
-                <a class="nav-link link-secondary text-white" href="{% url 'list-events' %}">
+                <a class="nav-link link-secondary text-white" href="{% url 'EventsApp:list-events' %}">
                     <p>Show Events</p>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link link-secondary text-white" href="{% url 'multistep' %}">
+                <a class="nav-link link-secondary text-white" href="{% url 'EventsApp:multistep' %}">
                     <p>Create Events</p>
                 </a>
             </li>
-            {% if request.user.is_organization  == True %}
+            {% if request.user.is_organization == True %}
             <li class="nav-item">
-                <a class="nav-link link-secondary text-white" href="{% url 'organization_profile' %}">
+                <a class="nav-link link-secondary text-white" href="{% url 'EventsApp:organization_profile' %}">
                     <p>Organization Profile</p>
                 </a>
-                {% else %}
-                <li class="nav-item">
-                <a class="nav-link link-secondary text-white" href="{% url 'user_profile' %}">
+            </li>
+            {% else %}
+            <li class="nav-item">
+                <a class="nav-link link-secondary text-white" href="{% url 'EventsApp:user_profile' %}">
                     <p>Individual Profile</p>
                 </a>
-                {% endif %}
+            </li>
+            {% endif %}
+            <li class="nav-item">
+                <a class="nav-link link-secondary text-white" href="{% url 'EventsApp:add_availability' %}">
+                    <p>Add Availability</p>
+                </a>
             </li>
             {% endif %}
         </ul>
@@ -87,9 +94,12 @@
             <a target="_blank" href="" class="link-secondary">INSPORTIFY</a>
         </div>
         <div class="text-center">
-            <a href="http://www.website.com" title="Fb insportify" style="color: #7b838a"><i class="bi bi-facebook p-2"></i></a>
-            <a href="http://www.website.com" title="insta insportify" style="color: #7b838a"><i class="bi bi-instagram p-2"></i></a>
-            <a href="http://www.website.com" title="twitter insportify" style="color: #7b838a"><i class="bi bi-twitter p-2"></i></a>
+            <a href="http://www.website.com" title="Fb insportify" style="color: #7b838a"><i
+                    class="bi bi-facebook p-2"></i></a>
+            <a href="http://www.website.com" title="insta insportify" style="color: #7b838a"><i
+                    class="bi bi-instagram p-2"></i></a>
+            <a href="http://www.website.com" title="twitter insportify" style="color: #7b838a"><i
+                    class="bi bi-twitter p-2"></i></a>
         </div>
     </footer>
 </div>
@@ -161,6 +171,9 @@
     height: 80px;
     background-color: white;
     }
+
+
+
 
 
 

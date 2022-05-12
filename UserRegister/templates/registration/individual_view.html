@@ -318,7 +318,7 @@ $("#category").change(function () {
         var selected_category_text = selected_category_value.text();
         $.ajax({
             type: "POST",
-            url: '{% url "get_selected_sports_type" %}',
+            url: '{% url "EventsApp:get_selected_sports_type" %}',
             data: {
                 'selected_category_text': selected_category_text,
                 'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
@@ -404,7 +404,7 @@ $("#category").change(function () {
    function populate_sportscategory(category_id) {
     $.ajax({
         type: "GET",
-        url: '{% url "get_sports_category" %}',
+        url: '{% url "EventsApp:get_sports_category" %}',
         data: {
             'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
         },
@@ -426,7 +426,7 @@ function populate_sportstype(){
     var selected_category_text = selected_category_value.text();
     $.ajax({
     type: "POST",
-    url: '{% url "get_selected_sports_type" %}',
+    url: '{% url "EventsApp:get_selected_sports_type" %}',
     data: {
         'selected_category_text': selected_category_text,
         'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),

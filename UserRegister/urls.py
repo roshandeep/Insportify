@@ -6,6 +6,7 @@ from django.conf.urls import url
 
 # from UserRegister.views import CreateProfilePageView
 
+
 urlpatterns = [
     path('edit_profile/', UserEditView.as_view(), name='edit_profile'),
     #path('password/', PasswordsChangeView.as_view(template_name='registration/change_password.html')),
