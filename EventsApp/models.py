@@ -34,8 +34,10 @@ class master_table(models.Model):
 class User(AbstractUser):
     is_individual = models.BooleanField(default=False)
     is_organization = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=False)
     first_name = models.CharField(max_length=40, null=True)
     last_name = models.CharField(max_length=40, null=True)
+    password_reset_token = models.CharField(max_length=5, null=True)
 
 
 class Individual(models.Model):
