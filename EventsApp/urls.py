@@ -34,6 +34,7 @@ urlpatterns = [
     path('get_sports_category/', views.get_sports_category, name='get_sports_category'),
     path('add_availability/', views.add_availability, name='add_availability'),
     path('delete_availability/<int:id>/', views.delete_availability, name='delete_availability'),
+    path('upload/', views.logo_upload_view, name='logo_upload'),
 
     # PAYMENT URL'S
     path('payment-success/', views.paymentSuccess, name='payment-success'),

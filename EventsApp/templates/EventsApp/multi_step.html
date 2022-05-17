@@ -280,25 +280,24 @@ $(document).ready(function(){
 
 
     $(document).ready(function() {
-    var max_fields      = 10; //maximum input boxes allowed
-    var wrapper         = $("#input_fields_wrap"); //Fields wrapper
-    var add_button      = $("#add_field_button"); //Add button ID
+    var max_fields      = 10;
+    var wrapper         = $("#input_fields_wrap");
+    var add_button      = $("#add_field_button");
 
     var x = 1; //initlal text box count
 
 
-   $(add_button).click(function(e){ //on add input button click
+   $(add_button).click(function(e){
         e.preventDefault();
-        if(x < max_fields){ //max input box allowed
+        if(x < max_fields){
 
-             //text box increment
-            $(wrapper).append('<div><select name = skill class="form-select p-2" aria-label=".form-select-lg example"><option>Rookie</option><option>Recreational</option><option>Competitve</option><option>Pro-Bound</option></select><input name="no_of_position" class="form-control" type="number" placeholder = "Number of Positions" min=0><input type="number" class="form-control" name ="position_cost" placeholder="Position Cost"><input type="number" class="form-control" name="min_age" placeholder= "Minimum Age" min=0><input name="max_age" class="form-control" type="number" min=0 name="mytext2[]" placeholder= "Maximum Age"><a href="#" class="remove_field">Remove</a></div>'); //add input box
+
+            $(wrapper).append('<div><input name="no_of_position" class="form-control" type="number" placeholder = "Number of Positions" min=0><input type="number" class="form-control" name ="position_cost" placeholder="Position Cost"><input type="number" class="form-control" name="min_age" placeholder= "Minimum Age" min=0><input name="max_age" class="form-control" type="number" min=0 name="mytext2[]" placeholder= "Maximum Age"><a href="#" class="remove_field">Remove</a></div>'); //add input box
             x++;
       }
     });
 
-    $(wrapper).on("click",".remove_field", function(e){ //user click on remove text
-
+    $(wrapper).on("click",".remove_field", function(e){
         e.preventDefault();
         $(this).parent('div').remove();
         x--;

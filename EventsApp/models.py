@@ -2,6 +2,13 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 
+class User(AbstractUser):
+    is_individual = models.BooleanField(default=False)
+    is_organization = models.BooleanField(default=False)
+    first_name = models.CharField(max_length=40, null=True)
+    last_name = models.CharField(max_length=40, null=True)
+
+
 class master_table(models.Model):
     EVENT_TYPE_CHOICES = (('Camp', 'Camp'), ('Charity', 'Charity'), ('Conditioning', 'Conditioning'),
                           ('Development', 'Development'), ('Game/Session', 'Game/Session'), ('Online', 'Online'),
@@ -24,6 +31,7 @@ class master_table(models.Model):
     country = models.CharField(max_length=30, blank=True, null=True)
     no_of_position = models.IntegerField(blank=True, null=True)
     position_cost = models.IntegerField(blank=True, null=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
         return self.event_title
@@ -31,13 +39,6 @@ class master_table(models.Model):
     class Meta:
         managed = True
         db_table = 'master_table'
-
-
-class User(AbstractUser):
-    is_individual = models.BooleanField(default=False)
-    is_organization = models.BooleanField(default=False)
-    first_name = models.CharField(max_length=40, null=True)
-    last_name = models.CharField(max_length=40, null=True)
 
 
 class Individual(models.Model):
@@ -158,8 +159,6 @@ class IsEventsDetails(models.Model):
         db_table = 'is_events_details'
 
 
-
-
 class IsEventsNotification(models.Model):
     en_id = models.IntegerField()
     en_fk_em_id = models.IntegerField(blank=True, null=True)
@@ -268,3 +267,11 @@ class Availability(models.Model):
     day_of_week = models.IntegerField(choices=Day.choices)
     start_time = models.TimeField()
     end_time = models.TimeField()
+
+
+class Logo(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='images')
+
+    def __str__(self):
+        return self.user.first_name + "_logo"

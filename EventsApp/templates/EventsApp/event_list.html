@@ -24,9 +24,15 @@
                         <td>{{event.datetimes }}</td>
                         <td>{{event.venue}}</td>
                         <td class="text-center">
+                            {% if request.user == event.created_by %}
                             <a href="/delete/{{event.pk}}/">
                                 <i class="bi bi-trash" style="color:red"></i>
                             </a>
+                            {% else %}
+                            <a href="" class="disabled">
+                                <i class="bi bi-trash" style="color:grey"></i>
+                            </a>
+                            {% endif %}
                         </td>
                     </tr>
                     {% endfor %}
@@ -62,6 +68,11 @@ td .id::before {
 
 td .id:hover::before {
   transform: scaleX(1);
+}
+
+a.disabled {
+  pointer-events: none;
+  cursor: default;
 }
 
 </style>

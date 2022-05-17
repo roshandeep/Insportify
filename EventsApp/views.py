@@ -14,9 +14,9 @@ from django.urls import reverse_lazy, reverse
 from django.views.decorators.csrf import csrf_exempt
 
 from Insportify import settings
-from .forms import MultiStepForm, UserForm, AvailabilityForm
+from .forms import MultiStepForm, UserForm, AvailabilityForm, LogoForm
 from .models import master_table, Individual, Organization, Venues, SportsCategory, SportsType, Order, User, \
-    Availability
+    Availability, Logo
 from django.views.generic import FormView
 
 
@@ -25,13 +25,15 @@ def multistep(request):
     if request.method == "POST":
         form = MultiStepForm(request.POST)
         if form.is_valid():
-            form.save()
+            obj = form.save(commit=False)
+            obj.created_by = request.user
+            obj.save()
             messages.success(request, 'Event Created')
             return render(request, 'EventsApp/multi_step.html', {'form': form})
+        else:
+            print(form.errors)
     else:
         form = MultiStepForm
-        if 'submitted' in request.GET:
-            submitted = True
 
     return render(request, 'EventsApp/multi_step.html', {'form': form})
 
@@ -425,3 +427,24 @@ def delete_availability(request, id):
         print("Some error occurred!")
 
     return redirect('EventsApp:add_availability')
+
+
+@login_required
+def logo_upload_view(request):
+    if request.method == 'POST':
+        img_obj = Logo.objects.get(user=request.user)
+        form = LogoForm(request.POST, request.FILES)
+        if form.is_valid():
+            if img_obj:
+                img_obj.image = form.instance.image
+                img_obj.save()
+            else:
+                obj = form.save(commit=False)
+                obj.user = request.user
+                obj.save()
+            return render(request, 'EventsApp/add_logo.html', {'form': form, 'img_obj': img_obj})
+    else:
+        form = LogoForm()
+        img_obj = Logo.objects.get(user=request.user)
+
+    return render(request, 'EventsApp/add_logo.html', {'form': form, 'img_obj': img_obj})

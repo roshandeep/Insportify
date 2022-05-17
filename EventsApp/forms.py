@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import ModelForm
-from .models import master_table, Availability
+from .models import master_table, Availability, Logo
 # from EventsApp.models import Person, City, Country
 # from bootstrap_datepicker_plus.widgets import DatePickerInput, TimePickerInput, DateTimePickerInput, MonthPickerInput
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
@@ -13,7 +13,7 @@ class MultiStepForm(ModelForm):
         model = master_table
         fields = (
         'event_title', 'description','event_type', 'sport_type', 'position', 'skill', 'min_age', 'max_age', 'sport_category',
-        'venue', 'province', 'country', 'city', 'datetimes', 'no_of_position', 'position_cost')
+        'venue', 'province', 'country', 'city', 'datetimes', 'no_of_position', 'position_cost', 'created_by')
         labels = {
             'event_title': '',
             'description': '',
@@ -71,3 +71,10 @@ class AvailabilityForm(forms.ModelForm):
         }
 
     field_order = ['day_of_week', 'start_time', 'end_time',]
+
+
+class LogoForm(forms.ModelForm):
+
+    class Meta:
+        model = Logo
+        fields = ['image']
