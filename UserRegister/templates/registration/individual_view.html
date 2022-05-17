@@ -4,7 +4,6 @@
 {% load static %}
 
 {% block content %}
-
 <div class="row">
     <div class="col-6 mx-auto">
         <form id="msform" method="post">
@@ -264,7 +263,6 @@
 
 <script>
 
-
 $(document).ready(function(){
   var tab2 = $("#tab-2");
   var tab3 = $("#tab-3");
@@ -366,7 +364,7 @@ $("#category").change(function () {
 });
 
     $(document).ready(function() {
-    var max_fields      = 4;
+    var max_fields      = 5;
     var wrapper         = $("#input_fields");
     var add_button      = $("#add_button");
 
@@ -379,10 +377,11 @@ $("#category").change(function () {
             var category_id = "category_" + x;
             var type_id = "type_" + x;
             var position_id = "position_" + x;
+            var sports_type_func = "populate_sportstype" + x;
 
             var html='';
             html += '<div>'
-            html += '<select name="' + category_id + '" id="' + category_id + '" class="form-select" onchange="populate_sportstype()">'
+            html += '<select name="' + category_id + '" id="' + category_id + '" class="form-select" onchange="' + sports_type_func + '()">'
             html += '<option selected disabled>Choose Sport Category</option></select>'
             html += '<select name="' + type_id + '" id="' + type_id + '" class="form-select">'
             html += '<option selected disabled>Choose Sport Type</option>'
@@ -426,7 +425,7 @@ $("#category").change(function () {
 
 });
 
-function populate_sportstype(){
+function populate_sportstype1(){
     var selected_category_value = $("#category_1 option:selected");
     var selected_category_text = selected_category_value.text();
     $.ajax({
@@ -442,6 +441,66 @@ function populate_sportstype(){
             html_data += `<option value="${data.sports_type_text}">${data.sports_type_text}</option>`
         });
         $("#type_1").html(html_data);
+    }
+});
+}
+
+function populate_sportstype2(){
+    var selected_category_value = $("#category_2 option:selected");
+    var selected_category_text = selected_category_value.text();
+    $.ajax({
+    type: "POST",
+    url: '{% url "EventsApp:get_selected_sports_type" %}',
+    data: {
+        'selected_category_text': selected_category_text,
+        'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
+    },
+    success: function (data) {
+        let html_data = '';
+        data.forEach(function (data) {
+            html_data += `<option value="${data.sports_type_text}">${data.sports_type_text}</option>`
+        });
+        $("#type_2").html(html_data);
+    }
+});
+}
+
+function populate_sportstype3(){
+    var selected_category_value = $("#category_3 option:selected");
+    var selected_category_text = selected_category_value.text();
+    $.ajax({
+    type: "POST",
+    url: '{% url "EventsApp:get_selected_sports_type" %}',
+    data: {
+        'selected_category_text': selected_category_text,
+        'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
+    },
+    success: function (data) {
+        let html_data = '';
+        data.forEach(function (data) {
+            html_data += `<option value="${data.sports_type_text}">${data.sports_type_text}</option>`
+        });
+        $("#type_3").html(html_data);
+    }
+});
+}
+
+function populate_sportstype4(){
+    var selected_category_value = $("#category_4 option:selected");
+    var selected_category_text = selected_category_value.text();
+    $.ajax({
+    type: "POST",
+    url: '{% url "EventsApp:get_selected_sports_type" %}',
+    data: {
+        'selected_category_text': selected_category_text,
+        'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
+    },
+    success: function (data) {
+        let html_data = '';
+        data.forEach(function (data) {
+            html_data += `<option value="${data.sports_type_text}">${data.sports_type_text}</option>`
+        });
+        $("#type_4").html(html_data);
     }
 });
 }
