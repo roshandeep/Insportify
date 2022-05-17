@@ -16,7 +16,7 @@ from django.views.decorators.csrf import csrf_exempt
 from Insportify import settings
 from .forms import MultiStepForm, UserForm, AvailabilityForm, LogoForm
 from .models import master_table, Individual, Organization, Venues, SportsCategory, SportsType, Order, User, \
-    Availability, Logo, Extra_Loctaions
+    Availability, Logo, Extra_Loctaions, Events_PositionInfo
 from django.views.generic import FormView
 
 
@@ -25,9 +25,15 @@ def multistep(request):
     if request.method == "POST":
         form = MultiStepForm(request.POST)
         if form.is_valid():
+            print(list(request.POST.items()))
             obj = form.save(commit=False)
             obj.created_by = request.user
+            obj.position_cost = request.POST['position_cost1']
+            obj.no_of_position = request.POST['no_of_position1']
+            obj.min_age = request.POST['min_age1']
+            obj.max_age = request.POST['max_age1']
             obj.save()
+            save_event_position_info(request, obj)
             messages.success(request, 'Event Created')
             return render(request, 'EventsApp/multi_step.html', {'form': form})
         else:
@@ -36,6 +42,18 @@ def multistep(request):
         form = MultiStepForm
 
     return render(request, 'EventsApp/multi_step.html', {'form': form})
+
+
+def save_event_position_info(request, event):
+    for i in range(2, 10):
+        if 'no_of_position' + str(i) in request.POST:
+            no_of_position = request.POST['no_of_position' + str(i)].strip()
+            position_cost = request.POST['position_cost' + str(i)].strip()
+            min_age = request.POST['min_age' + str(i)].strip()
+            max_age = request.POST['max_age' + str(i)].strip()
+            obj = Events_PositionInfo(event=event, max_age=max_age, min_age=min_age, no_of_position=no_of_position,
+                                      position_cost=position_cost, position_number=i)
+            obj.save()
 
 
 @login_required

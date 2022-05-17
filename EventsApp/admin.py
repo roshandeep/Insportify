@@ -1,7 +1,8 @@
 from django.contrib import admin
 from EventsApp.models import master_table, User, IsEventTypeMaster, IsEventsDetails, \
     IsEventsNotification, IsEventsScheduler, IsNotificationMaster, \
-    Individual, Organization, SportsCategory, SportsType, Venues, Availability, Order, Logo, Extra_Loctaions
+    Individual, Organization, SportsCategory, SportsType, Venues, Availability, Order, Logo, Extra_Loctaions, \
+    Events_PositionInfo
 
 admin.site.register(master_table)
 admin.site.register(User)
@@ -17,6 +18,7 @@ admin.site.register(Organization)
 admin.site.register(Venues)
 admin.site.register(Order)
 admin.site.register(Logo)
+admin.site.register(Events_PositionInfo)
 
 
 class Extra_LoctaionsAdmin(admin.ModelAdmin):

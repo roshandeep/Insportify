@@ -109,7 +109,6 @@ class EventsappMasterTable(models.Model):
         db_table = 'EventsApp_master_table'
 
 
-
 class IsEventTypeMaster(models.Model):
     etm_id = models.IntegerField()
     etm_category = models.CharField(max_length=100, blank=True, null=True)
@@ -266,6 +265,18 @@ class Logo(models.Model):
 
     def __str__(self):
         return self.user.first_name + "_logo"
+
+
+class Events_PositionInfo(models.Model):
+    event = models.ForeignKey(master_table, on_delete=models.CASCADE)
+    position_number = models.IntegerField(blank=True, null=True)
+    max_age = models.IntegerField(blank=True, null=True)
+    min_age = models.IntegerField(blank=True, null=True)
+    no_of_position = models.IntegerField(blank=True, null=True)
+    position_cost = models.IntegerField(blank=True, null=True)
+
+    def __str__(self):
+        return self.event.event_title + " Position_" + str(self.position_number)
 
 
 class Extra_Loctaions(models.Model):

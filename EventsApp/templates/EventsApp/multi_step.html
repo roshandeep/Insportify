@@ -291,8 +291,15 @@ $(document).ready(function(){
         e.preventDefault();
         if(x < max_fields){
 
-
-            $(wrapper).append('<div><input name="no_of_position" class="form-control" type="number" placeholder = "Number of Positions" min=0><input type="number" class="form-control" name ="position_cost" placeholder="Position Cost"><input type="number" class="form-control" name="min_age" placeholder= "Minimum Age" min=0><input name="max_age" class="form-control" type="number" min=0 name="mytext2[]" placeholder= "Maximum Age"><a href="#" class="remove_field">Remove</a></div>'); //add input box
+            var html= '';
+            html += '<div>'
+            html += '<input type="number" class="form-control" name="no_of_position' + x + '" placeholder = "Number of Positions" min=0>'
+            html += '<input type="number" class="form-control" name ="position_cost' + x + '" placeholder="Position Cost">'
+            html += '<input type="number" class="form-control" name="min_age' + x + '" placeholder= "Minimum Age" min=0>'
+            html += '<input type="number" class="form-control" name="max_age' + x + '" placeholder= "Maximum Age" min=0 >'
+            html += '<a href="#" class="remove_field">Remove</a>'
+            html += '</div>'
+            $(wrapper).append(html); //add input box
             x++;
       }
     });
@@ -527,10 +534,6 @@ $(function () {
 $('.radio').change(function() {
   $('#custom_amount').prop('disabled', !$(this).is('.other'));
 });
-
-
-
-
 
 
 
