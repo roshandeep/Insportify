@@ -16,7 +16,7 @@ from django.views.decorators.csrf import csrf_exempt
 from Insportify import settings
 from .forms import MultiStepForm, UserForm, AvailabilityForm, LogoForm
 from .models import master_table, Individual, Organization, Venues, SportsCategory, SportsType, Order, User, \
-    Availability, Logo
+    Availability, Logo, Extra_Loctaions
 from django.views.generic import FormView
 
 
@@ -73,7 +73,6 @@ def user_profile(request):
     elif request.method == "POST":
         individual = Individual.objects.filter(user=request.user)
         response = request.POST.dict()
-        print(response)
         if individual.exists():
             individual = Individual.objects.get(user=request.user)
             individual.user = request.user
@@ -87,11 +86,12 @@ def user_profile(request):
             individual.participation_interest = response["interest_gender"].strip()
             individual.city = response["city"].strip()
             individual.province = response["province"].strip()
-            individual.country = response["Country"].strip()
+            individual.country = response["country"].strip()
             individual.sports_category = response["sport_category"].strip()
             individual.sports_type = response["sport_type"].strip()
             individual.sports_position = response["position"].strip()
             individual.sports_skill = response["skill"].strip()
+            update_secondary_locations(request.user, response)
             individual.save()
             context['individual'] = individual
         else:
@@ -112,6 +112,7 @@ def user_profile(request):
             obj.sports_type = response["sport_type"].strip()
             obj.sports_position = response["position"].strip()
             obj.sports_skill = response["skill"].strip()
+            save_secondary_locations(request.user, response)
             obj.save()
             context['individual'] = obj
         messages.success(request, 'Individual details updated!')
@@ -119,12 +120,41 @@ def user_profile(request):
     return render(request, 'registration/individual_view.html', context)
 
 
+def update_secondary_locations(user, response):
+    print("Update Old Locs")
+    for i in range(1, 5):
+        obj = Extra_Loctaions.objects.filter(user=user, location_number=i).exists()
+        if obj:
+            obj = Extra_Loctaions.objects.get(user=user, location_number=i)
+            if 'city' + str(i) in response:
+                obj.city = response['city' + str(i)].strip()
+                obj.province = response['province' + str(i)].strip()
+                obj.country = response['country' + str(i)].strip()
+                obj.save()
+        else:
+            if 'city' + str(i) in response:
+                city = response['city' + str(i)].strip()
+                province = response['province' + str(i)].strip()
+                country = response['country' + str(i)].strip()
+                obj = Extra_Loctaions(user=user, city=city, province=province, country=country, location_number=i)
+                obj.save()
+
+
+def save_secondary_locations(user, response):
+    for i in range(1, 5):
+        if 'city' + str(i) in response:
+            city = response['city' + str(i)].strip()
+            province = response['province' + str(i)].strip()
+            country = response['country' + str(i)].strip()
+            obj = Extra_Loctaions(user=user, city=city, province=province, country=country, location_number=i)
+            obj.save()
+
+
 def get_selected_sports_type(request):
     data = {}
     if request.method == "POST":
         selected_category = request.POST['selected_category_text']
         try:
-            print(selected_category)
             selected_type = SportsType.objects.filter(sports_category__sports_catgeory_text=selected_category)
             print(selected_type)
         except Exception:
@@ -248,7 +278,7 @@ def get_recommended_events(request):
     user_avaiability = Availability.objects.filter(user=user)
     events = master_table.objects.all()
     week_days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-    recommended_events=set()
+    recommended_events = set()
     for event in events:
         time = event.datetimes.split("-")
         start_datetime = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')

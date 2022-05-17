@@ -98,7 +98,7 @@
                                value="{% if individual.province %} {{individual.province}} {% endif %}"/>
                     </div>
                     <div class="form-row p-2">
-                        <input type="text" class="form-control" name="Country" placeholder="Country"
+                        <input type="text" class="form-control" name="country" placeholder="Country"
                                value="{% if individual.country %} {{individual.country}} {% endif %}"/>
                     </div>
                     <div class="form-row p-2 text-center">
@@ -335,19 +335,24 @@ $("#category").change(function () {
 
 
     $(document).ready(function() {
-    var max_fields      = 10; //maximum input boxes allowed
+    var max_fields      = 6; //maximum input boxes allowed
     var wrapper         = $("#input_fields_wrap"); //Fields wrapper
     var add_button      = $("#add_field_button"); //Add button ID
 
     var x = 1; //initlal text box count
 
 
-   $(add_button).click(function(e){ //on add input button click
+   $(add_button).click(function(e){
         e.preventDefault();
-        if(x < max_fields){ //max input box allowed
-
-             //text box increment
-            $(wrapper).append('<div><input name="city" class="form-control" type="text" placeholder = "City"><input type="text" class="form-control" name ="province" placeholder="Province"><input type="text" class="form-control" name="country" placeholder= "Country"><a href="#" class="remove_field">Remove</a></div>'); //add input box
+        if(x < max_fields){
+             var html= '';
+             html += '<div>'
+             html += '<input name="city'+ x + '" class="form-control" type="text" placeholder="City">'
+             html += '<input type="text" class="form-control" name ="province' + x + '" placeholder="Province">'
+             html += '<input type="text" class="form-control" name="country' + x + '" placeholder= "Country">'
+             html += '<a href="#" class="remove_field">Remove</a>'
+             html += '</div>'
+            $(wrapper).append(html);
             x++;
       }
     });

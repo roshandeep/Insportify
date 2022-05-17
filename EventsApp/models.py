@@ -109,15 +109,6 @@ class EventsappMasterTable(models.Model):
         db_table = 'EventsApp_master_table'
 
 
-class EventsappTestCity(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    name = models.CharField(max_length=30, blank=True, null=True)
-    test_country = models.ForeignKey(EventsappMasterTable, models.DO_NOTHING)
-
-    class Meta:
-        managed = True
-        db_table = 'EventsApp_test_city'
-
 
 class IsEventTypeMaster(models.Model):
     etm_id = models.IntegerField()
@@ -275,3 +266,14 @@ class Logo(models.Model):
 
     def __str__(self):
         return self.user.first_name + "_logo"
+
+
+class Extra_Loctaions(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    location_number = models.IntegerField(blank=True, null=True)
+    city = models.CharField(max_length=50, blank=True, null=True)
+    province = models.CharField(max_length=100, blank=True, null=True)
+    country = models.CharField(max_length=250, blank=True, null=True)
+
+    def __str__(self):
+        return self.user.first_name + " Location_" + str(self.location_number)
