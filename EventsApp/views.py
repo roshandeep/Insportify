@@ -16,7 +16,7 @@ from django.views.decorators.csrf import csrf_exempt
 from Insportify import settings
 from .forms import MultiStepForm, UserForm, AvailabilityForm, LogoForm
 from .models import master_table, Individual, Organization, Venues, SportsCategory, SportsType, Order, User, \
-    Availability, Logo, Extra_Loctaions, Events_PositionInfo
+    Availability, Logo, Extra_Loctaions, Events_PositionInfo, Secondary_SportsChoice
 from django.views.generic import FormView
 
 
@@ -25,7 +25,7 @@ def multistep(request):
     if request.method == "POST":
         form = MultiStepForm(request.POST)
         if form.is_valid():
-            print(list(request.POST.items()))
+            # print(list(request.POST.items()))
             obj = form.save(commit=False)
             obj.created_by = request.user
             obj.position_cost = request.POST['position_cost1']
@@ -39,7 +39,7 @@ def multistep(request):
         else:
             print(form.errors)
     else:
-        form = MultiStepForm
+        form = MultiStepForm()
 
     return render(request, 'EventsApp/multi_step.html', {'form': form})
 
@@ -110,6 +110,7 @@ def user_profile(request):
             individual.sports_position = response["position"].strip()
             individual.sports_skill = response["skill"].strip()
             update_secondary_locations(request.user, response)
+            save_secondary_sports_info(request.user, response)
             individual.save()
             context['individual'] = individual
         else:
@@ -131,6 +132,7 @@ def user_profile(request):
             obj.sports_position = response["position"].strip()
             obj.sports_skill = response["skill"].strip()
             save_secondary_locations(request.user, response)
+            save_secondary_sports_info(request.user, response)
             obj.save()
             context['individual'] = obj
         messages.success(request, 'Individual details updated!')
@@ -138,8 +140,38 @@ def user_profile(request):
     return render(request, 'registration/individual_view.html', context)
 
 
+def save_secondary_sports_info(user, response):
+    obj = Secondary_SportsChoice.objects.filter(user=user).exists()
+    if obj:
+        for i in range(1, 4):
+            obj = Secondary_SportsChoice.objects.filter(user=user, sport_entry_number=i).exists()
+            if obj:
+                obj = Secondary_SportsChoice.objects.get(user=user, location_number=i)
+                if 'category_' + str(i) in response:
+                    obj.sport_category = response['category_' + str(i)].strip()
+                    obj.sport_type = response['type_' + str(i)].strip()
+                    obj.position = response['position_' + str(i)].strip()
+                    obj.save()
+                else:
+                    sport_category = response['category_' + str(i)].strip()
+                    sport_type = response['type_' + str(i)].strip()
+                    position = response['position_' + str(i)].strip()
+                    obj = Secondary_SportsChoice(user=user, sport_category=sport_category, sport_type=sport_type,
+                                                 position=position, sport_entry_number=i)
+                    obj.save()
+    else:
+        for i in range(1, 4):
+            if 'category_' + str(i) in response:
+                sport_category = response['category_' + str(i)].strip()
+                sport_type = response['type_' + str(i)].strip()
+                position = response['position_' + str(i)].strip()
+                obj = Secondary_SportsChoice(user=user, sport_category=sport_category, sport_type=sport_type,
+                                             position=position, sport_entry_number=i)
+                obj.save()
+
+
 def update_secondary_locations(user, response):
-    print("Update Old Locs")
+    # print("Update Old Locs")
     for i in range(1, 5):
         obj = Extra_Loctaions.objects.filter(user=user, location_number=i).exists()
         if obj:
@@ -174,7 +206,7 @@ def get_selected_sports_type(request):
         selected_category = request.POST['selected_category_text']
         try:
             selected_type = SportsType.objects.filter(sports_category__sports_catgeory_text=selected_category)
-            print(selected_type)
+            # print(selected_type)
         except Exception:
             data['error_message'] = 'error'
             return JsonResponse(data)
@@ -199,7 +231,7 @@ def organization_profile(request):
     }
     if request.method == "GET":
         organization = Organization.objects.get(user=request.user)
-        print(organization.__dict__)
+        # print(organization.__dict__)
         context['organization'] = organization
         return render(request, 'registration/organization_view.html', context)
 

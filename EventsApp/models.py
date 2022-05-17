@@ -109,23 +109,6 @@ class EventsappMasterTable(models.Model):
         db_table = 'EventsApp_master_table'
 
 
-
-class IsNotificationMaster(models.Model):
-    nm_id = models.IntegerField()
-    nm_title = models.CharField(max_length=100, blank=True, null=True)
-    nm_description = models.CharField(max_length=250, blank=True, null=True)
-    nm_trigger = models.CharField(max_length=10, blank=True, null=True)
-    nm_trigger_frequency = models.CharField(max_length=10, blank=True, null=True)
-    nm_isactive = models.CharField(max_length=1, blank=True, null=True)
-    nm_created_by = models.IntegerField(blank=True, null=True)
-    nm_updated_by = models.IntegerField(blank=True, null=True)
-    nm_updated_date = models.DateTimeField(blank=True, null=True)
-
-    class Meta:
-        managed = True
-        db_table = 'is_notification_master'
-
-
 class Venues(models.Model):
     vm_name = models.CharField(max_length=500, blank=True, null=True)
     vm_venue_description = models.CharField(max_length=500, blank=True, null=True)
@@ -209,3 +192,14 @@ class Extra_Loctaions(models.Model):
 
     def __str__(self):
         return self.user.first_name + " Location_" + str(self.location_number)
+
+
+class Secondary_SportsChoice(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    sport_entry_number = models.IntegerField(blank=True, null=True)
+    sport_category = models.CharField(max_length=30, blank=True, null=True)
+    sport_type = models.CharField(max_length=30, blank=True, null=True)
+    position = models.CharField(max_length=30, blank=True, null=True)
+
+    def __str__(self):
+        return self.user.first_name + " Sport_Choice_" + str(self.sport_entry_number)
