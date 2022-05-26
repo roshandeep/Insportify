@@ -1,7 +1,7 @@
 from django.contrib import admin
 from EventsApp.models import master_table, User, \
     Individual, Organization, SportsCategory, SportsType, Venues, Availability, Order, Logo, Extra_Loctaions, \
-    Events_PositionInfo, Secondary_SportsChoice
+    Events_PositionInfo, Secondary_SportsChoice, Cart
 
 admin.site.register(master_table)
 admin.site.register(User)
@@ -40,3 +40,10 @@ class AvailabilityAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Availability, AvailabilityAdmin)
+
+
+class CartAdmin(admin.ModelAdmin):
+    list_display = ('user', 'event', 'position_type', 'no_of_position', 'position_cost', 'total_cost', )
+
+
+admin.site.register(Cart, CartAdmin)

@@ -4,43 +4,10 @@
 {% load static %}
 {% block content %}
 
-<script>
-
-    function toggle() {
-        var selected_sports = document.getElementById('selected_sports');
-        var default_sports = document.getElementById('default_sports');
-
-        if (selected_sports.style.display == 'none') {
-          selected_sports.style.display = 'block';
-          default_sports.style.display = 'none';
-        }
-        else {
-        selected_sports.style.display = 'none';
-        default_sports.style.display = 'block';
-        }
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</script>
-
 
 <form class="row p-3" action="{% url 'EventsApp:home' %}" method="get">
     <div class="col">
-        <select class="form-select" name="events_types">
+        <select id="events_types" class="form-select" multiple name="events_types">
             <option value="" selected="selected">Select Event Type</option>
             <option value="Camp">Camp</option>
             <option value="Charity">Charity</option>
@@ -98,7 +65,8 @@
                             <p class="card-text">{{event.venue}}, {{event.city}}, {{event.province}}
                             <p class="text-secondary"><i class="bi bi-calendar"></i> {{event.datetimes}}
                             </p>
-                            <a href="/{{event.pk}}/" class="btn btn-primary">Details >></a>
+<!--                            <a href="/{{event.pk}}/" class="btn btn-primary">Details >></a>-->
+                            <a href="event_details/{{event.pk}}/" class="btn btn-primary">Details >></a>
                         </div>
                     </div>
                     {% endfor %}
@@ -197,6 +165,9 @@
     transition: all .4s ease;
 -webkit-transition: all .4s ease;
 }
+
+
+
 
 
 

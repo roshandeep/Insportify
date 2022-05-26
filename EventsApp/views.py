@@ -1,12 +1,10 @@
 import calendar
-from datetime import datetime, timedelta
-import json
+from datetime import datetime, timedelta, date
 
 import openpyxl
 import stripe
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
 from django.template import loader
 from django.shortcuts import render, get_object_or_404, redirect
@@ -16,7 +14,7 @@ from django.views.decorators.csrf import csrf_exempt
 from Insportify import settings
 from .forms import MultiStepForm, UserForm, AvailabilityForm, LogoForm
 from .models import master_table, Individual, Organization, Venues, SportsCategory, SportsType, Order, User, \
-    Availability, Logo, Extra_Loctaions, Events_PositionInfo, Secondary_SportsChoice
+    Availability, Logo, Extra_Loctaions, Events_PositionInfo, Secondary_SportsChoice, Cart
 from django.views.generic import FormView
 
 
@@ -293,6 +291,8 @@ def home(request):
     events = master_table.objects.all()
     recommended_events = get_recommended_events(request)
 
+    # print(request.GET.getlist('events_types'))
+
     if request.GET.get('events_types'):
         selected_events_types = request.GET.get('events_types')
         # events = events.filter(Q(event_type__icontains=selected_events_types))
@@ -357,6 +357,50 @@ def get_events_by_date(events, selected_date):
             events = events.exclude(pk=event.id)
 
     return events
+
+
+def event_details(request, event_id):
+    context = {}
+    event = master_table.objects.get(pk=event_id)
+    event_postions = Events_PositionInfo.objects.filter(event=event_id)
+    context['event'] = event
+    context['event_postions'] = event_postions
+
+    if request.method == 'POST':
+        # print(request.POST.dict())
+        response = request.POST.dict()
+        for key in response:
+            if 'chk' in key:
+                idx = key.split("_")[-1]
+                position_id = response['posId_' + idx]
+                pos_type = response['posType_' + idx]
+                needed_pos = response['needed_' + idx]
+                no_of_pos = response['noOfPos_' + idx]
+                pos_cost = response['cost_' + idx]
+                # print(pos_type, needed_pos, no_of_pos, pos_cost)
+                ## Add to cart
+                cart = Cart()
+                cart.event = master_table.objects.get(pk=event_id)
+                cart.user = User.objects.get(username=request.user.username)
+                cart.position_id = Events_PositionInfo.objects.get(pk=position_id)
+                cart.date = date.today()
+                cart.position_type = pos_type
+                cart.no_of_position = needed_pos
+                cart.position_cost = pos_cost
+                cart.total_cost = int(pos_cost)*int(needed_pos)
+                cart.save()
+
+                ## Update Inventory
+                event_pos = Events_PositionInfo.objects.get(pk=position_id)
+                event_pos.no_of_position = int(event_pos.no_of_position) - int(needed_pos)
+                event_pos.save()
+                return redirect('EventsApp:cart_summary')
+
+    return render(request, "EventsApp/detail_dashboard.html", context)
+
+
+def cart_summary(request):
+    return render(request, "EventsApp/cart_summary.html")
 
 
 @csrf_exempt

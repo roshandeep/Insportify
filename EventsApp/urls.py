@@ -35,6 +35,8 @@ urlpatterns = [
     path('add_availability/', views.add_availability, name='add_availability'),
     path('delete_availability/<int:id>/', views.delete_availability, name='delete_availability'),
     path('upload/', views.logo_upload_view, name='logo_upload'),
+    path('event_details/<int:event_id>/', views.event_details, name='event_details'),
+    path('cart_summary/', views.cart_summary, name='cart_summary'),
 
     # PAYMENT URL'S
     path('payment-success/', views.paymentSuccess, name='payment-success'),

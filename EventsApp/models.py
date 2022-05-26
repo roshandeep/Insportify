@@ -174,6 +174,7 @@ class Logo(models.Model):
 class Events_PositionInfo(models.Model):
     event = models.ForeignKey(master_table, on_delete=models.CASCADE)
     position_number = models.IntegerField(blank=True, null=True)
+    position_type = models.CharField(max_length=100, blank=True, null=True)
     max_age = models.IntegerField(blank=True, null=True)
     min_age = models.IntegerField(blank=True, null=True)
     no_of_position = models.IntegerField(blank=True, null=True)
@@ -203,3 +204,14 @@ class Secondary_SportsChoice(models.Model):
 
     def __str__(self):
         return self.user.first_name + " Sport_Choice_" + str(self.sport_entry_number)
+
+
+class Cart(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    event = models.ForeignKey(master_table, on_delete=models.CASCADE)
+    position_id = models.ForeignKey(Events_PositionInfo, on_delete=models.CASCADE)
+    date = models.DateField()
+    position_type = models.CharField(max_length=100, blank=True, null=True)
+    no_of_position = models.IntegerField(blank=True, null=True)
+    position_cost = models.IntegerField(blank=True, null=True)
+    total_cost = models.IntegerField(blank=True, null=True)
