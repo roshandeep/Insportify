@@ -33,23 +33,12 @@ class IndividualSignUpForm(UserCreationForm):
         return user
 
 
-class PasswordResetForm(UserCreationForm):
-    email = forms.CharField(required=True)
-    password_reset_token = forms.CharField(required=False)
-    new_password1 = forms.CharField(required=False)
-    new_password2 = forms.CharField(required=False)
-
-    # def __init__(self, *args, **kwargs):
-    #     super(PasswordResetForm, self).__init__(*args, **kwargs)
-    #     # remove username
-    #     self.fields.pop('username')
-    #     self.fields.pop('password1')
-    #     self.fields.pop('password2')
-    #     print(self)
-    class Meta(UserCreationForm.Meta):
+class PasswordResetAuthForm(UserChangeForm):
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control'}))
+    class Meta:
         model = User
-
-
+        fields = ("email",)
+        exclude = ("password",)
 
 # @transaction.atomic
 # def save(self):

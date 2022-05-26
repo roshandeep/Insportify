@@ -14,10 +14,11 @@ from django.urls import reverse_lazy, reverse
 from django.views.decorators.csrf import csrf_exempt
 
 from Insportify import settings
-from .forms import MultiStepForm, UserForm, AvailabilityForm
+from .forms import MultiStepForm, UserForm, AvailabilityForm, InviteForm
 from .models import master_table, Individual, Organization, Venues, SportsCategory, SportsType, Order, User, \
-    Availability
+    Availability, Invite
 from django.views.generic import FormView
+import util
 
 
 @login_required
@@ -25,9 +26,10 @@ def multistep(request):
     if request.method == "POST":
         form = MultiStepForm(request.POST)
         if form.is_valid():
-            form.save()
-            messages.success(request, 'Event Created')
-            return render(request, 'EventsApp/multi_step.html', {'form': form})
+            #form.save()
+            messages.success(request, 'Event Created - Invite Users?')
+            redirect_url = f'/invite/'+str(master_table.objects.last().id)+'/'
+            return redirect(redirect_url)
     else:
         form = MultiStepForm
         if 'submitted' in request.GET:
@@ -209,7 +211,7 @@ def home(request):
     venues = Venues.objects.values('pk', 'vm_name')
     load_venues_excel()
     events = master_table.objects.all()
-    recommended_events = get_recommended_events(request)
+    #recommended_events = get_recommended_events(request)
 
     if request.GET.get('events_types'):
         selected_events_types = request.GET.get('events_types')
@@ -229,20 +231,22 @@ def home(request):
         selected_date = datetime.strptime(selected_date.strip(), '%Y-%m-%d').date()
         events = get_events_by_date(events, selected_date)
 
-    recommended_events = [recommended_events[i:i + 3] for i in range(0, len(recommended_events), 3)]
+    #recommended_events = [recommended_events[i:i + 3] for i in range(0, len(recommended_events), 3)]
     events = [events[i:i + 3] for i in range(0, len(events), 3)]
     context = {
         'sports_list': sports,
         'venues_list': venues,
-        'events': events,
-        'recommended_events': recommended_events
+        'events': events
+        #'recommended_events': recommended_events
     }
     html_template = loader.get_template('EventsApp/home.html')
     return HttpResponse(html_template.render(context, request))
 
 
 def get_recommended_events(request):
-    user = User.objects.get(username=request.user.username)
+    #print(request.user.username)
+    #rint("Hi")
+    user = User.objects.get(username="tejas1794")
     user_avaiability = Availability.objects.filter(user=user)
     events = master_table.objects.all()
     week_days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
@@ -363,6 +367,36 @@ def add_availability(request):
     return render(request, "EventsApp/add_availability.html", context)
 
 
+@login_required
+def notifications(request):
+    context = {}
+    form = AvailabilityForm(request.POST or None,
+                            instance=Availability(),
+                            initial={'user': request.user})
+
+    context['form'] = form
+    user = User.objects.get(username=request.user.username)
+    user_avaiability = Availability.objects.filter(user=user)
+    get_day_of_week(user_avaiability)
+
+    context["user_availability"] = user_avaiability
+
+    if request.POST:
+        if form.is_valid():
+            obj = Availability(user=user,
+                               day_of_week=form.cleaned_data['day_of_week'],
+                               start_time=form.cleaned_data['start_time'],
+                               end_time=form.cleaned_data['end_time'])
+            obj.save()
+            user_avaiability = Availability.objects.filter(user=user)
+            get_day_of_week(user_avaiability)
+            context["user_availability"] = user_avaiability
+            messages.success(request, "New Availability Added!")
+        else:
+            print(form.errors)
+
+    return render(request, "EventsApp/add_availability.html", context)
+
 def get_day_of_week(user_avaiability):
     for avail in user_avaiability:
         if avail.day_of_week == 1:
@@ -413,6 +447,58 @@ def delete_by_id(request, event_id):
 
     return redirect('EventsApp:list-events')
 
+@login_required
+def invite_by_id(request, event_id):
+    context = {}
+    form = InviteForm(request.POST or None,
+                            instance=Invite(),
+                            initial={'user': request.user})
+
+    context['form'] = form
+    user = User.objects.get(username=request.user.username)
+    event = master_table.objects.get(pk=event_id)
+    context["event"] = event
+    context["invites"] = Invite.objects.all().filter(event=event)
+
+    if request.POST:
+        if form.is_valid():
+            obj = Invite(user=user,
+                         event=event,
+                         email=form.cleaned_data['email'])
+            obj.save()
+            util.email("Invitation from Insportify", "Hi there! " + user.first_name + " " + user.last_name
+                       + " has invited you to the event: " + event.event_title
+                       + ". Join Insportify now: " + "http://127.0.0.1:8000/" + str(event_id), [form.cleaned_data['email']])
+            context["invites"] = Invite.objects.all().filter(event=event)
+        else:
+            print(form.errors)
+
+    return render(request, "EventsApp/invite.html", context)
+
+@login_required
+def invite(request):
+    context = {}
+    form = InviteForm(request.POST or None,
+                            instance=Invite(),
+                            initial={'user': request.user})
+
+    context['form'] = form
+    user = User.objects.get(username=request.user.username)
+    context["invites"] = Invite.objects.all().filter(user=user)
+
+    if request.POST:
+        if form.is_valid():
+            obj = Invite(user=user,
+                         event=None,
+                         email=form.cleaned_data['email'])
+            obj.save()
+            util.email("Invitation from Insportify", "Hi there! " + user.first_name + " " + user.last_name
+                       + " has invited you to Insportify! Join Now: " + "http://127.0.0.1:8000/", [form.cleaned_data['email']])
+            context["invites"] = Invite.objects.all().filter(user=user)
+        else:
+            print(form.errors)
+
+    return render(request, "EventsApp/invite.html", context)
 
 @login_required
 def delete_availability(request, id):

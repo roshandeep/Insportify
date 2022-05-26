@@ -7,7 +7,7 @@ from .forms import SignUpForm, EditProfileForm
 from django.contrib.auth.views import PasswordChangeView
 from django.views.generic import DetailView, CreateView
 from EventsApp.models import User
-from UserRegister.forms import IndividualSignUpForm, OrganizationSignUpForm, PasswordResetForm
+from UserRegister.forms import IndividualSignUpForm, OrganizationSignUpForm, PasswordResetAuthForm
 from django.contrib.auth import login, logout, authenticate
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -117,10 +117,11 @@ def logout_view(request):
     return redirect('/')
 
 
-class password_reset(CreateView):
+class password_reset(generic.CreateView):
     model = User
-    form_class = PasswordResetForm
+    form_class = PasswordResetAuthForm
     template_name = 'registration/change_password_auth.html'
+    print(form_class)
 
     def form_valid(self, form):
         if form.is_valid():

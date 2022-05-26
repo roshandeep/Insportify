@@ -255,6 +255,10 @@ class Order(models.Model):
     def __str__(self):
         return self.customer.first_name + " " + self.event.event_title
 
+class Invite(models.Model):
+    email = models.CharField(max_length=100)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    event = models.ForeignKey(master_table, on_delete=models.CASCADE, blank=True, null=True)
 
 class Availability(models.Model):
     class Day(models.IntegerChoices):
