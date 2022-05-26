@@ -1,12 +1,10 @@
 import calendar
-from datetime import datetime, timedelta
-import json
+from datetime import datetime, timedelta, date
 
 import openpyxl
 import stripe
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
 from django.template import loader
 from django.shortcuts import render, get_object_or_404, redirect
@@ -14,9 +12,9 @@ from django.urls import reverse_lazy, reverse
 from django.views.decorators.csrf import csrf_exempt
 
 from Insportify import settings
-from .forms import MultiStepForm, UserForm, AvailabilityForm, InviteForm
+from .forms import MultiStepForm, UserForm, AvailabilityForm, LogoForm, InviteForm
 from .models import master_table, Individual, Organization, Venues, SportsCategory, SportsType, Order, User, \
-    Availability, Invite
+    Availability, Logo, Extra_Loctaions, Events_PositionInfo, Secondary_SportsChoice, Cart, Invite
 from django.views.generic import FormView
 import util
 
@@ -26,16 +24,36 @@ def multistep(request):
     if request.method == "POST":
         form = MultiStepForm(request.POST)
         if form.is_valid():
-            #form.save()
+            # print(list(request.POST.items()))
+            obj = form.save(commit=False)
+            obj.created_by = request.user
+            obj.position_cost = request.POST['position_cost1']
+            obj.no_of_position = request.POST['no_of_position1']
+            obj.min_age = request.POST['min_age1']
+            obj.max_age = request.POST['max_age1']
+            obj.save()
+            save_event_position_info(request, obj)
             messages.success(request, 'Event Created - Invite Users?')
             redirect_url = f'/invite/'+str(master_table.objects.last().id)+'/'
             return redirect(redirect_url)
+        else:
+            print(form.errors)
     else:
-        form = MultiStepForm
-        if 'submitted' in request.GET:
-            submitted = True
+        form = MultiStepForm()
 
     return render(request, 'EventsApp/multi_step.html', {'form': form})
+
+
+def save_event_position_info(request, event):
+    for i in range(2, 10):
+        if 'no_of_position' + str(i) in request.POST:
+            no_of_position = request.POST['no_of_position' + str(i)].strip()
+            position_cost = request.POST['position_cost' + str(i)].strip()
+            min_age = request.POST['min_age' + str(i)].strip()
+            max_age = request.POST['max_age' + str(i)].strip()
+            obj = Events_PositionInfo(event=event, max_age=max_age, min_age=min_age, no_of_position=no_of_position,
+                                      position_cost=position_cost, position_number=i)
+            obj.save()
 
 
 @login_required
@@ -73,7 +91,6 @@ def user_profile(request):
     elif request.method == "POST":
         individual = Individual.objects.filter(user=request.user)
         response = request.POST.dict()
-        print(response)
         if individual.exists():
             individual = Individual.objects.get(user=request.user)
             individual.user = request.user
@@ -87,11 +104,13 @@ def user_profile(request):
             individual.participation_interest = response["interest_gender"].strip()
             individual.city = response["city"].strip()
             individual.province = response["province"].strip()
-            individual.country = response["Country"].strip()
+            individual.country = response["country"].strip()
             individual.sports_category = response["sport_category"].strip()
             individual.sports_type = response["sport_type"].strip()
             individual.sports_position = response["position"].strip()
             individual.sports_skill = response["skill"].strip()
+            update_secondary_locations(request.user, response)
+            save_secondary_sports_info(request.user, response)
             individual.save()
             context['individual'] = individual
         else:
@@ -112,6 +131,8 @@ def user_profile(request):
             obj.sports_type = response["sport_type"].strip()
             obj.sports_position = response["position"].strip()
             obj.sports_skill = response["skill"].strip()
+            save_secondary_locations(request.user, response)
+            save_secondary_sports_info(request.user, response)
             obj.save()
             context['individual'] = obj
         messages.success(request, 'Individual details updated!')
@@ -119,14 +140,73 @@ def user_profile(request):
     return render(request, 'registration/individual_view.html', context)
 
 
+def save_secondary_sports_info(user, response):
+    obj = Secondary_SportsChoice.objects.filter(user=user).exists()
+    if obj:
+        for i in range(1, 4):
+            obj = Secondary_SportsChoice.objects.filter(user=user, sport_entry_number=i).exists()
+            if obj:
+                obj = Secondary_SportsChoice.objects.get(user=user, location_number=i)
+                if 'category_' + str(i) in response:
+                    obj.sport_category = response['category_' + str(i)].strip()
+                    obj.sport_type = response['type_' + str(i)].strip()
+                    obj.position = response['position_' + str(i)].strip()
+                    obj.save()
+                else:
+                    sport_category = response['category_' + str(i)].strip()
+                    sport_type = response['type_' + str(i)].strip()
+                    position = response['position_' + str(i)].strip()
+                    obj = Secondary_SportsChoice(user=user, sport_category=sport_category, sport_type=sport_type,
+                                                 position=position, sport_entry_number=i)
+                    obj.save()
+    else:
+        for i in range(1, 4):
+            if 'category_' + str(i) in response:
+                sport_category = response['category_' + str(i)].strip()
+                sport_type = response['type_' + str(i)].strip()
+                position = response['position_' + str(i)].strip()
+                obj = Secondary_SportsChoice(user=user, sport_category=sport_category, sport_type=sport_type,
+                                             position=position, sport_entry_number=i)
+                obj.save()
+
+
+def update_secondary_locations(user, response):
+    # print("Update Old Locs")
+    for i in range(1, 5):
+        obj = Extra_Loctaions.objects.filter(user=user, location_number=i).exists()
+        if obj:
+            obj = Extra_Loctaions.objects.get(user=user, location_number=i)
+            if 'city' + str(i) in response:
+                obj.city = response['city' + str(i)].strip()
+                obj.province = response['province' + str(i)].strip()
+                obj.country = response['country' + str(i)].strip()
+                obj.save()
+        else:
+            if 'city' + str(i) in response:
+                city = response['city' + str(i)].strip()
+                province = response['province' + str(i)].strip()
+                country = response['country' + str(i)].strip()
+                obj = Extra_Loctaions(user=user, city=city, province=province, country=country, location_number=i)
+                obj.save()
+
+
+def save_secondary_locations(user, response):
+    for i in range(1, 5):
+        if 'city' + str(i) in response:
+            city = response['city' + str(i)].strip()
+            province = response['province' + str(i)].strip()
+            country = response['country' + str(i)].strip()
+            obj = Extra_Loctaions(user=user, city=city, province=province, country=country, location_number=i)
+            obj.save()
+
+
 def get_selected_sports_type(request):
     data = {}
     if request.method == "POST":
         selected_category = request.POST['selected_category_text']
         try:
-            print(selected_category)
             selected_type = SportsType.objects.filter(sports_category__sports_catgeory_text=selected_category)
-            print(selected_type)
+            # print(selected_type)
         except Exception:
             data['error_message'] = 'error'
             return JsonResponse(data)
@@ -151,7 +231,7 @@ def organization_profile(request):
     }
     if request.method == "GET":
         organization = Organization.objects.get(user=request.user)
-        print(organization.__dict__)
+        # print(organization.__dict__)
         context['organization'] = organization
         return render(request, 'registration/organization_view.html', context)
 
@@ -213,6 +293,8 @@ def home(request):
     events = master_table.objects.all()
     #recommended_events = get_recommended_events(request)
 
+    # print(request.GET.getlist('events_types'))
+
     if request.GET.get('events_types'):
         selected_events_types = request.GET.get('events_types')
         # events = events.filter(Q(event_type__icontains=selected_events_types))
@@ -250,7 +332,7 @@ def get_recommended_events(request):
     user_avaiability = Availability.objects.filter(user=user)
     events = master_table.objects.all()
     week_days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-    recommended_events=set()
+    recommended_events = set()
     for event in events:
         time = event.datetimes.split("-")
         start_datetime = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
@@ -279,6 +361,50 @@ def get_events_by_date(events, selected_date):
             events = events.exclude(pk=event.id)
 
     return events
+
+
+def event_details(request, event_id):
+    context = {}
+    event = master_table.objects.get(pk=event_id)
+    event_postions = Events_PositionInfo.objects.filter(event=event_id)
+    context['event'] = event
+    context['event_postions'] = event_postions
+
+    if request.method == 'POST':
+        # print(request.POST.dict())
+        response = request.POST.dict()
+        for key in response:
+            if 'chk' in key:
+                idx = key.split("_")[-1]
+                position_id = response['posId_' + idx]
+                pos_type = response['posType_' + idx]
+                needed_pos = response['needed_' + idx]
+                no_of_pos = response['noOfPos_' + idx]
+                pos_cost = response['cost_' + idx]
+                # print(pos_type, needed_pos, no_of_pos, pos_cost)
+                ## Add to cart
+                cart = Cart()
+                cart.event = master_table.objects.get(pk=event_id)
+                cart.user = User.objects.get(username=request.user.username)
+                cart.position_id = Events_PositionInfo.objects.get(pk=position_id)
+                cart.date = date.today()
+                cart.position_type = pos_type
+                cart.no_of_position = needed_pos
+                cart.position_cost = pos_cost
+                cart.total_cost = int(pos_cost)*int(needed_pos)
+                cart.save()
+
+                ## Update Inventory
+                event_pos = Events_PositionInfo.objects.get(pk=position_id)
+                event_pos.no_of_position = int(event_pos.no_of_position) - int(needed_pos)
+                event_pos.save()
+                return redirect('EventsApp:cart_summary')
+
+    return render(request, "EventsApp/detail_dashboard.html", context)
+
+
+def cart_summary(request):
+    return render(request, "EventsApp/cart_summary.html")
 
 
 @csrf_exempt
@@ -511,3 +637,24 @@ def delete_availability(request, id):
         print("Some error occurred!")
 
     return redirect('EventsApp:add_availability')
+
+
+@login_required
+def logo_upload_view(request):
+    if request.method == 'POST':
+        img_obj = Logo.objects.get(user=request.user)
+        form = LogoForm(request.POST, request.FILES)
+        if form.is_valid():
+            if img_obj:
+                img_obj.image = form.instance.image
+                img_obj.save()
+            else:
+                obj = form.save(commit=False)
+                obj.user = request.user
+                obj.save()
+            return render(request, 'EventsApp/add_logo.html', {'form': form, 'img_obj': img_obj})
+    else:
+        form = LogoForm()
+        img_obj = Logo.objects.get(user=request.user)
+
+    return render(request, 'EventsApp/add_logo.html', {'form': form, 'img_obj': img_obj})
