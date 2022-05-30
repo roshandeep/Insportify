@@ -1,12 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-
+from datetime import datetime
 
 class User(AbstractUser):
     is_individual = models.BooleanField(default=False)
     is_organization = models.BooleanField(default=False)
     first_name = models.CharField(max_length=40, null=True)
     last_name = models.CharField(max_length=40, null=True)
+    is_active = models.BooleanField(default=False, null=True)
 
 
 class master_table(models.Model):
@@ -17,7 +18,16 @@ class master_table(models.Model):
     event_title = models.CharField(max_length=30, blank=True, null=True)
     description = models.CharField(max_length=300, blank=True, null=True)
     event_type = models.CharField(max_length=50, choices=EVENT_TYPE_CHOICES, blank=True, null=True)
-    datetimes = models.CharField(max_length=50, blank=True, null=True)
+    datetimes = models.CharField(max_length=100, blank=True, null=True)
+    is_recurring = models.BooleanField(default=False, null=True)
+    datetimes_monday = models.CharField(max_length=100, blank=True, null=True)
+    datetimes_tuesday = models.CharField(max_length=100, blank=True, null=True)
+    datetimes_wednesday = models.CharField(max_length=100, blank=True, null=True)
+    datetimes_thursday = models.CharField(max_length=100, blank=True, null=True)
+    datetimes_friday = models.CharField(max_length=100, blank=True, null=True)
+    datetimes_saturday = models.CharField(max_length=100, blank=True, null=True)
+    datetimes_sunday = models.CharField(max_length=100, blank=True, null=True)
+    datetimes_exceptions = models.CharField(max_length=500, blank=True, null=True)
     sport_category = models.CharField(max_length=30, blank=True, null=True)
     sport_type = models.CharField(max_length=30, blank=True, null=True)
     position = models.CharField(max_length=30, blank=True, null=True)
@@ -26,7 +36,6 @@ class master_table(models.Model):
     max_age = models.IntegerField(blank=True, null=True)
     min_age = models.IntegerField(blank=True, null=True)
     venue = models.CharField(max_length=30, blank=True, null=True)
-    country = models.CharField(max_length=30, blank=True, null=True)
     province = models.CharField(max_length=30, blank=True, null=True)
     country = models.CharField(max_length=30, blank=True, null=True)
     no_of_position = models.IntegerField(blank=True, null=True)
@@ -41,8 +50,6 @@ class master_table(models.Model):
         db_table = 'master_table'
 
 
-    is_active = models.BooleanField(default=False)
-    password_reset_token = models.CharField(max_length=5, null=True)
 class Individual(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     first_name = models.CharField(max_length=50, null=True)
@@ -148,10 +155,13 @@ class Order(models.Model):
     def __str__(self):
         return self.customer.first_name + " " + self.event.event_title
 
+
 class Invite(models.Model):
     email = models.CharField(max_length=100)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     event = models.ForeignKey(master_table, on_delete=models.CASCADE, blank=True, null=True)
+    invite_date = models.DateField(null=True)
+
 
 class Availability(models.Model):
     class Day(models.IntegerChoices):
