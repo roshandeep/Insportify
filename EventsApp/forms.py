@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import ModelForm
-from .models import master_table, Availability, Logo
+from .models import master_table, Availability, Invite, Logo
 # from EventsApp.models import Person, City, Country
 # from bootstrap_datepicker_plus.widgets import DatePickerInput, TimePickerInput, DateTimePickerInput, MonthPickerInput
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
@@ -41,6 +41,10 @@ class RegisterForm(UserCreationForm):
         fields = ('email', 'username', 'password1', 'password2')
 
 
+class ForgotPasswordForm(AuthenticationForm):
+    email = forms.CharField(label='Email')
+
+
 class LoginForm(AuthenticationForm):
     username = forms.CharField(label='Email / Username')
 
@@ -72,6 +76,12 @@ class AvailabilityForm(forms.ModelForm):
 
     field_order = ['day_of_week', 'start_time', 'end_time',]
 
+class InviteForm(forms.ModelForm):
+    class Meta:
+        model = Invite
+        fields = ['email']
+
+    field_order = ['email',]
 
 class LogoForm(forms.ModelForm):
 
