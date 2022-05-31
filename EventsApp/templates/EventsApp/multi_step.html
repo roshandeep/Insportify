@@ -36,7 +36,7 @@
                             <input type="text" class="form-control" name="event_title" placeholder="Event Title"/>
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" class="form-control" name="description" placeholder="description"/>
+                            <input type="text" class="form-control" name="description" placeholder="Description"/>
                         </div>
                         <div class="form-row p-2" id="event_type">
                             <select class="form-select" name="event_type">
@@ -54,8 +54,8 @@
                         </div>
                         <div class="form-row p-2">
                             <label>Is this a recurring event? &nbsp &nbsp</label>
-                            <input type="radio" id="chkYes" name="recurring_event">Yes</input>
-                            <input type="radio" id="chkNo" name="recurring_event"> No </input>
+                            <input type="radio" value="Yes" id="chkYes" name="recurring_event">Yes</input>
+                            <input type="radio" value="No" id="chkNo" name="recurring_event"> No </input>
                         </div>
                         <div class="form-row p-2" id="fields_recurring" style="display:None">
                             <label>Which days does the event occur &nbsp &nbsp</label>
@@ -151,15 +151,7 @@
                                 <option selected disabled>Choose Sport Type</option>
                             </select>
                         </div>
-                        <div class="form-row p-2">
-                            <select name='position' class="form-select"
-                                    aria-label=".form-select-lg example">
-                                <option selected disabled>Choose position</option>
-                                <option>Athelete</option>
-                                <option>Coach</option>
-                                <option>Attendee</option>
-                            </select>
-                        </div>
+
                         <div class="form-row p-2">
                             <select name='skill' class="form-select"
                                     aria-label=".form-select-lg example">
@@ -170,7 +162,7 @@
                                 <option>Pro-Bound</option>
                             </select>
                         </div>
-                        <div class="form-row p-2">
+                        <div class="form-row p-2 text-center">
                             <div id="input_fields_wrap">
                                 <button class="btn btn-primary"
                                         id="add_field_button">Add Position
@@ -360,12 +352,18 @@ $(document).ready(function(){
         if(x < max_fields){
 
             var html= '';
-            html += '<div>'
-            html += '<input type="number" class="form-control" name="no_of_position' + x + '" placeholder = "Number of Positions" min=0>'
-            html += '<input type="number" class="form-control" name ="position_cost' + x + '" placeholder="Position Cost">'
-            html += '<input type="number" class="form-control" name="min_age' + x + '" placeholder= "Minimum Age" min=0>'
-            html += '<input type="number" class="form-control" name="max_age' + x + '" placeholder= "Maximum Age" min=0 >'
-            html += '<a href="#" class="remove_field">Remove</a>'
+            html += '<div class="mt-2">'
+            html += '<select class="form-select mt-2" name="type_of_position' + x + '">'
+            html += '<option selected disabled>Choose position</option>'
+            html += '<option>Athelete</option>'
+            html += '<option>Coach</option>'
+            html += '<option>Attendee</option>'
+            html += '</select>'
+            html += '<input type="number" class="form-control mt-2" name="no_of_position' + x + '" placeholder = "Number of Positions" min=0>'
+            html += '<input type="number" class="form-control mt-2" name ="position_cost' + x + '" placeholder="Position Cost">'
+            html += '<input type="number" class="form-control mt-2" name="min_age' + x + '" placeholder= "Minimum Age" min=0>'
+            html += '<input type="number" class="form-control mt-2" name="max_age' + x + '" placeholder= "Maximum Age" min=0 >'
+            html += '<a href="#" class="remove_field mt-2">Remove</a>'
             html += '</div>'
             $(wrapper).append(html); //add input box
             x++;

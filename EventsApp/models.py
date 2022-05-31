@@ -102,16 +102,11 @@ class EventsappMasterTable(models.Model):
     country = models.CharField(max_length=30, blank=True, null=True)
     datetimes = models.CharField(max_length=50, blank=True, null=True)
     event_type = models.IntegerField(blank=True, null=True)
-    max_age = models.IntegerField(blank=True, null=True)
-    min_age = models.IntegerField(blank=True, null=True)
-    position = models.CharField(max_length=30, blank=True, null=True)
     province = models.CharField(max_length=30, blank=True, null=True)
     skill = models.CharField(max_length=30, blank=True, null=True)
     sport_category = models.CharField(max_length=30, blank=True, null=True)
     sport_type = models.CharField(max_length=30, blank=True, null=True)
     venue = models.CharField(max_length=30, blank=True, null=True)
-    no_of_position = models.IntegerField(blank=True, null=True)
-    position_cost = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = True

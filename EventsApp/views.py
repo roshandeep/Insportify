@@ -24,10 +24,10 @@ def multistep(request):
     if request.method == "POST":
         form = MultiStepForm(request.POST)
         if form.is_valid():
-            # print(list(request.POST.items()))
+            print(list(request.POST.items()))
             obj = form.save(commit=False)
             obj.created_by = request.user
-            obj.is_recurring = request.POST['recurring_event'] == "on"
+            obj.is_recurring = request.POST['recurring_event'] == "Yes"
             obj.datetimes_monday = request.POST['datetimes_monday'] if obj.is_recurring else ""
             obj.datetimes_tuesday = request.POST['datetimes_tuesday'] if obj.is_recurring else ""
             obj.datetimes_wednesday = request.POST['datetimes_wednesday'] if obj.is_recurring else ""
@@ -37,10 +37,6 @@ def multistep(request):
             obj.datetimes_sunday = request.POST['datetimes_sunday'] if obj.is_recurring else ""
             obj.datetimes_exceptions = request.POST['datetimes_exceptions'] if obj.is_recurring else ""
             obj.datetimes = "" if obj.is_recurring else request.POST['datetimes']
-            obj.position_cost = request.POST['position_cost1']
-            obj.no_of_position = request.POST['no_of_position1']
-            obj.min_age = request.POST['min_age1']
-            obj.max_age = request.POST['max_age1']
             obj.save()
             save_event_position_info(request, obj)
             messages.success(request, 'Event Created - Invite Users?')
@@ -55,14 +51,15 @@ def multistep(request):
 
 
 def save_event_position_info(request, event):
-    for i in range(2, 10):
+    for i in range(1, 10):
         if 'no_of_position' + str(i) in request.POST:
+            position_type = request.POST['type_of_position' + str(i)].strip()
             no_of_position = request.POST['no_of_position' + str(i)].strip()
             position_cost = request.POST['position_cost' + str(i)].strip()
             min_age = request.POST['min_age' + str(i)].strip()
             max_age = request.POST['max_age' + str(i)].strip()
             obj = Events_PositionInfo(event=event, max_age=max_age, min_age=min_age, no_of_position=no_of_position,
-                                      position_cost=position_cost, position_number=i)
+                                      position_cost=position_cost, position_number=i, position_type=position_type)
             obj.save()
 
 
