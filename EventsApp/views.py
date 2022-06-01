@@ -66,6 +66,7 @@ def save_event_position_info(request, event):
 @login_required
 def all_events(request):
     event_list = master_table.objects.all()
+    event_list = format_time(event_list)
     return render(request, 'EventsApp/event_list.html', {'event_list': event_list})
 
 
@@ -298,6 +299,9 @@ def home(request):
     venues = Venues.objects.values('pk', 'vm_name')
     load_venues_excel()
     events = master_table.objects.all()
+
+    events = format_time(events)
+
     recommended_events = get_recommended_events(request)
 
     # print(request.GET.getlist('events_types'))
@@ -321,6 +325,7 @@ def home(request):
         events = get_events_by_date(events, selected_date)
 
     recommended_events = [recommended_events[i:i + 3] for i in range(0, len(recommended_events), 3)]
+
     events = [events[i:i + 3] for i in range(0, len(events), 3)]
     context = {
         'sports_list': sports,
@@ -355,6 +360,27 @@ def get_recommended_events(request):
     # print(list(recommended_events))
 
     return list(recommended_events)
+
+
+def format_time(events):
+    for event in events:
+        time = event.datetimes.split("-")
+        start_time = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p').time()
+        end_time = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p').time()
+        start_time = start_time.strftime("%I:%M %p")
+        end_time = end_time.strftime('%I:%M %p')
+
+        start_date = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p').date()
+        end_date = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p').date()
+        start_date = start_date.strftime("%B %d, %Y")
+        end_date = end_date.strftime("%B %d, %Y")
+        if start_date == end_date:
+            str_datetime = start_date + " " + start_time + " to " + end_time
+        else:
+            str_datetime = start_date + " " + start_time + " to " + end_date + " " + end_time
+
+        event.datetimes = str_datetime
+    return events
 
 
 def get_events_by_date(events, selected_date):
@@ -396,7 +422,7 @@ def event_details(request, event_id):
                 cart.position_type = pos_type
                 cart.no_of_position = needed_pos
                 cart.position_cost = pos_cost
-                cart.total_cost = int(pos_cost)*int(needed_pos)
+                cart.total_cost = int(pos_cost) * int(needed_pos)
                 cart.save()
 
                 ## Update Inventory
@@ -577,14 +603,22 @@ def delete_by_id(request, event_id):
         event_data = " Event Title: " + event.event_title + "\n Event Description: " \
                      + event.description + "\n Event Location: " + event.venue + ", " + event.city \
                      + "\n Event Dates: " + \
-                     (event.datetimes if not event.is_recurring else ("\nMon: " + event.datetimes_monday if event.datetimes_monday is not None else "")
-                                                                     + ("\nTue: " + event.datetimes_tuesday if event.datetimes_tuesday is not None else "")
-                                                                     + ("\nWed: " + event.datetimes_wednesday if event.datetimes_wednesday is not None else "")
-                                                                     + ("\nThu: " + event.datetimes_thursday if event.datetimes_thursday is not None else "")
-                                                                     + ("\nFri: " + event.datetimes_friday if event.datetimes_friday is not None else "")
-                                                                     + ("\nSat: " + event.datetimes_saturday if event.datetimes_saturday is not None else "")
-                                                                     + ("\nSun: " + event.datetimes_sunday if event.datetimes_sunday is not None else "")
-                                                                     + ("\nExc: " + event.datetimes_exceptions if event.datetimes_exceptions is not None else ""))
+                     (event.datetimes if not event.is_recurring else (
+                                                                         "\nMon: " + event.datetimes_monday if event.datetimes_monday is not None else "")
+                                                                     + (
+                                                                         "\nTue: " + event.datetimes_tuesday if event.datetimes_tuesday is not None else "")
+                                                                     + (
+                                                                         "\nWed: " + event.datetimes_wednesday if event.datetimes_wednesday is not None else "")
+                                                                     + (
+                                                                         "\nThu: " + event.datetimes_thursday if event.datetimes_thursday is not None else "")
+                                                                     + (
+                                                                         "\nFri: " + event.datetimes_friday if event.datetimes_friday is not None else "")
+                                                                     + (
+                                                                         "\nSat: " + event.datetimes_saturday if event.datetimes_saturday is not None else "")
+                                                                     + (
+                                                                         "\nSun: " + event.datetimes_sunday if event.datetimes_sunday is not None else "")
+                                                                     + (
+                                                                         "\nExc: " + event.datetimes_exceptions if event.datetimes_exceptions is not None else ""))
         util.email(event_subject, "Hello " + user.first_name + " " + user.last_name
                    + ", the following event has been cancelled by the creator:\n\n" + event_data
                    , [user.email]);
