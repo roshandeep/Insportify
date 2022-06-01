@@ -302,7 +302,9 @@ def home(request):
 
     events = format_time(events)
 
-    # recommended_events = get_recommended_events(request)
+    recommended_events=[]
+    if request.user.is_authenticated:
+        recommended_events = get_recommended_events(request)
 
     # print(request.GET.getlist('events_types'))
 
@@ -324,14 +326,15 @@ def home(request):
         selected_date = datetime.strptime(selected_date.strip(), '%Y-%m-%d').date()
         events = get_events_by_date(events, selected_date)
 
-    # recommended_events = [recommended_events[i:i + 3] for i in range(0, len(recommended_events), 3)]
+    if request.user.is_authenticated:
+        recommended_events = [recommended_events[i:i + 3] for i in range(0, len(recommended_events), 3)]
 
     events = [events[i:i + 3] for i in range(0, len(events), 3)]
     context = {
         'sports_list': sports,
         'venues_list': venues,
         'events': events,
-        # 'recommended_events': recommended_events
+        'recommended_events': recommended_events
     }
     html_template = loader.get_template('EventsApp/home.html')
     return HttpResponse(html_template.render(context, request))
@@ -394,6 +397,7 @@ def get_events_by_date(events, selected_date):
     return events
 
 
+@login_required
 def event_details(request, event_id):
     context = {}
     event = master_table.objects.get(pk=event_id)

@@ -78,14 +78,14 @@
                     <ul class="navbar-nav mb-2 mb-lg-0">
                         {% if user.is_authenticated %}
                         <li class="nav-item">
-                            <a class="nav-link link-secondary" href="{% url 'logout' %}"><p>Logout</p></a>
+                            <a class="nav-link link-secondary" href="{% url 'UserRegister:logout' %}"><p>Logout</p></a>
                         </li>
                         {% else %}
                         <li class="nav-item">
-                            <a class="nav-link link-secondary" href="{% url 'register' %}">Register</a>
+                            <a class="nav-link link-secondary" href="{% url 'UserRegister:register' %}">Register</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link link-secondary" href="{% url 'login' %}">Login</a>
+                            <a class="nav-link link-secondary" href="{% url 'UserRegister:login' %}">Login</a>
                         </li>
                         {% endif %}
                     </ul>

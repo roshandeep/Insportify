@@ -6,6 +6,7 @@ from django.conf.urls import url
 
 # from UserRegister.views import CreateProfilePageView
 
+app_name = 'UserRegister'
 
 urlpatterns = [
     path('edit_profile/', UserEditView.as_view(), name='edit_profile'),
