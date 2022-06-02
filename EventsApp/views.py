@@ -692,7 +692,11 @@ def invite_by_id(request, event_id):
                          event=event,
                          email=form.cleaned_data['email'])
             obj.save()
-            util.email("Invitation from Insportify", "Hi there! " + user.first_name + " " + user.last_name
+            if user.first_name and user.last_name:
+                full_name = user.first_name + " " + user.last_name
+            else:
+                full_name = ""
+            util.email("Invitation from Insportify", "Hi there! " + full_name
                        + " has invited you to the event: " + event.event_title
                        + ". Join Insportify now: " + "http://127.0.0.1:8000/" + str(event_id),
                        [form.cleaned_data['email']])
@@ -720,7 +724,11 @@ def invite(request):
                          event=None,
                          email=form.cleaned_data['email'])
             obj.save()
-            util.email("Invitation from Insportify", "Hi there! " + user.first_name + " " + user.last_name
+            if user.first_name and user.last_name:
+                full_name = user.first_name + " " + user.last_name
+            else:
+                full_name = ""
+            util.email("Invitation from Insportify", "Hi there! " + full_name
                        + " has invited you to Insportify! Join Now: " + "http://127.0.0.1:8000/",
                        [form.cleaned_data['email']])
             context["invites"] = Invite.objects.all().filter(user=user)
