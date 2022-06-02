@@ -11,7 +11,7 @@
                 Registration</h3>
             <div class="card-body">
                 <div class="card-body">
-                    <form action="{% url 'individual_register' %}" method="POST" novalidate>
+                    <form action="{% url 'UserRegister:individual_register' %}" method="POST" novalidate>
                         {% csrf_token %}
                         {% if messages %}
                         {% for message in messages %}

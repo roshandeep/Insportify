@@ -24,30 +24,61 @@ def multistep(request):
     sports_type = SportsType.objects.all()
     if request.method == "POST":
         form = MultiStepForm(request.POST)
-        if form.is_valid():
-            print(list(request.POST.items()))
+
+        # Validate datetime
+        date_valid = True
+        if not request.POST.get('recurring_event'):
+            messages.error(request, "Please select event recurrence")
+            print(date_valid)
+            date_valid = False
+        else:
+            if request.POST['recurring_event'] == "Yes":
+                if (not request.POST.get('datetimes_monday') or request.POST['datetimes_monday'] == "") and \
+                        (not request.POST.get('datetimes_tuesday') or request.POST['datetimes_tuesday'] == "") and \
+                        (not request.POST.get('datetimes_wednesday') or request.POST['datetimes_wednesday'] == "") and \
+                        (not request.POST.get('datetimes_thursday') or request.POST['datetimes_thursday'] == "") and \
+                        (not request.POST.get('datetimes_friday') or request.POST['datetimes_friday'] == "") and \
+                        (not request.POST.get('datetimes_saturday') or request.POST['datetimes_saturday'] == "") and \
+                        (not request.POST.get('datetimes_sunday') or request.POST['datetimes_sunday'] == ""):
+                    messages.error(request, "No date times entered, please enter dates for one of the selected "
+                                            "recurring days")
+                    date_valid = False
+            else:
+                if not request.POST.get('datetimes') or request.POST['datetimes'] == "":
+                    messages.error(request, "No date times entered, please enter a date for the event")
+                    date_valid = False
+        print(date_valid)
+        # Handle Form Post
+        if form.is_valid() and date_valid:
+            # print(list(request.POST.items()))
+            # Save data
             obj = form.save(commit=False)
             obj.created_by = request.user
+            print('this works 2')
             sports_type_text, sports_catgeory_text = save_sports_type(request)
             obj.sport_type = sports_type_text
             obj.sport_category = sports_catgeory_text
+            print('this works 3')
             obj.is_recurring = request.POST['recurring_event'] == "Yes"
-            obj.datetimes_monday = request.POST['datetimes_monday'] if obj.is_recurring else ""
-            obj.datetimes_tuesday = request.POST['datetimes_tuesday'] if obj.is_recurring else ""
-            obj.datetimes_wednesday = request.POST['datetimes_wednesday'] if obj.is_recurring else ""
-            obj.datetimes_thursday = request.POST['datetimes_thursday'] if obj.is_recurring else ""
-            obj.datetimes_friday = request.POST['datetimes_friday'] if obj.is_recurring else ""
-            obj.datetimes_saturday = request.POST['datetimes_saturday'] if obj.is_recurring else ""
-            obj.datetimes_sunday = request.POST['datetimes_sunday'] if obj.is_recurring else ""
-            obj.datetimes_exceptions = request.POST['datetimes_exceptions'] if obj.is_recurring else ""
-            obj.datetimes = "" if obj.is_recurring else request.POST['datetimes']
+            obj.datetimes_monday = request.POST.get('datetimes_monday') if obj.is_recurring else ""
+            obj.datetimes_tuesday = request.POST.get('datetimes_tuesday') if obj.is_recurring else ""
+            obj.datetimes_wednesday = request.POST.get('datetimes_wednesday') if obj.is_recurring else ""
+            obj.datetimes_thursday = request.POST.get('datetimes_thursday') if obj.is_recurring else ""
+            obj.datetimes_friday = request.POST.get('datetimes_friday') if obj.is_recurring else ""
+            obj.datetimes_saturday = request.POST.get('datetimes_saturday') if obj.is_recurring else ""
+            obj.datetimes_sunday = request.POST.get('datetimes_sunday') if obj.is_recurring else ""
+            obj.datetimes_exceptions = request.POST.get('datetimes_exceptions') if obj.is_recurring else ""
+            obj.datetimes = "" if obj.is_recurring else request.POST.get('datetimes')
+            print('this works 4')
             obj.save()
             save_event_position_info(request, obj)
+
+            # Take user to event invitation page
             messages.success(request, 'Event Created - Invite Users?')
             redirect_url = f'/invite/' + str(master_table.objects.last().id) + '/'
             return redirect(redirect_url)
-        else:
-            print(form.errors)
+        elif not form.is_valid():
+            messages.error(request, form.errors)
     else:
         form = MultiStepForm()
 
@@ -455,6 +486,15 @@ def event_details(request, event_id):
                 event_pos = Events_PositionInfo.objects.get(pk=position_id)
                 event_pos.no_of_position = int(event_pos.no_of_position) - int(needed_pos)
                 event_pos.save()
+
+                ## Email Creator - New Subscriber
+                event_subject = "New subscriber for Event: " + event.event_title
+                event_message = "A new user has subscribed to event: " + event.event_title + "\n" + \
+                                "Subscriber Name: " + request.user.first_name + " " + request.user.last_name + "\n" + \
+                                "Subscriber Email: " + request.user.email + "\n" + \
+                                "Subscriber User Name: " + request.user.username
+                if event.created_by:
+                    util.email(event_subject, event_message, [event.created_by.email])
                 return redirect('EventsApp:cart_summary')
 
     return render(request, "EventsApp/detail_dashboard.html", context)
@@ -662,9 +702,22 @@ def delete_by_id(request, event_id):
                                                                          "\nSun: " + event.datetimes_sunday if event.datetimes_sunday is not None else "")
                                                                      + (
                                                                          "\nExc: " + event.datetimes_exceptions if event.datetimes_exceptions is not None else ""))
+
+        for cart_item in Cart.objects.filter(event=event):
+            subs_email = cart_item.user.email
+            util.email(event_subject, "Hello " + user.first_name + " " + user.last_name
+                       + ", the following subscribed event in your cart has been cancelled by the creator:\n\n"
+                       + event_data
+                       , [subs_email])
+        for order_item in Order.objects.filter(event=event):
+            order_email = order_item.customer.email
+            util.email(event_subject, "Hello " + user.first_name + " " + user.last_name
+                       + ", the following event has been cancelled by the creator:\n\n" + event_data
+                       , [order_email])
         util.email(event_subject, "Hello " + user.first_name + " " + user.last_name
-                   + ", the following event has been cancelled by the creator:\n\n" + event_data
-                   , [user.email]);
+                   + ", the following event has been cancelled as requested (subscribers and customers have been "
+                     "notified):\n\n" + event_data
+                   , [user.email])
         messages.success(request, "Event removed successfully!")
 
     except Exception as e:
@@ -694,7 +747,7 @@ def invite_by_id(request, event_id):
             obj.save()
             util.email("Invitation from Insportify", "Hi there! " + user.first_name + " " + user.last_name
                        + " has invited you to the event: " + event.event_title
-                       + ". Join Insportify now: " + "http://127.0.0.1:8000/" + str(event_id),
+                       + ". Join Insportify now: " + request.get_host() + "/" + str(event_id),
                        [form.cleaned_data['email']])
             context["invites"] = Invite.objects.all().filter(event=event)
         else:
