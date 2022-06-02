@@ -59,7 +59,8 @@
                         </div>
                         <div class="form-row p-2" id="fields_recurring" style="display:None">
                             <label>Which days does the event occur &nbsp &nbsp</label>
-                            <select class="select2 form-control" style="width: 100%" id="recurring_selection" name="recurring_days" multiple="multiple">
+                            <select class="select2 form-control" style="width: 100%" id="recurring_selection"
+                                    name="recurring_days" multiple="multiple">
                                 <option>Monday</option>
                                 <option>Tuesday</option>
                                 <option>Wednesday</option>
@@ -72,43 +73,50 @@
                         <div class="form-row p-2" id="Monday_dates" style="display:None">
                             <label>Monday: Select Start and End Date &nbsp &nbsp</label>
                             <div class="form-row p-2">
-                                <input type="text" class="form-control datetime" name="datetimes_monday" placeholder="Date & Time"/>
+                                <input type="text" class="form-control datetime" name="datetimes_monday"
+                                       placeholder="Date & Time"/>
                             </div>
                         </div>
                         <div class="form-row p-2" id="Tuesday_dates" style="display:None">
                             <label>Tuesday: Select Start and End Date &nbsp &nbsp</label>
                             <div class="form-row p-2">
-                                <input type="text" class="form-control datetime" name="datetimes_tuesday" placeholder="Date & Time"/>
+                                <input type="text" class="form-control datetime" name="datetimes_tuesday"
+                                       placeholder="Date & Time"/>
                             </div>
                         </div>
                         <div class="form-row p-2" id="Wednesday_dates" style="display:None">
                             <label>Wednesday: Select Start and End Date &nbsp &nbsp</label>
                             <div class="form-row p-2">
-                                <input type="text" class="form-control datetime" name="datetimes_wednesday" placeholder="Date & Time"/>
+                                <input type="text" class="form-control datetime" name="datetimes_wednesday"
+                                       placeholder="Date & Time"/>
                             </div>
                         </div>
                         <div class="form-row p-2" id="Thursday_dates" style="display:None">
                             <label>Thursday: Select Start and End Date &nbsp &nbsp</label>
                             <div class="form-row p-2">
-                                <input type="text" class="form-control datetime" name="datetimes_thursday" placeholder="Date & Time"/>
+                                <input type="text" class="form-control datetime" name="datetimes_thursday"
+                                       placeholder="Date & Time"/>
                             </div>
                         </div>
                         <div class="form-row p-2" id="Friday_dates" style="display:None">
                             <label>Friday: Select Start and End Date &nbsp &nbsp</label>
                             <div class="form-row p-2">
-                                <input type="text" class="form-control datetime" name="datetimes_friday" placeholder="Date & Time"/>
+                                <input type="text" class="form-control datetime" name="datetimes_friday"
+                                       placeholder="Date & Time"/>
                             </div>
                         </div>
                         <div class="form-row p-2" id="Saturday_dates" style="display:None">
                             <label>Saturday: Select Start and End Date &nbsp &nbsp</label>
                             <div class="form-row p-2">
-                                <input type="text" class="form-control datetime" name="datetimes_saturday" placeholder="Date & Time"/>
+                                <input type="text" class="form-control datetime" name="datetimes_saturday"
+                                       placeholder="Date & Time"/>
                             </div>
                         </div>
                         <div class="form-row p-2" id="Sunday_dates" style="display:None">
                             <label>Sunday: Select Start and End Date &nbsp &nbsp</label>
                             <div class="form-row p-2">
-                                <input type="text" class="form-control datetime" name="datetimes_sunday" placeholder="Date & Time"/>
+                                <input type="text" class="form-control datetime" name="datetimes_sunday"
+                                       placeholder="Date & Time"/>
                             </div>
                         </div>
                         <div class="form-row p-2" id="Exception_dates" style="display:None">
@@ -120,7 +128,8 @@
                         <div class="form-row p-2" id="single_dates" style="display:None">
                             <label>Select Event Date &nbsp &nbsp</label>
                             <div class="form-row p-2">
-                                <input type="text" class="form-control datetime" name="datetimes" placeholder="Date & Time"/>
+                                <input type="text" class="form-control datetime" name="datetimes"
+                                       placeholder="Date & Time"/>
                             </div>
                         </div>
                         <div class="form-row p-2 text-center">
@@ -140,15 +149,12 @@
                         Sports Information</h3>
                     <div class="card-body">
                         <div class="form-row p-2">
-                            <select name='sport_category' id="category" class="form-select"
-                                    aria-label=".form-select-lg example">
-                                <option selected>Choose Sport Category</option>
-                            </select>
-                        </div>
-                        <div class="form-row p-2">
                             <select name='sport_type' id="sports" class="form-select"
                                     aria-label=".form-select-lg example">
                                 <option selected disabled>Choose Sport Type</option>
+                                {% for type in sports_type %}
+                                <option value="{{type.pk}}">{{type.sports_type_text}}</option>
+                                {% endfor %}
                             </select>
                         </div>
 
@@ -226,8 +232,9 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"/>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.css" rel="stylesheet"/>
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.css"
+      rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <style>
@@ -280,6 +287,7 @@
 #progressbar li.active:after {
     background: #ff6f3d
 }
+
 
 
 
@@ -625,6 +633,7 @@ $(function () {
 $('.radio').change(function() {
   $('#custom_amount').prop('disabled', !$(this).is('.other'));
 });
+
 
 
 

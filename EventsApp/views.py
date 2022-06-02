@@ -21,12 +21,16 @@ import util
 
 @login_required
 def multistep(request):
+    sports_type = SportsType.objects.all()
     if request.method == "POST":
         form = MultiStepForm(request.POST)
         if form.is_valid():
             print(list(request.POST.items()))
             obj = form.save(commit=False)
             obj.created_by = request.user
+            sports_type_text, sports_catgeory_text = save_sports_type(request)
+            obj.sport_type = sports_type_text
+            obj.sport_category = sports_catgeory_text
             obj.is_recurring = request.POST['recurring_event'] == "Yes"
             obj.datetimes_monday = request.POST['datetimes_monday'] if obj.is_recurring else ""
             obj.datetimes_tuesday = request.POST['datetimes_tuesday'] if obj.is_recurring else ""
@@ -47,7 +51,14 @@ def multistep(request):
     else:
         form = MultiStepForm()
 
-    return render(request, 'EventsApp/multi_step.html', {'form': form})
+    return render(request, 'EventsApp/multi_step.html', {'form': form, 'sports_type': sports_type})
+
+
+def save_sports_type(request):
+    if request.POST['sport_type']:
+        sports_type_id = request.POST['sport_type']
+        obj = SportsType.objects.get(pk=sports_type_id)
+        return obj.sports_type_text, obj.sports_category.sports_catgeory_text
 
 
 def save_event_position_info(request, event):
@@ -452,7 +463,7 @@ def event_details(request, event_id):
 @login_required
 def cart_summary(request):
     context = {}
-    total=0
+    total = 0
     user = request.user
     context['STRIPE_PUBLISHABLE_KEY'] = settings.STRIPE_PUBLISHABLE_KEY,
     cart = Cart.objects.filter(user=user)
