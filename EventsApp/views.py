@@ -7,10 +7,10 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
 from django.template import loader
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
+from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth import login, logout, authenticate
 from Insportify import settings
 from .forms import MultiStepForm, UserForm, AvailabilityForm, LogoForm, InviteForm
 from .models import master_table, Individual, Organization, Venues, SportsCategory, SportsType, Order, User, \
@@ -302,7 +302,7 @@ def home(request):
 
     events = format_time(events)
 
-    recommended_events=[]
+    recommended_events = []
     if request.user.is_authenticated:
         recommended_events = get_recommended_events(request)
 
@@ -346,6 +346,8 @@ def get_recommended_events(request):
     events = master_table.objects.all()
     week_days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
     recommended_events = set()
+
+    # FILTER by DateTime
     for event in events:
         time = event.datetimes.split("-")
         start_datetime = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
@@ -361,6 +363,15 @@ def get_recommended_events(request):
                         recommended_events.add(event)
 
     # print(list(recommended_events))
+    # FILTER BY Location
+    locations_saved = Extra_Loctaions.objects.filter(user=user);
+    loc_list = []
+    for item in locations_saved:
+        loc_list.append(item.city.lower())
+
+    for event in recommended_events:
+        if event.city.lower() not in loc_list:
+            recommended_events.remove(event)
 
     return list(recommended_events)
 
@@ -438,14 +449,30 @@ def event_details(request, event_id):
     return render(request, "EventsApp/detail_dashboard.html", context)
 
 
+@login_required
 def cart_summary(request):
-    return render(request, "EventsApp/cart_summary.html")
+    context = {}
+    total=0
+    user = request.user
+    context['STRIPE_PUBLISHABLE_KEY'] = settings.STRIPE_PUBLISHABLE_KEY,
+    cart = Cart.objects.filter(user=user)
+    for item in cart:
+        total = total + item.total_cost
+    context["cart"] = cart
+    context["total"] = total
+    return render(request, "EventsApp/cart_summary.html", context)
 
 
 @csrf_exempt
 def create_checkout_session(request, id):
-    event = get_object_or_404(master_table, pk=id)
-    unit_amount = round(event.position_cost)
+    user = request.user
+    cart = Cart.objects.filter(user=user)
+    name = cart[0].event.event_title
+    event = cart[0].event
+    total = 0
+    for item in cart:
+        total = total + item.total_cost
+
     stripe.api_key = settings.STRIPE_SECRET_KEY
     try:
         checkout_session = stripe.checkout.Session.create(
@@ -453,11 +480,11 @@ def create_checkout_session(request, id):
             line_items=[
                 {
                     'price_data': {
-                        'currency': 'usd',
+                        'currency': 'cad',
                         'product_data': {
-                            'name': event.event_title,
+                            'name': name,
                         },
-                        'unit_amount': int(unit_amount),
+                        'unit_amount': int(total),
                     },
                     'quantity': 1,
                 }
@@ -471,13 +498,14 @@ def create_checkout_session(request, id):
         order = Order()
         order.customer = User.objects.get(username=request.user.username)
         order.event = event
-        order.order_date = datetime.datetime.now()
-        order.order_amount = int(unit_amount)
+        order.order_date = timezone.now()
+        order.order_amount = int(total)
         order.save()
 
         return JsonResponse({'sessionId': checkout_session.id})
 
     except Exception as e:
+        print(str(e))
         return JsonResponse({'error': str(e)})
 
 
