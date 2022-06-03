@@ -22,6 +22,7 @@ import util
 @login_required
 def multistep(request):
     sports_type = SportsType.objects.all()
+    print(sports_type)
     if request.method == "POST":
         form = MultiStepForm(request.POST)
         if form.is_valid():
@@ -306,6 +307,7 @@ class UserProfileView(FormView):
 
 
 def home(request):
+    master_table.objects.filter(pk=2).delete()
     sports = SportsCategory.objects.values('pk', 'sports_catgeory_text')
     venues = Venues.objects.values('pk', 'vm_name')
     load_venues_excel()
@@ -314,8 +316,8 @@ def home(request):
     events = format_time(events)
 
     recommended_events = []
-    if request.user.is_authenticated:
-        recommended_events = get_recommended_events(request)
+    # if request.user.is_authenticated:
+    #     recommended_events = get_recommended_events(request)
 
     # print(request.GET.getlist('events_types'))
 
@@ -337,8 +339,8 @@ def home(request):
         selected_date = datetime.strptime(selected_date.strip(), '%Y-%m-%d').date()
         events = get_events_by_date(events, selected_date)
 
-    if request.user.is_authenticated:
-        recommended_events = [recommended_events[i:i + 3] for i in range(0, len(recommended_events), 3)]
+    # if request.user.is_authenticated:
+    #     recommended_events = [recommended_events[i:i + 3] for i in range(0, len(recommended_events), 3)]
 
     events = [events[i:i + 3] for i in range(0, len(events), 3)]
     context = {

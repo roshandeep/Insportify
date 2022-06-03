@@ -153,7 +153,7 @@
                                     aria-label=".form-select-lg example">
                                 <option selected disabled>Choose Sport Type</option>
                                 {% for type in sports_type %}
-                                <option value="{{type.pk}}">{{type.sports_type_text}}</option>
+                                    <option value="{{type.pk}}">{{type.sports_type_text}}</option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -565,22 +565,6 @@ $(document).ready(function(){
 
 }
 
-  window.onload = function() {
-  var catgeorySel = document.getElementById("category");
-  var sportsSel = document.getElementById("sports");
-  for (var x in sportsObject) {
-    catgeorySel.options[catgeorySel.options.length] = new Option(x, x);
-  }
-  catgeorySel.onchange = function() {
-    //empty Chapters- and Topics- dropdowns
-    sportsSel.length = 1;
-    //display correct values
-    for (var y in sportsObject[this.value]) {
-      sportsSel.options[sportsSel.options.length] = new Option(y, y);
-
-    }
-  }
-}
 
 
 $(function() {

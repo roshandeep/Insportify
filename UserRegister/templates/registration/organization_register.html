@@ -10,7 +10,7 @@
                 style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">Organization
                 Registration</h3>
             <div class="card-body">
-                <form action="{% url 'organization_register' %}" method="POST" novalidate>
+                <form action="{% url 'UserRegister:organization_register' %}" method="POST" novalidate>
                     {% csrf_token %}
                     {% if messages %}
                     {% for message in messages %}
