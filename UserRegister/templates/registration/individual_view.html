@@ -137,7 +137,7 @@
                         <div class="form-row p-2">
                             <select name='sport_type' id="sports" class="form-select"
                                     aria-label=".form-select-lg example">
-                                <option value="" selected>Choose Sport Type</option>
+                                <option value="" selected>Choose Sport</option>
                             </select>
                         </div>
                         <div class="form-row p-2">
@@ -146,9 +146,9 @@
                                 <option value=""
                                         {% if individual.sports_position == "" %} selected {% endif %}>
                                 Choose position</option>
-                                <option value="Athelete"
-                                        {% if individual.sports_position == "Athelete" %} selected {% endif %}>
-                                Athelete</option>
+                                <option value="Athlete"
+                                        {% if individual.sports_position == "Athlete" %} selected {% endif %}>
+                                Athlete</option>
                                 <option value="Coach"
                                         {% if individual.sports_position == "Coach" %} selected {% endif %}>
                                 Coach</option>
@@ -383,11 +383,11 @@ $("#category").change(function () {
             html += '<select name="' + category_id + '" id="' + category_id + '" class="form-select" onchange="' + sports_type_func + '()">'
             html += '<option selected disabled>Choose Sport Category</option></select>'
             html += '<select name="' + type_id + '" id="' + type_id + '" class="form-select">'
-            html += '<option selected disabled>Choose Sport Type</option>'
+            html += '<option selected disabled>Choose Sport</option>'
             html += '</select>'
             html += '<select name="' + position_id + '" id="' + position_id + '" class="form-select">'
             html += '<option selected disabled>Choose position</option>'
-            html += '<option>Athelete</option><option>Coach</option>'
+            html += '<option>Athlete</option><option>Coach</option>'
             html += '<option>Attendee</option>'
             html += '</select>'
             html += '<a href="#" class="remove_field">Remove</a>'

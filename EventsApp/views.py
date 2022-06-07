@@ -265,6 +265,7 @@ def organization_profile(request):
             organization.organization_name = response["company_name"].strip()
             organization.parent_organization_name = response["parent_organization"].strip()
             organization.registration_no = response["registration"].strip()
+            organization.year_established = response["year_established"].strip()
             organization.street = response["street_name"].strip()
             organization.city = response["city"].strip()
             organization.province = response["province"].strip()
@@ -307,7 +308,7 @@ class UserProfileView(FormView):
 
 
 def home(request):
-    master_table.objects.filter(pk=2).delete()
+    # Individual.objects.filter(pk=4).delete()
     sports = SportsCategory.objects.values('pk', 'sports_catgeory_text')
     venues = Venues.objects.values('pk', 'vm_name')
     load_venues_excel()
@@ -566,6 +567,8 @@ def add_availability(request):
         else:
             print(form.errors)
 
+    form = AvailabilityForm()
+    context['form'] = form
     return render(request, "EventsApp/add_availability.html", context)
 
 

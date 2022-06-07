@@ -33,7 +33,7 @@
                         Information</h3>
                     <div class="card-body">
                         <div class="form-row p-2">
-                            <input type="text" class="form-control" name="event_title" placeholder="Event Title"/>
+                            <input type="text" class="form-control" name="event_title" placeholder="Event Title" required/>
                         </div>
                         <div class="form-row p-2">
                             <input type="text" class="form-control" name="description" placeholder="Description"/>
@@ -151,7 +151,7 @@
                         <div class="form-row p-2">
                             <select name='sport_type' id="sports" class="form-select"
                                     aria-label=".form-select-lg example">
-                                <option selected disabled>Choose Sport Type</option>
+                                <option selected disabled>Choose Sport</option>
                                 {% for type in sports_type %}
                                     <option value="{{type.pk}}">{{type.sports_type_text}}</option>
                                 {% endfor %}
@@ -363,7 +363,7 @@ $(document).ready(function(){
             html += '<div class="mt-2">'
             html += '<select class="form-select mt-2" name="type_of_position' + x + '">'
             html += '<option selected disabled>Choose position</option>'
-            html += '<option>Athelete</option>'
+            html += '<option>Athlete</option>'
             html += '<option>Coach</option>'
             html += '<option>Attendee</option>'
             html += '</select>'

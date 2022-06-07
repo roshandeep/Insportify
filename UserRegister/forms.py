@@ -40,20 +40,11 @@ class PasswordResetAuthForm(UserChangeForm):
         fields = ("email",)
         exclude = ("password",)
 
-# @transaction.atomic
-# def save(self):
-# 	user = super().save(commit=False)
-# 	user.is_individual = True
-# 	user.first_name = self.cleaned_data.get('first_name')
-# 	user.last_name = self.cleaned_data.get('last_name')
-# 	user.save()
-# 	return user
-
 
 class OrganizationSignUpForm(UserCreationForm):
     organization_name = forms.CharField(required=True)
-    # last_name = forms.CharField(required=True)
     phone = forms.CharField(required=True)
+    email = forms.CharField(required=True)
 
     class Meta(UserCreationForm.Meta):
         model = User
@@ -64,11 +55,13 @@ class OrganizationSignUpForm(UserCreationForm):
         user = super().save(commit=False)
         user.is_organization = True
         user.is_staff = True
-        user.first_name = self.cleaned_data.get('first_name')
-        user.last_name = self.cleaned_data.get('last_name')
+        user.first_name = self.cleaned_data.get('organization_name')
+        user.email = self.cleaned_data.get('email')
         user.save()
         organization = Organization.objects.create(user=user)
+        organization.organization_name = self.cleaned_data.get('organization_name')
         organization.phone = self.cleaned_data.get('phone')
+        organization.email = self.cleaned_data.get('email')
         organization.save()
         return user
 

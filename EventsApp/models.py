@@ -2,12 +2,14 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from datetime import datetime
 
+
 class User(AbstractUser):
     is_individual = models.BooleanField(default=False)
     is_organization = models.BooleanField(default=False)
     first_name = models.CharField(max_length=40, null=True)
     last_name = models.CharField(max_length=40, null=True)
     is_active = models.BooleanField(default=False, null=True)
+
 
 
 class master_table(models.Model):
@@ -69,7 +71,7 @@ class Individual(models.Model):
     sports_skill = models.CharField(max_length=50, null=True)
 
     def __str__(self):
-        return self.first_name + " " + self.last_name
+        return self.first_name
 
 
 class Organization(models.Model):

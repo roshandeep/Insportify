@@ -1,15 +1,11 @@
-from django.urls import path, include
-from .views import UserRegisterView, UserEditView, PasswordsChangeView
+from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
-from django.conf.urls import url
 
-# from UserRegister.views import CreateProfilePageView
 
 app_name = 'UserRegister'
 
 urlpatterns = [
-    path('edit_profile/', UserEditView.as_view(), name='edit_profile'),
     path('register/', views.register, name='register'),
     path('login/', views.login_request, name='login'),
     path('logout/', views.logout_request, name='logout'),
