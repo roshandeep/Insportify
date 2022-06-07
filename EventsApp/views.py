@@ -1,4 +1,5 @@
 import calendar
+import re
 from datetime import datetime, timedelta, date
 
 import openpyxl
@@ -8,14 +9,13 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
 from django.template import loader
 from django.shortcuts import render, redirect
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from Insportify import settings
-from .forms import MultiStepForm, UserForm, AvailabilityForm, LogoForm, InviteForm
+from .forms import MultiStepForm, AvailabilityForm, LogoForm, InviteForm
 from .models import master_table, Individual, Organization, Venues, SportsCategory, SportsType, Order, User, \
     Availability, Logo, Extra_Loctaions, Events_PositionInfo, Secondary_SportsChoice, Cart, Invite
-from django.views.generic import FormView
 import util
 
 
@@ -118,7 +118,6 @@ def user_profile(request):
             individual.last_name = response["last_name"].strip()
             individual.phone = response["mobile"].strip()
             individual.email = response["contact_email"].strip()
-            individual.provider = response["provider"].strip()
             individual.dob = response["dob"].strip()
             individual.concussion = response["is_concussion"].strip()
             individual.participation_interest = response["interest_gender"].strip()
@@ -140,7 +139,6 @@ def user_profile(request):
             obj.last_name = response["last_name"].strip()
             obj.phone = response["mobile"].strip()
             obj.email = response["contact_email"].strip()
-            obj.provider = response["provider"].strip()
             obj.dob = response["dob"].strip()
             obj.concussion = response["is_concussion"].strip()
             obj.participation_interest = response["interest_gender"].strip()
@@ -301,12 +299,6 @@ def organization_profile(request):
     return render(request, 'registration/organization_view.html', context)
 
 
-class UserProfileView(FormView):
-    form_class = UserForm
-    template_name = 'EventsApp/user_profile.html'
-    success_url = reverse_lazy('multistep')
-
-
 def home(request):
     # Individual.objects.filter(pk=4).delete()
     sports = SportsCategory.objects.values('pk', 'sports_catgeory_text')
@@ -317,8 +309,8 @@ def home(request):
     events = format_time(events)
 
     recommended_events = []
-    # if request.user.is_authenticated:
-    #     recommended_events = get_recommended_events(request)
+    if request.user.is_authenticated:
+        recommended_events = get_recommended_events(request)
 
     # print(request.GET.getlist('events_types'))
 
@@ -340,8 +332,8 @@ def home(request):
         selected_date = datetime.strptime(selected_date.strip(), '%Y-%m-%d').date()
         events = get_events_by_date(events, selected_date)
 
-    # if request.user.is_authenticated:
-    #     recommended_events = [recommended_events[i:i + 3] for i in range(0, len(recommended_events), 3)]
+    if request.user.is_authenticated:
+        recommended_events = [recommended_events[i:i + 3] for i in range(0, len(recommended_events), 3)]
 
     events = [events[i:i + 3] for i in range(0, len(events), 3)]
     context = {
@@ -376,9 +368,10 @@ def get_recommended_events(request):
                     if avail.start_time <= end_datetime.time() or avail.end_time >= start_datetime.time():
                         recommended_events.add(event)
 
-    # print(list(recommended_events))
+    recommended_events = list(recommended_events)
+
     # FILTER BY Location
-    locations_saved = Extra_Loctaions.objects.filter(user=user);
+    locations_saved = Extra_Loctaions.objects.filter(user=user)
     loc_list = []
     for item in locations_saved:
         loc_list.append(item.city.lower())
@@ -386,6 +379,26 @@ def get_recommended_events(request):
     for event in recommended_events:
         if event.city.lower() not in loc_list:
             recommended_events.remove(event)
+
+    recommended_events = list(recommended_events)
+
+    # FILTER BY Age
+    individual = Individual.objects.get(user=user)
+    if individual.dob:
+        dob = datetime.strptime(individual.dob, '%Y-%m-%d').date()
+        today = date.today()
+        age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
+        for event in recommended_events:
+            positions = Events_PositionInfo.objects.filter(event=event)
+            age_fail_count=0
+            for position in positions:
+                if position.max_age >= age >= position.min_age:
+                    print(position.max_age, position.min_age)
+                else:
+                    age_fail_count = age_fail_count + 1
+
+            if age_fail_count == len(positions):
+                recommended_events.remove(event)
 
     return list(recommended_events)
 
@@ -565,6 +578,7 @@ def add_availability(request):
             context["user_availability"] = user_avaiability
             messages.success(request, "New Availability Added!")
         else:
+            messages.error(request, "Enter a valid time!")
             print(form.errors)
 
     form = AvailabilityForm()

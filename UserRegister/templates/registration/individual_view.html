@@ -54,10 +54,6 @@
                             value="{% if individual.phone %} {{individual.phone}} {% endif %}"/>
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" class="form-control" name="provider" placeholder="Provider"
-                            value="{% if individual.provider %} {{individual.provider}} {% endif %}"/>
-                        </div>
-                        <div class="form-row p-2">
                             <label>I am interest in participating in ?</label>
                             <input type="radio" id="Male" name="interest_gender" value="Male"
                             {% if individual.participation_interest == "Male" %} checked {% endif %}>Male</input>

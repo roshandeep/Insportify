@@ -27,6 +27,11 @@
         </a>
         <hr>
         <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link link-secondary text-white" href="{% url 'EventsApp:home' %}">
+                    <p>Home</p>
+                </a>
+            </li>
             {% if request.user.is_authenticated %}
             <li class="nav-item">
                 <a class="nav-link link-secondary text-white" href="{% url 'EventsApp:list-events' %}">
