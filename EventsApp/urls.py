@@ -34,6 +34,7 @@ urlpatterns = [
     path('delete/<int:event_id>/', views.delete_by_id, name='delete_by_id'),
     path('get_selected_sports_type/', views.get_selected_sports_type, name='get_selected_sports_type'),
     path('get_sports_category/', views.get_sports_category, name='get_sports_category'),
+    path('get_venue/', views.get_venue_details, name='get_venue'),
     path('add_availability/', views.add_availability, name='add_availability'),
     path('notifications/', views.notifications, name='notifications'),
     path('delete_availability/<int:id>/', views.delete_availability, name='delete_availability'),

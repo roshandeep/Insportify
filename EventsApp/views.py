@@ -1,5 +1,4 @@
 import calendar
-import re
 from datetime import datetime, timedelta, date
 
 import openpyxl
@@ -22,7 +21,7 @@ import util
 @login_required
 def multistep(request):
     sports_type = SportsType.objects.all()
-    print(sports_type)
+    venues = Venues.objects.all()
     if request.method == "POST":
         form = MultiStepForm(request.POST)
         if form.is_valid():
@@ -52,7 +51,20 @@ def multistep(request):
     else:
         form = MultiStepForm()
 
-    return render(request, 'EventsApp/multi_step.html', {'form': form, 'sports_type': sports_type})
+    return render(request, 'EventsApp/multi_step.html', {'form': form, 'sports_type': sports_type, 'venues': venues})
+
+
+def get_venue_details(request):
+    data = {}
+    if request.method == "POST":
+        selected_venue = request.POST['selected_venue']
+        try:
+            selected_venue = Venues.objects.filter(vm_name=selected_venue)
+            # print(selected_venue)
+        except Exception:
+            data['error_message'] = 'error'
+            return JsonResponse(data)
+        return JsonResponse(list(selected_venue.values()), safe=False)
 
 
 def save_sports_type(request):

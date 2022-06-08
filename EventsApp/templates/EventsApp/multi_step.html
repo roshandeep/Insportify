@@ -33,7 +33,8 @@
                         Information</h3>
                     <div class="card-body">
                         <div class="form-row p-2">
-                            <input type="text" class="form-control" name="event_title" placeholder="Event Title" required/>
+                            <input type="text" class="form-control" name="event_title" placeholder="Event Title"
+                                   required/>
                         </div>
                         <div class="form-row p-2">
                             <input type="text" class="form-control" name="description" placeholder="Description"/>
@@ -153,7 +154,7 @@
                                     aria-label=".form-select-lg example">
                                 <option selected disabled>Choose Sport</option>
                                 {% for type in sports_type %}
-                                    <option value="{{type.pk}}">{{type.sports_type_text}}</option>
+                                <option value="{{type.pk}}">{{type.sports_type_text}}</option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -193,22 +194,34 @@
                         Venue</h2>
                     <div class="card-body">
                         <div class="form-row p-2">
-                            <input type="text" class="form-control" name="venue" placeholder="Venue"/>
+                            <!--                            <input type="text" class="form-control" name="venue" placeholder="Venue"/>-->
+                            <select name='venue' id="venue" class="form-select"
+                                    aria-label=".form-select-lg example">
+                                <option selected disabled>Choose Venue</option>
+                                {% for venue in venues %}
+                                <option value="{{venue}}">{{venue.vm_name}}</option>
+                                {% endfor %}
+                            </select>
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" class="form-control" name="street" placeholder="Street"/>
+                            <input type="text" class="form-control" id="street" name="street"
+                                   placeholder="Street" disabled/>
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" class="form-control" name="city" placeholder="City"/>
+                            <input type="text" class="form-control" id="city" name="city"
+                                   placeholder="City" disabled/>
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" class="form-control" name="province" placeholder="Province"/>
+                            <input type="text" class="form-control" id="province" name="province"
+                                   placeholder="Province" disabled/>
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" class="form-control" name="country" placeholder="Country"/>
+                            <input type="text" class="form-control" id="country" name="country"
+                                   placeholder="Country" disabled/>
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" class="form-control" name="zip_code" placeholder="Area Code"/>
+                            <input type="text" class="form-control" id="zip_code" name="zip_code"
+                                   placeholder="Area Code" disabled/>
                         </div>
                         <div class="form-row p-2 text-center">
                             <input type="button" name="previous"
@@ -291,9 +304,36 @@
 
 
 
+
+
+
+
 </style>
 
 <script>
+
+
+$("#venue").change(function () {
+        var selected_venue_value = $("#venue option:selected");
+        var selected_venue_text = selected_venue_value.text();
+        $.ajax({
+            type: "POST",
+            url: '{% url "EventsApp:get_venue" %}',
+            data: {
+                'selected_venue': selected_venue_text,
+                'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
+            },
+            success: function (data) {
+                let html_data = data[0];
+                console.log(html_data["vm_venue_street"]);
+                $("#street").val(html_data["vm_venue_street"]);
+                $("#city").val(html_data["vm_venuecity"]);
+                $("#province").val(html_data["vm_venue_province"]);
+                $("#country").val(html_data["vm_venue_country"]);
+                $("#zip_code").val(html_data["vm_venue_zip"]);
+            }
+        });
+    });
 
 
 $(document).ready(function(){
@@ -385,187 +425,6 @@ $(document).ready(function(){
     })
 });
 
- var sportsObject = {
-    "Targeting": {
-            "Archery":[],
-            "Wheelchair Archery":[]
-          },
-    "Combat Sport": {
-           "Mauy Thai/Kick Boxing":[],
-           "Mixed Martial Arts":[],
-           "Paintball":[],
-             "Red Rover":[]
-     },
-     "Dance": {
-            "Dance":[]
-          },
-      "Combat Sport": {
-           "Aerobics":[],
-           "Gymnastics":[],
-             "Multisport":[],
-           "Park Program":[],
-           "Spin":[],
-           "Weight Training":[],
-           "Yoga":[]
-     },
-     "Football/Rugby": {
-           "Wheelchair Rugby":[],
-           "Flag Football":[],
-             "Football":[],
-           "Rugby":[],
-           "Touch Football":[]
-     },
-     "Racquet/Volleying": {
-           "Handball":[],
-           "Badminton":[],
-             "Wheelchair Badminton":[],
-           "Pickleball":[],
-           "Round Ball":[],
-           "Sitting Volleyball":[],
-           "Squash":[],
-           "Table Tennis":[],
-           "Wheelchair Table Tennis":[],
-           "Tennis":[],
-           "Wheelchair Tennis":[],
-           "Volleyball":[]
-     },
-     "Riding(Equestrian, Vehicular, Paddling)": {
-"Bobsledding":[],
-"Dog Sledding":[],
-"Luge":[],
-"Skateboarding/Scootering":[],
-"Skim Boarding":[],
-"Surfing/Wind Surfing":[],
-"Base Jumping":[],
-"BMX":[],
-"Canoeing":[],
-"Cart":[],
-"Dragon Boat":[],
-"Equestrian":[],
-"Fishing":[],
-"Indoor Skydiving":[],
-"Kayaking":[],
-"Motorcross":[],
-"Outdoor Skydiving":[],
-"Paddle Boarding":[],
-"ParaGliding/ParaSailing":[],
-"Polo":[],
-"Rafting":[],
-"Rowing":[],
-"Sailing/Boating":[]
-},
-"Running/Track/Parkour": {
-"Cross Country Running":[],
-"Discus":[],
-"High Jump":[],
-"Hurling":[],
-"Javelin":[],
-"Marathoning":[],
-"Mudder":[],
-"Parkour":[],
-"Pole Vault":[],
-"Running":[],
-"Shot Put":[],
-"Track Running":[],
-"Trekking":[]
-},
-
-"Swimming": {
-"Water Aerobics":[],
-"Water Polo":[],
-"Diving":[],
-"Scuba":[],
-"Swimming":[],
-"Synchro Swimming":[],
-},
-
-"Trampolining": {
-"Trampolining":[]
-},
-
-"Baseball": {
-  "Fastball":[],
-"Soccer Baseball":[],
-"Softball":[],
-"T-Ball":[],
-"Basketball":[],
-"Wheelchair Basketball":[],
-"Climbing":[]
-},
-
-"Climbing": {
-"Ninja Camp":[],
-"Climbing":[]
-},
-
-"Cricket": {
-"Cricket":[]
-},
-
-"Frisbee": {
-"Disk Golf":[],
-"Ultimate Frisbee":[],
-"Ultimate Para-frisbee":[]
-},
-
-"Golf": {
-"Golf":[]
-},
-
-"Hockey/Skating/Blading": {
-  "Amputee Hockey":[],
-"Ball/Floor Hockey":[],
-"Blind Hockey":[],
-"Field Hockey":[],
-"Figure Skating":[],
-"Ice Hockey":[],
-"Ice Skating":[],
-"Inline/Roller Hockey":[],
-"Ringette":[],
-"Shinny":[],
-"Sledge Hockey":[],
-"Speed Skating":[],
-"Stick & Puck":[]
-
-},
-
-"Lacrosse": {
-"Box Lacrosse":[],
-"Field Lacrosse":[],
-"Boss":[]
-},
-
-"Skiing (Water, Terrestrial, Boarding)": {
-  "Cross Country Skiing":[],
-"Downhill/Alpine":[],
-"Skiing":[],
-"Paraskiing":[],
-"Snowboarding":[]
-},
-
-"Soccer": {
-  "Beach Soccer":[],
-"Bubble Soccer":[],
-"Soccer":[],
-"ParaSoccer":[]
-
-},
-
-"Strategy": {
-"Board Game":[],
-"Panic Room":[],
-"First Responding":[]
-},
-
-"Basketball": {
-  "Basketball":[],
-"Wheelchair Basketball":[],
-
-},
-
-}
-
-
 
 $(function() {
   $('.datetime').daterangepicker({
@@ -617,7 +476,6 @@ $(function () {
 $('.radio').change(function() {
   $('#custom_amount').prop('disabled', !$(this).is('.other'));
 });
-
 
 
 
