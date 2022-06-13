@@ -31,22 +31,25 @@ def multistep(request):
             sports_type_text, sports_catgeory_text = save_sports_type(request)
             obj.sport_type = sports_type_text
             obj.sport_category = sports_catgeory_text
-            obj.is_recurring = request.POST['recurring_event'] == "Yes"
-            obj.datetimes_monday = request.POST['datetimes_monday'] if obj.is_recurring else ""
-            obj.datetimes_tuesday = request.POST['datetimes_tuesday'] if obj.is_recurring else ""
-            obj.datetimes_wednesday = request.POST['datetimes_wednesday'] if obj.is_recurring else ""
-            obj.datetimes_thursday = request.POST['datetimes_thursday'] if obj.is_recurring else ""
-            obj.datetimes_friday = request.POST['datetimes_friday'] if obj.is_recurring else ""
-            obj.datetimes_saturday = request.POST['datetimes_saturday'] if obj.is_recurring else ""
-            obj.datetimes_sunday = request.POST['datetimes_sunday'] if obj.is_recurring else ""
-            obj.datetimes_exceptions = request.POST['datetimes_exceptions'] if obj.is_recurring else ""
-            obj.datetimes = "" if obj.is_recurring else request.POST['datetimes']
+            if 'recurring_event' in request.POST:
+                obj.is_recurring = request.POST['recurring_event'] == "Yes"
+                obj.datetimes_monday = request.POST['datetimes_monday'] if obj.is_recurring else ""
+                obj.datetimes_tuesday = request.POST['datetimes_tuesday'] if obj.is_recurring else ""
+                obj.datetimes_wednesday = request.POST['datetimes_wednesday'] if obj.is_recurring else ""
+                obj.datetimes_thursday = request.POST['datetimes_thursday'] if obj.is_recurring else ""
+                obj.datetimes_friday = request.POST['datetimes_friday'] if obj.is_recurring else ""
+                obj.datetimes_saturday = request.POST['datetimes_saturday'] if obj.is_recurring else ""
+                obj.datetimes_sunday = request.POST['datetimes_sunday'] if obj.is_recurring else ""
+                obj.datetimes_exceptions = request.POST['datetimes_exceptions'] if obj.is_recurring else ""
+                obj.datetimes = "" if obj.is_recurring else request.POST['datetimes']
             obj.save()
             save_event_position_info(request, obj)
             messages.success(request, 'Event Created - Invite Users?')
             redirect_url = f'/invite/' + str(master_table.objects.last().id) + '/'
             return redirect(redirect_url)
         else:
+            print("error aaya")
+            messages.error(request, 'Information missing !')
             print(form.errors)
     else:
         form = MultiStepForm()
@@ -89,7 +92,7 @@ def save_event_position_info(request, event):
 
 @login_required
 def all_events(request):
-    event_list = master_table.objects.all()
+    event_list = master_table.objects.filter(created_by=request.user)
     event_list = format_time(event_list)
     return render(request, 'EventsApp/event_list.html', {'event_list': event_list})
 
@@ -395,22 +398,23 @@ def get_recommended_events(request):
     recommended_events = list(recommended_events)
 
     # FILTER BY Age
-    individual = Individual.objects.get(user=user)
-    if individual.dob:
-        dob = datetime.strptime(individual.dob, '%Y-%m-%d').date()
-        today = date.today()
-        age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
-        for event in recommended_events:
-            positions = Events_PositionInfo.objects.filter(event=event)
-            age_fail_count=0
-            for position in positions:
-                if position.max_age >= age >= position.min_age:
-                    print(position.max_age, position.min_age)
-                else:
-                    age_fail_count = age_fail_count + 1
+    if user.is_individual:
+        individual = Individual.objects.get(user=user)
+        if individual.dob:
+            dob = datetime.strptime(individual.dob, '%Y-%m-%d').date()
+            today = date.today()
+            age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
+            for event in recommended_events:
+                positions = Events_PositionInfo.objects.filter(event=event)
+                age_fail_count = 0
+                for position in positions:
+                    if position.max_age >= age >= position.min_age:
+                        print(position.max_age, position.min_age)
+                    else:
+                        age_fail_count = age_fail_count + 1
 
-            if age_fail_count == len(positions):
-                recommended_events.remove(event)
+                if age_fail_count == len(positions):
+                    recommended_events.remove(event)
 
     return list(recommended_events)
 
@@ -584,11 +588,15 @@ def add_availability(request):
                                day_of_week=form.cleaned_data['day_of_week'],
                                start_time=form.cleaned_data['start_time'],
                                end_time=form.cleaned_data['end_time'])
-            obj.save()
-            user_avaiability = Availability.objects.filter(user=user)
-            get_day_of_week(user_avaiability)
-            context["user_availability"] = user_avaiability
-            messages.success(request, "New Availability Added!")
+            is_duplicate = check_duplicate_availability(user_avaiability, obj)
+            if is_duplicate:
+                messages.error(request, "Duplicate Availability!")
+            else:
+                obj.save()
+                user_avaiability = Availability.objects.filter(user=user)
+                get_day_of_week(user_avaiability)
+                context["user_availability"] = user_avaiability
+                messages.success(request, "New Availability Added!")
         else:
             messages.error(request, "Enter a valid time!")
             print(form.errors)
@@ -596,6 +604,33 @@ def add_availability(request):
     form = AvailabilityForm()
     context['form'] = form
     return render(request, "EventsApp/add_availability.html", context)
+
+
+def check_duplicate_availability(user_avaiability, new_availability):
+    if new_availability.day_of_week == 1:
+        new_availability.day_of_week = "Monday"
+    if new_availability.day_of_week == 2:
+        new_availability.day_of_week = "Tuesday"
+    if new_availability.day_of_week == 3:
+        new_availability.day_of_week = "Wednesday"
+    if new_availability.day_of_week == 4:
+        new_availability.day_of_week = "Thursday"
+    if new_availability.day_of_week == 5:
+        new_availability.day_of_week = "Friday"
+    if new_availability.day_of_week == 6:
+        new_availability.day_of_week = "Saturday"
+    if new_availability.day_of_week == 7:
+        new_availability.day_of_week = "Sunday"
+
+    new_availability.start_time = new_availability.start_time.strftime("%H:%M:%S")
+    new_availability.end_time = new_availability.end_time.strftime("%H:%M:%S")
+
+    for avail in user_avaiability:
+        if avail.day_of_week == new_availability.day_of_week and str(avail.start_time) == new_availability.start_time and str(avail.end_time) == new_availability.end_time:
+            return True
+
+    return False
+
 
 
 @login_required

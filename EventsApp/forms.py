@@ -12,22 +12,11 @@ class MultiStepForm(ModelForm):
     class Meta:
         model = master_table
         fields = (
-        'event_title', 'description','event_type', 'sport_type', 'skill', 'sport_category',
-        'venue', 'province', 'country', 'city', 'datetimes', 'created_by')
-        labels = {
-            'event_title': '',
-            'description': '',
-            'datetimes': '',
-            'sport_category': '',
-            'venue': 'Venue',
-            'street': '',
-            'province': '',
-            'city': '',
-            'country': '',
-            'sport_type': '',
-            'skill': '',
-            'event_type': '',
-        }
+            'event_title', 'description', 'event_type', 'sport_type', 'skill', 'sport_category',
+            'venue', 'province', 'country', 'city', 'datetimes', 'created_by')
+        required = (
+            'event_title', 'description', 'event_type', 'sport_type', 'skill', 'sport_category',
+            'venue', 'province', 'country', 'city', 'datetimes', 'created_by')
 
 
 class RegisterForm(UserCreationForm):
@@ -69,17 +58,18 @@ class AvailabilityForm(forms.ModelForm):
             'end_time': forms.TimeInput(format='%H:%M', attrs={'placeholder': 'HH:MM 24 hr format'})
         }
 
-    field_order = ['day_of_week', 'start_time', 'end_time',]
+    field_order = ['day_of_week', 'start_time', 'end_time', ]
+
 
 class InviteForm(forms.ModelForm):
     class Meta:
         model = Invite
         fields = ['email']
 
-    field_order = ['email',]
+    field_order = ['email', ]
+
 
 class LogoForm(forms.ModelForm):
-
     class Meta:
         model = Logo
         fields = ['image']
