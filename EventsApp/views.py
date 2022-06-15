@@ -316,7 +316,19 @@ def organization_profile(request):
 
 def home(request):
     # Individual.objects.filter(pk=4).delete()
-    sports = SportsCategory.objects.values('pk', 'sports_catgeory_text')
+    sports = SportsCategory.objects.values('pk', 'sports_catgeory_text').order_by('sports_catgeory_text')
+
+    if request.user.is_authenticated and request.user.is_individual:
+        user_sports = Secondary_SportsChoice.objects.filter(user=request.user).values('sport_category')
+        for item in sports:
+            flag = False
+            for item2 in user_sports:
+                if item['sports_catgeory_text'] == item2['sport_category']:
+                    flag = True
+
+            if not flag:
+                sports = sports.exclude(sports_catgeory_text=item['sports_catgeory_text'])
+
     venues = Venues.objects.values('pk', 'vm_name')
     load_venues_excel()
     events = master_table.objects.all()
@@ -626,11 +638,11 @@ def check_duplicate_availability(user_avaiability, new_availability):
     new_availability.end_time = new_availability.end_time.strftime("%H:%M:%S")
 
     for avail in user_avaiability:
-        if avail.day_of_week == new_availability.day_of_week and str(avail.start_time) == new_availability.start_time and str(avail.end_time) == new_availability.end_time:
+        if avail.day_of_week == new_availability.day_of_week and str(
+                avail.start_time) == new_availability.start_time and str(avail.end_time) == new_availability.end_time:
             return True
 
     return False
-
 
 
 @login_required
