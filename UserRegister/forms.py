@@ -25,10 +25,13 @@ class IndividualSignUpForm(UserCreationForm):
         user.is_individual = True
         user.first_name = self.cleaned_data.get('first_name')
         user.last_name = self.cleaned_data.get('last_name')
+        user.email = self.cleaned_data.get('email')
         user.save()
         individual = Individual.objects.create(user=user)
         individual.phone = self.cleaned_data.get('phone')
         individual.email = self.cleaned_data.get('email')
+        individual.first_name = self.cleaned_data.get('first_name')
+        individual.last_name = self.cleaned_data.get('last_name')
         individual.save()
         return user
 

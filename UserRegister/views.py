@@ -33,7 +33,11 @@ def activate(request, uidb64, token):
         user.is_active = True
         user.save()
         login(request, user)
-        return redirect('/')
+        if user.is_individual:
+            return redirect('EventsApp:user_profile')
+        elif user.is_organzation:
+            return redirect('EventsApp:organization_profile')
+        # return redirect('/')
     else:
         return render(request, 'registration/invalid_acc_token.html', {})
 

@@ -315,9 +315,8 @@ def organization_profile(request):
 
 
 def home(request):
-    # Individual.objects.filter(pk=4).delete()
+    # Individual.objects.filter(pk=7).delete()
     sports = SportsCategory.objects.values('pk', 'sports_catgeory_text').order_by('sports_catgeory_text')
-
     if request.user.is_authenticated and request.user.is_individual:
         user_sports = Secondary_SportsChoice.objects.filter(user=request.user).values('sport_category')
         for item in sports:
