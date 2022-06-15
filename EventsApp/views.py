@@ -20,7 +20,7 @@ import util
 
 @login_required
 def multistep(request):
-    sports_type = SportsType.objects.all()
+    sports_type = SportsType.objects.all().order_by('sports_type_text')
     venues = Venues.objects.all()
     if request.method == "POST":
         form = MultiStepForm(request.POST)
@@ -113,7 +113,7 @@ def user_profile(request):
         'user': request.user
     }
     sports_category = SportsCategory.objects.all()
-    sports_type = SportsType.objects.all()
+    sports_type = SportsType.objects.all().order_by('sports_type_text')
     context['sports_category'] = sports_category
     context['sports_type'] = sports_type
 

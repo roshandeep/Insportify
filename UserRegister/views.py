@@ -19,8 +19,7 @@ from django.core.mail import EmailMessage
 
 
 def register(request):
-    user = User
-    return render(request, 'registration/register_final.html', {'user': user})
+    return render(request, 'registration/register_final.html')
 
 
 def activate(request, uidb64, token):
