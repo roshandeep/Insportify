@@ -135,6 +135,7 @@ def user_profile(request):
             individual.email = response["contact_email"].strip()
             individual.dob = response["dob"].strip()
             individual.concussion = response["is_concussion"].strip()
+            individual.is_student = response["is_student"].strip()
             individual.participation_interest = response["interest_gender"].strip()
             individual.city = response["city"].strip()
             individual.province = response["province"].strip()
@@ -156,6 +157,7 @@ def user_profile(request):
             obj.email = response["contact_email"].strip()
             obj.dob = response["dob"].strip()
             obj.concussion = response["is_concussion"].strip()
+            obj.is_student = response["is_student"].strip()
             obj.participation_interest = response["interest_gender"].strip()
             obj.city = response["city"].strip()
             obj.province = response["province"].strip()
@@ -175,23 +177,24 @@ def user_profile(request):
 
 def save_secondary_sports_info(user, response):
     obj = Secondary_SportsChoice.objects.filter(user=user).exists()
+    print(response)
     if obj:
         for i in range(1, 4):
             obj = Secondary_SportsChoice.objects.filter(user=user, sport_entry_number=i).exists()
             if obj:
-                obj = Secondary_SportsChoice.objects.get(user=user, location_number=i)
+                obj = Secondary_SportsChoice.objects.get(user=user, sport_entry_number=i)
                 if 'category_' + str(i) in response:
                     obj.sport_category = response['category_' + str(i)].strip()
                     obj.sport_type = response['type_' + str(i)].strip()
                     obj.position = response['position_' + str(i)].strip()
                     obj.save()
-                else:
-                    sport_category = response['category_' + str(i)].strip()
-                    sport_type = response['type_' + str(i)].strip()
-                    position = response['position_' + str(i)].strip()
-                    obj = Secondary_SportsChoice(user=user, sport_category=sport_category, sport_type=sport_type,
-                                                 position=position, sport_entry_number=i)
-                    obj.save()
+                # else:
+                #     sport_category = response['category_' + str(i)].strip()
+                #     sport_type = response['type_' + str(i)].strip()
+                #     position = response['position_' + str(i)].strip()
+                #     obj = Secondary_SportsChoice(user=user, sport_category=sport_category, sport_type=sport_type,
+                #                                  position=position, sport_entry_number=i)
+                #     obj.save()
     else:
         for i in range(1, 4):
             if 'category_' + str(i) in response:

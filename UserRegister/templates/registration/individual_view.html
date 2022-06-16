@@ -63,6 +63,13 @@
                             {% if individual.participation_interest == "Coed" %} checked {% endif %}> Coed </input>
                         </div>
                         <div class="form-row p-2">
+                            <label>Are you a Student?</label>
+                            <input type="radio" id="Yes" name="is_student" value="Yes"
+                            {% if individual.is_student == "Yes" %} checked {% endif %}>Yes</input>
+                            <input type="radio" id="No" name="is_student" value="No"
+                            {% if individual.is_student == "No" %} checked {% endif %}> No</input>
+                        </div>
+                        <div class="form-row p-2">
                             <label>Have you ever suffered concussion?</label>
                             <input type="radio" id="Yes" name="is_concussion" value="Yes"
                             {% if individual.concussion == "Yes" %} checked {% endif %}>Yes</input>
