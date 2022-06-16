@@ -14,7 +14,7 @@ from django.views.decorators.csrf import csrf_exempt
 from Insportify import settings
 from .forms import MultiStepForm, AvailabilityForm, LogoForm, InviteForm
 from .models import master_table, Individual, Organization, Venues, SportsCategory, SportsType, Order, User, \
-    Availability, Logo, Extra_Loctaions, Events_PositionInfo, Secondary_SportsChoice, Cart, Invite
+    Availability, Logo, Extra_Loctaions, Events_PositionInfo, Secondary_SportsChoice, Cart, Invite, PositionAndSkillType
 import util
 
 
@@ -711,6 +711,29 @@ def load_venues_excel():
                          vm_venuecity=vm_venuecity, vm_venue_province=vm_venue_province,
                          vm_venue_country=vm_venue_country, vm_venue_zip=vm_venue_zip)
             # obj.save()
+
+
+def load_pos_skill_type():
+    path = "./INsportify sport database.xlsx"
+    wb_obj = openpyxl.load_workbook(path)
+    sheet_obj = wb_obj.active
+    for i in range(2, sheet_obj.max_row + 1):
+        sports_category = SportsCategory.objects.get(sports_catgeory_text=sheet_obj.cell(row=i, column=1).value.strip())
+        try:
+            sports_type = SportsType.objects.get(sports_type_text=sheet_obj.cell(row=i, column=2).value.strip())
+            position = sheet_obj.cell(row=i, column=3).value.strip()
+            skill = sheet_obj.cell(row=i, column=4).value.strip()
+            obj = PositionAndSkillType(sports_category=sports_category,
+                                       sports_type=sports_type,
+                                       position_type=position,
+                                       skill_type=skill)
+            # print(i, sports_category, sports_type, obj)
+            # obj.save()
+        except SportsType.DoesNotExist:
+            s = SportsType(sports_category=sports_category,
+                           sports_type_text=sheet_obj.cell(row=i, column=2).value.strip())
+            s.save()
+        # obj.save()
 
 
 @login_required

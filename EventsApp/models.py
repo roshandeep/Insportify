@@ -142,6 +142,16 @@ class SportsType(models.Model):
         return self.sports_type_text
 
 
+class PositionAndSkillType(models.Model):
+    sports_category = models.ForeignKey(SportsCategory, on_delete=models.CASCADE)
+    sports_type = models.ForeignKey(SportsType, on_delete=models.CASCADE)
+    position_type = models.CharField(max_length=100)
+    skill_type = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.position_type + ' ' + self.skill_type
+
+
 class Order(models.Model):
     customer = models.ForeignKey(User, on_delete=models.CASCADE)
     event = models.ForeignKey(master_table, on_delete=models.CASCADE)
