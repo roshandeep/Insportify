@@ -260,6 +260,20 @@ def get_sports_category(request):
         return JsonResponse(list(selected_type.values('pk', 'sports_catgeory_text')), safe=False)
 
 
+def get_selected_sports_skill(request):
+    data = {}
+    if request.method == "POST":
+        selected_sport = request.POST['selected_type_text']
+        # print(selected_sport)
+        try:
+            selected_skills = PositionAndSkillType.objects.filter(sports_type__sports_type_text=selected_sport).values(
+                'pk', 'skill_type').distinct('skill_type')
+        except Exception:
+            data['error_message'] = 'error'
+            return JsonResponse(data)
+        return JsonResponse(list(selected_skills.values('pk', 'skill_type')), safe=False)
+
+
 @login_required
 def organization_profile(request):
     context = {
@@ -389,11 +403,9 @@ def get_recommended_events(request):
         end_datetime = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p')
 
         for i in range((end_datetime - start_datetime).days):
-            # print(i, calendar.day_name[(start_time + timedelta(days=i+1)).weekday()])
             days_between = calendar.day_name[(start_datetime + timedelta(days=i + 1)).weekday()]
             for avail in user_avaiability:
                 if week_days[avail.day_of_week - 1] == days_between:
-                    # print("day match",week_days[avail.day_of_week-1], days_between)
                     if avail.start_time <= end_datetime.time() or avail.end_time >= start_datetime.time():
                         recommended_events.add(event)
 
@@ -429,6 +441,8 @@ def get_recommended_events(request):
 
                 if age_fail_count == len(positions):
                     recommended_events.remove(event)
+
+    # FILTER BY Gender, Skill, position,
 
     return list(recommended_events)
 
