@@ -346,7 +346,6 @@ def home(request):
                 sports = sports.exclude(sports_catgeory_text=item['sports_catgeory_text'])
 
     venues = Venues.objects.values('pk', 'vm_name')
-    load_venues_excel()
     events = master_table.objects.all()
 
     events = format_time(events)
@@ -398,16 +397,17 @@ def get_recommended_events(request):
 
     # FILTER by DateTime
     for event in events:
-        time = event.datetimes.split("-")
-        start_datetime = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
-        end_datetime = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p')
+        if event.datetimes:
+            time = event.datetimes.split("-")
+            start_datetime = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
+            end_datetime = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p')
 
-        for i in range((end_datetime - start_datetime).days):
-            days_between = calendar.day_name[(start_datetime + timedelta(days=i + 1)).weekday()]
-            for avail in user_avaiability:
-                if week_days[avail.day_of_week - 1] == days_between:
-                    if avail.start_time <= end_datetime.time() or avail.end_time >= start_datetime.time():
-                        recommended_events.add(event)
+            for i in range((end_datetime - start_datetime).days):
+                days_between = calendar.day_name[(start_datetime + timedelta(days=i + 1)).weekday()]
+                for avail in user_avaiability:
+                    if week_days[avail.day_of_week - 1] == days_between:
+                        if avail.start_time <= end_datetime.time() or avail.end_time >= start_datetime.time():
+                            recommended_events.add(event)
 
     recommended_events = list(recommended_events)
 
@@ -449,22 +449,23 @@ def get_recommended_events(request):
 
 def format_time(events):
     for event in events:
-        time = event.datetimes.split("-")
-        start_time = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p').time()
-        end_time = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p').time()
-        start_time = start_time.strftime("%I:%M %p")
-        end_time = end_time.strftime('%I:%M %p')
+        if event.datetimes:
+            time = event.datetimes.split("-")
+            start_time = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p').time()
+            end_time = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p').time()
+            start_time = start_time.strftime("%I:%M %p")
+            end_time = end_time.strftime('%I:%M %p')
 
-        start_date = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p').date()
-        end_date = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p').date()
-        start_date = start_date.strftime("%B %d, %Y")
-        end_date = end_date.strftime("%B %d, %Y")
-        if start_date == end_date:
-            str_datetime = start_date + " " + start_time + " to " + end_time
-        else:
-            str_datetime = start_date + " " + start_time + " to " + end_date + " " + end_time
+            start_date = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p').date()
+            end_date = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p').date()
+            start_date = start_date.strftime("%B %d, %Y")
+            end_date = end_date.strftime("%B %d, %Y")
+            if start_date == end_date:
+                str_datetime = start_date + " " + start_time + " to " + end_time
+            else:
+                str_datetime = start_date + " " + start_time + " to " + end_date + " " + end_time
 
-        event.datetimes = str_datetime
+            event.datetimes = str_datetime
     return events
 
 
