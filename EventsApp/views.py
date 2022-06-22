@@ -94,6 +94,7 @@ def save_event_position_info(request, event):
 def all_events(request):
     event_list = master_table.objects.filter(created_by=request.user)
     event_list = format_time(event_list)
+    # load_pos_skill_type()
     return render(request, 'EventsApp/event_list.html', {'event_list': event_list})
 
 
@@ -332,7 +333,7 @@ def organization_profile(request):
 
 
 def home(request):
-    # Individual.objects.filter(pk=7).delete()
+    # Individual.objects.filter(pk=16).delete()
     sports = SportsCategory.objects.values('pk', 'sports_catgeory_text').order_by('sports_catgeory_text')
     if request.user.is_authenticated and request.user.is_individual:
         user_sports = Secondary_SportsChoice.objects.filter(user=request.user).values('sport_category')
@@ -745,8 +746,8 @@ def load_pos_skill_type():
                                        sports_type=sports_type,
                                        position_type=position,
                                        skill_type=skill)
-            # print(i, sports_category, sports_type, obj)
-            # obj.save()
+            print(i, sports_category, sports_type, obj)
+            obj.save()
         except SportsType.DoesNotExist:
             s = SportsType(sports_category=sports_category,
                            sports_type_text=sheet_obj.cell(row=i, column=2).value.strip())
@@ -872,10 +873,11 @@ def delete_availability(request, id):
 @login_required
 def logo_upload_view(request):
     if request.method == 'POST':
-        img_obj = Logo.objects.get(user=request.user)
+        img_obj=""
         form = LogoForm(request.POST, request.FILES)
         if form.is_valid():
-            if img_obj:
+            if Logo.objects.filter(user=request.user).exists():
+                img_obj = Logo.objects.get(user=request.user)
                 img_obj.image = form.instance.image
                 img_obj.save()
             else:
@@ -884,7 +886,9 @@ def logo_upload_view(request):
                 obj.save()
             return render(request, 'EventsApp/add_logo.html', {'form': form, 'img_obj': img_obj})
     else:
+        img_obj=""
         form = LogoForm()
-        img_obj = Logo.objects.get(user=request.user)
+        if Logo.objects.filter(user=request.user).exists():
+            img_obj = Logo.objects.get(user=request.user)
 
     return render(request, 'EventsApp/add_logo.html', {'form': form, 'img_obj': img_obj})
