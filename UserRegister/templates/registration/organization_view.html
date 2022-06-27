@@ -95,7 +95,7 @@
                         </div>
                         <div class="form-row p-2">
                             <span>Which year were you eastablished?</span>
-                            <select id="year" class="form-select mb-3" aria-label=".form-select-lg example">
+                            <select id="year" class="form-select mb-3" name="year_established" aria-label=".form-select-lg example">
                                 <option selected>Select Year</option>
                             </select>
                         </div>
@@ -138,12 +138,12 @@
                         Sports</h3>
                     <div class="card-body">
                         <div class="form-row p-2">
-                            <span>What is the most appropriate contact info for the atheletes and the organizer to contact you?</span>
+                            <span>What is the most appropriate contact info for the athletes and the organizer to contact you?</span>
                             <input type="text" name="email" class="form-control" placeholder="Email"
                             value="{% if organization.email %} {{organization.email}} {% endif %}">
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" name="phone" class="form-control" placeholder="Phone"
+                            <input type="text" name="phone" class="form-control" placeholder="Enter 10 digit phone number"
                             value="{% if organization.phone %} {{organization.phone}} {% endif %}">
                         </div>
                         <div class="form-row p-2">

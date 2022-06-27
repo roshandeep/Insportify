@@ -2,12 +2,14 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from datetime import datetime
 
+
 class User(AbstractUser):
     is_individual = models.BooleanField(default=False)
     is_organization = models.BooleanField(default=False)
     first_name = models.CharField(max_length=40, null=True)
     last_name = models.CharField(max_length=40, null=True)
     is_active = models.BooleanField(default=False, null=True)
+
 
 
 class master_table(models.Model):
@@ -56,9 +58,9 @@ class Individual(models.Model):
     last_name = models.CharField(max_length=50, null=True)
     phone = models.CharField(max_length=50, null=True)
     email = models.CharField(max_length=50, null=True)
-    provider = models.CharField(max_length=50, null=True)
     dob = models.CharField(max_length=50, blank=True, null=True)
     concussion = models.CharField(max_length=100, blank=True, null=True)
+    is_student = models.CharField(max_length=100, blank=True, null=True)
     participation_interest = models.CharField(max_length=100, blank=True, null=True)
     city = models.CharField(verbose_name="City", max_length=50, blank=True, null=True)
     province = models.CharField(max_length=100, blank=True, null=True)
@@ -69,7 +71,7 @@ class Individual(models.Model):
     sports_skill = models.CharField(max_length=50, null=True)
 
     def __str__(self):
-        return self.first_name + " " + self.last_name
+        return self.first_name
 
 
 class Organization(models.Model):
@@ -141,6 +143,16 @@ class SportsType(models.Model):
         return self.sports_type_text
 
 
+class PositionAndSkillType(models.Model):
+    sports_category = models.ForeignKey(SportsCategory, on_delete=models.CASCADE)
+    sports_type = models.ForeignKey(SportsType, on_delete=models.CASCADE)
+    position_type = models.CharField(max_length=100)
+    skill_type = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.position_type + ' ' + self.skill_type
+
+
 class Order(models.Model):
     customer = models.ForeignKey(User, on_delete=models.CASCADE)
     event = models.ForeignKey(master_table, on_delete=models.CASCADE)
@@ -209,7 +221,7 @@ class Extra_Loctaions(models.Model):
 class Secondary_SportsChoice(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     sport_entry_number = models.IntegerField(blank=True, null=True)
-    sport_category = models.CharField(max_length=30, blank=True, null=True)
+    sport_category = models.CharField(max_length=100, blank=True, null=True)
     sport_type = models.CharField(max_length=30, blank=True, null=True)
     position = models.CharField(max_length=30, blank=True, null=True)
 

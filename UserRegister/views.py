@@ -1,7 +1,7 @@
 from django.contrib import messages
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render,redirect
 from django.views import generic
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordResetForm, PasswordChangeForm, AuthenticationForm
+from django.contrib.auth.forms import PasswordResetForm, PasswordChangeForm, AuthenticationForm
 from django.urls import reverse_lazy
 from .forms import SignUpForm, EditProfileForm
 from django.contrib.auth.tokens import default_token_generator
@@ -16,13 +16,10 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
 from .tokens import account_activation_token, pass_reset_code
 from django.core.mail import EmailMessage
-import random
-import string
 
 
 def register(request):
-    user = User
-    return render(request, 'registration/register_final.html', {'user': user})
+    return render(request, 'registration/register_final.html')
 
 
 def activate(request, uidb64, token):
@@ -35,7 +32,11 @@ def activate(request, uidb64, token):
         user.is_active = True
         user.save()
         login(request, user)
-        return redirect('/')
+        if user.is_individual:
+            return redirect('EventsApp:user_profile')
+        elif user.is_organzation:
+            return redirect('EventsApp:organization_profile')
+        # return redirect('/')
     else:
         return render(request, 'registration/invalid_acc_token.html', {})
 
@@ -77,6 +78,7 @@ class organization_register(CreateView):
     template_name = 'registration/organization_register.html'
 
     def form_valid(self, form):
+        print(form)
         if form.is_valid():
             user = form.save()
             user.is_active = False
@@ -184,10 +186,4 @@ class UserRegisterView(generic.CreateView):
     success_url = reverse_lazy('login')
 
 
-class UserEditView(generic.UpdateView):
-    form_class = EditProfileForm
-    template_name = 'registration/edit_profile.html'
-    success_url = reverse_lazy('list-events')
 
-    def get_object(self):
-        return self.request.user

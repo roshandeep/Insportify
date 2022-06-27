@@ -27,11 +27,16 @@
         </a>
         <hr>
         <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link link-secondary text-white" href="{% url 'EventsApp:home' %}">
+                    <p>Home</p>
+                </a>
+            </li>
             {% if request.user.is_authenticated %}
             <li class="nav-item">
                 <a class="nav-link link-secondary text-white" href="{% url 'EventsApp:list-events' %}"
                    {% if request.path == '/show/' %} style="font-weight:bold" {% endif %}>
-                    <p>Show Events</p>
+                    <p>My Events</p>
                 </a>
             </li>
             <li class="nav-item">
@@ -44,14 +49,14 @@
             <li class="nav-item">
                 <a class="nav-link link-secondary text-white" href="{% url 'EventsApp:organization_profile' %}"
                 {% if request.path == '/organization/profile/' %} style="font-weight:bold" {% endif %}>
-                    <p>Organization Profile</p>
+                    <p>User Profile</p>
                 </a>
             </li>
             {% else %}
             <li class="nav-item">
                 <a class="nav-link link-secondary text-white" href="{% url 'EventsApp:user_profile' %}"
                 {% if request.path == '/individual/profile/' %} style="font-weight:bold" {% endif %}>
-                    <p>Individual Profile</p>
+                    <p>User Profile</p>
                 </a>
             </li>
             {% endif %}

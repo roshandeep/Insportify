@@ -8,20 +8,20 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
 from django.template import loader
 from django.shortcuts import render, redirect
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from Insportify import settings
-from .forms import MultiStepForm, UserForm, AvailabilityForm, LogoForm, InviteForm
+from .forms import MultiStepForm, AvailabilityForm, LogoForm, InviteForm
 from .models import master_table, Individual, Organization, Venues, SportsCategory, SportsType, Order, User, \
-    Availability, Logo, Extra_Loctaions, Events_PositionInfo, Secondary_SportsChoice, Cart, Invite
-from django.views.generic import FormView
+    Availability, Logo, Extra_Loctaions, Events_PositionInfo, Secondary_SportsChoice, Cart, Invite, PositionAndSkillType
 import util
 
 
 @login_required
 def multistep(request):
-    sports_type = SportsType.objects.all()
+    sports_type = SportsType.objects.all().order_by('sports_type_text')
+    venues = Venues.objects.all()
     if request.method == "POST":
         form = MultiStepForm(request.POST)
 
@@ -58,7 +58,6 @@ def multistep(request):
             sports_type_text, sports_catgeory_text = save_sports_type(request)
             obj.sport_type = sports_type_text
             obj.sport_category = sports_catgeory_text
-            print('this works 3')
             obj.is_recurring = request.POST['recurring_event'] == "Yes"
             obj.datetimes_monday = request.POST.get('datetimes_monday') if obj.is_recurring else ""
             obj.datetimes_tuesday = request.POST.get('datetimes_tuesday') if obj.is_recurring else ""
@@ -69,7 +68,6 @@ def multistep(request):
             obj.datetimes_sunday = request.POST.get('datetimes_sunday') if obj.is_recurring else ""
             obj.datetimes_exceptions = request.POST.get('datetimes_exceptions') if obj.is_recurring else ""
             obj.datetimes = "" if obj.is_recurring else request.POST.get('datetimes')
-            print('this works 4')
             obj.save()
             save_event_position_info(request, obj)
 
@@ -78,11 +76,24 @@ def multistep(request):
             redirect_url = f'/invite/' + str(master_table.objects.last().id) + '/'
             return redirect(redirect_url)
         elif not form.is_valid():
-            messages.error(request, form.errors)
+            messages.error(request, 'Information missing !')
     else:
         form = MultiStepForm()
 
-    return render(request, 'EventsApp/multi_step.html', {'form': form, 'sports_type': sports_type})
+    return render(request, 'EventsApp/multi_step.html', {'form': form, 'sports_type': sports_type, 'venues': venues})
+
+
+def get_venue_details(request):
+    data = {}
+    if request.method == "POST":
+        selected_venue = request.POST['selected_venue']
+        try:
+            selected_venue = Venues.objects.filter(vm_name=selected_venue)
+            # print(selected_venue)
+        except Exception:
+            data['error_message'] = 'error'
+            return JsonResponse(data)
+        return JsonResponse(list(selected_venue.values()), safe=False)
 
 
 def save_sports_type(request):
@@ -107,8 +118,9 @@ def save_event_position_info(request, event):
 
 @login_required
 def all_events(request):
-    event_list = master_table.objects.all()
+    event_list = master_table.objects.filter(created_by=request.user)
     event_list = format_time(event_list)
+    # load_pos_skill_type()
     return render(request, 'EventsApp/event_list.html', {'event_list': event_list})
 
 
@@ -128,7 +140,7 @@ def user_profile(request):
         'user': request.user
     }
     sports_category = SportsCategory.objects.all()
-    sports_type = SportsType.objects.all()
+    sports_type = SportsType.objects.all().order_by('sports_type_text')
     context['sports_category'] = sports_category
     context['sports_type'] = sports_type
 
@@ -148,9 +160,9 @@ def user_profile(request):
             individual.last_name = response["last_name"].strip()
             individual.phone = response["mobile"].strip()
             individual.email = response["contact_email"].strip()
-            individual.provider = response["provider"].strip()
             individual.dob = response["dob"].strip()
             individual.concussion = response["is_concussion"].strip()
+            individual.is_student = response["is_student"].strip()
             individual.participation_interest = response["interest_gender"].strip()
             individual.city = response["city"].strip()
             individual.province = response["province"].strip()
@@ -170,9 +182,9 @@ def user_profile(request):
             obj.last_name = response["last_name"].strip()
             obj.phone = response["mobile"].strip()
             obj.email = response["contact_email"].strip()
-            obj.provider = response["provider"].strip()
             obj.dob = response["dob"].strip()
             obj.concussion = response["is_concussion"].strip()
+            obj.is_student = response["is_student"].strip()
             obj.participation_interest = response["interest_gender"].strip()
             obj.city = response["city"].strip()
             obj.province = response["province"].strip()
@@ -192,23 +204,24 @@ def user_profile(request):
 
 def save_secondary_sports_info(user, response):
     obj = Secondary_SportsChoice.objects.filter(user=user).exists()
+    print(response)
     if obj:
         for i in range(1, 4):
             obj = Secondary_SportsChoice.objects.filter(user=user, sport_entry_number=i).exists()
             if obj:
-                obj = Secondary_SportsChoice.objects.get(user=user, location_number=i)
+                obj = Secondary_SportsChoice.objects.get(user=user, sport_entry_number=i)
                 if 'category_' + str(i) in response:
                     obj.sport_category = response['category_' + str(i)].strip()
                     obj.sport_type = response['type_' + str(i)].strip()
                     obj.position = response['position_' + str(i)].strip()
                     obj.save()
-                else:
-                    sport_category = response['category_' + str(i)].strip()
-                    sport_type = response['type_' + str(i)].strip()
-                    position = response['position_' + str(i)].strip()
-                    obj = Secondary_SportsChoice(user=user, sport_category=sport_category, sport_type=sport_type,
-                                                 position=position, sport_entry_number=i)
-                    obj.save()
+                # else:
+                #     sport_category = response['category_' + str(i)].strip()
+                #     sport_type = response['type_' + str(i)].strip()
+                #     position = response['position_' + str(i)].strip()
+                #     obj = Secondary_SportsChoice(user=user, sport_category=sport_category, sport_type=sport_type,
+                #                                  position=position, sport_entry_number=i)
+                #     obj.save()
     else:
         for i in range(1, 4):
             if 'category_' + str(i) in response:
@@ -274,6 +287,20 @@ def get_sports_category(request):
         return JsonResponse(list(selected_type.values('pk', 'sports_catgeory_text')), safe=False)
 
 
+def get_selected_sports_skill(request):
+    data = {}
+    if request.method == "POST":
+        selected_sport = request.POST['selected_type_text']
+        # print(selected_sport)
+        try:
+            selected_skills = PositionAndSkillType.objects.filter(sports_type__sports_type_text=selected_sport).values(
+                'pk', 'skill_type').distinct('skill_type')
+        except Exception:
+            data['error_message'] = 'error'
+            return JsonResponse(data)
+        return JsonResponse(list(selected_skills.values('pk', 'skill_type')), safe=False)
+
+
 @login_required
 def organization_profile(request):
     context = {
@@ -295,6 +322,7 @@ def organization_profile(request):
             organization.organization_name = response["company_name"].strip()
             organization.parent_organization_name = response["parent_organization"].strip()
             organization.registration_no = response["registration"].strip()
+            organization.year_established = response["year_established"].strip()
             organization.street = response["street_name"].strip()
             organization.city = response["city"].strip()
             organization.province = response["province"].strip()
@@ -330,16 +358,21 @@ def organization_profile(request):
     return render(request, 'registration/organization_view.html', context)
 
 
-class UserProfileView(FormView):
-    form_class = UserForm
-    template_name = 'EventsApp/user_profile.html'
-    success_url = reverse_lazy('multistep')
-
-
 def home(request):
-    sports = SportsCategory.objects.values('pk', 'sports_catgeory_text')
+    # Individual.objects.filter(pk=16).delete()
+    sports = SportsCategory.objects.values('pk', 'sports_catgeory_text').order_by('sports_catgeory_text')
+    if request.user.is_authenticated and request.user.is_individual:
+        user_sports = Secondary_SportsChoice.objects.filter(user=request.user).values('sport_category')
+        for item in sports:
+            flag = False
+            for item2 in user_sports:
+                if item['sports_catgeory_text'] == item2['sport_category']:
+                    flag = True
+
+            if not flag:
+                sports = sports.exclude(sports_catgeory_text=item['sports_catgeory_text'])
+
     venues = Venues.objects.values('pk', 'vm_name')
-    load_venues_excel()
     events = master_table.objects.all()
 
     events = format_time(events)
@@ -391,22 +424,22 @@ def get_recommended_events(request):
 
     # FILTER by DateTime
     for event in events:
-        time = event.datetimes.split("-")
-        start_datetime = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
-        end_datetime = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p')
+        if event.datetimes:
+            time = event.datetimes.split("-")
+            start_datetime = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
+            end_datetime = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p')
 
-        for i in range((end_datetime - start_datetime).days):
-            # print(i, calendar.day_name[(start_time + timedelta(days=i+1)).weekday()])
-            days_between = calendar.day_name[(start_datetime + timedelta(days=i + 1)).weekday()]
-            for avail in user_avaiability:
-                if week_days[avail.day_of_week - 1] == days_between:
-                    # print("day match",week_days[avail.day_of_week-1], days_between)
-                    if avail.start_time <= end_datetime.time() or avail.end_time >= start_datetime.time():
-                        recommended_events.add(event)
+            for i in range((end_datetime - start_datetime).days):
+                days_between = calendar.day_name[(start_datetime + timedelta(days=i + 1)).weekday()]
+                for avail in user_avaiability:
+                    if week_days[avail.day_of_week - 1] == days_between:
+                        if avail.start_time <= end_datetime.time() or avail.end_time >= start_datetime.time():
+                            recommended_events.add(event)
 
-    # print(list(recommended_events))
+    recommended_events = list(recommended_events)
+
     # FILTER BY Location
-    locations_saved = Extra_Loctaions.objects.filter(user=user);
+    locations_saved = Extra_Loctaions.objects.filter(user=user)
     loc_list = []
     for item in locations_saved:
         loc_list.append(item.city.lower())
@@ -415,27 +448,51 @@ def get_recommended_events(request):
         if event.city.lower() not in loc_list:
             recommended_events.remove(event)
 
+    recommended_events = list(recommended_events)
+
+    # FILTER BY Age
+    if user.is_individual:
+        individual = Individual.objects.get(user=user)
+        if individual.dob:
+            dob = datetime.strptime(individual.dob, '%Y-%m-%d').date()
+            today = date.today()
+            age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
+            for event in recommended_events:
+                positions = Events_PositionInfo.objects.filter(event=event)
+                age_fail_count = 0
+                for position in positions:
+                    if position.max_age >= age >= position.min_age:
+                        print(position.max_age, position.min_age)
+                    else:
+                        age_fail_count = age_fail_count + 1
+
+                if age_fail_count == len(positions):
+                    recommended_events.remove(event)
+
+    # FILTER BY Gender, Skill, position,
+
     return list(recommended_events)
 
 
 def format_time(events):
     for event in events:
-        time = event.datetimes.split("-")
-        start_time = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p').time()
-        end_time = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p').time()
-        start_time = start_time.strftime("%I:%M %p")
-        end_time = end_time.strftime('%I:%M %p')
+        if event.datetimes:
+            time = event.datetimes.split("-")
+            start_time = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p').time()
+            end_time = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p').time()
+            start_time = start_time.strftime("%I:%M %p")
+            end_time = end_time.strftime('%I:%M %p')
 
-        start_date = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p').date()
-        end_date = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p').date()
-        start_date = start_date.strftime("%B %d, %Y")
-        end_date = end_date.strftime("%B %d, %Y")
-        if start_date == end_date:
-            str_datetime = start_date + " " + start_time + " to " + end_time
-        else:
-            str_datetime = start_date + " " + start_time + " to " + end_date + " " + end_time
+            start_date = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p').date()
+            end_date = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p').date()
+            start_date = start_date.strftime("%B %d, %Y")
+            end_date = end_date.strftime("%B %d, %Y")
+            if start_date == end_date:
+                str_datetime = start_date + " " + start_time + " to " + end_time
+            else:
+                str_datetime = start_date + " " + start_time + " to " + end_date + " " + end_time
 
-        event.datetimes = str_datetime
+            event.datetimes = str_datetime
     return events
 
 
@@ -596,15 +653,49 @@ def add_availability(request):
                                day_of_week=form.cleaned_data['day_of_week'],
                                start_time=form.cleaned_data['start_time'],
                                end_time=form.cleaned_data['end_time'])
-            obj.save()
-            user_avaiability = Availability.objects.filter(user=user)
-            get_day_of_week(user_avaiability)
-            context["user_availability"] = user_avaiability
-            messages.success(request, "New Availability Added!")
+            is_duplicate = check_duplicate_availability(user_avaiability, obj)
+            if is_duplicate:
+                messages.error(request, "Duplicate Availability!")
+            else:
+                obj.save()
+                user_avaiability = Availability.objects.filter(user=user)
+                get_day_of_week(user_avaiability)
+                context["user_availability"] = user_avaiability
+                messages.success(request, "New Availability Added!")
         else:
+            messages.error(request, "Enter a valid time!")
             print(form.errors)
 
+    form = AvailabilityForm()
+    context['form'] = form
     return render(request, "EventsApp/add_availability.html", context)
+
+
+def check_duplicate_availability(user_avaiability, new_availability):
+    if new_availability.day_of_week == 1:
+        new_availability.day_of_week = "Monday"
+    if new_availability.day_of_week == 2:
+        new_availability.day_of_week = "Tuesday"
+    if new_availability.day_of_week == 3:
+        new_availability.day_of_week = "Wednesday"
+    if new_availability.day_of_week == 4:
+        new_availability.day_of_week = "Thursday"
+    if new_availability.day_of_week == 5:
+        new_availability.day_of_week = "Friday"
+    if new_availability.day_of_week == 6:
+        new_availability.day_of_week = "Saturday"
+    if new_availability.day_of_week == 7:
+        new_availability.day_of_week = "Sunday"
+
+    new_availability.start_time = new_availability.start_time.strftime("%H:%M:%S")
+    new_availability.end_time = new_availability.end_time.strftime("%H:%M:%S")
+
+    for avail in user_avaiability:
+        if avail.day_of_week == new_availability.day_of_week and str(
+                avail.start_time) == new_availability.start_time and str(avail.end_time) == new_availability.end_time:
+            return True
+
+    return False
 
 
 @login_required
@@ -674,6 +765,29 @@ def load_venues_excel():
                          vm_venuecity=vm_venuecity, vm_venue_province=vm_venue_province,
                          vm_venue_country=vm_venue_country, vm_venue_zip=vm_venue_zip)
             # obj.save()
+
+
+def load_pos_skill_type():
+    path = "./INsportify sport database.xlsx"
+    wb_obj = openpyxl.load_workbook(path)
+    sheet_obj = wb_obj.active
+    for i in range(2, sheet_obj.max_row + 1):
+        sports_category = SportsCategory.objects.get(sports_catgeory_text=sheet_obj.cell(row=i, column=1).value.strip())
+        try:
+            sports_type = SportsType.objects.get(sports_type_text=sheet_obj.cell(row=i, column=2).value.strip())
+            position = sheet_obj.cell(row=i, column=3).value.strip()
+            skill = sheet_obj.cell(row=i, column=4).value.strip()
+            obj = PositionAndSkillType(sports_category=sports_category,
+                                       sports_type=sports_type,
+                                       position_type=position,
+                                       skill_type=skill)
+            print(i, sports_category, sports_type, obj)
+            obj.save()
+        except SportsType.DoesNotExist:
+            s = SportsType(sports_category=sports_category,
+                           sports_type_text=sheet_obj.cell(row=i, column=2).value.strip())
+            s.save()
+        # obj.save()
 
 
 @login_required
@@ -807,10 +921,11 @@ def delete_availability(request, id):
 @login_required
 def logo_upload_view(request):
     if request.method == 'POST':
-        img_obj = Logo.objects.get(user=request.user)
+        img_obj=""
         form = LogoForm(request.POST, request.FILES)
         if form.is_valid():
-            if img_obj:
+            if Logo.objects.filter(user=request.user).exists():
+                img_obj = Logo.objects.get(user=request.user)
                 img_obj.image = form.instance.image
                 img_obj.save()
             else:
@@ -819,7 +934,9 @@ def logo_upload_view(request):
                 obj.save()
             return render(request, 'EventsApp/add_logo.html', {'form': form, 'img_obj': img_obj})
     else:
+        img_obj=""
         form = LogoForm()
-        img_obj = Logo.objects.get(user=request.user)
+        if Logo.objects.filter(user=request.user).exists():
+            img_obj = Logo.objects.get(user=request.user)
 
     return render(request, 'EventsApp/add_logo.html', {'form': form, 'img_obj': img_obj})

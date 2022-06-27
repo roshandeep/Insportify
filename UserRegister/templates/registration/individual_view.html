@@ -54,10 +54,6 @@
                             value="{% if individual.phone %} {{individual.phone}} {% endif %}"/>
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" class="form-control" name="provider" placeholder="Provider"
-                            value="{% if individual.provider %} {{individual.provider}} {% endif %}"/>
-                        </div>
-                        <div class="form-row p-2">
                             <label>I am interest in participating in ?</label>
                             <input type="radio" id="Male" name="interest_gender" value="Male"
                             {% if individual.participation_interest == "Male" %} checked {% endif %}>Male</input>
@@ -65,6 +61,13 @@
                             {% if individual.participation_interest == "Female" %} checked {% endif %}> Female </input>
                             <input type="radio" id="Coed" name="interest_gender" value="Coed"
                             {% if individual.participation_interest == "Coed" %} checked {% endif %}> Coed </input>
+                        </div>
+                        <div class="form-row p-2">
+                            <label>Are you a Student?</label>
+                            <input type="radio" id="Yes" name="is_student" value="Yes"
+                            {% if individual.is_student == "Yes" %} checked {% endif %}>Yes</input>
+                            <input type="radio" id="No" name="is_student" value="No"
+                            {% if individual.is_student == "No" %} checked {% endif %}> No</input>
                         </div>
                         <div class="form-row p-2">
                             <label>Have you ever suffered concussion?</label>
@@ -137,7 +140,7 @@
                         <div class="form-row p-2">
                             <select name='sport_type' id="sports" class="form-select"
                                     aria-label=".form-select-lg example">
-                                <option value="" selected>Choose Sport Type</option>
+                                <option value="" selected>Choose Sport</option>
                             </select>
                         </div>
                         <div class="form-row p-2">
@@ -146,9 +149,9 @@
                                 <option value=""
                                         {% if individual.sports_position == "" %} selected {% endif %}>
                                 Choose position</option>
-                                <option value="Athelete"
-                                        {% if individual.sports_position == "Athelete" %} selected {% endif %}>
-                                Athelete</option>
+                                <option value="Athlete"
+                                        {% if individual.sports_position == "Athlete" %} selected {% endif %}>
+                                Athlete</option>
                                 <option value="Coach"
                                         {% if individual.sports_position == "Coach" %} selected {% endif %}>
                                 Coach</option>
@@ -383,11 +386,11 @@ $("#category").change(function () {
             html += '<select name="' + category_id + '" id="' + category_id + '" class="form-select" onchange="' + sports_type_func + '()">'
             html += '<option selected disabled>Choose Sport Category</option></select>'
             html += '<select name="' + type_id + '" id="' + type_id + '" class="form-select">'
-            html += '<option selected disabled>Choose Sport Type</option>'
+            html += '<option selected disabled>Choose Sport</option>'
             html += '</select>'
             html += '<select name="' + position_id + '" id="' + position_id + '" class="form-select">'
             html += '<option selected disabled>Choose position</option>'
-            html += '<option>Athelete</option><option>Coach</option>'
+            html += '<option>Athlete</option><option>Coach</option>'
             html += '<option>Attendee</option>'
             html += '</select>'
             html += '<a href="#" class="remove_field">Remove</a>'
