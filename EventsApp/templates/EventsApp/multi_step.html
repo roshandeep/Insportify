@@ -409,6 +409,27 @@ $(document).ready(function(){
 
 });
 
+function sports_position_dropdown(){
+    var selected_type_value = $("#sport_type option:selected");
+    var selected_type_text = selected_type_value.text();
+    let html_data = '';
+    $.ajax({
+            async: false,
+            type: "POST",
+            url: '{% url "EventsApp:get_selected_sports_positions" %}',
+            data: {
+                'selected_type_text': selected_type_text,
+                'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
+            },
+            success: function (data) {
+                data.forEach(function (data) {
+                    html_data += `<option value="${data.position_type}">${data.position_type}</option>`
+                });
+            }
+        });
+        return html_data;
+    }
+
 
 
     $(document).ready(function() {
@@ -421,15 +442,14 @@ $(document).ready(function(){
 
    $(add_button).click(function(e){
         e.preventDefault();
+        let position_options = sports_position_dropdown();
         if(x < max_fields){
 
             var html= '';
             html += '<div class="mt-2">'
             html += '<select class="form-select mt-2" name="type_of_position' + x + '">'
             html += '<option selected disabled>Choose position</option>'
-            html += '<option>Athlete</option>'
-            html += '<option>Coach</option>'
-            html += '<option>Attendee</option>'
+            html += position_options
             html += '</select>'
             html += '<input type="number" class="form-control mt-2" name="no_of_position' + x + '" placeholder = "Number of Positions" min=0>'
             html += '<input type="number" class="form-control mt-2" name ="position_cost' + x + '" placeholder="Position Cost">'

@@ -275,6 +275,21 @@ def get_selected_sports_skill(request):
         return JsonResponse(list(selected_skills.values('pk', 'skill_type')), safe=False)
 
 
+def get_selected_sports_positions(request):
+    data = {}
+    if request.method == "POST":
+        selected_sport = request.POST['selected_type_text']
+        # print(selected_sport)
+        try:
+            selected_skills = PositionAndSkillType.objects.filter(sports_type__sports_type_text=selected_sport).values(
+                'pk', 'position_type').distinct('position_type')
+        except Exception:
+            data['error_message'] = 'error'
+            return JsonResponse(data)
+        return JsonResponse(list(selected_skills.values('pk', 'position_type')), safe=False)
+
+
+
 @login_required
 def organization_profile(request):
     context = {
