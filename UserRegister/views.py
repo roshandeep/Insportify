@@ -55,6 +55,7 @@ class individual_register(CreateView):
         if form.is_valid():
             user = form.save()
             user.is_active = False
+            user.is_mvp = self.request.POST.get('is_mvp') == "on"
             user.save()
             email = EmailMessage(
                 'Welcome to Insportify!',

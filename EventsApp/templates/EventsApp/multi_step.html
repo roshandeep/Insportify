@@ -34,7 +34,7 @@
                     <div class="card-body">
                         <div class="form-row p-2">
                             <input type="text" class="form-control" name="event_title" placeholder="Event Title"
-                                   required/>
+                                   />
                         </div>
                         <div class="form-row p-2">
                             <input type="text" class="form-control" name="description" placeholder="Description"/>
@@ -158,16 +158,6 @@
                                 {% endfor %}
                             </select>
                         </div>
-<!--                        <div class="form-row p-2">-->
-<!--                            <select name='skill' class="form-select"-->
-<!--                                    aria-label=".form-select-lg example">-->
-<!--                                <option selected disabled>Choose Skill</option>-->
-<!--                                <option>Rookie</option>-->
-<!--                                <option>Recreational</option>-->
-<!--                                <option>Competitive</option>-->
-<!--                                <option>Pro-Bound</option>-->
-<!--                            </select>-->
-<!--                        </div>-->
                         <div class="form-row p-2">
                             <select name='skill' class="form-select" id="skill" aria-label=".form-select-lg example">
                                 <option selected disabled>Choose Skill</option>
@@ -361,52 +351,52 @@ $("#sport_type").change(function () {
     });
 
 $(document).ready(function(){
-  $('.select2').select2();
-  var tab2 = $("#tab-2");
-  var tab3 = $("#tab-3");
-  tab2.hide();
-  tab3.hide();
 
-  $("#next-tab-1").click(function(){
-    var tab1 = $("#tab-1");
+    $('.select2').select2();
     var tab2 = $("#tab-2");
     var tab3 = $("#tab-3");
-    tab1.hide();
-    tab2.show();
-    tab3.hide();
-    $("#step2").addClass("active");
-  });
-
-  $("#next-tab-2").click(function(){
-    var tab1 = $("#tab-1");
-    var tab2 = $("#tab-2");
-    var tab3 = $("#tab-3");
-    tab1.hide();
-    tab2.hide();
-    tab3.show();
-    $("#step3").addClass("active");
-  });
-
-  $("#previous-tab-2").click(function(){
-    var tab1 = $("#tab-1");
-    var tab2 = $("#tab-2");
-    var tab3 = $("#tab-3");
-    tab1.show();
     tab2.hide();
     tab3.hide();
-    $("#step2").removeClass("active");
-  });
 
-  $("#previous-tab-3").click(function(){
-    var tab1 = $("#tab-1");
-    var tab2 = $("#tab-2");
-    var tab3 = $("#tab-3");
-    tab1.hide();
-    tab2.show();
-    tab3.hide();
-    $("#step3").removeClass("active");
-  });
+    $("#next-tab-1").click(function(){
+      var tab1 = $("#tab-1");
+      var tab2 = $("#tab-2");
+      var tab3 = $("#tab-3");
+      tab1.hide();
+      tab2.show();
+      tab3.hide();
+      $("#step2").addClass("active");
+    });
 
+    $("#next-tab-2").click(function(){
+      var tab1 = $("#tab-1");
+      var tab2 = $("#tab-2");
+      var tab3 = $("#tab-3");
+      tab1.hide();
+      tab2.hide();
+      tab3.show();
+      $("#step3").addClass("active");
+    });
+
+    $("#previous-tab-2").click(function(){
+      var tab1 = $("#tab-1");
+      var tab2 = $("#tab-2");
+      var tab3 = $("#tab-3");
+      tab1.show();
+      tab2.hide();
+      tab3.hide();
+      $("#step2").removeClass("active");
+    });
+
+    $("#previous-tab-3").click(function(){
+      var tab1 = $("#tab-1");
+      var tab2 = $("#tab-2");
+      var tab3 = $("#tab-3");
+      tab1.hide();
+      tab2.show();
+      tab3.hide();
+      $("#step3").removeClass("active");
+    });
 });
 
 
@@ -434,7 +424,7 @@ $(document).ready(function(){
             html += '<input type="number" class="form-control mt-2" name="no_of_position' + x + '" placeholder = "Number of Positions" min=0>'
             html += '<input type="number" class="form-control mt-2" name ="position_cost' + x + '" placeholder="Position Cost">'
             html += '<input type="number" class="form-control mt-2" name="min_age' + x + '" placeholder= "Minimum Age" min=0>'
-            html += '<input type="number" class="form-control mt-2" name="max_age' + x + '" placeholder= "Maximum Age" min=0 >'
+            html += '<input type="number" class="form-control mt-2" name="max_age' + x + '" placeholder= "Maximum Age" min=0>'
             html += '<a href="#" class="remove_field mt-2">Remove</a>'
             html += '</div>'
             $(wrapper).append(html); //add input box
@@ -501,6 +491,25 @@ $('.radio').change(function() {
   $('#custom_amount').prop('disabled', !$(this).is('.other'));
 });
 
+// Logic to show alert when user leaving page without saving
+$(function () {
+    var formSubmitting = false;
+    $("#msform").on('submit', function(){
+        formSubmitting = true;
+    });
+    window.onload = function() {
+        window.addEventListener("beforeunload", function (e) {
+            if (formSubmitting) {
+                return undefined;
+            }
+
+            var confirmationMessage = 'It appears you have unsaved changes, if you leave now, your changes will be lost.';
+
+            (e || window.event).returnValue = confirmationMessage; //Gecko + IE
+            return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
+        });
+    };
+});
 
 
 

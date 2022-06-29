@@ -23,38 +23,17 @@ def multistep(request):
     sports_type = SportsType.objects.all().order_by('sports_type_text')
     venues = Venues.objects.all()
     if request.method == "POST":
+        # Had to remove required since some fieldsets are hidden due to pagination causing client side console errors
+        # Checking validity here
         form = MultiStepForm(request.POST)
-
-        # Validate datetime
-        date_valid = True
-        if not request.POST.get('recurring_event'):
-            messages.error(request, "Please select event recurrence")
-            print(date_valid)
-            date_valid = False
-        else:
-            if request.POST['recurring_event'] == "Yes":
-                if (not request.POST.get('datetimes_monday') or request.POST['datetimes_monday'] == "") and \
-                        (not request.POST.get('datetimes_tuesday') or request.POST['datetimes_tuesday'] == "") and \
-                        (not request.POST.get('datetimes_wednesday') or request.POST['datetimes_wednesday'] == "") and \
-                        (not request.POST.get('datetimes_thursday') or request.POST['datetimes_thursday'] == "") and \
-                        (not request.POST.get('datetimes_friday') or request.POST['datetimes_friday'] == "") and \
-                        (not request.POST.get('datetimes_saturday') or request.POST['datetimes_saturday'] == "") and \
-                        (not request.POST.get('datetimes_sunday') or request.POST['datetimes_sunday'] == ""):
-                    messages.error(request, "No date times entered, please enter dates for one of the selected "
-                                            "recurring days")
-                    date_valid = False
-            else:
-                if not request.POST.get('datetimes') or request.POST['datetimes'] == "":
-                    messages.error(request, "No date times entered, please enter a date for the event")
-                    date_valid = False
-        print(date_valid)
+        # Validation
+        values_valid = ValidateFormValues(request)
         # Handle Form Post
-        if form.is_valid() and date_valid:
+        if form.is_valid() and values_valid:
             # print(list(request.POST.items()))
             # Save data
             obj = form.save(commit=False)
             obj.created_by = request.user
-            print('this works 2')
             sports_type_text, sports_catgeory_text = save_sports_type(request)
             obj.sport_type = sports_type_text
             obj.sport_category = sports_catgeory_text
@@ -76,11 +55,56 @@ def multistep(request):
             redirect_url = f'/invite/' + str(master_table.objects.last().id) + '/'
             return redirect(redirect_url)
         elif not form.is_valid():
-            messages.error(request, 'Information missing !')
+            messages.error(request, form.errors)
+            messages.error(request, form.non_field_errors)
     else:
         form = MultiStepForm()
 
     return render(request, 'EventsApp/multi_step.html', {'form': form, 'sports_type': sports_type, 'venues': venues})
+
+
+def ValidateFormValues(request):
+    date_valid = True
+    event_count_valid = True
+    fields_valid = True
+    event_count = len(master_table.objects.filter(created_by=request.user))
+    if not request.user.is_mvp and event_count >= 2:
+        messages.error(request, "Cannot create event, maximum events possible by non-MVP member is 2")
+        event_count_valid = False
+    if not request.POST.get('event_title') or not request.POST.get('description') \
+            or not request.POST.get('event_type') or not request.POST.get('sport_type') \
+            or not request.POST.get('skill') or not request.POST.get('venue'):
+        messages.error(request, "All fields are required, please enter valid information")
+        fields_valid = False
+    if not request.POST.get('recurring_event'):
+        messages.error(request, "Please select event recurrence")
+        date_valid = False
+    else:
+        if request.POST['recurring_event'] == "Yes":
+            if (not request.POST.get('datetimes_monday') or request.POST['datetimes_monday'] == "") and \
+                    (not request.POST.get('datetimes_tuesday') or request.POST['datetimes_tuesday'] == "") and \
+                    (not request.POST.get('datetimes_wednesday') or request.POST['datetimes_wednesday'] == "") and \
+                    (not request.POST.get('datetimes_thursday') or request.POST['datetimes_thursday'] == "") and \
+                    (not request.POST.get('datetimes_friday') or request.POST['datetimes_friday'] == "") and \
+                    (not request.POST.get('datetimes_saturday') or request.POST['datetimes_saturday'] == "") and \
+                    (not request.POST.get('datetimes_sunday') or request.POST['datetimes_sunday'] == ""):
+                messages.error(request, "No date times entered, please enter dates for one of the selected "
+                                        "recurring days")
+                date_valid = False
+        else:
+            if not request.POST.get('datetimes') or request.POST['datetimes'] == "":
+                messages.error(request, "No date times entered, please enter a date for the event")
+                date_valid = False
+    for i in range(1, 10):
+        if request.POST.get('no_of_position' + str(i)) == '' \
+                or request.POST.get('type_of_position' + str(i)) == '' \
+                or request.POST.get('position_cost' + str(i)) == '' \
+                or request.POST.get('min_age' + str(i)) == '' \
+                or request.POST.get('max_age' + str(i)) == '':
+            messages.error(request, "All position fields are required, please enter valid information")
+            fields_valid = False
+
+    return date_valid and event_count_valid and fields_valid
 
 
 def get_venue_details(request):
@@ -110,7 +134,8 @@ def save_event_position_info(request, event):
             no_of_position = request.POST['no_of_position' + str(i)].strip()
             position_cost = request.POST['position_cost' + str(i)].strip()
             min_age = request.POST['min_age' + str(i)].strip()
-            max_age = request.POST['max_age' + str(i)].strip()
+            max_age = request.POST['max_age' + str(i)].strip() \
+                if request.POST['max_age' + str(i)].strip() == "" else "999"
             obj = Events_PositionInfo(event=event, max_age=max_age, min_age=min_age, no_of_position=no_of_position,
                                       position_cost=position_cost, position_number=i, position_type=position_type)
             obj.save()
@@ -921,7 +946,7 @@ def delete_availability(request, id):
 @login_required
 def logo_upload_view(request):
     if request.method == 'POST':
-        img_obj=""
+        img_obj = ""
         form = LogoForm(request.POST, request.FILES)
         if form.is_valid():
             if Logo.objects.filter(user=request.user).exists():
@@ -934,7 +959,7 @@ def logo_upload_view(request):
                 obj.save()
             return render(request, 'EventsApp/add_logo.html', {'form': form, 'img_obj': img_obj})
     else:
-        img_obj=""
+        img_obj = ""
         form = LogoForm()
         if Logo.objects.filter(user=request.user).exists():
             img_obj = Logo.objects.get(user=request.user)

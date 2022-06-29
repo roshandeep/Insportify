@@ -6,9 +6,9 @@ from django.db import transaction
 from EventsApp.models import User
 from django.contrib.auth import get_user_model
 from EventsApp.models import Individual, Organization
+from django.forms import CheckboxInput
 
 User = get_user_model()
-
 
 class IndividualSignUpForm(UserCreationForm):
     first_name = forms.CharField(required=True)
