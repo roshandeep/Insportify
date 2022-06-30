@@ -35,6 +35,7 @@ urlpatterns = [
     path('get_selected_sports_type/', views.get_selected_sports_type, name='get_selected_sports_type'),
     path('get_sports_category/', views.get_sports_category, name='get_sports_category'),
     path('get_sports_skill/', views.get_selected_sports_skill, name='get_selected_sports_skill'),
+    path('get_sports_position/', views.get_selected_sports_positions, name='get_selected_sports_positions'),
     path('get_venue/', views.get_venue_details, name='get_venue'),
     path('add_availability/', views.add_availability, name='add_availability'),
     path('notifications/', views.notifications, name='notifications'),

@@ -183,7 +183,9 @@ def user_profile(request):
             individual.user = request.user
             individual.first_name = response["first_name"].strip()
             individual.last_name = response["last_name"].strip()
-            individual.phone = response["mobile"].strip()
+            mobile = response["mobile"].strip()
+            mobile = ''.join(i for i in mobile if i.isdigit())
+            individual.phone = mobile
             individual.email = response["contact_email"].strip()
             individual.dob = response["dob"].strip()
             individual.concussion = response["is_concussion"].strip()
@@ -205,7 +207,9 @@ def user_profile(request):
             obj.user = request.user
             obj.first_name = response["first_name"].strip()
             obj.last_name = response["last_name"].strip()
-            obj.phone = response["mobile"].strip()
+            mobile = response["mobile"].strip()
+            mobile = ''.join(i for i in mobile if i.isdigit())
+            obj.phone = mobile
             obj.email = response["contact_email"].strip()
             obj.dob = response["dob"].strip()
             obj.concussion = response["is_concussion"].strip()
@@ -324,6 +328,21 @@ def get_selected_sports_skill(request):
             data['error_message'] = 'error'
             return JsonResponse(data)
         return JsonResponse(list(selected_skills.values('pk', 'skill_type')), safe=False)
+
+
+def get_selected_sports_positions(request):
+    data = {}
+    if request.method == "POST":
+        selected_sport = request.POST['selected_type_text']
+        # print(selected_sport)
+        try:
+            selected_skills = PositionAndSkillType.objects.filter(sports_type__sports_type_text=selected_sport).values(
+                'pk', 'position_type').distinct('position_type')
+        except Exception:
+            data['error_message'] = 'error'
+            return JsonResponse(data)
+        return JsonResponse(list(selected_skills.values('pk', 'position_type')), safe=False)
+
 
 
 @login_required
