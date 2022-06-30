@@ -132,7 +132,9 @@ def user_profile(request):
             individual.user = request.user
             individual.first_name = response["first_name"].strip()
             individual.last_name = response["last_name"].strip()
-            individual.phone = response["mobile"].strip()
+            mobile = response["mobile"].strip()
+            mobile = ''.join(i for i in mobile if i.isdigit())
+            individual.phone = mobile
             individual.email = response["contact_email"].strip()
             individual.dob = response["dob"].strip()
             individual.concussion = response["is_concussion"].strip()
@@ -154,7 +156,9 @@ def user_profile(request):
             obj.user = request.user
             obj.first_name = response["first_name"].strip()
             obj.last_name = response["last_name"].strip()
-            obj.phone = response["mobile"].strip()
+            mobile = response["mobile"].strip()
+            mobile = ''.join(i for i in mobile if i.isdigit())
+            obj.phone = mobile
             obj.email = response["contact_email"].strip()
             obj.dob = response["dob"].strip()
             obj.concussion = response["is_concussion"].strip()
