@@ -178,6 +178,7 @@ def user_profile(request):
     elif request.method == "POST":
         individual = Individual.objects.filter(user=request.user)
         response = request.POST.dict()
+        print(response)
         if individual.exists():
             individual = Individual.objects.get(user=request.user)
             individual.user = request.user
@@ -188,9 +189,12 @@ def user_profile(request):
             individual.phone = mobile
             individual.email = response["contact_email"].strip()
             individual.dob = response["dob"].strip()
-            individual.concussion = response["is_concussion"].strip()
-            individual.is_student = response["is_student"].strip()
-            individual.participation_interest = response["interest_gender"].strip()
+            if "is_concussion" in response:
+                individual.concussion = response["is_concussion"].strip()
+            if "is_student" in response:
+                individual.is_student = response["is_student"].strip()
+            if "interest_gender" in response:
+                individual.participation_interest = response["interest_gender"].strip()
             individual.city = response["city"].strip()
             individual.province = response["province"].strip()
             individual.country = response["country"].strip()
@@ -212,9 +216,12 @@ def user_profile(request):
             obj.phone = mobile
             obj.email = response["contact_email"].strip()
             obj.dob = response["dob"].strip()
-            obj.concussion = response["is_concussion"].strip()
-            obj.is_student = response["is_student"].strip()
-            obj.participation_interest = response["interest_gender"].strip()
+            if "is_concussion" in response:
+                obj.concussion = response["is_concussion"].strip()
+            if "is_student" in response:
+                obj.is_student = response["is_student"].strip()
+            if "interest_gender" in response:
+                obj.participation_interest = response["interest_gender"].strip()
             obj.city = response["city"].strip()
             obj.province = response["province"].strip()
             obj.country = response["Country"].strip()
