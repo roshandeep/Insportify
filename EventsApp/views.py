@@ -23,38 +23,88 @@ def multistep(request):
     sports_type = SportsType.objects.all().order_by('sports_type_text')
     venues = Venues.objects.all()
     if request.method == "POST":
+        # Had to remove required since some fieldsets are hidden due to pagination causing client side console errors
+        # Checking validity here
         form = MultiStepForm(request.POST)
-        if form.is_valid():
-            print(list(request.POST.items()))
+        # Validation
+        values_valid = ValidateFormValues(request)
+        # Handle Form Post
+        if form.is_valid() and values_valid:
+            # print(list(request.POST.items()))
+            # Save data
             obj = form.save(commit=False)
             obj.created_by = request.user
             sports_type_text, sports_catgeory_text = save_sports_type(request)
             obj.sport_type = sports_type_text
             obj.sport_category = sports_catgeory_text
-            if 'recurring_event' in request.POST:
-                obj.is_recurring = request.POST['recurring_event'] == "Yes"
-                obj.datetimes_monday = request.POST['datetimes_monday'] if obj.is_recurring else ""
-                obj.datetimes_tuesday = request.POST['datetimes_tuesday'] if obj.is_recurring else ""
-                obj.datetimes_wednesday = request.POST['datetimes_wednesday'] if obj.is_recurring else ""
-                obj.datetimes_thursday = request.POST['datetimes_thursday'] if obj.is_recurring else ""
-                obj.datetimes_friday = request.POST['datetimes_friday'] if obj.is_recurring else ""
-                obj.datetimes_saturday = request.POST['datetimes_saturday'] if obj.is_recurring else ""
-                obj.datetimes_sunday = request.POST['datetimes_sunday'] if obj.is_recurring else ""
-                obj.datetimes_exceptions = request.POST['datetimes_exceptions'] if obj.is_recurring else ""
-                obj.datetimes = "" if obj.is_recurring else request.POST['datetimes']
+            obj.is_recurring = request.POST['recurring_event'] == "Yes"
+            obj.datetimes_monday = request.POST.get('datetimes_monday') if obj.is_recurring else ""
+            obj.datetimes_tuesday = request.POST.get('datetimes_tuesday') if obj.is_recurring else ""
+            obj.datetimes_wednesday = request.POST.get('datetimes_wednesday') if obj.is_recurring else ""
+            obj.datetimes_thursday = request.POST.get('datetimes_thursday') if obj.is_recurring else ""
+            obj.datetimes_friday = request.POST.get('datetimes_friday') if obj.is_recurring else ""
+            obj.datetimes_saturday = request.POST.get('datetimes_saturday') if obj.is_recurring else ""
+            obj.datetimes_sunday = request.POST.get('datetimes_sunday') if obj.is_recurring else ""
+            obj.datetimes_exceptions = request.POST.get('datetimes_exceptions') if obj.is_recurring else ""
+            obj.datetimes = "" if obj.is_recurring else request.POST.get('datetimes')
             obj.save()
             save_event_position_info(request, obj)
+
+            # Take user to event invitation page
             messages.success(request, 'Event Created - Invite Users?')
             redirect_url = f'/invite/' + str(master_table.objects.last().id) + '/'
             return redirect(redirect_url)
-        else:
-            print("error aaya")
-            messages.error(request, 'Information missing !')
-            print(form.errors)
+        elif not form.is_valid():
+            messages.error(request, form.errors)
+            messages.error(request, form.non_field_errors)
     else:
         form = MultiStepForm()
 
     return render(request, 'EventsApp/multi_step.html', {'form': form, 'sports_type': sports_type, 'venues': venues})
+
+
+def ValidateFormValues(request):
+    date_valid = True
+    event_count_valid = True
+    fields_valid = True
+    event_count = len(master_table.objects.filter(created_by=request.user))
+    if not request.user.is_mvp and event_count >= 2:
+        messages.error(request, "Cannot create event, maximum events possible by non-MVP member is 2")
+        event_count_valid = False
+    if not request.POST.get('event_title') or not request.POST.get('description') \
+            or not request.POST.get('event_type') or not request.POST.get('sport_type') \
+            or not request.POST.get('skill') or not request.POST.get('venue'):
+        messages.error(request, "All fields are required, please enter valid information")
+        fields_valid = False
+    if not request.POST.get('recurring_event'):
+        messages.error(request, "Please select event recurrence")
+        date_valid = False
+    else:
+        if request.POST['recurring_event'] == "Yes":
+            if (not request.POST.get('datetimes_monday') or request.POST['datetimes_monday'] == "") and \
+                    (not request.POST.get('datetimes_tuesday') or request.POST['datetimes_tuesday'] == "") and \
+                    (not request.POST.get('datetimes_wednesday') or request.POST['datetimes_wednesday'] == "") and \
+                    (not request.POST.get('datetimes_thursday') or request.POST['datetimes_thursday'] == "") and \
+                    (not request.POST.get('datetimes_friday') or request.POST['datetimes_friday'] == "") and \
+                    (not request.POST.get('datetimes_saturday') or request.POST['datetimes_saturday'] == "") and \
+                    (not request.POST.get('datetimes_sunday') or request.POST['datetimes_sunday'] == ""):
+                messages.error(request, "No date times entered, please enter dates for one of the selected "
+                                        "recurring days")
+                date_valid = False
+        else:
+            if not request.POST.get('datetimes') or request.POST['datetimes'] == "":
+                messages.error(request, "No date times entered, please enter a date for the event")
+                date_valid = False
+    for i in range(1, 10):
+        if request.POST.get('no_of_position' + str(i)) == '' \
+                or request.POST.get('type_of_position' + str(i)) == '' \
+                or request.POST.get('position_cost' + str(i)) == '' \
+                or request.POST.get('min_age' + str(i)) == '' \
+                or request.POST.get('max_age' + str(i)) == '':
+            messages.error(request, "All position fields are required, please enter valid information")
+            fields_valid = False
+
+    return date_valid and event_count_valid and fields_valid
 
 
 def get_venue_details(request):
@@ -84,7 +134,8 @@ def save_event_position_info(request, event):
             no_of_position = request.POST['no_of_position' + str(i)].strip()
             position_cost = request.POST['position_cost' + str(i)].strip()
             min_age = request.POST['min_age' + str(i)].strip()
-            max_age = request.POST['max_age' + str(i)].strip()
+            max_age = request.POST['max_age' + str(i)].strip() \
+                if request.POST['max_age' + str(i)].strip() == "" else "999"
             obj = Events_PositionInfo(event=event, max_age=max_age, min_age=min_age, no_of_position=no_of_position,
                                       position_cost=position_cost, position_number=i, position_type=position_type)
             obj.save()
@@ -536,6 +587,15 @@ def event_details(request, event_id):
                 event_pos = Events_PositionInfo.objects.get(pk=position_id)
                 event_pos.no_of_position = int(event_pos.no_of_position) - int(needed_pos)
                 event_pos.save()
+
+                ## Email Creator - New Subscriber
+                event_subject = "New subscriber for Event: " + event.event_title
+                event_message = "A new user has subscribed to event: " + event.event_title + "\n" + \
+                                "Subscriber Name: " + request.user.first_name + " " + request.user.last_name + "\n" + \
+                                "Subscriber Email: " + request.user.email + "\n" + \
+                                "Subscriber User Name: " + request.user.username
+                if event.created_by:
+                    util.email(event_subject, event_message, [event.created_by.email])
                 return redirect('EventsApp:cart_summary')
 
     return render(request, "EventsApp/detail_dashboard.html", context)
@@ -800,9 +860,22 @@ def delete_by_id(request, event_id):
                                                                          "\nSun: " + event.datetimes_sunday if event.datetimes_sunday is not None else "")
                                                                      + (
                                                                          "\nExc: " + event.datetimes_exceptions if event.datetimes_exceptions is not None else ""))
+
+        for cart_item in Cart.objects.filter(event=event):
+            subs_email = cart_item.user.email
+            util.email(event_subject, "Hello " + user.first_name + " " + user.last_name
+                       + ", the following subscribed event in your cart has been cancelled by the creator:\n\n"
+                       + event_data
+                       , [subs_email])
+        for order_item in Order.objects.filter(event=event):
+            order_email = order_item.customer.email
+            util.email(event_subject, "Hello " + user.first_name + " " + user.last_name
+                       + ", the following event has been cancelled by the creator:\n\n" + event_data
+                       , [order_email])
         util.email(event_subject, "Hello " + user.first_name + " " + user.last_name
-                   + ", the following event has been cancelled by the creator:\n\n" + event_data
-                   , [user.email]);
+                   + ", the following event has been cancelled as requested (subscribers and customers have been "
+                     "notified):\n\n" + event_data
+                   , [user.email])
         messages.success(request, "Event removed successfully!")
 
     except Exception as e:
@@ -836,7 +909,7 @@ def invite_by_id(request, event_id):
                 full_name = ""
             util.email("Invitation from Insportify", "Hi there! " + full_name
                        + " has invited you to the event: " + event.event_title
-                       + ". Join Insportify now: " + "http://127.0.0.1:8000/" + str(event_id),
+                       + ". Join Insportify now: " + request.get_host() + "/" + str(event_id),
                        [form.cleaned_data['email']])
             context["invites"] = Invite.objects.all().filter(event=event)
         else:
@@ -892,7 +965,7 @@ def delete_availability(request, id):
 @login_required
 def logo_upload_view(request):
     if request.method == 'POST':
-        img_obj=""
+        img_obj = ""
         form = LogoForm(request.POST, request.FILES)
         if form.is_valid():
             if Logo.objects.filter(user=request.user).exists():
@@ -905,7 +978,7 @@ def logo_upload_view(request):
                 obj.save()
             return render(request, 'EventsApp/add_logo.html', {'form': form, 'img_obj': img_obj})
     else:
-        img_obj=""
+        img_obj = ""
         form = LogoForm()
         if Logo.objects.filter(user=request.user).exists():
             img_obj = Logo.objects.get(user=request.user)
