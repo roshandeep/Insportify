@@ -369,40 +369,75 @@ def organization_profile(request):
         if organization.exists():
             organization = Organization.objects.get(user=request.user)
             organization.user = request.user
-            organization.type_of_organization = response["type_of_organization"].strip()
-            organization.organization_name = response["company_name"].strip()
-            organization.parent_organization_name = response["parent_organization"].strip()
-            organization.registration_no = response["registration"].strip()
-            organization.year_established = response["year_established"].strip()
-            organization.street = response["street_name"].strip()
-            organization.city = response["city"].strip()
-            organization.province = response["province"].strip()
-            organization.country = response["country"].strip()
-            organization.postal_code = response["postal_code"].strip()
-            organization.email = response["email"].strip()
-            organization.phone = response["phone"].strip()
-            organization.website = response["website"].strip()
-            organization.gender_focus = response["gender"].strip()
-            organization.age_group = response["age_group"].strip()
+            if response["type_of_organization"]:
+                organization.type_of_organization = response["type_of_organization"].strip()
+            if response["company_name"]:
+                organization.organization_name = response["company_name"].strip()
+            if response["parent_organization"]:
+                organization.parent_organization_name = response["parent_organization"].strip()
+            if response["registration"]:
+                organization.registration_no = response["registration"].strip()
+            if response["year_established"]:
+                organization.year_established = response["year_established"].strip()
+            if response["street_name"]:
+                organization.street = response["street_name"].strip()
+            if response["city"]:
+                organization.city = response["city"].strip()
+            if response["province"]:
+                organization.province = response["province"].strip()
+            if response["country"]:
+                organization.country = response["country"].strip()
+            if response["postal_code"]:
+                organization.postal_code = response["postal_code"].strip()
+            if response["email"]:
+                organization.email = response["email"].strip()
+            if response["phone"]:
+                phone = response["phone"].strip()
+                phone = ''.join(i for i in phone if i.isdigit())
+                organization.phone = phone
+            if response["website"]:
+                organization.website = response["website"].strip()
+            if response["gender"]:
+                organization.gender_focus = response["gender"].strip()
+            if response["age_group"]:
+                organization.age_group = response["age_group"].strip()
             organization.save()
             context['organization'] = organization
         else:
             obj = Organization()
             obj.user = request.user
-            obj.type_of_organization = response["type_of_organization"].strip()
-            obj.organization_name = response["company_name"].strip()
-            obj.parent_organization_name = response["parent_organization"].strip()
-            obj.registration_no = response["registration"].strip()
-            obj.street = response["street_name"].strip()
-            obj.city = response["city"].strip()
-            obj.province = response["province"].strip()
-            obj.country = response["country"].strip()
-            obj.postal_code = response["postal_code"].strip()
-            obj.email = response["email"].strip()
-            obj.phone = response["phone"].strip()
-            obj.website = response["website"].strip()
-            obj.gender_focus = response["gender"].strip()
-            obj.age_group = response["age_group"].strip()
+            if response["type_of_organization"]:
+                obj.type_of_organization = response["type_of_organization"].strip()
+            if response["company_name"]:
+                obj.organization_name = response["company_name"].strip()
+            if response["parent_organization"]:
+                obj.parent_organization_name = response["parent_organization"].strip()
+            if response["registration"]:
+                obj.registration_no = response["registration"].strip()
+            if response["year_established"]:
+                obj.year_established = response["year_established"].strip()
+            if response["street_name"]:
+                obj.street = response["street_name"].strip()
+            if response["city"]:
+                obj.city = response["city"].strip()
+            if response["province"]:
+                obj.province = response["province"].strip()
+            if response["country"]:
+                obj.country = response["country"].strip()
+            if response["postal_code"]:
+                obj.postal_code = response["postal_code"].strip()
+            if response["email"]:
+                obj.email = response["email"].strip()
+            if response["phone"]:
+                phone = response["phone"].strip()
+                phone = ''.join(i for i in phone if i.isdigit())
+                obj.phone = phone
+            if response["website"]:
+                obj.website = response["website"].strip()
+            if response["gender"]:
+                obj.gender_focus = response["gender"].strip()
+            if response["age_group"]:
+                obj.age_group = response["age_group"].strip()
             obj.save()
             context['organization'] = obj
         messages.success(request, 'Organization details updated!')

@@ -28,7 +28,8 @@
         <hr>
         <ul class="navbar-nav">
             <li class="nav-item">
-                <a class="nav-link link-secondary text-white" href="{% url 'EventsApp:home' %}">
+                <a class="nav-link link-secondary text-white" href="{% url 'EventsApp:home' %}"
+                {% if request.path == '/' %} style="font-weight:bold" {% endif %}>
                     <p>Home</p>
                 </a>
             </li>

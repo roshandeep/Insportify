@@ -33,8 +33,7 @@
                         Information</h3>
                     <div class="card-body">
                         <div class="form-row p-2">
-                            <input type="text" class="form-control" name="event_title" placeholder="Event Title"
-                                   required/>
+                            <input type="text" class="form-control" name="event_title" placeholder="Event Title"/>
                         </div>
                         <div class="form-row p-2">
                             <input type="text" class="form-control" name="description" placeholder="Description"/>
@@ -159,7 +158,8 @@
                             </select>
                         </div>
                         <div class="form-row p-2">
-                            <select name='skill' class="form-select" id="skill" aria-label=".form-select-lg example">
+                            <select name='skill' class="form-select" id="skill" aria-label=".form-select-lg example"
+                                    multiple="multiple" data-toggle="tooltip" title="Select multiple skills">
                                 <option selected disabled>Choose Skill</option>
 
                             </select>
@@ -303,10 +303,13 @@
 
 
 
+
 </style>
 
 <script>
-
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
 
 $("#venue").change(function () {
         var selected_venue_value = $("#venue option:selected");
@@ -530,6 +533,7 @@ $(function () {
         });
     };
 });
+
 
 </script>
 
