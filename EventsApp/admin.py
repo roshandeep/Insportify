@@ -9,10 +9,16 @@ admin.site.register(SportsCategory)
 admin.site.register(SportsType)
 admin.site.register(Individual)
 admin.site.register(Organization)
-admin.site.register(Venues)
 admin.site.register(Order)
 admin.site.register(Logo)
 admin.site.register(PositionAndSkillType)
+
+class VenuesAdmin(admin.ModelAdmin):
+    list_display = ('vm_name', 'vm_venue_street', 'vm_venuecity', 'vm_venue_province', 'vm_venue_country', 'vm_venue_zip',)
+    search_fields = ['vm_name', 'vm_venue_street', 'vm_venuecity', 'vm_venue_province', 'vm_venue_country', 'vm_venue_zip',]
+
+
+admin.site.register(Venues, VenuesAdmin)
 
 
 class Events_PositionInfoAdmin(admin.ModelAdmin):
