@@ -207,7 +207,7 @@ def user_profile(request):
             if response["country"]:
                 individual.province = response["country"].strip() if response["country"] else ""
             if response["contact_email"]:
-                individual.country = response["contact_email"].strip() if response["contact_email"] else ""
+                individual.contact_email = response["contact_email"].strip() if response["contact_email"] else ""
             if response["sport_category"]:
                 individual.sports_category = response["sport_category"].strip() if response["sport_category"] else ""
             if response["sport_type"]:
@@ -245,8 +245,8 @@ def user_profile(request):
                 obj.city = response["city"].strip() if response["city"] else ""
             if response["province"]:
                 obj.province = response["province"].strip() if response["province"] else ""
-            if response["Country"]:
-                obj.country = response["Country"].strip() if response["Country"] else ""
+            if response["country"]:
+                obj.country = response["country"].strip() if response["country"] else ""
             if response["sport_category"]:
                 obj.sports_category = response["sport_category"].strip() if response["sport_category"] else ""
             if response["sport_type"]:
