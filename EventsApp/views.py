@@ -166,9 +166,7 @@ def user_profile(request):
     context = {
         'user': request.user
     }
-    sports_category = SportsCategory.objects.all()
     sports_type = SportsType.objects.all().order_by('sports_type_text')
-    context['sports_category'] = sports_category
     context['sports_type'] = sports_type
 
     if request.method == "GET":
@@ -354,11 +352,11 @@ def get_selected_sports_skill(request):
     if request.method == "POST":
         sport_position = request.POST['selected_position_text']
         selected_sport = request.POST['selected_type_text']
-        # print(sport_position, selected_sport)
+        # print(selected_sport, sport_position)
         try:
             selected_skills = PositionAndSkillType.objects.filter(sports_type__sports_type_text=selected_sport).filter(
                 position_type=sport_position).values('pk', 'skill_type').distinct('skill_type')
-            print(selected_skills)
+            # print(selected_skills)
         except Exception:
             data['error_message'] = 'error'
             return JsonResponse(data)
