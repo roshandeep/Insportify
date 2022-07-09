@@ -336,15 +336,15 @@ def get_selected_sports_type(request):
         return JsonResponse(list(selected_type.values('pk', 'sports_type_text')), safe=False)
 
 
-def get_sports_category(request):
+def get_sports_type(request):
     data = {}
     if request.method == "GET":
         try:
-            selected_type = SportsCategory.objects.all()
+            sports_type = SportsType.objects.all().order_by('sports_type_text')
         except Exception:
             data['error_message'] = 'error'
             return JsonResponse(data)
-        return JsonResponse(list(selected_type.values('pk', 'sports_catgeory_text')), safe=False)
+        return JsonResponse(list(sports_type.values('pk', 'sports_type_text')), safe=False)
 
 
 def get_selected_sports_skill(request):
