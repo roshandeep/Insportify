@@ -99,7 +99,7 @@ def ValidateFormValues(request):
                 date_valid = False
     for i in range(1, 10):
         if request.POST.get('no_of_position' + str(i)) == '' \
-                or request.POST.get('type_of_position' + str(i)) == '' \
+                or request.POST.get('type_of_skill' + str(i)) == '' \
                 or request.POST.get('position_cost' + str(i)) == '' \
                 or request.POST.get('min_age' + str(i)) == '' \
                 or request.POST.get('max_age' + str(i)) == '':
@@ -132,7 +132,7 @@ def save_sports_type(request):
 def save_event_position_info(request, event):
     for i in range(1, 10):
         if 'no_of_position' + str(i) in request.POST:
-            position_type = request.POST['type_of_position' + str(i)].strip()
+            position_type = request.POST['type_of_skill' + str(i)].strip()
             no_of_position = request.POST['no_of_position' + str(i)].strip()
             position_cost = request.POST['position_cost' + str(i)].strip()
             min_age = request.POST['min_age' + str(i)].strip()
@@ -352,11 +352,13 @@ def get_sports_category(request):
 def get_selected_sports_skill(request):
     data = {}
     if request.method == "POST":
+        sport_position = request.POST['selected_position_text']
         selected_sport = request.POST['selected_type_text']
-        # print(selected_sport)
+        # print(sport_position, selected_sport)
         try:
-            selected_skills = PositionAndSkillType.objects.filter(sports_type__sports_type_text=selected_sport).values(
-                'pk', 'skill_type').distinct('skill_type')
+            selected_skills = PositionAndSkillType.objects.filter(sports_type__sports_type_text=selected_sport).filter(
+                position_type=sport_position).values('pk', 'skill_type').distinct('skill_type')
+            print(selected_skills)
         except Exception:
             data['error_message'] = 'error'
             return JsonResponse(data)
@@ -377,7 +379,6 @@ def get_selected_sports_positions(request):
         return JsonResponse(list(selected_skills.values('pk', 'position_type')), safe=False)
 
 
-
 @login_required
 def organization_profile(request):
     context = {
@@ -396,15 +397,18 @@ def organization_profile(request):
             organization = Organization.objects.get(user=request.user)
             organization.user = request.user
             if response["type_of_organization"]:
-                organization.type_of_organization = response["type_of_organization"].strip() if response["type_of_organization"] else ""
+                organization.type_of_organization = response["type_of_organization"].strip() if response[
+                    "type_of_organization"] else ""
             if response["company_name"]:
                 organization.organization_name = response["company_name"].strip() if response["company_name"] else ""
             if response["parent_organization"]:
-                organization.parent_organization_name = response["parent_organization"].strip() if response["parent_organization"] else ""
+                organization.parent_organization_name = response["parent_organization"].strip() if response[
+                    "parent_organization"] else ""
             if response["registration"]:
                 organization.registration_no = response["registration"].strip() if response["registration"] else ""
             if response["year_established"]:
-                organization.year_established = response["year_established"].strip() if response["year_established"] else ""
+                organization.year_established = response["year_established"].strip() if response[
+                    "year_established"] else ""
             if response["street_name"]:
                 organization.street = response["street_name"].strip() if response["street_name"] else ""
             if response["city"]:
@@ -433,11 +437,13 @@ def organization_profile(request):
             obj = Organization()
             obj.user = request.user
             if response["type_of_organization"]:
-                obj.type_of_organization = response["type_of_organization"].strip() if response["type_of_organization"] else ""
+                obj.type_of_organization = response["type_of_organization"].strip() if response[
+                    "type_of_organization"] else ""
             if response["company_name"]:
                 obj.organization_name = response["company_name"].strip() if response["company_name"] else ""
             if response["parent_organization"]:
-                obj.parent_organization_name = response["parent_organization"].strip() if response["parent_organization"] else ""
+                obj.parent_organization_name = response["parent_organization"].strip() if response[
+                    "parent_organization"] else ""
             if response["registration"]:
                 obj.registration_no = response["registration"].strip() if response["registration"] else ""
             if response["year_established"]:
@@ -557,8 +563,9 @@ def get_recommended_events(request):
         loc_list.append(item.city.lower())
 
     for event in recommended_events:
-        if event.city.lower() not in loc_list:
-            recommended_events.remove(event)
+        if event.city:
+            if event.city.lower() not in loc_list:
+                recommended_events.remove(event)
 
     recommended_events = list(recommended_events)
 
