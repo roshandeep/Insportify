@@ -21,7 +21,7 @@ import util
 @login_required
 def multistep(request):
     sports_type = SportsType.objects.all().order_by('sports_type_text')
-    venues = Venues.objects.all()
+    venues = Venues.objects.all().order_by('vm_name')
     if request.method == "POST":
         # Had to remove required since some fieldsets are hidden due to pagination causing client side console errors
         # Checking validity here
@@ -114,7 +114,7 @@ def get_venue_details(request):
     if request.method == "POST":
         selected_venue = request.POST['selected_venue']
         try:
-            selected_venue = Venues.objects.filter(vm_name=selected_venue)
+            selected_venue = Venues.objects.filter(vm_name=selected_venue).order_by('vm_name')
             # print(selected_venue)
         except Exception:
             data['error_message'] = 'error'
@@ -488,7 +488,7 @@ def home(request):
             if not flag:
                 sports = sports.exclude(sports_catgeory_text=item['sports_catgeory_text'])
 
-    venues = Venues.objects.values('pk', 'vm_name')
+    venues = Venues.objects.values('pk', 'vm_name').order_by('vm_name')
     events = master_table.objects.all()
 
     events = format_time(events)
