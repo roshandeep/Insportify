@@ -27,62 +27,62 @@
         </a>
         <hr>
         <ul class="navbar-nav">
+            {% if request.user.is_authenticated %}
             <li class="nav-item">
                 <a class="nav-link link-secondary text-white" href="{% url 'EventsApp:home' %}"
-                {% if request.path == '/' %} style="font-weight:bold" {% endif %}>
-                    <p>Home</p>
+                   {% if request.path == '/' %} style="font-weight:bold" {% endif %}>
+                <p>Home</p>
                 </a>
             </li>
-            {% if request.user.is_authenticated %}
             <li class="nav-item">
                 <a class="nav-link link-secondary text-white" href="{% url 'EventsApp:list-events' %}"
                    {% if request.path == '/show/' %} style="font-weight:bold" {% endif %}>
-                    <p>My Events</p>
+                <p>My Events</p>
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link link-secondary text-white" href="{% url 'EventsApp:multistep' %}"
-                {% if request.path == '/create/' %} style="font-weight:bold" {% endif %}>
-                    <p>Create Events</p>
+                   {% if request.path == '/create/' %} style="font-weight:bold" {% endif %}>
+                <p>Create Events</p>
                 </a>
             </li>
             {% if request.user.is_organization == True %}
             <li class="nav-item">
                 <a class="nav-link link-secondary text-white" href="{% url 'EventsApp:organization_profile' %}"
-                {% if request.path == '/organization/profile/' %} style="font-weight:bold" {% endif %}>
-                    <p>User Profile</p>
+                   {% if request.path == '/organization/profile/' %} style="font-weight:bold" {% endif %}>
+                <p>User Profile</p>
                 </a>
             </li>
             {% else %}
             <li class="nav-item">
                 <a class="nav-link link-secondary text-white" href="{% url 'EventsApp:user_profile' %}"
-                {% if request.path == '/individual/profile/' %} style="font-weight:bold" {% endif %}>
-                    <p>User Profile</p>
+                   {% if request.path == '/individual/profile/' %} style="font-weight:bold" {% endif %}>
+                <p>User Profile</p>
                 </a>
             </li>
             {% endif %}
             <li class="nav-item">
                 <a class="nav-link link-secondary text-white" href="{% url 'EventsApp:add_availability' %}"
-                    {% if request.path == '/add_availability/' %} style="font-weight:bold" {% endif %}>
-                    <p>Add Availability</p>
+                   {% if request.path == '/add_availability/' %} style="font-weight:bold" {% endif %}>
+                <p>Add Availability</p>
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link link-secondary text-white" href="{% url 'EventsApp:logo_upload' %}"
-                    {% if request.path == '/upload/' %} style="font-weight:bold" {% endif %}>
-                    <p>Add Logo</p>
+                   {% if request.path == '/upload/' %} style="font-weight:bold" {% endif %}>
+                <p>Add Logo</p>
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link link-secondary text-white" href="/invite/"
-                    {% if request.path == '/invite/' %} style="font-weight:bold" {% endif %}>
-                    <p>Invite Friends</p>
+                   {% if request.path == '/invite/' %} style="font-weight:bold" {% endif %}>
+                <p>Invite Friends</p>
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link link-secondary text-white" href="{% url 'EventsApp:cart_summary' %}"
-                     {% if request.path == '/cart_summary/' %} style="font-weight:bold" {% endif %}>
-                    <p>Cart</p>
+                   {% if request.path == '/cart_summary/' %} style="font-weight:bold" {% endif %}>
+                <p>Cart</p>
                 </a>
             </li>
             {% endif %}
@@ -95,18 +95,21 @@
             <div class="container-fluid">
                 <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                     <ul class="navbar-nav mb-2 mb-lg-0">
-                        {% if user.is_authenticated %}
+                        {% if request.user.is_authenticated %}
                         <li class="nav-item">
                             <a class="nav-link link-secondary" href="{% url 'UserRegister:logout' %}"><p>Logout</p></a>
                         </li>
                         {% else %}
+                        {% if request.path != '/users/register/' and request.path != '/users/organization_register/' and request.path != '/users/individual_register/' and request.path != '/users/login/' %}
+
                         <li class="nav-item">
                             <a class="nav-link link-secondary" href="{% url 'UserRegister:register' %}">
-                            Register</a>
+                                Register</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link link-secondary" href="{% url 'UserRegister:login' %}">Login</a>
                         </li>
+                        {% endif %}
                         {% endif %}
                     </ul>
                 </div>
@@ -203,12 +206,9 @@
     background-color: white;
     }
 
-
-
-
-
-
-
+.navbar {
+    min-height: 56px;
+}
 
 </style>
 </html>

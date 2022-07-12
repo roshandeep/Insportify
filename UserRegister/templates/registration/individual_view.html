@@ -22,7 +22,6 @@
                 <li class="active" id="step1">Personal Details</li>
                 <li id="step2">Location Details</li>
                 <li id="step3">Sports Choices</li>
-<!--                <li id="step4">Notification Choices</li>-->
             </ul>
 
             <fieldset class="p-2" id="tab-1">
@@ -382,14 +381,14 @@ $(document).ready(function(){
             var sports_skill_func = "populate_sportsskill" + x;
 
             var html='';
-            html += '<div>'
-            html += '<select name="' + type_id + '" id="' + type_id + '" class="form-select" onchange="' + sports_position_func + '()">'
+            html += '<div class="mt-2">'
+            html += '<select name="' + type_id + '" id="' + type_id + '" class="form-select mt-2" onchange="' + sports_position_func + '()">'
             html += '<option selected disabled>Choose Sport</option>'
             html += '</select>'
-            html += '<select name="' + position_id + '" id="' + position_id + '" class="form-select" onchange="' + sports_skill_func + '()">'
+            html += '<select name="' + position_id + '" id="' + position_id + '" class="form-select mt-2" onchange="' + sports_skill_func + '()">'
             html += '<option selected disabled>Choose Position</option>'
             html += '</select>'
-            html += '<select name="' + skill_id + '" id="' + skill_id + '" class="form-select">'
+            html += '<select name="' + skill_id + '" id="' + skill_id + '" class="form-select mt-2">'
             html += '<option selected disabled>Choose Skill</option>'
             html += '</select>'
             html += '<a href="#" class="remove_field">Remove</a>'

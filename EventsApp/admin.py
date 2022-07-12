@@ -22,10 +22,10 @@ admin.site.register(Venues, VenuesAdmin)
 
 
 class Events_PositionInfoAdmin(admin.ModelAdmin):
-    list_display = ('event', 'position_number', 'max_age', 'min_age', 'no_of_position', 'position_cost',)
+    list_display = ('position_number', 'event', 'max_age', 'min_age', 'no_of_position', 'position_cost',)
 
 
-admin.site.register(Events_PositionInfo)
+admin.site.register(Events_PositionInfo, Events_PositionInfoAdmin)
 
 
 class Secondary_SportsChoiceAdmin(admin.ModelAdmin):

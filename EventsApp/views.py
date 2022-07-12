@@ -34,11 +34,8 @@ def multistep(request):
             # Save data
             obj = form.save(commit=False)
             obj.created_by = request.user
-            sports_type_text, sports_catgeory_text = save_sports_type(request)
-            skill_list = request.POST.getlist('skill')
-            obj.skill = ', '.join(skill_list)
-            obj.sport_type = sports_type_text
-            obj.sport_category = sports_catgeory_text
+            obj.sport_type = request.POST['sport_type']
+            obj.position = request.POST['position']
             obj.is_recurring = request.POST['recurring_event'] == "Yes"
             obj.datetimes_monday = request.POST.get('datetimes_monday') if obj.is_recurring else ""
             obj.datetimes_tuesday = request.POST.get('datetimes_tuesday') if obj.is_recurring else ""
@@ -75,7 +72,7 @@ def ValidateFormValues(request):
         event_count_valid = False
     if not request.POST.get('event_title') or not request.POST.get('description') \
             or not request.POST.get('event_type') or not request.POST.get('sport_type') \
-            or not request.POST.get('skill') or not request.POST.get('venue'):
+            or not request.POST.get('venue'):
         messages.error(request, "All fields are required, please enter valid information")
         fields_valid = False
     if not request.POST.get('recurring_event'):
@@ -101,8 +98,7 @@ def ValidateFormValues(request):
         if request.POST.get('no_of_position' + str(i)) == '' \
                 or request.POST.get('type_of_skill' + str(i)) == '' \
                 or request.POST.get('position_cost' + str(i)) == '' \
-                or request.POST.get('min_age' + str(i)) == '' \
-                or request.POST.get('max_age' + str(i)) == '':
+                or request.POST.get('min_age' + str(i)) == '':
             messages.error(request, "All position fields are required, please enter valid information")
             fields_valid = False
 
@@ -122,12 +118,6 @@ def get_venue_details(request):
         return JsonResponse(list(selected_venue.values()), safe=False)
 
 
-def save_sports_type(request):
-    if request.POST['sport_type']:
-        sports_type_id = request.POST['sport_type']
-        obj = SportsType.objects.get(pk=sports_type_id)
-        return obj.sports_type_text, obj.sports_category.sports_catgeory_text
-
 
 def save_event_position_info(request, event):
     for i in range(1, 10):
@@ -136,8 +126,8 @@ def save_event_position_info(request, event):
             no_of_position = request.POST['no_of_position' + str(i)].strip()
             position_cost = request.POST['position_cost' + str(i)].strip()
             min_age = request.POST['min_age' + str(i)].strip()
-            max_age = request.POST['max_age' + str(i)].strip() \
-                if request.POST['max_age' + str(i)].strip() == "" else "999"
+            max_age = request.POST['max_age' + str(i)].strip() if request.POST['max_age' + str(i)] else "999"
+            print(request.POST['min_age' + str(i)].strip(), request.POST['max_age' + str(i)].strip())
             obj = Events_PositionInfo(event=event, max_age=max_age, min_age=min_age, no_of_position=no_of_position,
                                       position_cost=position_cost, position_number=i, position_type=position_type)
             obj.save()
