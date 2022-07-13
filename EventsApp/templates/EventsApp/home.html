@@ -65,8 +65,9 @@
                         <div class="card-body">
                             <h5 class="card-title">{{event.event_title}}</h5>
                             <p class="card-text">{{event.venue}}, {{event.city}}, {{event.province}}
-                            <p class="text-secondary"><i class="bi bi-calendar"></i> {{event.datetimes}}
+                            <p class="text-dark text-start eventdatetime">{{event.datetimes}}
                             </p>
+
                             <a href="/{{event.pk}}/" class="btn btn-primary">Details >></a>
                         </div>
                     </div>
@@ -104,9 +105,9 @@
                         <div class="card-body">
                             <h5 class="card-title">{{event.event_title}}</h5>
                             <p class="card-text">{{event.venue}}, {{event.city}}, {{event.province}}
-                            <p class="text-secondary"><i class="bi bi-calendar"></i> {{event.datetimes}}
+                            <p class="text-dark text-start eventdatetime">
+                            {{event.datetimes}}
                             </p>
-                            <!--                            <a href="/{{event.pk}}/" class="btn btn-primary">Details >></a>-->
                             <a href="event_details/{{event.pk}}/" class="btn btn-primary">Details >></a>
                         </div>
                     </div>
@@ -129,6 +130,18 @@
 </div>
 
 {% endif %}
+
+<script>
+$(document).ready(function() {
+    let para = document.getElementsByClassName("eventdatetime");
+    for (let i = 0; i < para.length; i++) {
+      let pval = para[i].innerHTML.split("from");
+      console.log(pval[1])
+      para[i].innerHTML = "";
+      para[i].innerHTML = pval[0] + "<br>" + pval[1];
+    }
+});
+</script>
 
 <style>
 
@@ -171,6 +184,7 @@
     transition: all .4s ease;
 -webkit-transition: all .4s ease;
 }
+
 
 
 

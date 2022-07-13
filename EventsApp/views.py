@@ -592,12 +592,12 @@ def format_time(events):
 
             start_date = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p').date()
             end_date = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p').date()
-            start_date = start_date.strftime("%B %d, %Y")
-            end_date = end_date.strftime("%B %d, %Y")
+            start_date = start_date.strftime("%B %d")
+            end_date = end_date.strftime("%B %d")
             if start_date == end_date:
-                str_datetime = start_date + " " + start_time + " to " + end_time
+                str_datetime = start_date + " from " + start_time + " - " + end_time
             else:
-                str_datetime = start_date + " " + start_time + " to " + end_date + " " + end_time
+                str_datetime = start_date + " - " + end_date + " from " + start_time + " - " + end_time
 
             event.datetimes = str_datetime
     return events
