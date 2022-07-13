@@ -118,7 +118,6 @@ def get_venue_details(request):
         return JsonResponse(list(selected_venue.values()), safe=False)
 
 
-
 def save_event_position_info(request, event):
     for i in range(1, 10):
         if 'no_of_position' + str(i) in request.POST:
@@ -139,6 +138,18 @@ def all_events(request):
     event_list = format_time(event_list)
     # load_pos_skill_type()
     return render(request, 'EventsApp/event_list.html', {'event_list': event_list})
+
+
+@login_required
+def committed_events(request):
+    event_list = set()
+    cart = Cart.objects.filter(user=request.user)
+    if len(cart) > 0:
+        for item in cart:
+            event = master_table.objects.get(pk=item.event.pk)
+            event_list.add(event)
+        event_list = format_time(event_list)
+    return render(request, 'EventsApp/events_committed.html', {'event_list': list(event_list)})
 
 
 @login_required
@@ -584,6 +595,7 @@ def get_recommended_events(request):
 def format_time(events):
     for event in events:
         if event.datetimes:
+            print(event.datetimes)
             time = event.datetimes.split("-")
             start_time = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p').time()
             end_time = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p').time()

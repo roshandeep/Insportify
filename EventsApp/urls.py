@@ -25,6 +25,7 @@ app_name = 'EventsApp'
 urlpatterns = [
     path('', views.home, name='home'),
     path('show/', views.all_events, name="list-events"),
+    path('committed/', views.committed_events, name="committed_events"),
     path('individual/profile/', views.user_profile, name='user_profile'),
     path('organization/profile/', views.organization_profile, name='organization_profile'),
     path('create/', views.multistep, name='multistep'),

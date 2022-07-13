@@ -41,6 +41,12 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a class="nav-link link-secondary text-white" href="{% url 'EventsApp:committed_events' %}"
+                   {% if request.path == '/committed/' %} style="font-weight:bold" {% endif %}>
+                <p>Committed Events</p>
+                </a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link link-secondary text-white" href="{% url 'EventsApp:multistep' %}"
                    {% if request.path == '/create/' %} style="font-weight:bold" {% endif %}>
                 <p>Create Events</p>
