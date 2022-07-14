@@ -21,7 +21,7 @@ import util
 @login_required
 def multistep(request):
     sports_type = SportsType.objects.all().order_by('sports_type_text')
-    venues = Venues.objects.all()
+    venues = Venues.objects.all().order_by('vm_name')
     if request.method == "POST":
         # Had to remove required since some fieldsets are hidden due to pagination causing client side console errors
         # Checking validity here
@@ -30,13 +30,12 @@ def multistep(request):
         values_valid = ValidateFormValues(request)
         # Handle Form Post
         if form.is_valid() and values_valid:
-            # print(list(request.POST.items()))
+            print(list(request.POST.items()))
             # Save data
             obj = form.save(commit=False)
             obj.created_by = request.user
-            sports_type_text, sports_catgeory_text = save_sports_type(request)
-            obj.sport_type = sports_type_text
-            obj.sport_category = sports_catgeory_text
+            obj.sport_type = request.POST['sport_type']
+            obj.position = request.POST['position']
             obj.is_recurring = request.POST['recurring_event'] == "Yes"
             obj.datetimes_monday = request.POST.get('datetimes_monday') if obj.is_recurring else ""
             obj.datetimes_tuesday = request.POST.get('datetimes_tuesday') if obj.is_recurring else ""
@@ -73,7 +72,7 @@ def ValidateFormValues(request):
         event_count_valid = False
     if not request.POST.get('event_title') or not request.POST.get('description') \
             or not request.POST.get('event_type') or not request.POST.get('sport_type') \
-            or not request.POST.get('skill') or not request.POST.get('venue'):
+            or not request.POST.get('venue'):
         messages.error(request, "All fields are required, please enter valid information")
         fields_valid = False
     if not request.POST.get('recurring_event'):
@@ -97,10 +96,9 @@ def ValidateFormValues(request):
                 date_valid = False
     for i in range(1, 10):
         if request.POST.get('no_of_position' + str(i)) == '' \
-                or request.POST.get('type_of_position' + str(i)) == '' \
+                or request.POST.get('type_of_skill' + str(i)) == '' \
                 or request.POST.get('position_cost' + str(i)) == '' \
-                or request.POST.get('min_age' + str(i)) == '' \
-                or request.POST.get('max_age' + str(i)) == '':
+                or request.POST.get('min_age' + str(i)) == '':
             messages.error(request, "All position fields are required, please enter valid information")
             fields_valid = False
 
@@ -112,7 +110,7 @@ def get_venue_details(request):
     if request.method == "POST":
         selected_venue = request.POST['selected_venue']
         try:
-            selected_venue = Venues.objects.filter(vm_name=selected_venue)
+            selected_venue = Venues.objects.filter(vm_name=selected_venue).order_by('vm_name')
             # print(selected_venue)
         except Exception:
             data['error_message'] = 'error'
@@ -120,22 +118,15 @@ def get_venue_details(request):
         return JsonResponse(list(selected_venue.values()), safe=False)
 
 
-def save_sports_type(request):
-    if request.POST['sport_type']:
-        sports_type_id = request.POST['sport_type']
-        obj = SportsType.objects.get(pk=sports_type_id)
-        return obj.sports_type_text, obj.sports_category.sports_catgeory_text
-
-
 def save_event_position_info(request, event):
     for i in range(1, 10):
         if 'no_of_position' + str(i) in request.POST:
-            position_type = request.POST['type_of_position' + str(i)].strip()
+            position_type = request.POST['type_of_skill' + str(i)].strip()
             no_of_position = request.POST['no_of_position' + str(i)].strip()
             position_cost = request.POST['position_cost' + str(i)].strip()
             min_age = request.POST['min_age' + str(i)].strip()
-            max_age = request.POST['max_age' + str(i)].strip() \
-                if request.POST['max_age' + str(i)].strip() == "" else "999"
+            max_age = request.POST['max_age' + str(i)].strip() if request.POST['max_age' + str(i)] else "999"
+            print(request.POST['min_age' + str(i)].strip(), request.POST['max_age' + str(i)].strip())
             obj = Events_PositionInfo(event=event, max_age=max_age, min_age=min_age, no_of_position=no_of_position,
                                       position_cost=position_cost, position_number=i, position_type=position_type)
             obj.save()
@@ -147,6 +138,18 @@ def all_events(request):
     event_list = format_time(event_list)
     # load_pos_skill_type()
     return render(request, 'EventsApp/event_list.html', {'event_list': event_list})
+
+
+@login_required
+def committed_events(request):
+    event_list = set()
+    cart = Cart.objects.filter(user=request.user)
+    if len(cart) > 0:
+        for item in cart:
+            event = master_table.objects.get(pk=item.event.pk)
+            event_list.add(event)
+        event_list = format_time(event_list)
+    return render(request, 'EventsApp/events_committed.html', {'event_list': list(event_list)})
 
 
 @login_required
@@ -164,9 +167,7 @@ def user_profile(request):
     context = {
         'user': request.user
     }
-    sports_category = SportsCategory.objects.all()
     sports_type = SportsType.objects.all().order_by('sports_type_text')
-    context['sports_category'] = sports_category
     context['sports_type'] = sports_type
 
     if request.method == "GET":
@@ -182,26 +183,38 @@ def user_profile(request):
         if individual.exists():
             individual = Individual.objects.get(user=request.user)
             individual.user = request.user
-            individual.first_name = response["first_name"].strip()
-            individual.last_name = response["last_name"].strip()
-            mobile = response["mobile"].strip()
-            mobile = ''.join(i for i in mobile if i.isdigit())
-            individual.phone = mobile
-            individual.email = response["contact_email"].strip()
-            individual.dob = response["dob"].strip()
+            if response["first_name"]:
+                individual.first_name = response["first_name"].strip() if response["first_name"] else ""
+            if response["last_name"]:
+                individual.last_name = response["last_name"].strip() if response["last_name"] else ""
+            if response["mobile"]:
+                mobile = response["mobile"].strip()
+                mobile = ''.join(i for i in mobile if i.isdigit())
+                individual.phone = mobile
+            if response["contact_email"]:
+                individual.email = response["contact_email"].strip() if response["contact_email"] else ""
+            if response["dob"]:
+                individual.dob = response["dob"].strip() if response["dob"] else ""
             if "is_concussion" in response:
                 individual.concussion = response["is_concussion"].strip()
             if "is_student" in response:
                 individual.is_student = response["is_student"].strip()
             if "interest_gender" in response:
                 individual.participation_interest = response["interest_gender"].strip()
-            individual.city = response["city"].strip()
-            individual.province = response["province"].strip()
-            individual.country = response["country"].strip()
-            individual.sports_category = response["sport_category"].strip()
-            individual.sports_type = response["sport_type"].strip()
-            individual.sports_position = response["position"].strip()
-            individual.sports_skill = response["skill"].strip()
+            if response["city"]:
+                individual.city = response["city"].strip() if response["city"] else ""
+            if response["country"]:
+                individual.province = response["country"].strip() if response["country"] else ""
+            if response["contact_email"]:
+                individual.contact_email = response["contact_email"].strip() if response["contact_email"] else ""
+            if response["sport_category"]:
+                individual.sports_category = response["sport_category"].strip() if response["sport_category"] else ""
+            if response["sport_type"]:
+                individual.sports_type = response["sport_type"].strip() if response["sport_type"] else ""
+            if response["position"]:
+                individual.sports_position = response["position"].strip() if response["position"] else ""
+            if response["skill"]:
+                individual.sports_skill = response["skill"].strip() if response["skill"] else ""
             update_secondary_locations(request.user, response)
             save_secondary_sports_info(request.user, response)
             individual.save()
@@ -209,26 +222,38 @@ def user_profile(request):
         else:
             obj = Individual()
             obj.user = request.user
-            obj.first_name = response["first_name"].strip()
-            obj.last_name = response["last_name"].strip()
-            mobile = response["mobile"].strip()
-            mobile = ''.join(i for i in mobile if i.isdigit())
-            obj.phone = mobile
-            obj.email = response["contact_email"].strip()
-            obj.dob = response["dob"].strip()
+            if response["first_name"]:
+                obj.first_name = response["first_name"].strip() if response["first_name"] else ""
+            if response["last_name"]:
+                obj.last_name = response["last_name"].strip() if response["last_name"] else ""
+            if response["mobile"]:
+                mobile = response["mobile"].strip()
+                mobile = ''.join(i for i in mobile if i.isdigit())
+                obj.phone = mobile
+            if response["contact_email"]:
+                obj.email = response["contact_email"].strip() if response["contact_email"] else ""
+            if response["dob"]:
+                obj.dob = response["dob"].strip() if response["dob"] else ""
             if "is_concussion" in response:
                 obj.concussion = response["is_concussion"].strip()
             if "is_student" in response:
                 obj.is_student = response["is_student"].strip()
             if "interest_gender" in response:
                 obj.participation_interest = response["interest_gender"].strip()
-            obj.city = response["city"].strip()
-            obj.province = response["province"].strip()
-            obj.country = response["Country"].strip()
-            obj.sports_category = response["sport_category"].strip()
-            obj.sports_type = response["sport_type"].strip()
-            obj.sports_position = response["position"].strip()
-            obj.sports_skill = response["skill"].strip()
+            if response["city"]:
+                obj.city = response["city"].strip() if response["city"] else ""
+            if response["province"]:
+                obj.province = response["province"].strip() if response["province"] else ""
+            if response["country"]:
+                obj.country = response["country"].strip() if response["country"] else ""
+            if response["sport_category"]:
+                obj.sports_category = response["sport_category"].strip() if response["sport_category"] else ""
+            if response["sport_type"]:
+                obj.sports_type = response["sport_type"].strip() if response["sport_type"] else ""
+            if response["position"]:
+                obj.sports_position = response["position"].strip() if response["position"] else ""
+            if response["skill"]:
+                obj.sports_skill = response["skill"].strip() if response["skill"] else ""
             save_secondary_locations(request.user, response)
             save_secondary_sports_info(request.user, response)
             obj.save()
@@ -312,25 +337,27 @@ def get_selected_sports_type(request):
         return JsonResponse(list(selected_type.values('pk', 'sports_type_text')), safe=False)
 
 
-def get_sports_category(request):
+def get_sports_type(request):
     data = {}
     if request.method == "GET":
         try:
-            selected_type = SportsCategory.objects.all()
+            sports_type = SportsType.objects.all().order_by('sports_type_text')
         except Exception:
             data['error_message'] = 'error'
             return JsonResponse(data)
-        return JsonResponse(list(selected_type.values('pk', 'sports_catgeory_text')), safe=False)
+        return JsonResponse(list(sports_type.values('pk', 'sports_type_text')), safe=False)
 
 
 def get_selected_sports_skill(request):
     data = {}
     if request.method == "POST":
+        sport_position = request.POST['selected_position_text']
         selected_sport = request.POST['selected_type_text']
-        # print(selected_sport)
+        # print(selected_sport, sport_position)
         try:
-            selected_skills = PositionAndSkillType.objects.filter(sports_type__sports_type_text=selected_sport).values(
-                'pk', 'skill_type').distinct('skill_type')
+            selected_skills = PositionAndSkillType.objects.filter(sports_type__sports_type_text=selected_sport).filter(
+                position_type=sport_position).values('pk', 'skill_type').distinct('skill_type')
+            # print(selected_skills)
         except Exception:
             data['error_message'] = 'error'
             return JsonResponse(data)
@@ -351,7 +378,6 @@ def get_selected_sports_positions(request):
         return JsonResponse(list(selected_skills.values('pk', 'position_type')), safe=False)
 
 
-
 @login_required
 def organization_profile(request):
     context = {
@@ -369,40 +395,80 @@ def organization_profile(request):
         if organization.exists():
             organization = Organization.objects.get(user=request.user)
             organization.user = request.user
-            organization.type_of_organization = response["type_of_organization"].strip()
-            organization.organization_name = response["company_name"].strip()
-            organization.parent_organization_name = response["parent_organization"].strip()
-            organization.registration_no = response["registration"].strip()
-            organization.year_established = response["year_established"].strip()
-            organization.street = response["street_name"].strip()
-            organization.city = response["city"].strip()
-            organization.province = response["province"].strip()
-            organization.country = response["country"].strip()
-            organization.postal_code = response["postal_code"].strip()
-            organization.email = response["email"].strip()
-            organization.phone = response["phone"].strip()
-            organization.website = response["website"].strip()
-            organization.gender_focus = response["gender"].strip()
-            organization.age_group = response["age_group"].strip()
+            if response["type_of_organization"]:
+                organization.type_of_organization = response["type_of_organization"].strip() if response[
+                    "type_of_organization"] else ""
+            if response["company_name"]:
+                organization.organization_name = response["company_name"].strip() if response["company_name"] else ""
+            if response["parent_organization"]:
+                organization.parent_organization_name = response["parent_organization"].strip() if response[
+                    "parent_organization"] else ""
+            if response["registration"]:
+                organization.registration_no = response["registration"].strip() if response["registration"] else ""
+            if response["year_established"]:
+                organization.year_established = response["year_established"].strip() if response[
+                    "year_established"] else ""
+            if response["street_name"]:
+                organization.street = response["street_name"].strip() if response["street_name"] else ""
+            if response["city"]:
+                organization.city = response["city"].strip() if response["city"] else ""
+            if response["province"]:
+                organization.province = response["province"].strip() if response["province"] else ""
+            if response["country"]:
+                organization.country = response["country"].strip() if response["country"] else ""
+            if response["postal_code"]:
+                organization.postal_code = response["postal_code"].strip() if response["postal_code"] else ""
+            if response["email"]:
+                organization.email = response["email"].strip() if response["email"] else ""
+            if response["phone"]:
+                phone = response["phone"].strip()
+                phone = ''.join(i for i in phone if i.isdigit())
+                organization.phone = phone
+            if response["website"]:
+                organization.website = response["website"].strip() if response["website"] else ""
+            if response["gender"]:
+                organization.gender_focus = response["gender"].strip() if response["gender"] else ""
+            if response["age_group"]:
+                organization.age_group = response["age_group"].strip() if response["age_group"] else ""
             organization.save()
             context['organization'] = organization
         else:
             obj = Organization()
             obj.user = request.user
-            obj.type_of_organization = response["type_of_organization"].strip()
-            obj.organization_name = response["company_name"].strip()
-            obj.parent_organization_name = response["parent_organization"].strip()
-            obj.registration_no = response["registration"].strip()
-            obj.street = response["street_name"].strip()
-            obj.city = response["city"].strip()
-            obj.province = response["province"].strip()
-            obj.country = response["country"].strip()
-            obj.postal_code = response["postal_code"].strip()
-            obj.email = response["email"].strip()
-            obj.phone = response["phone"].strip()
-            obj.website = response["website"].strip()
-            obj.gender_focus = response["gender"].strip()
-            obj.age_group = response["age_group"].strip()
+            if response["type_of_organization"]:
+                obj.type_of_organization = response["type_of_organization"].strip() if response[
+                    "type_of_organization"] else ""
+            if response["company_name"]:
+                obj.organization_name = response["company_name"].strip() if response["company_name"] else ""
+            if response["parent_organization"]:
+                obj.parent_organization_name = response["parent_organization"].strip() if response[
+                    "parent_organization"] else ""
+            if response["registration"]:
+                obj.registration_no = response["registration"].strip() if response["registration"] else ""
+            if response["year_established"]:
+                obj.year_established = response["year_established"].strip() if response["year_established"] else ""
+            if response["street_name"]:
+                obj.street = response["street_name"].strip() if response["street_name"] else ""
+            if response["city"]:
+                obj.city = response["city"].strip() if response["city"] else ""
+            if response["province"]:
+                obj.province = response["province"].strip() if response["province"] else ""
+            if response["country"]:
+                obj.country = response["country"].strip() if response["country"] else ""
+            if response["postal_code"]:
+                obj.postal_code = response["postal_code"].strip() if response["postal_code"] else ""
+            if response["email"]:
+                obj.email = response["email"].strip() if response["email"] else ""
+            if response["phone"]:
+                phone = response["phone"].strip()
+                phone = ''.join(i for i in phone if i.isdigit())
+                obj.phone = phone
+            if response["website"]:
+                obj.website = response["website"].strip() if response["website"] else ""
+            if response["gender"]:
+                obj.gender_focus = response["gender"].strip() if response["gender"] else ""
+            if response["age_group"]:
+                obj.age_group = response["age_group"].strip() if response["age_group"] else ""
             obj.save()
             context['organization'] = obj
         messages.success(request, 'Organization details updated!')
@@ -423,7 +489,7 @@ def home(request):
             if not flag:
                 sports = sports.exclude(sports_catgeory_text=item['sports_catgeory_text'])
 
-    venues = Venues.objects.values('pk', 'vm_name')
+    venues = Venues.objects.values('pk', 'vm_name').order_by('vm_name')
     events = master_table.objects.all()
 
     events = format_time(events)
@@ -496,8 +562,9 @@ def get_recommended_events(request):
         loc_list.append(item.city.lower())
 
     for event in recommended_events:
-        if event.city.lower() not in loc_list:
-            recommended_events.remove(event)
+        if event.city:
+            if event.city.lower() not in loc_list:
+                recommended_events.remove(event)
 
     recommended_events = list(recommended_events)
 
@@ -528,6 +595,7 @@ def get_recommended_events(request):
 def format_time(events):
     for event in events:
         if event.datetimes:
+            print(event.datetimes)
             time = event.datetimes.split("-")
             start_time = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p').time()
             end_time = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p').time()
@@ -536,12 +604,12 @@ def format_time(events):
 
             start_date = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p').date()
             end_date = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p').date()
-            start_date = start_date.strftime("%B %d, %Y")
-            end_date = end_date.strftime("%B %d, %Y")
+            start_date = start_date.strftime("%B %d")
+            end_date = end_date.strftime("%B %d")
             if start_date == end_date:
-                str_datetime = start_date + " " + start_time + " to " + end_time
+                str_datetime = start_date + " from " + start_time + " - " + end_time
             else:
-                str_datetime = start_date + " " + start_time + " to " + end_date + " " + end_time
+                str_datetime = start_date + " - " + end_date + " from " + start_time + " - " + end_time
 
             event.datetimes = str_datetime
     return events

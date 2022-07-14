@@ -33,8 +33,7 @@
                         Information</h3>
                     <div class="card-body">
                         <div class="form-row p-2">
-                            <input type="text" class="form-control" name="event_title" placeholder="Event Title"
-                                   required/>
+                            <input type="text" class="form-control" name="event_title" placeholder="Event Title"/>
                         </div>
                         <div class="form-row p-2">
                             <input type="text" class="form-control" name="description" placeholder="Description"/>
@@ -159,9 +158,8 @@
                             </select>
                         </div>
                         <div class="form-row p-2">
-                            <select name='skill' class="form-select" id="skill" aria-label=".form-select-lg example">
-                                <option selected disabled>Choose Skill</option>
-
+                            <select name='position' class="form-select" id="position" aria-label=".form-select-lg example">
+                                <option selected disabled>Choose Position</option>
                             </select>
                         </div>
                         <div class="form-row p-2 text-center">
@@ -303,10 +301,13 @@
 
 
 
+
 </style>
 
 <script>
-
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
 
 $("#venue").change(function () {
         var selected_venue_value = $("#venue option:selected");
@@ -335,17 +336,17 @@ $("#sport_type").change(function () {
         var selected_type_text = selected_type_value.text();
         $.ajax({
             type: "POST",
-            url: '{% url "EventsApp:get_selected_sports_skill" %}',
+            url: '{% url "EventsApp:get_selected_sports_positions" %}',
             data: {
                 'selected_type_text': selected_type_text,
                 'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
             },
             success: function (data) {
-                let html_data = '';
+                let html_data = '<option selected disabled>Choose Position</option>';
                 data.forEach(function (data) {
-                    html_data += `<option value="${data.skill_type}">${data.skill_type}</option>`
+                    html_data += `<option value="${data.position_type}">${data.position_type}</option>`
                 });
-                $("#skill").html(html_data);
+                $("#position").html(html_data);
             }
         });
     });
@@ -399,25 +400,29 @@ $(document).ready(function(){
 
 });
 
-function sports_position_dropdown(){
+function sports_skill_dropdown(skill_field_id){
+    var selected_position_value = $("#position option:selected");
+    var selected_position_text = selected_position_value.text();
     var selected_type_value = $("#sport_type option:selected");
     var selected_type_text = selected_type_value.text();
     let html_data = '';
     $.ajax({
             async: false,
             type: "POST",
-            url: '{% url "EventsApp:get_selected_sports_positions" %}',
+            url: '{% url "EventsApp:get_selected_sports_skill" %}',
             data: {
+                'selected_position_text': selected_position_text,
                 'selected_type_text': selected_type_text,
                 'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
             },
             success: function (data) {
+                let html_data = '<option selected disabled>Choose Skill</option>';
                 data.forEach(function (data) {
-                    html_data += `<option value="${data.position_type}">${data.position_type}</option>`
+                    html_data += `<option value="${data.skill_type}">${data.skill_type}</option>`
                 });
+                $("#" + skill_field_id).html(html_data);
             }
         });
-        return html_data;
     }
 
 
@@ -432,14 +437,11 @@ function sports_position_dropdown(){
 
    $(add_button).click(function(e){
         e.preventDefault();
-        let position_options = sports_position_dropdown();
         if(x < max_fields){
-
             var html= '';
             html += '<div class="mt-2">'
-            html += '<select class="form-select mt-2" name="type_of_position' + x + '">'
-            html += '<option selected disabled>Choose position</option>'
-            html += position_options
+            html += '<select class="form-select mt-2" name="type_of_skill' + x + '" id="type_of_skill' + x + '">'
+            html += '<option selected disabled>Choose Skill</option>'
             html += '</select>'
             html += '<input type="number" class="form-control mt-2" name="no_of_position' + x + '" placeholder = "Number of Positions" min=0>'
             html += '<input type="number" class="form-control mt-2" name ="position_cost' + x + '" placeholder="Position Cost">'
@@ -448,8 +450,11 @@ function sports_position_dropdown(){
             html += '<a href="#" class="remove_field mt-2">Remove</a>'
             html += '</div>'
             $(wrapper).append(html); //add input box
+
+            skill_field_id = "type_of_skill"+x;
+            sports_skill_dropdown(skill_field_id);
             x++;
-      }
+        }
     });
 
     $(wrapper).on("click",".remove_field", function(e){
@@ -530,6 +535,7 @@ $(function () {
         });
     };
 });
+
 
 </script>
 

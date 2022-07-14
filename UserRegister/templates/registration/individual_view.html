@@ -22,7 +22,6 @@
                 <li class="active" id="step1">Personal Details</li>
                 <li id="step2">Location Details</li>
                 <li id="step3">Sports Choices</li>
-<!--                <li id="step4">Notification Choices</li>-->
             </ul>
 
             <fieldset class="p-2" id="tab-1">
@@ -129,18 +128,12 @@
                         add sports you play and the ones you would love to play</h4>
                     <div class="card-body">
                         <div class="form-row p-2">
-                            <select name='sport_category' id="category" class="form-select"
-                                    aria-label=".form-select-lg example">
-                                <option selected> Choose Sport Category</option>
-                                {% for sc in sports_category %}
-                                    <option value="{{sc}}">{{sc}}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="form-row p-2">
                             <select name='sport_type' id="sports" class="form-select"
                                     aria-label=".form-select-lg example">
                                 <option value="" selected>Choose Sport</option>
+                                {% for st in sports_type %}
+                                    <option value="{{st}}">{{st}}</option>
+                                {% endfor %}
                             </select>
                         </div>
                         <div class="form-row p-2">
@@ -248,23 +241,6 @@
 $("#sports").change(function () {
         var selected_type_value = $("#sports option:selected");
         var selected_type_text = selected_type_value.text();
-        console.log(selected_type_text);
-        $.ajax({
-            type: "POST",
-            url: '{% url "EventsApp:get_selected_sports_skill" %}',
-            data: {
-                'selected_type_text': selected_type_text,
-                'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
-            },
-            success: function (data) {
-                let html_data = '';
-                data.forEach(function (data) {
-                    html_data += `<option value="${data.skill_type}">${data.skill_type}</option>`
-                });
-                console.log(html_data)
-                $("#skill").html(html_data);
-            }
-        });
         $.ajax({
             type: "POST",
             url: '{% url "EventsApp:get_selected_sports_positions" %}',
@@ -273,12 +249,35 @@ $("#sports").change(function () {
                 'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
             },
             success: function (data) {
-                let html_data = '';
+                let html_data = '<option selected disabled>Choose Position</option>';
                 data.forEach(function (data) {
                     html_data += `<option value="${data.position_type}">${data.position_type}</option>`
                 });
-                console.log(html_data)
                 $("#position").html(html_data);
+            }
+        });
+    });
+
+$("#position").change(function () {
+    var selected_position_value = $("#position option:selected");
+    var selected_position_text = selected_position_value.text();
+    var selected_type_value = $("#sports option:selected");
+    var selected_type_text = selected_type_value.text();
+        $.ajax({
+            type: "POST",
+            url: '{% url "EventsApp:get_selected_sports_skill" %}',
+            data: {
+                'selected_position_text': selected_position_text,
+                'selected_type_text': selected_type_text,
+                'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
+            },
+            success: function (data) {
+                let html_data = '<option selected disabled>Choose Skill</option>';
+                data.forEach(function (data) {
+                    html_data += `<option value="${data.skill_type}">${data.skill_type}</option>`
+                });
+                console.log(html_data);
+                $("#skill").html(html_data);
             }
         });
     });
@@ -331,26 +330,6 @@ $(document).ready(function(){
 
 });
 
-$("#category").change(function () {
-        var selected_category_value = $("#category option:selected");
-        var selected_category_text = selected_category_value.text();
-        $.ajax({
-            type: "POST",
-            url: '{% url "EventsApp:get_selected_sports_type" %}',
-            data: {
-                'selected_category_text': selected_category_text,
-                'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
-            },
-            success: function (data) {
-                let html_data = '';
-                data.forEach(function (data) {
-                    html_data += `<option value="${data.sports_type_text}">${data.sports_type_text}</option>`
-                });
-                $("#sports").html(html_data);
-            }
-        });
-    });
-
 
     $(document).ready(function() {
     var max_fields      = 6; //maximum input boxes allowed
@@ -394,27 +373,29 @@ $("#category").change(function () {
    $(add_button).click(function(e){
         e.preventDefault();
         if(x < max_fields){
-            var category_id = "category_" + x;
             var type_id = "type_" + x;
             var position_id = "position_" + x;
+            var skill_id = "skill_" + x;
             var sports_type_func = "populate_sportstype" + x;
             var sports_position_func = "populate_sportsposition" + x;
+            var sports_skill_func = "populate_sportsskill" + x;
 
             var html='';
-            html += '<div>'
-            html += '<select name="' + category_id + '" id="' + category_id + '" class="form-select" onchange="' + sports_type_func + '()">'
-            html += '<option selected disabled>Choose Sport Category</option></select>'
-            html += '<select name="' + type_id + '" id="' + type_id + '" class="form-select" onchange="' + sports_position_func + '()">'
+            html += '<div class="mt-2">'
+            html += '<select name="' + type_id + '" id="' + type_id + '" class="form-select mt-2" onchange="' + sports_position_func + '()">'
             html += '<option selected disabled>Choose Sport</option>'
             html += '</select>'
-            html += '<select name="' + position_id + '" id="' + position_id + '" class="form-select">'
-            html += '<option selected disabled>Choose position</option>'
+            html += '<select name="' + position_id + '" id="' + position_id + '" class="form-select mt-2" onchange="' + sports_skill_func + '()">'
+            html += '<option selected disabled>Choose Position</option>'
+            html += '</select>'
+            html += '<select name="' + skill_id + '" id="' + skill_id + '" class="form-select mt-2">'
+            html += '<option selected disabled>Choose Skill</option>'
             html += '</select>'
             html += '<a href="#" class="remove_field">Remove</a>'
             html += '</div>'
             $(wrapper).append(html);
             x++;
-            populate_sportscategory(category_id)
+            populate_sportstype(type_id)
       }
     });
 
@@ -424,105 +405,25 @@ $("#category").change(function () {
         x--;
     })
 
-   function populate_sportscategory(category_id) {
+   function populate_sportstype(type_id) {
     $.ajax({
         type: "GET",
-        url: '{% url "EventsApp:get_sports_category" %}',
+        url: '{% url "EventsApp:get_sports_type" %}',
         data: {
             'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
         },
         success: function (data) {
-            let html_data = '';
+            let html_data = '<option selected disabled>Choose Sport</option>';
             data.forEach(function (data) {
-                html_data += `<option value="${data.sports_catgeory_text}">${data.sports_catgeory_text}</option>`
+                html_data += `<option value="${data.sports_type_text}">${data.sports_type_text}</option>`
             });
-            $("#"+category_id).html(html_data);
+            $("#"+type_id).html(html_data);
         }
     });
     }
 
 
 });
-
-function populate_sportstype1(){
-    var selected_category_value = $("#category_1 option:selected");
-    var selected_category_text = selected_category_value.text();
-    $.ajax({
-    type: "POST",
-    url: '{% url "EventsApp:get_selected_sports_type" %}',
-    data: {
-        'selected_category_text': selected_category_text,
-        'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
-    },
-    success: function (data) {
-        let html_data = '';
-        data.forEach(function (data) {
-            html_data += `<option value="${data.sports_type_text}">${data.sports_type_text}</option>`
-        });
-        $("#type_1").html(html_data);
-    }
-});
-}
-
-function populate_sportstype2(){
-    var selected_category_value = $("#category_2 option:selected");
-    var selected_category_text = selected_category_value.text();
-    $.ajax({
-    type: "POST",
-    url: '{% url "EventsApp:get_selected_sports_type" %}',
-    data: {
-        'selected_category_text': selected_category_text,
-        'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
-    },
-    success: function (data) {
-        let html_data = '';
-        data.forEach(function (data) {
-            html_data += `<option value="${data.sports_type_text}">${data.sports_type_text}</option>`
-        });
-        $("#type_2").html(html_data);
-    }
-});
-}
-
-function populate_sportstype3(){
-    var selected_category_value = $("#category_3 option:selected");
-    var selected_category_text = selected_category_value.text();
-    $.ajax({
-    type: "POST",
-    url: '{% url "EventsApp:get_selected_sports_type" %}',
-    data: {
-        'selected_category_text': selected_category_text,
-        'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
-    },
-    success: function (data) {
-        let html_data = '';
-        data.forEach(function (data) {
-            html_data += `<option value="${data.sports_type_text}">${data.sports_type_text}</option>`
-        });
-        $("#type_3").html(html_data);
-    }
-});
-}
-
-function populate_sportstype4(){
-    var selected_category_value = $("#category_4 option:selected");
-    var selected_category_text = selected_category_value.text();
-    $.ajax({
-    type: "POST",
-    url: '{% url "EventsApp:get_selected_sports_type" %}',
-    data: {
-        'selected_category_text': selected_category_text,
-        'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
-    },
-    success: function (data) {
-        let html_data = '';
-        data.forEach(function (data) {
-            html_data += `<option value="${data.sports_type_text}">${data.sports_type_text}</option>`
-        });
-        $("#type_4").html(html_data);
-    }
-});
-}
 
 function populate_sportsposition1(){
     var selected_type_value = $("#type_1 option:selected");
@@ -536,7 +437,7 @@ function populate_sportsposition1(){
         'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
     },
     success: function (data) {
-        let html_data = '';
+        let html_data = '<option selected disabled>Choose Position</option>';
         data.forEach(function (data) {
             html_data += `<option value="${data.position_type}">${data.position_type}</option>`
         });
@@ -556,7 +457,7 @@ function populate_sportsposition2(){
         'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
     },
     success: function (data) {
-        let html_data = '';
+        let html_data = '<option selected disabled>Choose Position</option>';
         data.forEach(function (data) {
             html_data += `<option value="${data.position_type}">${data.position_type}</option>`
         });
@@ -576,7 +477,7 @@ function populate_sportsposition3(){
         'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
     },
     success: function (data) {
-        let html_data = '';
+        let html_data = '<option selected disabled>Choose Position</option>';
         data.forEach(function (data) {
             html_data += `<option value="${data.position_type}">${data.position_type}</option>`
         });
@@ -596,11 +497,103 @@ function populate_sportsposition4(){
         'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
     },
     success: function (data) {
-        let html_data = '';
+        let html_data = '<option selected disabled>Choose Position</option>';
         data.forEach(function (data) {
             html_data += `<option value="${data.position_type}">${data.position_type}</option>`
         });
         $("#position_4").html(html_data);
+    }
+});
+}
+
+function populate_sportsskill1(){
+    var selected_type_value = $("#type_1 option:selected");
+    var selected_type_text = selected_type_value.text();
+    var selected_position_value = $("#position_1 option:selected");
+    var selected_position_text = selected_position_value.text();
+    $.ajax({
+    type: "POST",
+    url: '{% url "EventsApp:get_selected_sports_skill" %}',
+    data: {
+        'selected_position_text': selected_position_text,
+        'selected_type_text': selected_type_text,
+        'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
+    },
+    success: function (data) {
+        let html_data = '<option selected disabled>Choose Skill</option>';
+        data.forEach(function (data) {
+            html_data += `<option value="${data.skill_type}">${data.skill_type}</option>`
+        });
+        $("#skill_1").html(html_data);
+    }
+});
+}
+
+function populate_sportsskill2(){
+    var selected_type_value = $("#type_2 option:selected");
+    var selected_type_text = selected_type_value.text();
+    var selected_position_value = $("#position_2 option:selected");
+    var selected_position_text = selected_position_value.text();
+    $.ajax({
+    type: "POST",
+    url: '{% url "EventsApp:get_selected_sports_skill" %}',
+    data: {
+        'selected_position_text': selected_position_text,
+        'selected_type_text': selected_type_text,
+        'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
+    },
+    success: function (data) {
+        let html_data = '<option selected disabled>Choose Skill</option>';
+        data.forEach(function (data) {
+            html_data += `<option value="${data.skill_type}">${data.skill_type}</option>`
+        });
+        $("#skill_2").html(html_data);
+    }
+});
+}
+
+function populate_sportsskill3(){
+    var selected_type_value = $("#type_3 option:selected");
+    var selected_type_text = selected_type_value.text();
+    var selected_position_value = $("#position_3 option:selected");
+    var selected_position_text = selected_position_value.text();
+    $.ajax({
+    type: "POST",
+    url: '{% url "EventsApp:get_selected_sports_skill" %}',
+    data: {
+        'selected_position_text': selected_position_text,
+        'selected_type_text': selected_type_text,
+        'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
+    },
+    success: function (data) {
+        let html_data = '<option selected disabled>Choose Skill</option>';
+        data.forEach(function (data) {
+            html_data += `<option value="${data.skill_type}">${data.skill_type}</option>`
+        });
+        $("#skill_3").html(html_data);
+    }
+});
+}
+
+function populate_sportsskill4(){
+    var selected_type_value = $("#type_4 option:selected");
+    var selected_type_text = selected_type_value.text();
+    var selected_position_value = $("#position_4 option:selected");
+    var selected_position_text = selected_position_value.text();
+    $.ajax({
+    type: "POST",
+    url: '{% url "EventsApp:get_selected_sports_skill" %}',
+    data: {
+        'selected_position_text': selected_position_text,
+        'selected_type_text': selected_type_text,
+        'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
+    },
+    success: function (data) {
+        let html_data = '<option selected disabled>Choose Skill</option>';
+        data.forEach(function (data) {
+            html_data += `<option value="${data.skill_type}">${data.skill_type}</option>`
+        });
+        $("#skill_4").html(html_data);
     }
 });
 }

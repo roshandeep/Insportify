@@ -12,10 +12,10 @@ class MultiStepForm(ModelForm):
     class Meta:
         model = master_table
         fields = (
-            'event_title', 'description', 'event_type', 'sport_type', 'skill', 'sport_category',
+            'event_title', 'description', 'event_type', 'sport_type', 'position',
             'venue', 'province', 'country', 'city', 'datetimes', 'created_by')
         required = (
-            'event_title', 'description', 'event_type', 'sport_type', 'skill', 'venue', 'created_by')
+            'event_title', 'description', 'event_type', 'sport_type', 'position', 'venue', 'created_by')
 
 
 class RegisterForm(UserCreationForm):
