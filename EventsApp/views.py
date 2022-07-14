@@ -168,7 +168,9 @@ def user_profile(request):
         'user': request.user
     }
     sports_type = SportsType.objects.all().order_by('sports_type_text')
+    sec_sport_choices = Secondary_SportsChoice.objects.filter(user=request.user).order_by("sport_entry_number")
     context['sports_type'] = sports_type
+    context['sec_sport_choices'] = sec_sport_choices
 
     if request.method == "GET":
         individual = Individual.objects.get(user=request.user)
@@ -207,14 +209,15 @@ def user_profile(request):
                 individual.province = response["country"].strip() if response["country"] else ""
             if response["contact_email"]:
                 individual.contact_email = response["contact_email"].strip() if response["contact_email"] else ""
-            if response["sport_category"]:
-                individual.sports_category = response["sport_category"].strip() if response["sport_category"] else ""
             if response["sport_type"]:
                 individual.sports_type = response["sport_type"].strip() if response["sport_type"] else ""
+                response["type_0"] = response["sport_type"].strip() if response["sport_type"] else ""
             if response["position"]:
                 individual.sports_position = response["position"].strip() if response["position"] else ""
+                response["position_0"] = response["position"].strip() if response["position"] else ""
             if response["skill"]:
                 individual.sports_skill = response["skill"].strip() if response["skill"] else ""
+                response["skill_0"] = response["skill"].strip() if response["skill"] else ""
             update_secondary_locations(request.user, response)
             save_secondary_sports_info(request.user, response)
             individual.save()
@@ -246,14 +249,15 @@ def user_profile(request):
                 obj.province = response["province"].strip() if response["province"] else ""
             if response["country"]:
                 obj.country = response["country"].strip() if response["country"] else ""
-            if response["sport_category"]:
-                obj.sports_category = response["sport_category"].strip() if response["sport_category"] else ""
             if response["sport_type"]:
                 obj.sports_type = response["sport_type"].strip() if response["sport_type"] else ""
+                response["type_0"] = response["sport_type"].strip() if response["sport_type"] else ""
             if response["position"]:
                 obj.sports_position = response["position"].strip() if response["position"] else ""
+                response["position_0"] = response["position"].strip() if response["position"] else ""
             if response["skill"]:
                 obj.sports_skill = response["skill"].strip() if response["skill"] else ""
+                response["skill_0"] = response["skill"].strip() if response["skill"] else ""
             save_secondary_locations(request.user, response)
             save_secondary_sports_info(request.user, response)
             obj.save()
@@ -267,30 +271,31 @@ def save_secondary_sports_info(user, response):
     obj = Secondary_SportsChoice.objects.filter(user=user).exists()
     print(response)
     if obj:
-        for i in range(1, 4):
+        for i in range(0, 4):
             obj = Secondary_SportsChoice.objects.filter(user=user, sport_entry_number=i).exists()
             if obj:
                 obj = Secondary_SportsChoice.objects.get(user=user, sport_entry_number=i)
-                if 'category_' + str(i) in response:
-                    obj.sport_category = response['category_' + str(i)].strip()
+                if 'type_' + str(i) in response:
                     obj.sport_type = response['type_' + str(i)].strip()
                     obj.position = response['position_' + str(i)].strip()
+                    obj.skill = response['skill_' + str(i)].strip()
                     obj.save()
-                # else:
-                #     sport_category = response['category_' + str(i)].strip()
-                #     sport_type = response['type_' + str(i)].strip()
-                #     position = response['position_' + str(i)].strip()
-                #     obj = Secondary_SportsChoice(user=user, sport_category=sport_category, sport_type=sport_type,
-                #                                  position=position, sport_entry_number=i)
-                #     obj.save()
+            else:
+                if 'type_' + str(i) in response:
+                    sport_type = response['type_' + str(i)].strip()
+                    position = response['position_' + str(i)].strip()
+                    skill = response['skill_' + str(i)].strip()
+                    newobj = Secondary_SportsChoice(user=user, sport_type=sport_type,
+                                                 position=position, sport_entry_number=i, skill=skill)
+                    newobj.save()
     else:
-        for i in range(1, 4):
-            if 'category_' + str(i) in response:
-                sport_category = response['category_' + str(i)].strip()
+        for i in range(0, 4):
+            if 'type_' + str(i) in response:
                 sport_type = response['type_' + str(i)].strip()
                 position = response['position_' + str(i)].strip()
-                obj = Secondary_SportsChoice(user=user, sport_category=sport_category, sport_type=sport_type,
-                                             position=position, sport_entry_number=i)
+                skill = response['skill_' + str(i)].strip()
+                obj = Secondary_SportsChoice(user=user, sport_type=sport_type,
+                                             position=position, sport_entry_number=i, skill=skill)
                 obj.save()
 
 
@@ -477,17 +482,17 @@ def organization_profile(request):
 
 def home(request):
     # Individual.objects.filter(pk=16).delete()
-    sports = SportsCategory.objects.values('pk', 'sports_catgeory_text').order_by('sports_catgeory_text')
+    sports = SportsType.objects.values('pk', 'sports_type_text').order_by('sports_type_text')
     if request.user.is_authenticated and request.user.is_individual:
-        user_sports = Secondary_SportsChoice.objects.filter(user=request.user).values('sport_category')
+        user_sports = Secondary_SportsChoice.objects.filter(user=request.user).values('sport_type')
         for item in sports:
             flag = False
             for item2 in user_sports:
-                if item['sports_catgeory_text'] == item2['sport_category']:
+                if item['sports_type_text'] == item2['sport_type']:
                     flag = True
 
             if not flag:
-                sports = sports.exclude(sports_catgeory_text=item['sports_catgeory_text'])
+                sports = sports.exclude(sports_type_text=item['sports_type_text'])
 
     venues = Venues.objects.values('pk', 'vm_name').order_by('vm_name')
     events = master_table.objects.all()

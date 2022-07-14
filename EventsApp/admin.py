@@ -29,7 +29,7 @@ admin.site.register(Events_PositionInfo, Events_PositionInfoAdmin)
 
 
 class Secondary_SportsChoiceAdmin(admin.ModelAdmin):
-    list_display = ('user', 'sport_entry_number', 'sport_category', 'sport_type', 'position',)
+    list_display = ('user', 'sport_entry_number', 'sport_type', 'position',)
 
 
 admin.site.register(Secondary_SportsChoice, Secondary_SportsChoiceAdmin)

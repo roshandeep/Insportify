@@ -158,6 +158,18 @@
                                 </button>
                             </div>
                         </div>
+                        <div>
+                            <h5>Your Saved Sport Preferences</h5>
+                            <table class="table table-striped">
+                                {% for item in sec_sport_choices %}
+                                    <tr>
+                                        <td>{{item.sport_type}}</td>
+                                        <td>{{item.position}}</td>
+                                        <td>{{item.skill}}</td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
                         <div class="form-row p-2 text-center">
                             <input type="button" name="previous"
                                    class="previous action-button-previous btn btn-primary"
