@@ -35,6 +35,32 @@ class IndividualSignUpForm(UserCreationForm):
         individual.save()
         return user
 
+class MVPSignUpForm(UserCreationForm):
+    first_name = forms.CharField(required=True)
+    last_name = forms.CharField(required=True)
+    phone = forms.CharField(required=True)
+    email = forms.CharField(required=True)
+    website = forms.CharField(required=False)
+
+    class Meta(UserCreationForm.Meta):
+        model = User
+
+    @transaction.atomic
+    def save(self):
+        user = super().save(commit=False)
+        user.is_individual = True
+        user.first_name = self.cleaned_data.get('first_name')
+        user.last_name = self.cleaned_data.get('last_name')
+        user.email = self.cleaned_data.get('email')
+        user.save()
+        individual = Individual.objects.create(user=user)
+        individual.phone = self.cleaned_data.get('phone')
+        individual.email = self.cleaned_data.get('email')
+        individual.first_name = self.cleaned_data.get('first_name')
+        individual.last_name = self.cleaned_data.get('last_name')
+        individual.website = self.cleaned_data.get('website')
+        individual.save()
+        return user
 
 class PasswordResetAuthForm(UserChangeForm):
     email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control'}))

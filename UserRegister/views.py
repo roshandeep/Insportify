@@ -55,7 +55,7 @@ class individual_register(CreateView):
         if form.is_valid():
             user = form.save()
             user.is_active = False
-            user.is_mvp = self.request.POST.get('is_mvp') == "on"
+            user.is_mvp = False #self.request.POST.get('is_mvp') == "on"
             user.save()
             email = EmailMessage(
                 'Welcome to Insportify!',
@@ -71,6 +71,32 @@ class individual_register(CreateView):
             messages.success(self.request, 'Account created! Please confirm your email address to complete the '
                                            'registration')
         return redirect('/users/individual_register')
+
+class mvp_register(CreateView):
+    model = User
+    form_class = MVPSignUpForm
+    template_name = 'registration/mvp_register.html'
+
+    def form_valid(self, form):
+        if form.is_valid():
+            user = form.save()
+            user.is_active = False
+            user.is_mvp = True
+            user.save()
+            email = EmailMessage(
+                'Welcome to Insportify!',
+                render_to_string('acc_active_email.html', {
+                    'user': user,
+                    'domain': self.request.get_host(),
+                    'uid': force_text(urlsafe_base64_encode(force_bytes(user.username))),
+                    'token': account_activation_token.make_token(user),
+                }),
+                to=[form.cleaned_data.get('email')]
+            )
+            email.send()
+            messages.success(self.request, 'Account created! Please confirm your email address to complete the '
+                                           'registration')
+        return redirect('/users/mvp_register')
 
 
 class organization_register(CreateView):
