@@ -9,7 +9,7 @@ from django.contrib.auth.views import PasswordChangeView
 from django.views.generic import DetailView, CreateView
 from django.db.models.query_utils import Q
 from EventsApp.models import User
-from UserRegister.forms import IndividualSignUpForm, OrganizationSignUpForm, PasswordResetAuthForm
+from UserRegister.forms import IndividualSignUpForm, OrganizationSignUpForm, PasswordResetAuthForm, MVPSignUpForm
 from django.contrib.auth import login, logout, authenticate
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
