@@ -595,7 +595,6 @@ def get_recommended_events(request):
 def format_time(events):
     for event in events:
         if event.datetimes:
-            print(event.datetimes)
             time = event.datetimes.split("-")
             start_time = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p').time()
             end_time = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p').time()
