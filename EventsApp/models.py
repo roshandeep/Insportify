@@ -57,6 +57,7 @@ class Individual(models.Model):
     last_name = models.CharField(max_length=50, null=True)
     phone = models.CharField(max_length=50, null=True)
     email = models.CharField(max_length=50, null=True)
+    website = models.CharField(max_length=50, null=True)
     dob = models.CharField(max_length=50, blank=True, null=True)
     concussion = models.CharField(max_length=100, blank=True, null=True)
     is_student = models.CharField(max_length=100, blank=True, null=True)

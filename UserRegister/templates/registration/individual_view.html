@@ -599,6 +599,25 @@ function populate_sportsskill4(){
 });
 }
 
+// Logic to show alert when user leaving page without saving
+$(function () {
+    var formSubmitting = false;
+    $("#msform").on('submit', function(){
+        formSubmitting = true;
+    });
+    window.onload = function() {
+        window.addEventListener("beforeunload", function (e) {
+            if (formSubmitting) {
+                return undefined;
+            }
+
+            var confirmationMessage = 'It appears you have unsaved changes, if you leave now, your changes will be lost.';
+
+            (e || window.event).returnValue = confirmationMessage; //Gecko + IE
+            return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
+        });
+    };
+});
 
 </script>
 

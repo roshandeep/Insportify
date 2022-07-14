@@ -33,14 +33,14 @@
                         Information</h3>
                     <div class="card-body">
                         <div class="form-row p-2">
-                            <input type="text" class="form-control" name="event_title" placeholder="Event Title"/>
+                            <input type="text" class="form-control" name="event_title" placeholder="* Event Title"/>
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" class="form-control" name="description" placeholder="Description"/>
+                            <input type="text" class="form-control" name="description" placeholder="* Description"/>
                         </div>
                         <div class="form-row p-2" id="event_type">
                             <select class="form-select" name="event_type">
-                                <option value="" selected="selected">Select Event Type</option>
+                                <option value="" selected="selected">* Select Event Type</option>
                                 <option value="Camp">Camp</option>
                                 <option value="Charity">Charity</option>
                                 <option value="Conditioning">Conditioning</option>
@@ -53,12 +53,12 @@
                             </select>
                         </div>
                         <div class="form-row p-2">
-                            <label>Is this a recurring event? &nbsp &nbsp</label>
+                            <label>* Is this a recurring event? &nbsp &nbsp</label>
                             <input type="radio" value="Yes" id="chkYes" name="recurring_event">Yes</input>
                             <input type="radio" value="No" id="chkNo" name="recurring_event"> No </input>
                         </div>
                         <div class="form-row p-2" id="fields_recurring" style="display:None">
-                            <label>Which days does the event occur &nbsp &nbsp</label>
+                            <label>* Which days does the event occur &nbsp &nbsp</label>
                             <select class="select2 form-control" style="width: 100%" id="recurring_selection"
                                     name="recurring_days" multiple="multiple">
                                 <option>Monday</option>
@@ -126,7 +126,7 @@
                             </div>
                         </div>
                         <div class="form-row p-2" id="single_dates" style="display:None">
-                            <label>Select Event Date &nbsp &nbsp</label>
+                            <label>* Select Event Date &nbsp &nbsp</label>
                             <div class="form-row p-2">
                                 <input type="text" class="form-control datetime" name="datetimes"
                                        placeholder="Date & Time"/>
@@ -151,7 +151,7 @@
                         <div class="form-row p-2">
                             <select name='sport_type' id="sport_type" class="form-select"
                                     aria-label=".form-select-lg example">
-                                <option selected disabled>Choose Sport</option>
+                                <option selected disabled>* Choose Sport</option>
                                 {% for type in sports_type %}
                                 <option value="{{type.pk}}">{{type.sports_type_text}}</option>
                                 {% endfor %}
@@ -159,7 +159,7 @@
                         </div>
                         <div class="form-row p-2">
                             <select name='position' class="form-select" id="position" aria-label=".form-select-lg example">
-                                <option selected disabled>Choose Position</option>
+                                <option selected disabled>* Choose Position</option>
                             </select>
                         </div>
                         <div class="form-row p-2 text-center">
@@ -190,7 +190,7 @@
                             <!--                            <input type="text" class="form-control" name="venue" placeholder="Venue"/>-->
                             <select name='venue' id="venue" class="form-select"
                                     aria-label=".form-select-lg example">
-                                <option selected disabled>Choose Venue</option>
+                                <option selected disabled>* Choose Venue</option>
                                 {% for venue in venues %}
                                 <option value="{{venue}}">{{venue.vm_name}}</option>
                                 {% endfor %}
@@ -441,12 +441,12 @@ function sports_skill_dropdown(skill_field_id){
             var html= '';
             html += '<div class="mt-2">'
             html += '<select class="form-select mt-2" name="type_of_skill' + x + '" id="type_of_skill' + x + '">'
-            html += '<option selected disabled>Choose Skill</option>'
+            html += '<option selected disabled>* Choose Skill</option>'
             html += '</select>'
-            html += '<input type="number" class="form-control mt-2" name="no_of_position' + x + '" placeholder = "Number of Positions" min=0>'
-            html += '<input type="number" class="form-control mt-2" name ="position_cost' + x + '" placeholder="Position Cost">'
-            html += '<input type="number" class="form-control mt-2" name="min_age' + x + '" placeholder= "Minimum Age" min=0>'
-            html += '<input type="number" class="form-control mt-2" name="max_age' + x + '" placeholder= "Maximum Age" min=0 >'
+            html += '<input type="number" class="form-control mt-2" name="no_of_position' + x + '" placeholder = "* Number of Positions" min=0>'
+            html += '<input type="number" class="form-control mt-2" name ="position_cost' + x + '" placeholder="* Position Cost">'
+            html += '<input type="number" class="form-control mt-2" name="min_age' + x + '" placeholder= "* Minimum Age" min=0>'
+            html += '<input type="number" class="form-control mt-2" name="max_age' + x + '" placeholder= "* Maximum Age" min=0 >'
             html += '<a href="#" class="remove_field mt-2">Remove</a>'
             html += '</div>'
             $(wrapper).append(html); //add input box

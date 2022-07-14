@@ -7,11 +7,11 @@
     <div class="col-5 mx-auto">
         <div class="card shadow">
             <h3 class="card-header text-center text-white"
-                style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">Individual
+                style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">MVP
                 Registration</h3>
             <div class="card-body">
                 <div class="card-body">
-                    <form action="{% url 'UserRegister:individual_register' %}" method="POST" novalidate>
+                    <form action="{% url 'UserRegister:mvp_register' %}" method="POST" novalidate>
                         {% csrf_token %}
                         {% if messages %}
                         {% for message in messages %}
