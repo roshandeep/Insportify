@@ -4,6 +4,6 @@
 Hi {{ user.username }},
 
 We received your password reset request, please click on the link to reset your password
-http://{{ domain }}{% url 'password_reset_confirm' uidb64=uid token=token %}
+http://{{ domain }}{% url 'UserRegister:password_reset_confirm' uidb64=uid token=token %}
 
 {% endautoescape %}
