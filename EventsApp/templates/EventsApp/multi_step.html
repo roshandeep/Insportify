@@ -53,6 +53,12 @@
                             </select>
                         </div>
                         <div class="form-row p-2">
+                            <label>Gender</label>
+                            <input type="checkbox" id="Male" name="gender" value="Male">Male</input>
+                            <input type="checkbox" id="Female" name="gender" value="Female"> Female </input>
+                            <input type="checkbox" id="Coed" name="gender" value="Coed"> Coed </input>
+                        </div>
+                        <div class="form-row p-2">
                             <label>* Is this a recurring event? &nbsp &nbsp</label>
                             <input type="radio" value="Yes" id="chkYes" name="recurring_event">Yes</input>
                             <input type="radio" value="No" id="chkNo" name="recurring_event"> No </input>
@@ -187,7 +193,6 @@
                         Venue</h2>
                     <div class="card-body">
                         <div class="form-row p-2">
-                            <!--                            <input type="text" class="form-control" name="venue" placeholder="Venue"/>-->
                             <select name='venue' id="venue" class="form-select"
                                     aria-label=".form-select-lg example">
                                 <option selected disabled>* Choose Venue</option>
@@ -198,23 +203,23 @@
                         </div>
                         <div class="form-row p-2">
                             <input type="text" class="form-control" id="street" name="street"
-                                   placeholder="Street" disabled/>
+                                   placeholder="Street" readonly/>
                         </div>
                         <div class="form-row p-2">
                             <input type="text" class="form-control" id="city" name="city"
-                                   placeholder="City" disabled/>
+                                   placeholder="City" readonly/>
                         </div>
                         <div class="form-row p-2">
                             <input type="text" class="form-control" id="province" name="province"
-                                   placeholder="Province" disabled/>
+                                   placeholder="Province" readonly/>
                         </div>
                         <div class="form-row p-2">
                             <input type="text" class="form-control" id="country" name="country"
-                                   placeholder="Country" disabled/>
+                                   placeholder="Country" readonly/>
                         </div>
                         <div class="form-row p-2">
                             <input type="text" class="form-control" id="zip_code" name="zip_code"
-                                   placeholder="Area Code" disabled/>
+                                   placeholder="Area Code" readonly/>
                         </div>
                         <div class="form-row p-2 text-center">
                             <input type="button" name="previous"

@@ -35,7 +35,14 @@ def multistep(request):
             obj = form.save(commit=False)
             obj.created_by = request.user
             obj.sport_type = request.POST['sport_type']
+            obj.venue = request.POST['venue']
+            obj.street = request.POST['street']
+            obj.city = request.POST['city']
+            obj.country = request.POST['country']
+            obj.province = request.POST['province']
+            obj.zipcode = request.POST['zip_code']
             obj.position = request.POST['position']
+            obj.gender = ','.join(item for item in request.POST.getlist('gender'))
             obj.is_recurring = request.POST['recurring_event'] == "Yes"
             obj.datetimes_monday = request.POST.get('datetimes_monday') if obj.is_recurring else ""
             obj.datetimes_tuesday = request.POST.get('datetimes_tuesday') if obj.is_recurring else ""
@@ -593,6 +600,13 @@ def get_recommended_events(request):
                     recommended_events.remove(event)
 
     # FILTER BY Gender, Skill, position,
+    if user.is_individual:
+        individual = Individual.objects.get(user=user)
+        for event in recommended_events:
+            if event.gender:
+                gender_list = event.gender.split(",")
+                if individual.participation_interest not in gender_list:
+                    recommended_events.remove(event)
 
     return list(recommended_events)
 
