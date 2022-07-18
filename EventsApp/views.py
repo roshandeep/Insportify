@@ -413,13 +413,11 @@ def organization_profile(request):
             if response["company_name"]:
                 organization.organization_name = response["company_name"].strip() if response["company_name"] else ""
             if response["parent_organization"]:
-                organization.parent_organization_name = response["parent_organization"].strip() if response[
-                    "parent_organization"] else ""
+                organization.parent_organization_name = response["parent_organization"].strip() if response["parent_organization"] else ""
             if response["registration"]:
                 organization.registration_no = response["registration"].strip() if response["registration"] else ""
             if response["year_established"]:
-                organization.year_established = response["year_established"].strip() if response[
-                    "year_established"] else ""
+                organization.year_established = response["year_established"].strip() if response["year_established"] else ""
             if response["street_name"]:
                 organization.street = response["street_name"].strip() if response["street_name"] else ""
             if response["city"]:
@@ -439,7 +437,7 @@ def organization_profile(request):
             if response["website"]:
                 organization.website = response["website"].strip() if response["website"] else ""
             if response["gender"]:
-                organization.gender_focus = response["gender"].strip() if response["gender"] else ""
+                organization.gender_focus = ','.join(item for item in request.POST.getlist('gender'))
             if response["age_group"]:
                 organization.age_group = response["age_group"].strip() if response["age_group"] else ""
             organization.save()
@@ -478,7 +476,7 @@ def organization_profile(request):
             if response["website"]:
                 obj.website = response["website"].strip() if response["website"] else ""
             if response["gender"]:
-                obj.gender_focus = response["gender"].strip() if response["gender"] else ""
+                obj.gender_focus = ','.join(item for item in request.POST.getlist('gender'))
             if response["age_group"]:
                 obj.age_group = response["age_group"].strip() if response["age_group"] else ""
             obj.save()

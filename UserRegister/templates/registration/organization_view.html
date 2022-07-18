@@ -169,12 +169,12 @@
                     <div class="card-body">
                         <div class="form-row p-2">
                             <span>Your focus?</span>
-                            <input type="radio" id="Male" name="gender" value="Male"
-                            {% if organization.gender_focus == "Male" %} checked {% endif %}>Male</input>
-                            <input type="radio" id="Female" name="gender" value="Female"
-                            {% if organization.gender_focus == "Female" %} checked {% endif %}> Female </input>
-                            <input type="radio" id="Coed" name="gender" value="Coed"
-                            {% if organization.gender_focus == "Coed" %} checked {% endif %}> Coed </input>
+                           <input type="checkbox" id="Male" name="gender" value="Male"
+                            {% if "Male" in organization.gender_focus  %} checked {% endif %}>Male</input>
+                            <input type="checkbox" id="Female" name="gender" value="Female"
+                            {% if "Female" in organization.gender_focus %} checked {% endif %}> Female </input>
+                            <input type="checkbox" id="Coed" name="gender" value="Coed"
+                            {% if "Coed" in organization.gender_focus %} checked {% endif %}> Coed </input>
                         </div>
                         <div class="form-row p-2">
                             <select id="select-state" name='age_group' class="form-select"
