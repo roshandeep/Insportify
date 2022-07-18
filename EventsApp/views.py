@@ -510,6 +510,7 @@ def home(request):
     if request.user.is_authenticated:
         recommended_events = get_recommended_events(request)
 
+    recommended_events = format_time(recommended_events)
     # print(request.GET.getlist('events_types'))
 
     if request.GET.get('events_types'):
