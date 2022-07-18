@@ -34,7 +34,7 @@ def activate(request, uidb64, token):
         login(request, user)
         if user.is_individual:
             return redirect('EventsApp:user_profile')
-        elif user.is_organzation:
+        elif user.is_organization:
             return redirect('EventsApp:organization_profile')
         # return redirect('/')
     else:

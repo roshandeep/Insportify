@@ -604,7 +604,7 @@ def get_recommended_events(request):
                 if age_fail_count == len(positions):
                     recommended_events.remove(event)
 
-    # FILTER BY Gender, Skill, position,
+    # FILTER BY Gender
     if user.is_individual:
         individual = Individual.objects.get(user=user)
         individual_gender = individual.participation_interest.split(",")
