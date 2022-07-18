@@ -209,7 +209,7 @@ def user_profile(request):
             if "is_student" in response:
                 individual.is_student = response["is_student"].strip()
             if "interest_gender" in response:
-                individual.participation_interest = response["interest_gender"].strip()
+                individual.participation_interest = ','.join(item for item in request.POST.getlist('interest_gender'))
             if response["city"]:
                 individual.city = response["city"].strip() if response["city"] else ""
             if response["country"]:
@@ -249,7 +249,7 @@ def user_profile(request):
             if "is_student" in response:
                 obj.is_student = response["is_student"].strip()
             if "interest_gender" in response:
-                obj.participation_interest = response["interest_gender"].strip()
+                obj.participation_interest = ','.join(item for item in request.POST.getlist('interest_gender'))
             if response["city"]:
                 obj.city = response["city"].strip() if response["city"] else ""
             if response["province"]:
@@ -293,7 +293,7 @@ def save_secondary_sports_info(user, response):
                     position = response['position_' + str(i)].strip()
                     skill = response['skill_' + str(i)].strip()
                     newobj = Secondary_SportsChoice(user=user, sport_type=sport_type,
-                                                 position=position, sport_entry_number=i, skill=skill)
+                                                    position=position, sport_entry_number=i, skill=skill)
                     newobj.save()
     else:
         for i in range(0, 4):
@@ -607,10 +607,16 @@ def get_recommended_events(request):
     # FILTER BY Gender, Skill, position,
     if user.is_individual:
         individual = Individual.objects.get(user=user)
+        individual_gender = individual.participation_interest.split(",")
         for event in recommended_events:
+            flag = 0
             if event.gender:
                 gender_list = event.gender.split(",")
-                if individual.participation_interest not in gender_list:
+                for item in individual_gender:
+                    if item in gender_list:
+                        flag = 1
+
+                if flag == 0:
                     recommended_events.remove(event)
 
     return list(recommended_events)

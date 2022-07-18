@@ -54,12 +54,12 @@
                         </div>
                         <div class="form-row p-2">
                             <label>I am interest in participating in ?</label>
-                            <input type="radio" id="Male" name="interest_gender" value="Male"
-                            {% if individual.participation_interest == "Male" %} checked {% endif %}>Male</input>
-                            <input type="radio" id="Female" name="interest_gender" value="Female"
-                            {% if individual.participation_interest == "Female" %} checked {% endif %}> Female </input>
-                            <input type="radio" id="Coed" name="interest_gender" value="Coed"
-                            {% if individual.participation_interest == "Coed" %} checked {% endif %}> Coed </input>
+                            <input type="checkbox" id="Male" name="interest_gender" value="Male"
+                            {% if "Male" in individual.participation_interest  %} checked {% endif %}>Male</input>
+                            <input type="checkbox" id="Female" name="interest_gender" value="Female"
+                            {% if "Female" in individual.participation_interest %} checked {% endif %}> Female </input>
+                            <input type="checkbox" id="Coed" name="interest_gender" value="Coed"
+                            {% if "Coed" in individual.participation_interest %} checked {% endif %}> Coed </input>
                         </div>
                         <div class="form-row p-2">
                             <label>Are you a Student?</label>
