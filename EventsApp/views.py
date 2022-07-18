@@ -570,6 +570,10 @@ def get_recommended_events(request):
     # FILTER BY Location
     locations_saved = Extra_Loctaions.objects.filter(user=user)
     loc_list = []
+    if user.is_individual:
+        individual = Individual.objects.get(user=user)
+        if individual.city:
+            loc_list.append(individual.city.lower())
     for item in locations_saved:
         loc_list.append(item.city.lower())
 
