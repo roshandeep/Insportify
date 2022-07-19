@@ -1,4 +1,5 @@
 import calendar
+import os
 from datetime import datetime, timedelta, date
 
 import openpyxl
@@ -14,7 +15,8 @@ from django.views.decorators.csrf import csrf_exempt
 from Insportify import settings
 from .forms import MultiStepForm, AvailabilityForm, LogoForm, InviteForm
 from .models import master_table, Individual, Organization, Venues, SportsCategory, SportsType, Order, User, \
-    Availability, Logo, Extra_Loctaions, Events_PositionInfo, Secondary_SportsChoice, Cart, Invite, PositionAndSkillType
+    Availability, Logo, Extra_Loctaions, Events_PositionInfo, Secondary_SportsChoice, Cart, Invite, \
+    PositionAndSkillType, SportsImage
 import util
 
 
@@ -506,6 +508,7 @@ def organization_profile(request):
 def home(request):
     # Individual.objects.filter(pk=16).delete()
     sports = SportsType.objects.values('pk', 'sports_type_text').order_by('sports_type_text')
+
     if request.user.is_authenticated and request.user.is_individual:
         user_sports = Secondary_SportsChoice.objects.filter(user=request.user).values('sport_type')
         for item in sports:
@@ -521,6 +524,7 @@ def home(request):
     events = master_table.objects.all()
 
     events = format_time(events)
+
 
     recommended_events = []
     if request.user.is_authenticated:

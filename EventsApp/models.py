@@ -232,6 +232,13 @@ class Secondary_SportsChoice(models.Model):
         return self.user.first_name + " Sport_Choice_" + str(self.sport_entry_number)
 
 
+class SportsImage(models.Model):
+    sport = models.CharField(max_length=250, default=None,blank=True, null=True)
+    img = models.ImageField(upload_to='images/', default=None,blank=True, null=True)
+
+    def __str__(self):
+        return self.sport
+
 class Cart(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     event = models.ForeignKey(master_table, on_delete=models.CASCADE)
