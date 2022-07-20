@@ -552,7 +552,16 @@ def home(request):
         events = get_events_by_date(events, selected_date)
 
     if request.user.is_authenticated:
+        for event in recommended_events:
+            sport_img = SportsImage.objects.filter(sport=event.sport_type).values("img")
+            event.sport_logo = "/media/" + sport_img[0]["img"]
+
         recommended_events = [recommended_events[i:i + 3] for i in range(0, len(recommended_events), 3)]
+
+    for event in events:
+        sport_img = SportsImage.objects.filter(sport=event.sport_type).values("img")
+        event.sport_logo = "/media/" + sport_img[0]["img"]
+
 
     events = [events[i:i + 3] for i in range(0, len(events), 3)]
     context = {

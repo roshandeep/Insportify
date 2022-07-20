@@ -44,6 +44,7 @@ class master_table(models.Model):
     zipcode = models.CharField(max_length=300, blank=True, null=True)
     no_of_position = models.IntegerField(blank=True, null=True)
     position_cost = models.IntegerField(blank=True, null=True)
+    sport_logo = models.CharField(max_length=300, blank=True, null=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
