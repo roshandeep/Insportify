@@ -3,7 +3,7 @@ from django.shortcuts import render,redirect
 from django.views import generic
 from django.contrib.auth.forms import PasswordResetForm, PasswordChangeForm, AuthenticationForm
 from django.urls import reverse_lazy
-from .forms import SignUpForm, EditProfileForm
+from .forms import SignUpForm
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.views import PasswordChangeView
 from django.views.generic import DetailView, CreateView
@@ -25,7 +25,7 @@ def register(request):
 def activate(request, uidb64, token):
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
-        user = User.objects.get(username=uid)
+        user = User.objects.get(email=uid)
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
     if user is not None and account_activation_token.check_token(user, token):
@@ -62,7 +62,7 @@ class individual_register(CreateView):
                 render_to_string('acc_active_email.html', {
                     'user': user,
                     'domain': self.request.get_host(),
-                    'uid': force_text(urlsafe_base64_encode(force_bytes(user.username))),
+                    'uid': force_text(urlsafe_base64_encode(force_bytes(user.email))),
                     'token': account_activation_token.make_token(user),
                 }),
                 to=[form.cleaned_data.get('email')]
@@ -88,7 +88,7 @@ class mvp_register(CreateView):
                 render_to_string('acc_active_email.html', {
                     'user': user,
                     'domain': self.request.get_host(),
-                    'uid': force_text(urlsafe_base64_encode(force_bytes(user.username))),
+                    'uid': force_text(urlsafe_base64_encode(force_bytes(user.email))),
                     'token': account_activation_token.make_token(user),
                 }),
                 to=[form.cleaned_data.get('email')]
@@ -115,7 +115,7 @@ class organization_register(CreateView):
                 render_to_string('acc_active_email.html', {
                     'user': user,
                     'domain': self.request.get_host(),
-                    'uid': force_text(urlsafe_base64_encode(force_bytes(user.username))),
+                    'uid': force_text(urlsafe_base64_encode(force_bytes(user.email))),
                     'token': account_activation_token.make_token(user),
                 }),
                 to=[form.cleaned_data.get('email')]
@@ -163,7 +163,7 @@ class password_reset(generic.CreateView):
                 render_to_string('acc_pass_reset_email.html', {
                     'user': user,
                     'domain': self.request.get_host(),
-                    'uid': force_text(urlsafe_base64_encode(force_bytes(user.username))),
+                    'uid': force_text(urlsafe_base64_encode(force_bytes(user.email))),
                     'token': pass_reset_code.make_token(user),
                 }),
                 to=[form.cleaned_data.get('email')]

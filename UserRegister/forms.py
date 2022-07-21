@@ -1,23 +1,36 @@
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.models import User
 from django import forms
-from django.forms import ModelForm
 from django.db import transaction
 from EventsApp.models import User
 from django.contrib.auth import get_user_model
 from EventsApp.models import Individual, Organization
-from django.forms import CheckboxInput
 
 User = get_user_model()
+
 
 class IndividualSignUpForm(UserCreationForm):
     first_name = forms.CharField(required=True)
     last_name = forms.CharField(required=True)
     phone = forms.CharField(required=True)
     email = forms.CharField(required=True)
+    password1 = forms.CharField(widget=forms.PasswordInput(
+        attrs={'class': 'form-control', 'type': 'password', 'name': 'password2'}),
+        label="Password")
+    password2 = forms.CharField(widget=forms.PasswordInput(
+        attrs={'class': 'form-control', 'type': 'password', 'name': 'password2'}),
+        label="Password (again)")
 
-    class Meta(UserCreationForm.Meta):
+    class Meta:
         model = User
+        fields = (
+            "email",
+            'password1',
+            'password2',
+            "first_name",
+            "last_name",
+            "phone",
+        )
 
     @transaction.atomic
     def save(self):
@@ -35,15 +48,31 @@ class IndividualSignUpForm(UserCreationForm):
         individual.save()
         return user
 
-class MVPSignUpForm(UserCreationForm):
+
+class MVPSignUpForm(forms.ModelForm):
     first_name = forms.CharField(required=True)
     last_name = forms.CharField(required=True)
     phone = forms.CharField(required=True)
     email = forms.CharField(required=True)
     website = forms.CharField(required=False)
+    password1 = forms.CharField(widget=forms.PasswordInput(
+        attrs={'class': 'form-control', 'type': 'password', 'name': 'password2'}),
+        label="Password")
+    password2 = forms.CharField(widget=forms.PasswordInput(
+        attrs={'class': 'form-control', 'type': 'password', 'name': 'password2'}),
+        label="Password (again)")
 
-    class Meta(UserCreationForm.Meta):
+    class Meta():
         model = User
+        fields = (
+            "email",
+            'password1',
+            'password2',
+            "first_name",
+            "last_name",
+            "phone",
+            "website",
+        )
 
     @transaction.atomic
     def save(self):
@@ -62,22 +91,36 @@ class MVPSignUpForm(UserCreationForm):
         individual.save()
         return user
 
+
 class PasswordResetAuthForm(UserChangeForm):
     email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control'}))
+
     class Meta:
         model = User
         fields = ("email",)
         exclude = ("password",)
 
 
-class OrganizationSignUpForm(UserCreationForm):
+class OrganizationSignUpForm(forms.ModelForm):
     organization_name = forms.CharField(required=True)
     phone = forms.CharField(required=True)
     email = forms.CharField(required=True)
+    password1 = forms.CharField(widget=forms.PasswordInput(
+        attrs={'class': 'form-control', 'type': 'password', 'name': 'password2'}),
+        label="Password")
+    password2 = forms.CharField(widget=forms.PasswordInput(
+        attrs={'class': 'form-control', 'type': 'password', 'name': 'password2'}),
+        label="Password (again)")
 
-    class Meta(UserCreationForm.Meta):
+    class Meta():
         model = User
-
+        fields = (
+            "email",
+            'password1',
+            'password2',
+            "organization_name",
+            "phone",
+        )
 
     @transaction.atomic
     def save(self):
@@ -99,44 +142,18 @@ class DateInput(forms.DateInput):
     input_type = 'date'
 
 
-class SignUpForm(UserCreationForm):
+class SignUpForm(forms.ModelForm):
     email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control'}))
     first_name = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
     last_name = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
 
-    # birthdate = forms.DateField(help_text='Required. Format: YYYY-MM-DD')
     class Meta:
         model = User
-        fields = ('username', 'first_name', 'last_name')
+        fields = ('email', 'first_name', 'last_name')
 
     def __init__(self, *args, **kwargs):
         super(SignUpForm, self).__init__(*args, **kwargs)
 
-        self.fields['username'].widget.attrs['class'] = 'form-control'
+        self.fields['email'].widget.attrs['class'] = 'form-control'
         self.fields['first_name'].widget.attrs['class'] = 'form-control'
         self.fields['last_name'].widget.attrs['class'] = 'form-control'
-
-
-class EditProfileForm(UserChangeForm):
-    first_name = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    last_name = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    username = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    dob = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control'}))
-    phone = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    i_am_interested_participating_in = forms.CharField(max_length=100,
-                                                       widget=forms.TextInput(attrs={'class': 'form-control'}))
-    have_you_ever_had_concussion = forms.CharField(max_length=100,
-                                                   widget=forms.TextInput(attrs={'class': 'form-control'}))
-    prefer_city = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    prefer_province = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    prefer_country = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    prefer_sport = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    prefer_position = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
-
-    class Meta:
-        model = User
-        fields = (
-        'username', 'first_name', 'last_name', 'dob', 'password', 'email', 'phone', 'i_am_interested_participating_in',
-        'have_you_ever_had_concussion', 'prefer_city', 'prefer_province', 'prefer_country', 'prefer_sport',
-        'prefer_position')

@@ -214,8 +214,10 @@ def user_profile(request):
                 individual.participation_interest = ','.join(item for item in request.POST.getlist('interest_gender'))
             if response["city"]:
                 individual.city = response["city"].strip() if response["city"] else ""
+            if response["province"]:
+                individual.province = response["province"].strip() if response["province"] else ""
             if response["country"]:
-                individual.province = response["country"].strip() if response["country"] else ""
+                individual.country = response["country"].strip() if response["country"] else ""
             if response["contact_email"]:
                 individual.contact_email = response["contact_email"].strip() if response["contact_email"] else ""
             if response["sport_type"]:
@@ -580,7 +582,7 @@ def home(request):
 
 
 def get_recommended_events(request):
-    user = User.objects.get(username=request.user.username)
+    user = User.objects.get(email=request.user.email)
     user_avaiability = Availability.objects.filter(user=user)
     events = master_table.objects.all()
     week_days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
@@ -712,7 +714,7 @@ def event_details(request, event_id):
                 ## Add to cart
                 cart = Cart()
                 cart.event = master_table.objects.get(pk=event_id)
-                cart.user = User.objects.get(username=request.user.username)
+                cart.user = User.objects.get(email=request.user.email)
                 cart.position_id = Events_PositionInfo.objects.get(pk=position_id)
                 cart.date = date.today()
                 cart.position_type = pos_type
@@ -786,7 +788,7 @@ def create_checkout_session(request, id):
         )
 
         order = Order()
-        order.customer = User.objects.get(username=request.user.username)
+        order.customer = User.objects.get(email=request.user.email)
         order.event = event
         order.order_date = timezone.now()
         order.order_amount = int(total)
@@ -823,7 +825,7 @@ def add_availability(request):
                             initial={'user': request.user})
 
     context['form'] = form
-    user = User.objects.get(username=request.user.username)
+    user = User.objects.get(email=request.user.email)
     user_avaiability = Availability.objects.filter(user=user)
     get_day_of_week(user_avaiability)
 
@@ -888,7 +890,7 @@ def notifications(request):
                             initial={'user': request.user})
 
     context['form'] = form
-    user = User.objects.get(username=request.user.username)
+    user = User.objects.get(email=request.user.email)
     user_avaiability = Availability.objects.filter(user=user)
     get_day_of_week(user_avaiability)
 
@@ -977,7 +979,7 @@ def delete_by_id(request, event_id):
     try:
         event = master_table.objects.get(pk=event_id)
         event.delete()
-        user = User.objects.get(username=request.user.username)
+        user = User.objects.get(email=request.user.email)
         event_subject = "Event Cancelled - " + event.event_title
         event_data = " Event Title: " + event.event_title + "\n Event Description: " \
                      + event.description + "\n Event Location: " + event.venue + ", " + event.city \
@@ -1030,7 +1032,7 @@ def invite_by_id(request, event_id):
                       initial={'user': request.user})
 
     context['form'] = form
-    user = User.objects.get(username=request.user.username)
+    user = User.objects.get(email=request.user.email)
     event = master_table.objects.get(pk=event_id)
     context["event"] = event
     context["invites"] = Invite.objects.all().filter(event=event)
@@ -1064,7 +1066,7 @@ def invite(request):
                       initial={'user': request.user})
 
     context['form'] = form
-    user = User.objects.get(username=request.user.username)
+    user = User.objects.get(email=request.user.email)
     context["invites"] = Invite.objects.all().filter(user=user)
 
     if request.POST:

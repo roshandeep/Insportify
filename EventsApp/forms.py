@@ -1,12 +1,12 @@
 from django import forms
 from django.forms import ModelForm
 from .models import master_table, Availability, Invite, Logo
-# from EventsApp.models import Person, City, Country
-# from bootstrap_datepicker_plus.widgets import DatePickerInput, TimePickerInput, DateTimePickerInput, MonthPickerInput
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 
+
+User = get_user_model()
 
 class MultiStepForm(ModelForm):
     class Meta:
@@ -18,10 +18,13 @@ class MultiStepForm(ModelForm):
             'event_title', 'description', 'event_type', 'sport_type', 'position', 'venue', 'created_by')
 
 
-class RegisterForm(UserCreationForm):
+class RegisterForm(forms.ModelForm):
+    password = forms.CharField(label="Password", widget=forms.PasswordInput())
+    password1 = forms.CharField(label="Confirm Password", widget=forms.PasswordInput())
+
     class Meta:
-        model = get_user_model()
-        fields = ('email', 'username', 'password1', 'password2')
+        model = User
+        fields = ('email', 'password', 'password1')
 
 
 class ForgotPasswordForm(AuthenticationForm):
