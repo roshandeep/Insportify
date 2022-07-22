@@ -29,15 +29,10 @@
             <label>{{ form.email.label }}</label>
             {% render_field form.email|add_required_class:"is-required" class="form-control" %}
         </div>
-        <div class="form-group mb-3">
+        <div class="form-group">
             <button class="btn my-3 shadow rounded text-white" style="background: #ff6f3d;" type="submit">
                 Send Invite
             </button>
-            {% if event %}
-            <a class="btn-link my-3 mx-4" href="{% url 'EventsApp:list-events' %}">
-                Skip Invitations
-            </a>
-            {% endif %}
         </div>
     </form>
     <h5>
@@ -51,6 +46,9 @@
         {% for invite in invites %}
         <tr>
             <td>{{invite.email}}</td>
+            <td>
+                <a class="btn btn-warning btn-sm" href="{% url 'EventsApp:invite_by_id' invite.event.id invite.email %}">Resend</a>
+            </td>
         </tr>
         {% empty %}
         <tr>
@@ -61,6 +59,12 @@
         {% endfor %}
         </tbody>
     </table>
+    {% if event %}
+    <a class="btn shadow rounded text-white" style="background: #097969; margin-left:40%" href="{% url 'EventsApp:list-events' %}">
+        ✓ Finish Event Creation
+    </a>
+    {% endif %}
 </div>
 
 {% endblock %}
+

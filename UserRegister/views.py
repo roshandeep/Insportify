@@ -137,9 +137,12 @@ def login_request(request):
                 login(request, user)
                 return redirect('/')
             else:
-                messages.error(request, "Invalid username or password")
+                messages.error(request, "Invalid email or password")
         else:
-            messages.error(request, "Invalid username or password")
+            messages.error(request, "Invalid email or password")
+    elif request.method == 'GET':
+        if request.GET.get('next', ""):
+            messages.info(request, "Please Log-in or Sign-up below to access this feature and more of INsportify!")
     return render(request, 'registration/login.html', context={'form': AuthenticationForm()})
 
 

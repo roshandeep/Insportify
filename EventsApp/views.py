@@ -54,7 +54,10 @@ def multistep(request):
             obj.datetimes_saturday = request.POST.get('datetimes_saturday') if obj.is_recurring else ""
             obj.datetimes_sunday = request.POST.get('datetimes_sunday') if obj.is_recurring else ""
             obj.datetimes_exceptions = request.POST.get('datetimes_exceptions') if obj.is_recurring else ""
-            obj.datetimes = "" if obj.is_recurring else request.POST.get('datetimes')
+            obj.datetimes = "" if obj.is_recurring else request.POST.get('datetimes_date') + " " \
+                    + datetime.strptime(request.POST.get('datetimes_start_time'), "%H:%M").strftime("%I:%M %p") + " - " \
+                    + request.POST.get('datetimes_date') + " " + \
+                    datetime.strptime(request.POST.get('datetimes_end_time'), "%H:%M").strftime("%I:%M %p")
             obj.save()
             save_event_position_info(request, obj)
 
@@ -100,7 +103,9 @@ def ValidateFormValues(request):
                                         "recurring days")
                 date_valid = False
         else:
-            if not request.POST.get('datetimes') or request.POST['datetimes'] == "":
+            if (not request.POST.get('datetimes_date') or request.POST['datetimes_date'] == "") and \
+                    (not request.POST.get('datetimes_start_time') or request.POST['datetimes_start_time'] == "") and \
+                    (not request.POST.get('datetimes_end_time') or request.POST['datetimes_end_time'] == ""):
                 messages.error(request, "No date times entered, please enter a date for the event")
                 date_valid = False
     for i in range(1, 10):
@@ -363,13 +368,15 @@ def get_sports_type(request):
             return JsonResponse(data)
         return JsonResponse(list(sports_type.values('pk', 'sports_type_text')), safe=False)
 
+
 def get_selected_sports_position_and_skill(request):
     data = {}
-    data_list=[]
+    data_list = []
     if request.method == "POST":
         selected_sport = request.POST['selected_type_text']
         try:
-            positions = PositionAndSkillType.objects.filter(sports_type__sports_type_text=selected_sport).values('position_type').distinct('position_type')
+            positions = PositionAndSkillType.objects.filter(sports_type__sports_type_text=selected_sport).values(
+                'position_type').distinct('position_type')
             for position in positions:
                 skills = PositionAndSkillType.objects.filter(position_type=position.position_type).values(
                     'pk', 'skill_type').distinct('skill_type')
@@ -435,11 +442,13 @@ def organization_profile(request):
             if response["company_name"]:
                 organization.organization_name = response["company_name"].strip() if response["company_name"] else ""
             if response["parent_organization"]:
-                organization.parent_organization_name = response["parent_organization"].strip() if response["parent_organization"] else ""
+                organization.parent_organization_name = response["parent_organization"].strip() if response[
+                    "parent_organization"] else ""
             if response["registration"]:
                 organization.registration_no = response["registration"].strip() if response["registration"] else ""
             if response["year_established"]:
-                organization.year_established = response["year_established"].strip() if response["year_established"] else ""
+                organization.year_established = response["year_established"].strip() if response[
+                    "year_established"] else ""
             if response["street_name"]:
                 organization.street = response["street_name"].strip() if response["street_name"] else ""
             if response["city"]:
@@ -526,7 +535,6 @@ def home(request):
     events = master_table.objects.all()
 
     events = format_time(events)
-
 
     recommended_events = []
     if request.user.is_authenticated:
@@ -1025,7 +1033,7 @@ def delete_by_id(request, event_id):
 
 
 @login_required
-def invite_by_id(request, event_id):
+def invite_by_id(request, event_id, email=None):
     context = {}
     form = InviteForm(request.POST or None,
                       instance=Invite(),
@@ -1035,7 +1043,18 @@ def invite_by_id(request, event_id):
     user = User.objects.get(email=request.user.email)
     event = master_table.objects.get(pk=event_id)
     context["event"] = event
-    context["invites"] = Invite.objects.all().filter(event=event)
+    context["invites"] = Invite.objects.all().filter(event=event).distinct('email')
+
+    if email:
+        if user.first_name and user.last_name:
+            full_name = user.first_name + " " + user.last_name
+        else:
+            full_name = ""
+        util.email("Invitation from Insportify", "Hi there! " + full_name
+                   + " has invited you to the event: " + event.event_title
+                   + ". Join Insportify now: " + request.get_host() + "/" + str(event_id),
+                   [email])
+        messages.success(request, "Another invitation email sent to " + email)
 
     if request.POST:
         if form.is_valid():
@@ -1051,9 +1070,10 @@ def invite_by_id(request, event_id):
                        + " has invited you to the event: " + event.event_title
                        + ". Join Insportify now: " + request.get_host() + "/" + str(event_id),
                        [form.cleaned_data['email']])
-            context["invites"] = Invite.objects.all().filter(event=event)
+            messages.success(request, "Invitation email sent to " + form.cleaned_data['email'])
+            context["invites"] = Invite.objects.all().filter(event=event).distinct('email')
         else:
-            print(form.errors)
+            messages.error(request, form.errors)
 
     return render(request, "EventsApp/invite.html", context)
 
