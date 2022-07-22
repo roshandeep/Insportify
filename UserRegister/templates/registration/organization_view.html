@@ -170,11 +170,11 @@
                         <div class="form-row p-2">
                             <span>Your focus?</span>
                            <input type="checkbox" id="Male" name="gender" value="Male"
-                            {% if "Male" in organization.gender_focus  %} checked {% endif %}>Male</input>
+                            {% if "Male" in organization.gender_focus  %} checked {% endif %}> Male Only </input>
                             <input type="checkbox" id="Female" name="gender" value="Female"
-                            {% if "Female" in organization.gender_focus %} checked {% endif %}> Female </input>
+                            {% if "Female" in organization.gender_focus %} checked {% endif %}> Female Only </input>
                             <input type="checkbox" id="Coed" name="gender" value="Coed"
-                            {% if "Coed" in organization.gender_focus %} checked {% endif %}> Coed </input>
+                            {% if "Coed" in organization.gender_focus %} checked {% endif %}> Coed Only </input>
                         </div>
                         <div class="form-row p-2">
                             <select id="select-state" name='age_group' class="form-select"

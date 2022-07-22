@@ -29,7 +29,7 @@
         </select>
     </div>
     <div class="col">
-        <input class="form-control" type="date" value="Select Date" name="date_range"/>
+        <input class="form-control" onfocus="(this.type='date')" onblur="(this.type='text')" placeholder="Select Date" name="date_range"/>
     </div>
     <div class="col">
         <select class="form-select" name="venues">
@@ -60,14 +60,15 @@
             <div class="carousel-item {% if forloop.counter0 == 0 %}active{% endif %}">
                 <div class="cards-wrapper">
                     {% for event in sublist %}
-                    <div class="card {% if forloop.counter0 != 0 %}d-none d-md-block{% endif %} col-4">
+                    <div class="card {% if forloop.counter0 != 0 %}d-none d-md-block{% endif %} col-4"
+                         onclick="location.href='event_details/{{event.pk}}/';" style="cursor:pointer">
                         <img src="{{event.sport_logo}}" class="card-img-top" alt="...">
                         <div class="card-body">
                             <h5 class="card-title">{{event.sport_type}}</h5>
                             <p class="card-text">{{event.venue}}, {{event.city}}, {{event.province}}
                             <p class="text-dark text-start eventdatetime">{{event.datetimes}}
                             </p>
-                            <a href="/{{event.pk}}/" class="btn btn-primary">Details >></a>
+<!--                            <a href="/{{event.pk}}/" class="btn btn-primary">Details >></a>-->
                         </div>
                     </div>
                     {% endfor %}
@@ -99,15 +100,16 @@
             <div class="carousel-item {% if forloop.counter0 == 0 %}active{% endif %}">
                 <div class="cards-wrapper">
                     {% for event in sublist %}
-                    <div class="card {% if forloop.counter0 != 0 %}d-none d-md-block{% endif %} col-4">
+                    <div class="card {% if forloop.counter0 != 0 %}d-none d-md-block{% endif %} col-4"
+                         onclick="location.href='event_details/{{event.pk}}/';" style="cursor:pointer">
                         <img src="{{event.sport_logo}}" class="card-img-top" alt="...">
-                        <div class="card-body">
+                        <div class="card-body" >
                             <h5 class="card-title">{{event.sport_type}}</h5>
                             <p class="card-text">{{event.venue}}, {{event.city}}, {{event.province}}
                             <p class="text-dark text-start eventdatetime">
                             {{event.datetimes}}
                             </p>
-                            <a href="event_details/{{event.pk}}/" class="btn btn-primary">Details >></a>
+<!--                            <a href="event_details/{{event.pk}}/" class="btn btn-primary">Details >></a>-->
                         </div>
                     </div>
                     {% endfor %}

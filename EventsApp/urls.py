@@ -31,6 +31,7 @@ urlpatterns = [
     path('create/', views.multistep, name='multistep'),
     path('<int:event_id>/', views.event_by_id, name='event_by_id'),
     path('invite/<int:event_id>/', views.invite_by_id, name='invite_by_id'),
+    path('invite/<int:event_id>/<str:email>/', views.invite_by_id, name='invite_by_id'),
     path('invite/', views.invite, name='invite'),
     path('delete/<int:event_id>/', views.delete_by_id, name='delete_by_id'),
     path('get_selected_sports_type/', views.get_selected_sports_type, name='get_selected_sports_type'),

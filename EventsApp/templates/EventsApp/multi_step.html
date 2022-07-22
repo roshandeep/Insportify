@@ -54,9 +54,9 @@
                         </div>
                         <div class="form-row p-2">
                             <label>Gender</label>
-                            <input type="checkbox" id="Male" name="gender" value="Male">Male</input>
-                            <input type="checkbox" id="Female" name="gender" value="Female"> Female </input>
-                            <input type="checkbox" id="Coed" name="gender" value="Coed"> Coed </input>
+                            <input type="checkbox" id="Male" name="gender" value="Male"> Male Only</input>
+                            <input type="checkbox" id="Female" name="gender" value="Female"> Female Only </input>
+                            <input type="checkbox" id="Coed" name="gender" value="Coed"> Coed Only </input>
                         </div>
                         <div class="form-row p-2">
                             <label>* Is this a recurring event? &nbsp &nbsp</label>
@@ -133,9 +133,21 @@
                         </div>
                         <div class="form-row p-2" id="single_dates" style="display:None">
                             <label>* Select Event Date &nbsp &nbsp</label>
-                            <div class="form-row p-2">
-                                <input type="text" class="form-control datetime" name="datetimes"
-                                       placeholder="Date & Time"/>
+                            <div class="form-group row p-2">
+                                <div class="col-md-4">
+                                    <input type="text" name="datetimes_date"
+                                           placeholder="Event Date" class="form-control datesingle" />
+                                </div>
+                                 <div class="col-md-4">
+                                     <input type="text" onfocus="(this.type='time')" onblur="(this.type='text')"
+                                            id="datetimes_start_time"
+                                            name="datetimes_start_time" class="form-control timepicker" placeholder="Start Time"/>
+                                 </div>
+                                 <div class="col-md-4">
+                                     <input type="text" onfocus="(this.type='time')" onblur="(this.type='text')"
+                                            id="datetimes_end_time"
+                                            name="datetimes_end_time" class="form-control timepicker" placeholder="End Time"/>
+                                 </div>
                             </div>
                         </div>
                         <div class="form-row p-2 text-center">
@@ -170,15 +182,15 @@
                         </div>
                         <div class="form-row p-2 text-center">
                             <div id="input_fields_wrap">
-                                <button class="btn btn-primary"
-                                        id="add_field_button">Add Position
-                                </button>
                             </div>
                         </div>
                         <div class="form-row p-2 text-center">
                             <input type="button" name="previous"
                                    class="previous action-button-previous btn btn-primary"
                                    value="Previous" id="previous-tab-2"/>
+                            <button class="btn btn-primary"
+                                        id="add_field_button">Add Position
+                                </button>
                             <input type="button" name="next" class="next action-button btn btn-primary"
                                    value="Next" id="next-tab-2"/>
                         </div>
@@ -247,7 +259,6 @@
       rel="stylesheet"/>
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
 <style>
 
    #progressbar {
@@ -314,6 +325,18 @@ $(function () {
   $('[data-toggle="tooltip"]').tooltip()
 })
 
+function getTime(time, addHour) {
+  let [h, m] = time.split(':');
+  let date = new Date();
+   date.setHours(h, m, 0)
+   date.toString();
+  var hour = (date.getHours()+addHour)%24 > 9 ?
+    String((date.getHours()+addHour)%24) : ("0" + String((date.getHours()+addHour)%24));
+  var minutes = date.getMinutes() > 9 ? String(date.getMinutes()) : ("0" + String(date.getMinutes()));
+  let res = `${hour}:${minutes}`;
+  return res
+}
+
 $("#venue").change(function () {
         var selected_venue_value = $("#venue option:selected");
         var selected_venue_text = selected_venue_value.text();
@@ -335,6 +358,15 @@ $("#venue").change(function () {
             }
         });
     });
+
+$("#datetimes_start_time").change(function () {
+        var endtime = $("#datetimes_end_time")[0].value;
+        console.log(endtime);
+        if(!endtime){
+            $("#datetimes_end_time")[0].value = getTime( $("#datetimes_start_time")[0].value, 1 );
+        }
+    });
+
 
 $("#sport_type").change(function () {
         var selected_type_value = $("#sport_type option:selected");
@@ -448,11 +480,13 @@ function sports_skill_dropdown(skill_field_id){
             html += '<select class="form-select mt-2" name="type_of_skill' + x + '" id="type_of_skill' + x + '">'
             html += '<option selected disabled>* Choose Skill</option>'
             html += '</select>'
-            html += '<input type="number" class="form-control mt-2" name="no_of_position' + x + '" placeholder = "* Number of Positions" min=0>'
-            html += '<input type="number" class="form-control mt-2" name ="position_cost' + x + '" placeholder="* Position Cost">'
-            html += '<input type="number" class="form-control mt-2" name="min_age' + x + '" placeholder= "* Minimum Age" min=0>'
-            html += '<input type="number" class="form-control mt-2" name="max_age' + x + '" placeholder= "* Maximum Age" min=0 >'
-            html += '<a href="#" class="remove_field mt-2">Remove</a>'
+            html += '<div class="row g-2">'
+            html += '<div class="col-md-3"><input type="number" class="form-control mt-2" name="no_of_position' + x + '" placeholder = "* # Positions" min=0></div>'
+            html += '<div class="col-md-2"><input type="number" class="form-control mt-2" name ="position_cost' + x + '" placeholder="* Cost"></div>'
+            html += '<div class="col-md-3"><input type="number" class="form-control mt-2" name="min_age' + x + '" placeholder= "* Min Age" min=0></div>'
+            html += '<div class="col-md-3"><input type="number" class="form-control mt-2" name="max_age' + x + '" placeholder= "* Max Age" min=0 ></div>'
+            html += '<div class="col-md-1"><a href="#" class="remove_field btn btn-danger mt-2">🗑</a></div>'
+            html += '</div>'
             html += '</div>'
             $(wrapper).append(html); //add input box
 
@@ -464,7 +498,7 @@ function sports_skill_dropdown(skill_field_id){
 
     $(wrapper).on("click",".remove_field", function(e){
         e.preventDefault();
-        $(this).parent('div').remove();
+        $(this).parent('div').parent('div').parent('div').remove();
         x--;
     })
 });
@@ -482,6 +516,14 @@ $(function() {
   $('.date').datepicker({
     multidate: true
   });
+
+  $('.datesingle').daterangepicker({
+    singleDatePicker: true,
+    locale: {
+      format: 'MM/DD/YYYY'
+    }
+  });
+
 });
 
 
@@ -540,7 +582,6 @@ $(function () {
         });
     };
 });
-
 
 </script>
 
