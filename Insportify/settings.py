@@ -89,29 +89,29 @@ EMAIL_HOST_PASSWORD = 'xgtfkxdopmidjlhk'
 
 ## Dev DB Configurations
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'insportify',
-#         'USER': 'postgres',
-#         'PASSWORD': 'admin',
-#         'HOST': 'localhost',
-#         'PORT': '5432',
-#     }
-# }
-
-## Prod DB Configurations
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
+        'NAME': 'insportify',
         'USER': 'postgres',
-        'PASSWORD': 'Admin2022',
-        'HOST': 'insportify3.cz5lufvg1olp.ca-central-1.rds.amazonaws.com',
+        'PASSWORD': 'admin',
+        'HOST': 'localhost',
         'PORT': '5432',
     }
 }
+
+## Prod DB Configurations
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'postgres',
+#         'USER': 'postgres',
+#         'PASSWORD': 'Admin2022',
+#         'HOST': 'insportify3.cz5lufvg1olp.ca-central-1.rds.amazonaws.com',
+#         'PORT': '5432',
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators

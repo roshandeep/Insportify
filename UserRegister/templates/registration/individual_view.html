@@ -22,6 +22,7 @@
                 <li class="active" id="step1">Personal Details</li>
                 <li id="step2">Location Details</li>
                 <li id="step3">Sports Choices</li>
+                <li id="step4">User Availability</li>
             </ul>
 
             <fieldset class="p-2" id="tab-1">
@@ -46,34 +47,37 @@
                         </div>
                         <div class="form-row p-2">
                             <input type="text" class="form-control" name="contact_email" placeholder="Contact Email"
-                            value="{% if individual.email %} {{individual.email}} {% endif %}"/>
+                                   value="{% if individual.email %} {{individual.email}} {% endif %}"/>
                         </div>
                         <div class="form-row p-2">
                             <input type="text" class="form-control" name="mobile" placeholder="xxx-xxx-xxxx"
-                            value="{% if individual.phone %} {{individual.phone}} {% endif %}"/>
+                                   value="{% if individual.phone %} {{individual.phone}} {% endif %}"/>
                         </div>
                         <div class="form-row p-2">
                             <label>I am interest in participating in ?</label>
                             <input type="checkbox" id="Male" name="interest_gender" value="Male"
-                            {% if "Male" in individual.participation_interest  %} checked {% endif %}> Male Only</input>
+                                   {% if "Male" in individual.participation_interest %} checked {% endif %}> Male
+                            Only</input>
                             <input type="checkbox" id="Female" name="interest_gender" value="Female"
-                            {% if "Female" in individual.participation_interest %} checked {% endif %}> Female  Only</input>
+                                   {% if "Female" in individual.participation_interest %} checked {% endif %}> Female
+                            Only</input>
                             <input type="checkbox" id="Coed" name="interest_gender" value="Coed"
-                            {% if "Coed" in individual.participation_interest %} checked {% endif %}> Coed </input>
+                                   {% if "Coed" in individual.participation_interest %} checked {% endif %}>
+                            Coed </input>
                         </div>
                         <div class="form-row p-2">
                             <label>Are you a Student?</label>
                             <input type="radio" id="Yes" name="is_student" value="Yes"
-                            {% if individual.is_student == "Yes" %} checked {% endif %}>Yes</input>
+                                   {% if individual.is_student == "Yes" %} checked {% endif %}>Yes</input>
                             <input type="radio" id="No" name="is_student" value="No"
-                            {% if individual.is_student == "No" %} checked {% endif %}> No</input>
+                                   {% if individual.is_student == "No" %} checked {% endif %}> No</input>
                         </div>
                         <div class="form-row p-2">
                             <label>Have you ever suffered concussion?</label>
                             <input type="radio" id="Yes" name="is_concussion" value="Yes"
-                            {% if individual.concussion == "Yes" %} checked {% endif %}>Yes</input>
+                                   {% if individual.concussion == "Yes" %} checked {% endif %}>Yes</input>
                             <input type="radio" id="No" name="is_concussion" value="No"
-                            {% if individual.concussion == "No" %} checked {% endif %}> No</input>
+                                   {% if individual.concussion == "No" %} checked {% endif %}> No</input>
                         </div>
 
                         <div class="form-row p-2 text-center">
@@ -132,7 +136,7 @@
                                     aria-label=".form-select-lg example">
                                 <option value="" selected>Choose Sport</option>
                                 {% for st in sports_type %}
-                                    <option value="{{st}}">{{st}}</option>
+                                <option value="{{st}}">{{st}}</option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -162,11 +166,11 @@
                             <h5>Your Saved Sport Preferences</h5>
                             <table class="table table-striped">
                                 {% for item in sec_sport_choices %}
-                                    <tr>
-                                        <td>{{item.sport_type}}</td>
-                                        <td>{{item.position}}</td>
-                                        <td>{{item.skill}}</td>
-                                    </tr>
+                                <tr>
+                                    <td>{{item.sport_type}}</td>
+                                    <td>{{item.position}}</td>
+                                    <td>{{item.skill}}</td>
+                                </tr>
                                 {% endfor %}
                             </table>
                         </div>
@@ -174,6 +178,64 @@
                             <input type="button" name="previous"
                                    class="previous action-button-previous btn btn-primary"
                                    value="Previous" id="previous-tab-3"/>
+                            <input type="button" name="next" class="next action-button btn btn-primary"
+                                   value="Next" id="next-tab-3"/>
+                            <!--                            <input type="submit" name="submit" class="submit action-button btn btn-primary"-->
+                            <!--                                   value="Submit"/>-->
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset class="p-2" id="tab-4">
+                <div class="card shadow">
+                    <h4 class="card-header text-white text-center"
+                        style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">
+                        {{user.first_name }} ,
+                        add your availability</h4>
+                    <div class="card-body">
+                        <div class="form-row p-2">
+                            <select class="form-select" name="day_of_week" id="day_of_week">
+                                <option value="" selected="selected">Select Day Of The Week</option>
+                                <option value="1">Monday</option>
+                                <option value="2">Tuesday</option>
+                                <option value="3">Wednesday</option>
+                                <option value="4">Thursday</option>
+                                <option value="5">Friday</option>
+                                <option value="6">Saturday</option>
+                                <option value="7">Sunday</option>
+                        </select>
+                        </div>
+                        <div class="form-row p-2">
+                            <input type="time" class="form-control" id="start_time" name="start_time"
+                                   placeholder="HH:MM 24 hr format"/>
+                        </div>
+                        <div class="form-row p-2">
+                            <input type="time" class="form-control" id="end_time" name="end_time"
+                                   placeholder="HH:MM 24 hr format"/>
+                        </div>
+                        <div class="form-row p-2 text-center">
+                            <input type="button" class="action-button btn btn-primary" id="add_availability"
+                                   value="Add Availability"/>
+                        </div>
+                        <div class="form-row p-2 text-center">
+                            <h5>Your Saved Availability Preferences</h5>
+                            <div id="availability_table">
+                                <table class="table table-striped">
+                                {% for item in user_avaiability %}
+                                <tr>
+                                    <td>{{item.day_of_week}}</td>
+                                    <td>{{item.start_time}}</td>
+                                    <td>{{item.end_time}}</td>
+                                </tr>
+                                {% endfor %}
+                            </table>
+                            </div>
+                        </div>
+                        <div class="form-row p-2 text-center">
+                            <input type="button" name="previous"
+                                   class="previous action-button-previous btn btn-primary"
+                                   value="Previous" id="previous-tab-4"/>
 
                             <input type="submit" name="submit" class="submit action-button btn btn-primary"
                                    value="Submit"/>
@@ -181,7 +243,7 @@
                     </div>
                 </div>
             </fieldset>
-            
+
         </form>
     </div>
 </div>
@@ -209,7 +271,7 @@
     display:inline-block;
     list-style-type: none;
     font-size: 15px;
-    width: 25%;
+    width: 20%;
     position: relative;
     font-weight: 400
 }
@@ -224,6 +286,10 @@
 
 #progressbar #step3:before {
     content: "3"
+}
+
+#progressbar #step4:before {
+    content: "4"
 }
 
 #progressbar li:before {
@@ -247,9 +313,55 @@
 
 
 
+
 </style>
 
 <script>
+
+$("#add_availability").click(function(e) {
+    e.preventDefault();
+    var day_of_week_value = $("#day_of_week option:selected");
+    var day_of_week_text = day_of_week_value.val();
+    var start_time_val = $("#start_time").val();
+    var end_time_val = $("#end_time").val();
+    console.log(day_of_week_text);
+    console.log(start_time_val);
+    console.log(end_time_val);
+    $.ajax({
+        type: "POST",
+        url: '{% url "EventsApp:add_user_availability" %}',
+        data: {
+            'day_of_week': day_of_week_text,
+            'start_time': start_time_val,
+            'end_time': end_time_val,
+            'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
+        },
+        success: function (data) {
+            getUserAvailability();
+        }
+    });
+});
+
+function getUserAvailability(){
+    $.ajax({
+        type: "GET",
+        async: false,
+        url: '{% url "EventsApp:get_user_availability" %}',
+        success: function (data) {
+            console.log(data);
+            let html_data = `<table class="table table-striped">`;
+            data.forEach(function (data) {
+                html_data += `<tr>`;
+                html_data += `<td>${data.day_of_week}</td>`;
+                html_data += `<td>${data.start_time}</td>`;
+                html_data += `<td>${data.end_time}</td>`;
+                html_data += `</tr>`;
+            });
+            html_data += `</table>`;
+            $("#availability_table").html(html_data);
+        }
+    });
+}
 
 $("#sports").change(function () {
         var selected_type_value = $("#sports option:selected");
@@ -298,16 +410,20 @@ $("#position").change(function () {
 $(document).ready(function(){
   var tab2 = $("#tab-2");
   var tab3 = $("#tab-3");
+  var tab4 = $("#tab-4");
   tab2.hide();
   tab3.hide();
+  tab4.hide();
 
   $("#next-tab-1").click(function(){
     var tab1 = $("#tab-1");
     var tab2 = $("#tab-2");
     var tab3 = $("#tab-3");
+    var tab4 = $("#tab-4");
     tab1.hide();
     tab2.show();
     tab3.hide();
+    tab4.hide();
     $("#step2").addClass("active");
   });
 
@@ -315,19 +431,35 @@ $(document).ready(function(){
     var tab1 = $("#tab-1");
     var tab2 = $("#tab-2");
     var tab3 = $("#tab-3");
+    var tab4 = $("#tab-4");
     tab1.hide();
     tab2.hide();
     tab3.show();
+    tab4.hide();
     $("#step3").addClass("active");
+  });
+
+  $("#next-tab-3").click(function(){
+    var tab1 = $("#tab-1");
+    var tab2 = $("#tab-2");
+    var tab3 = $("#tab-3");
+    var tab4 = $("#tab-4");
+    tab1.hide();
+    tab2.hide();
+    tab3.hide();
+    tab4.show();
+    $("#step4").addClass("active");
   });
 
   $("#previous-tab-2").click(function(){
     var tab1 = $("#tab-1");
     var tab2 = $("#tab-2");
     var tab3 = $("#tab-3");
+    var tab4 = $("#tab-4");
     tab1.show();
     tab2.hide();
     tab3.hide();
+    tab4.hide();
     $("#step2").removeClass("active");
   });
 
@@ -335,10 +467,24 @@ $(document).ready(function(){
     var tab1 = $("#tab-1");
     var tab2 = $("#tab-2");
     var tab3 = $("#tab-3");
+    var tab4 = $("#tab-4");
     tab1.hide();
     tab2.show();
     tab3.hide();
+    tab4.hide();
     $("#step3").removeClass("active");
+  });
+
+  $("#previous-tab-4").click(function(){
+    var tab1 = $("#tab-1");
+    var tab2 = $("#tab-2");
+    var tab3 = $("#tab-3");
+    var tab4 = $("#tab-4");
+    tab1.hide();
+    tab2.hide();
+    tab3.show();
+    tab4.hide();
+    $("#step4").removeClass("active");
   });
 
 });
@@ -630,6 +776,7 @@ $(function () {
         });
     };
 });
+
 
 </script>
 

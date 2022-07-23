@@ -140,7 +140,7 @@ def save_event_position_info(request, event):
             position_cost = request.POST['position_cost' + str(i)].strip()
             min_age = request.POST['min_age' + str(i)].strip()
             max_age = request.POST['max_age' + str(i)].strip() if request.POST['max_age' + str(i)] else "999"
-            print(request.POST['min_age' + str(i)].strip(), request.POST['max_age' + str(i)].strip())
+            # print(request.POST['min_age' + str(i)].strip(), request.POST['max_age' + str(i)].strip())
             obj = Events_PositionInfo(event=event, max_age=max_age, min_age=min_age, no_of_position=no_of_position,
                                       position_cost=position_cost, position_number=i, position_type=position_type)
             obj.save()
@@ -183,9 +183,12 @@ def user_profile(request):
     }
     sports_type = SportsType.objects.all().order_by('sports_type_text')
     sec_sport_choices = Secondary_SportsChoice.objects.filter(user=request.user).order_by("sport_entry_number")
+    user_avaiability = Availability.objects.filter(user=request.user)
+    get_day_of_week(user_avaiability)
     context['sports_type'] = sports_type
     context['sec_sport_choices'] = sec_sport_choices
-
+    context['user_avaiability'] = user_avaiability
+    print("check")
     if request.method == "GET":
         individual = Individual.objects.get(user=request.user)
         # print(individual.__dict__)
@@ -195,7 +198,6 @@ def user_profile(request):
     elif request.method == "POST":
         individual = Individual.objects.filter(user=request.user)
         response = request.POST.dict()
-        print(response)
         if individual.exists():
             individual = Individual.objects.get(user=request.user)
             individual.user = request.user
@@ -368,25 +370,6 @@ def get_sports_type(request):
             return JsonResponse(data)
         return JsonResponse(list(sports_type.values('pk', 'sports_type_text')), safe=False)
 
-
-def get_selected_sports_position_and_skill(request):
-    data = {}
-    data_list = []
-    if request.method == "POST":
-        selected_sport = request.POST['selected_type_text']
-        try:
-            positions = PositionAndSkillType.objects.filter(sports_type__sports_type_text=selected_sport).values(
-                'position_type').distinct('position_type')
-            for position in positions:
-                skills = PositionAndSkillType.objects.filter(position_type=position.position_type).values(
-                    'pk', 'skill_type').distinct('skill_type')
-
-                print(position.position_type, skills)
-            print(data_list)
-        except Exception:
-            data['error_message'] = 'error'
-            return JsonResponse(data)
-        return JsonResponse()
 
 
 def get_selected_sports_skill(request):
@@ -863,6 +846,52 @@ def add_availability(request):
     return render(request, "EventsApp/add_availability.html", context)
 
 
+def get_user_availability(request):
+    if request.method == "GET":
+        user = User.objects.get(email=request.user.email)
+        user_avaiability = Availability.objects.filter(user=user)
+        for avail in user_avaiability:
+            if avail.day_of_week == 1:
+                avail.day_of_week = "Monday"
+            if avail.day_of_week == 2:
+                avail.day_of_week = "Tuesday"
+            if avail.day_of_week == 3:
+                avail.day_of_week = "Wednesday"
+            if avail.day_of_week == 4:
+                avail.day_of_week = "Thursday"
+            if avail.day_of_week == 5:
+                avail.day_of_week = "Friday"
+            if avail.day_of_week == 6:
+                avail.day_of_week = "Saturday"
+            if avail.day_of_week == 7:
+                avail.day_of_week = "Sunday"
+        for item in user_avaiability:
+            print(item.day_of_week)
+        return JsonResponse(list(user_avaiability.values()), safe=False)
+
+
+def add_user_availability(request):
+    user = User.objects.get(email=request.user.email)
+    user_avaiability = Availability.objects.filter(user=user)
+    print(request.POST['start_time'])
+    if request.method == "POST":
+        obj = Availability(user=user,
+                           day_of_week=request.POST['day_of_week'],
+                           start_time=request.POST['start_time'],
+                           end_time=request.POST['end_time'])
+        is_duplicate = check_duplicate_availability(user_avaiability, obj)
+        if is_duplicate:
+            return JsonResponse({'error_message': 'Duplicate Availability!'}, safe=False)
+        else:
+            obj.save()
+            user_avaiability = Availability.objects.filter(user=user)
+            get_day_of_week(user_avaiability)
+            print("New Availability Added!")
+            return JsonResponse({'success_message': 'New Availability Added!'}, safe=False)
+    else:
+        return JsonResponse({'error_message': 'Enter a valid time!'}, safe=False)
+
+
 def check_duplicate_availability(user_avaiability, new_availability):
     if new_availability.day_of_week == 1:
         new_availability.day_of_week = "Monday"
@@ -879,8 +908,8 @@ def check_duplicate_availability(user_avaiability, new_availability):
     if new_availability.day_of_week == 7:
         new_availability.day_of_week = "Sunday"
 
-    new_availability.start_time = new_availability.start_time.strftime("%H:%M:%S")
-    new_availability.end_time = new_availability.end_time.strftime("%H:%M:%S")
+    # new_availability.start_time = new_availability.start_time.strftime("%H:%M:%S")
+    # new_availability.end_time = new_availability.end_time.strftime("%H:%M:%S")
 
     for avail in user_avaiability:
         if avail.day_of_week == new_availability.day_of_week and str(
