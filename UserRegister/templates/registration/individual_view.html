@@ -327,26 +327,39 @@ $("#add_availability").click(function(e) {
     var day_of_week_text = day_of_week_value.val();
     var start_time_val = $("#start_time").val();
     var end_time_val = $("#end_time").val();
-    $.ajax({
-        type: "POST",
-        url: '{% url "EventsApp:add_user_availability" %}',
-        data: {
-            'day_of_week': day_of_week_text,
-            'start_time': start_time_val,
-            'end_time': end_time_val,
-            'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
-        },
-        success: function (data) {
-            console.log(data["status"]);
-            let html_data = `<div class="alert alert-warning alert-dismissible fade show" role="alert">`;
-            html_data += `${data["status"]}`;
-            html_data += `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
-            html_data += `</div>`;
-            let status = document.getElementById("availability_status");
-            status.innerHTML = html_data;
-            getUserAvailability();
-        }
-    });
+
+    if(start_time_val === "" || end_time_val === "" || day_of_week_text === ""){
+        let msg = "Please fill in he empty fields!";
+        let html_data = `<div class="alert alert-warning alert-dismissible fade show" role="alert">`;
+        html_data += `${msg}`;
+        html_data += `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+        html_data += `</div>`;
+        let status = document.getElementById("availability_status");
+        status.innerHTML = html_data;
+    }
+    else{
+
+        $.ajax({
+            type: "POST",
+            url: '{% url "EventsApp:add_user_availability" %}',
+            data: {
+                'day_of_week': day_of_week_text,
+                'start_time': start_time_val,
+                'end_time': end_time_val,
+                'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
+            },
+            success: function (data) {
+                console.log(data["status"]);
+                let html_data = `<div class="alert alert-warning alert-dismissible fade show" role="alert">`;
+                html_data += `${data["status"]}`;
+                html_data += `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+                html_data += `</div>`;
+                let status = document.getElementById("availability_status");
+                status.innerHTML = html_data;
+                getUserAvailability();
+            }
+        });
+     }
 });
 
 function getUserAvailability(){
