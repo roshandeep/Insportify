@@ -345,7 +345,7 @@ $("#add_availability").click(function(e) {
 function getUserAvailability(){
     $.ajax({
         type: "GET",
-        async: false,
+        async:false,
         url: '{% url "EventsApp:get_user_availability" %}',
         success: function (data) {
             console.log(data);
@@ -358,7 +358,8 @@ function getUserAvailability(){
                 html_data += `</tr>`;
             });
             html_data += `</table>`;
-            $("#availability_table").html(html_data);
+            let tableData = document.getElementById("availability_table");
+            tableData.innerHTML = html_data;
         }
     });
 }

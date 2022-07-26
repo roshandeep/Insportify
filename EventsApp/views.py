@@ -847,27 +847,27 @@ def add_availability(request):
 
 
 def get_user_availability(request):
-    if request.method == "GET":
+    if request.is_ajax():
         user = User.objects.get(email=request.user.email)
-        user_avaiability = Availability.objects.filter(user=user)
-        for avail in user_avaiability:
-            if avail.day_of_week == 1:
-                avail.day_of_week = "Monday"
-            if avail.day_of_week == 2:
-                avail.day_of_week = "Tuesday"
-            if avail.day_of_week == 3:
-                avail.day_of_week = "Wednesday"
-            if avail.day_of_week == 4:
-                avail.day_of_week = "Thursday"
-            if avail.day_of_week == 5:
-                avail.day_of_week = "Friday"
-            if avail.day_of_week == 6:
-                avail.day_of_week = "Saturday"
-            if avail.day_of_week == 7:
-                avail.day_of_week = "Sunday"
-        for item in user_avaiability:
-            print(item.day_of_week)
-        return JsonResponse(list(user_avaiability.values()), safe=False)
+        user_availability = Availability.objects.filter(user=user)
+        user_availability = list(user_availability.values("day_of_week", "start_time", "end_time"))
+        for avail in user_availability:
+            if avail["day_of_week"] == 1:
+                avail["day_of_week"] = "Monday"
+            if avail["day_of_week"] == 2:
+                avail["day_of_week"] = "Tuesday"
+            if avail["day_of_week"] == 3:
+                avail["day_of_week"] = "Wednesday"
+            if avail["day_of_week"] == 4:
+                avail["day_of_week"] = "Thursday"
+            if avail["day_of_week"] == 5:
+                avail["day_of_week"] = "Friday"
+            if avail["day_of_week"] == 6:
+                avail["day_of_week"] = "Saturday"
+            if avail["day_of_week"] == 7:
+                avail["day_of_week"] = "Sunday"
+
+    return JsonResponse(user_availability, safe=False)
 
 
 def add_user_availability(request):
@@ -910,8 +910,8 @@ def check_duplicate_availability(user_avaiability, new_availability):
 
     # new_availability.start_time = new_availability.start_time.strftime("%H:%M:%S")
     # new_availability.end_time = new_availability.end_time.strftime("%H:%M:%S")
-
     for avail in user_avaiability:
+        print(avail.day_of_week == new_availability.day_of_week, str(avail.start_time) == new_availability.start_time)
         if avail.day_of_week == new_availability.day_of_week and str(
                 avail.start_time) == new_availability.start_time and str(avail.end_time) == new_availability.end_time:
             return True
