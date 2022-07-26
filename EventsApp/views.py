@@ -881,15 +881,14 @@ def add_user_availability(request):
                            end_time=request.POST['end_time'])
         is_duplicate = check_duplicate_availability(user_avaiability, obj)
         if is_duplicate:
-            return JsonResponse({'error_message': 'Duplicate Availability!'}, safe=False)
+            return JsonResponse({'status': 'Duplicate Availability!'}, safe=False)
         else:
             obj.save()
             user_avaiability = Availability.objects.filter(user=user)
             get_day_of_week(user_avaiability)
-            print("New Availability Added!")
-            return JsonResponse({'success_message': 'New Availability Added!'}, safe=False)
+            return JsonResponse({'status': 'New Availability Added!'}, safe=False)
     else:
-        return JsonResponse({'error_message': 'Enter a valid time!'}, safe=False)
+        return JsonResponse({'status': 'Enter a valid time!'}, safe=False)
 
 
 def check_duplicate_availability(user_avaiability, new_availability):
@@ -908,12 +907,10 @@ def check_duplicate_availability(user_avaiability, new_availability):
     if new_availability.day_of_week == 7:
         new_availability.day_of_week = "Sunday"
 
-    # new_availability.start_time = new_availability.start_time.strftime("%H:%M:%S")
-    # new_availability.end_time = new_availability.end_time.strftime("%H:%M:%S")
     for avail in user_avaiability:
-        print(avail.day_of_week == new_availability.day_of_week, str(avail.start_time) == new_availability.start_time)
-        if avail.day_of_week == new_availability.day_of_week and str(
-                avail.start_time) == new_availability.start_time and str(avail.end_time) == new_availability.end_time:
+        if avail.day_of_week == int(new_availability.day_of_week) and \
+                avail.start_time.strftime("%H:%M") == new_availability.start_time and\
+                avail.end_time.strftime("%H:%M") == new_availability.end_time:
             return True
 
     return False
