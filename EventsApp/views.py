@@ -867,6 +867,9 @@ def get_user_availability(request):
             if avail["day_of_week"] == 7:
                 avail["day_of_week"] = "Sunday"
 
+            avail["start_time"] = avail["start_time"].strftime("%I:%M %p")
+            avail["end_time"] = avail["end_time"].strftime("%I:%M %p")
+
     return JsonResponse(user_availability, safe=False)
 
 
