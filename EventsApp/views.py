@@ -1,5 +1,4 @@
 import calendar
-import os
 from datetime import datetime, timedelta, date
 
 import openpyxl
@@ -55,9 +54,11 @@ def multistep(request):
             obj.datetimes_sunday = request.POST.get('datetimes_sunday') if obj.is_recurring else ""
             obj.datetimes_exceptions = request.POST.get('datetimes_exceptions') if obj.is_recurring else ""
             obj.datetimes = "" if obj.is_recurring else request.POST.get('datetimes_date') + " " \
-                    + datetime.strptime(request.POST.get('datetimes_start_time'), "%H:%M").strftime("%I:%M %p") + " - " \
-                    + request.POST.get('datetimes_date') + " " + \
-                    datetime.strptime(request.POST.get('datetimes_end_time'), "%H:%M").strftime("%I:%M %p")
+                                                        + datetime.strptime(request.POST.get('datetimes_start_time'),
+                                                                            "%H:%M").strftime("%I:%M %p") + " - " \
+                                                        + request.POST.get('datetimes_date') + " " + \
+                                                        datetime.strptime(request.POST.get('datetimes_end_time'),
+                                                                          "%H:%M").strftime("%I:%M %p")
             obj.save()
             save_event_position_info(request, obj)
 
@@ -183,12 +184,13 @@ def user_profile(request):
     }
     sports_type = SportsType.objects.all().order_by('sports_type_text')
     sec_sport_choices = Secondary_SportsChoice.objects.filter(user=request.user).order_by("sport_entry_number")
+    locations = Extra_Loctaions.objects.filter(user=request.user).order_by("location_number")
     user_avaiability = Availability.objects.filter(user=request.user)
     get_day_of_week(user_avaiability)
     context['sports_type'] = sports_type
     context['sec_sport_choices'] = sec_sport_choices
+    context['locations'] = locations
     context['user_avaiability'] = user_avaiability
-    print("check")
     if request.method == "GET":
         individual = Individual.objects.get(user=request.user)
         # print(individual.__dict__)
@@ -221,10 +223,13 @@ def user_profile(request):
                 individual.participation_interest = ','.join(item for item in request.POST.getlist('interest_gender'))
             if response["city"]:
                 individual.city = response["city"].strip() if response["city"] else ""
+                response["city0"] = response["city"].strip() if response["city"] else ""
             if response["province"]:
                 individual.province = response["province"].strip() if response["province"] else ""
+                response["province0"] = response["province"].strip() if response["province"] else ""
             if response["country"]:
                 individual.country = response["country"].strip() if response["country"] else ""
+                response["country0"] = response["country"].strip() if response["country"] else ""
             if response["contact_email"]:
                 individual.contact_email = response["contact_email"].strip() if response["contact_email"] else ""
             if response["sport_type"]:
@@ -263,10 +268,13 @@ def user_profile(request):
                 obj.participation_interest = ','.join(item for item in request.POST.getlist('interest_gender'))
             if response["city"]:
                 obj.city = response["city"].strip() if response["city"] else ""
+                response["city0"] = response["city"].strip() if response["city"] else ""
             if response["province"]:
                 obj.province = response["province"].strip() if response["province"] else ""
+                response["province0"] = response["province"].strip() if response["province"] else ""
             if response["country"]:
                 obj.country = response["country"].strip() if response["country"] else ""
+                response["country0"] = response["country"].strip() if response["country"] else ""
             if response["sport_type"]:
                 obj.sports_type = response["sport_type"].strip() if response["sport_type"] else ""
                 response["type_0"] = response["sport_type"].strip() if response["sport_type"] else ""
@@ -319,7 +327,7 @@ def save_secondary_sports_info(user, response):
 
 def update_secondary_locations(user, response):
     # print("Update Old Locs")
-    for i in range(1, 5):
+    for i in range(0, 5):
         obj = Extra_Loctaions.objects.filter(user=user, location_number=i).exists()
         if obj:
             obj = Extra_Loctaions.objects.get(user=user, location_number=i)
@@ -338,7 +346,7 @@ def update_secondary_locations(user, response):
 
 
 def save_secondary_locations(user, response):
-    for i in range(1, 5):
+    for i in range(0, 5):
         if 'city' + str(i) in response:
             city = response['city' + str(i)].strip()
             province = response['province' + str(i)].strip()
@@ -369,7 +377,6 @@ def get_sports_type(request):
             data['error_message'] = 'error'
             return JsonResponse(data)
         return JsonResponse(list(sports_type.values('pk', 'sports_type_text')), safe=False)
-
 
 
 def get_selected_sports_skill(request):
@@ -580,28 +587,33 @@ def get_recommended_events(request):
     recommended_events = set()
 
     # FILTER by DateTime
-    for event in events:
-        if event.datetimes:
-            time = event.datetimes.split("-")
-            start_datetime = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
-            end_datetime = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p')
+    # If there is no user availability then add all events to recommended events
+    if len(user_avaiability):
+        for event in events:
+            if event.datetimes:
+                time = event.datetimes.split("-")
+                start_datetime = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
+                end_datetime = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p')
 
-            for i in range((end_datetime - start_datetime).days):
-                days_between = calendar.day_name[(start_datetime + timedelta(days=i + 1)).weekday()]
-                for avail in user_avaiability:
-                    if week_days[avail.day_of_week - 1] == days_between:
-                        if avail.start_time <= end_datetime.time() or avail.end_time >= start_datetime.time():
-                            recommended_events.add(event)
+                for i in range((end_datetime - start_datetime).days):
+                    days_between = calendar.day_name[(start_datetime + timedelta(days=i + 1)).weekday()]
+                    print(days_between)
+                    for avail in user_avaiability:
+                        if week_days[avail.day_of_week - 1] == days_between:
+                            if avail.start_time <= end_datetime.time() or avail.end_time >= start_datetime.time():
+                                recommended_events.add(event)
+
+            else:
+                recommended_events.add(event)
+    else:
+        recommended_events = [event for event in events]
 
     recommended_events = list(recommended_events)
+    print("Availabiliy Filter", recommended_events)
 
     # FILTER BY Location
     locations_saved = Extra_Loctaions.objects.filter(user=user)
     loc_list = []
-    if user.is_individual:
-        individual = Individual.objects.get(user=user)
-        if individual.city:
-            loc_list.append(individual.city.lower())
     for item in locations_saved:
         loc_list.append(item.city.lower())
 
@@ -611,6 +623,7 @@ def get_recommended_events(request):
                 recommended_events.remove(event)
 
     recommended_events = list(recommended_events)
+    print("Location Filter", recommended_events)
 
     # FILTER BY Age
     if user.is_individual:
@@ -624,12 +637,14 @@ def get_recommended_events(request):
                 age_fail_count = 0
                 for position in positions:
                     if position.max_age >= age >= position.min_age:
-                        print(position.max_age, position.min_age)
+                        continue
                     else:
                         age_fail_count = age_fail_count + 1
 
                 if age_fail_count == len(positions):
                     recommended_events.remove(event)
+
+    print("Age Filter", recommended_events)
 
     # FILTER BY Gender
     if user.is_individual:
@@ -645,6 +660,21 @@ def get_recommended_events(request):
 
                 if flag == 0:
                     recommended_events.remove(event)
+
+    print("Gender Filter", recommended_events)
+
+    # FILTER BY Sports
+    if user.is_individual:
+        sport_choices = Secondary_SportsChoice.objects.filter(user=user).order_by("sport_entry_number")
+        sports_list = []
+        for item in sport_choices:
+            sports_list.append(item.sport_type)
+
+        for event in recommended_events:
+            if event.sport_type not in sports_list:
+                recommended_events.remove(event)
+
+    print("Sports Filter", recommended_events)
 
     return list(recommended_events)
 
@@ -912,7 +942,7 @@ def check_duplicate_availability(user_avaiability, new_availability):
 
     for avail in user_avaiability:
         if avail.day_of_week == int(new_availability.day_of_week) and \
-                avail.start_time.strftime("%H:%M") == new_availability.start_time and\
+                avail.start_time.strftime("%H:%M") == new_availability.start_time and \
                 avail.end_time.strftime("%H:%M") == new_availability.end_time:
             return True
 

@@ -35,20 +35,6 @@ class LoginForm(AuthenticationForm):
     username = forms.CharField(label='Email / Username')
 
 
-class UserForm(forms.Form):
-    first_name = forms.CharField(max_length=20)
-    last_name = forms.CharField(max_length=20)
-    DOB = forms.DateField()
-    contact = forms.CharField(max_length=50)
-    participate = forms.CharField(max_length=30)
-    is_concussion = forms.CharField(max_length=10)
-    pref_city = forms.CharField(max_length=30)
-    pref_province = forms.CharField(max_length=30)
-    pref_country = forms.CharField(max_length=30)
-    pref_sport = forms.CharField(max_length=30)
-    pref_sport = forms.CharField(max_length=30)
-    pref_position = forms.CharField(max_length=30)
-
 
 class AvailabilityForm(forms.ModelForm):
     class Meta:

@@ -115,6 +115,18 @@
                         </div>
                     </div>
                     <div class="form-row p-2 text-center">
+                        <h5>Your Saved Locations</h5>
+                        <table class="table table-striped">
+                            {% for item in locations %}
+                            <tr>
+                                <td>{{item.city}}</td>
+                                <td>{{item.province}}</td>
+                                <td>{{item.country}}</td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                    <div class="form-row p-2 text-center">
                         <input type="button" name="previous"
                                class="previous action-button-previous btn btn-primary"
                                value="Previous" id="previous-tab-2"/>
@@ -180,8 +192,6 @@
                                    value="Previous" id="previous-tab-3"/>
                             <input type="button" name="next" class="next action-button btn btn-primary"
                                    value="Next" id="next-tab-3"/>
-                            <!--                            <input type="submit" name="submit" class="submit action-button btn btn-primary"-->
-                            <!--                                   value="Submit"/>-->
                         </div>
                     </div>
                 </div>
