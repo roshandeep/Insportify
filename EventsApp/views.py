@@ -584,6 +584,8 @@ def get_recommended_events(request):
     user_avaiability = Availability.objects.filter(user=user)
     events = master_table.objects.all()
     week_days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    locations_saved = Extra_Loctaions.objects.filter(user=user)
+    loc_list = [item.city.lower() for item in locations_saved]
     recommended_events = set()
 
     # FILTER by DateTime
@@ -609,20 +611,13 @@ def get_recommended_events(request):
         recommended_events = [event for event in events]
 
     recommended_events = list(recommended_events)
-    print("Availabiliy Filter", recommended_events)
+    print("Availability Filter", recommended_events)
+
 
     # FILTER BY Location
-    locations_saved = Extra_Loctaions.objects.filter(user=user)
-    loc_list = []
-    for item in locations_saved:
-        loc_list.append(item.city.lower())
-
-    for event in recommended_events:
-        print(event.event_title, event.city)
-        if event.city:
-            # print(event.event_title, event.city.lower())
+    for event in recommended_events[:]:
+        if event.city != "":
             if event.city.lower() not in loc_list:
-                # print(event.event_title, event.city.lower(), loc_list)
                 recommended_events.remove(event)
 
     recommended_events = list(recommended_events)
@@ -635,7 +630,7 @@ def get_recommended_events(request):
             dob = datetime.strptime(individual.dob, '%Y-%m-%d').date()
             today = date.today()
             age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
-            for event in recommended_events:
+            for event in recommended_events[:]:
                 positions = Events_PositionInfo.objects.filter(event=event)
                 age_fail_count = 0
                 for position in positions:
@@ -654,7 +649,7 @@ def get_recommended_events(request):
         individual = Individual.objects.get(user=user)
         individual_gender = individual.participation_interest.split(",")
         # print(individual_gender)
-        for event in recommended_events:
+        for event in recommended_events[:]:
             flag = 0
             if event.gender:
                 gender_list = event.gender.split(",")
@@ -676,7 +671,7 @@ def get_recommended_events(request):
         for item in sport_choices:
             sports_list.append(item.sport_type)
 
-        for event in recommended_events:
+        for event in recommended_events[:]:
             if event.sport_type not in sports_list:
                 recommended_events.remove(event)
 
