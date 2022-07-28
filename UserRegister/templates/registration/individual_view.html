@@ -207,25 +207,27 @@
                         <div id="availability_status">
 
                         </div>
-                        <div class="form-row p-2">
-                            <select class="form-select" name="day_of_week" id="day_of_week">
-                                <option value="" selected="selected">Select Day Of The Week</option>
-                                <option value="1">Monday</option>
-                                <option value="2">Tuesday</option>
-                                <option value="3">Wednesday</option>
-                                <option value="4">Thursday</option>
-                                <option value="5">Friday</option>
-                                <option value="6">Saturday</option>
-                                <option value="7">Sunday</option>
-                        </select>
-                        </div>
-                        <div class="form-row p-2">
-                            <input type="time" class="form-control" id="start_time" name="start_time"
-                                   placeholder="HH:MM 24 hr format"/>
-                        </div>
-                        <div class="form-row p-2">
-                            <input type="time" class="form-control" id="end_time" name="end_time"
-                                   placeholder="HH:MM 24 hr format"/>
+                        <div class="form-group row p-2">
+                            <div class="col-md-4">
+                                <select class="form-select" name="day_of_week" id="day_of_week">
+                                    <option value="" selected="selected">Select Day Of The Week</option>
+                                    <option value="1">Monday</option>
+                                    <option value="2">Tuesday</option>
+                                    <option value="3">Wednesday</option>
+                                    <option value="4">Thursday</option>
+                                    <option value="5">Friday</option>
+                                    <option value="6">Saturday</option>
+                                    <option value="7">Sunday</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="time" class="form-control" id="start_time" name="start_time"
+                                       placeholder="HH:MM 24 hr format"/>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="time" class="form-control" id="end_time" name="end_time"
+                                       placeholder="HH:MM 24 hr format"/>
+                            </div>
                         </div>
                         <div class="form-row p-2 text-center">
                             <input type="button" class="action-button btn btn-primary" id="add_availability"
@@ -240,6 +242,12 @@
                                     <td>{{item.day_of_week}}</td>
                                     <td>{{item.start_time}}</td>
                                     <td>{{item.end_time}}</td>
+                                    <td>
+                                        <a href="#"
+                                           onclick="delete_availability({{item.pk}})">
+                                            <i class="bi bi-trash" style="color:red"></i>
+                                        </a>
+                                    </td>
                                 </tr>
                                 {% endfor %}
                             </table>
@@ -331,6 +339,27 @@
 
 <script>
 
+$("#sports").change(function () {
+        var selected_type_value = $("#sports option:selected");
+        var selected_type_text = selected_type_value.text();
+        $.ajax({
+            type: "POST",
+            url: '{% url "EventsApp:get_selected_sports_positions" %}',
+            data: {
+                'selected_type_text': selected_type_text,
+                'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
+            },
+            success: function (data) {
+                let html_data = '<option selected disabled>Choose Position</option>';
+                data.forEach(function (data) {
+                    html_data += `<option value="${data.position_type}">${data.position_type}</option>`
+                });
+                $("#position").html(html_data);
+            }
+        });
+    });
+
+
 $("#add_availability").click(function(e) {
     e.preventDefault();
     var day_of_week_value = $("#day_of_week option:selected");
@@ -385,11 +414,39 @@ function getUserAvailability(){
                 html_data += `<td>${data.day_of_week}</td>`;
                 html_data += `<td>${data.start_time}</td>`;
                 html_data += `<td>${data.end_time}</td>`;
+                html_data += `<td>`;
+                html_data += `<a href="#" onclick="delete_availability(${data.pk})">`;
+                html_data += `<i class="bi bi-trash" style="color:red"></i>`;
+                html_data += `</a>`;
+                html_data += `</td>`;
                 html_data += `</tr>`;
             });
             html_data += `</table>`;
             let tableData = document.getElementById("availability_table");
             tableData.innerHTML = html_data;
+        }
+    });
+}
+
+
+function delete_availability(availability_id){
+    console.log(availability_id);
+    $.ajax({
+        type: "POST",
+        url: '{% url "EventsApp:delete_availability" %}',
+        data: {
+            'id': availability_id,
+            'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
+        },
+        success: function (data) {
+            console.log(data["status"]);
+            let html_data = `<div class="alert alert-warning alert-dismissible fade show" role="alert">`;
+            html_data += `${data["status"]}`;
+            html_data += `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+            html_data += `</div>`;
+            let status = document.getElementById("availability_status");
+            status.innerHTML = html_data;
+            getUserAvailability();
         }
     });
 }

@@ -881,7 +881,7 @@ def get_user_availability(request):
     if request.is_ajax():
         user = User.objects.get(email=request.user.email)
         user_availability = Availability.objects.filter(user=user)
-        user_availability = list(user_availability.values("day_of_week", "start_time", "end_time"))
+        user_availability = list(user_availability.values("day_of_week", "start_time", "end_time", "pk"))
         for avail in user_availability:
             if avail["day_of_week"] == 1:
                 avail["day_of_week"] = "Monday"
@@ -948,6 +948,18 @@ def check_duplicate_availability(user_avaiability, new_availability):
             return True
 
     return False
+
+
+@login_required
+def delete_availability(request):
+    if request.POST:
+        try:
+            id = request.POST['id']
+            avail = Availability.objects.get(pk=id)
+            avail.delete()
+            return JsonResponse({'status': 'Availability removed successfully!'}, safe=False)
+        except:
+            return JsonResponse({'status': 'Some error occurred!'}, safe=False)
 
 
 @login_required
@@ -1169,17 +1181,7 @@ def invite(request):
     return render(request, "EventsApp/invite.html", context)
 
 
-@login_required
-def delete_availability(request, id):
-    try:
-        avail = Availability.objects.get(pk=id)
-        avail.delete()
-        messages.success(request, "Availability removed successfully!")
 
-    except:
-        print("Some error occurred!")
-
-    return redirect('EventsApp:add_availability')
 
 
 @login_required
