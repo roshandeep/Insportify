@@ -618,8 +618,11 @@ def get_recommended_events(request):
         loc_list.append(item.city.lower())
 
     for event in recommended_events:
+        print(event.event_title, event.city)
         if event.city:
+            # print(event.event_title, event.city.lower())
             if event.city.lower() not in loc_list:
+                # print(event.event_title, event.city.lower(), loc_list)
                 recommended_events.remove(event)
 
     recommended_events = list(recommended_events)
@@ -650,15 +653,18 @@ def get_recommended_events(request):
     if user.is_individual:
         individual = Individual.objects.get(user=user)
         individual_gender = individual.participation_interest.split(",")
+        # print(individual_gender)
         for event in recommended_events:
             flag = 0
             if event.gender:
                 gender_list = event.gender.split(",")
                 for item in individual_gender:
                     if item in gender_list:
-                        flag = 1
+                        flag = flag + 1
+                        # print(event.event_title, gender_list, individual_gender, flag, item)
 
                 if flag == 0:
+                    # print(event.event_title, gender_list, individual_gender, flag)
                     recommended_events.remove(event)
 
     print("Gender Filter", recommended_events)
