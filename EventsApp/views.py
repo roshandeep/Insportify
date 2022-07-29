@@ -960,35 +960,35 @@ def delete_availability(request):
             return JsonResponse({'status': 'Some error occurred!'}, safe=False)
 
 
-@login_required
-def notifications(request):
-    context = {}
-    form = AvailabilityForm(request.POST or None,
-                            instance=Availability(),
-                            initial={'user': request.user})
-
-    context['form'] = form
-    user = User.objects.get(email=request.user.email)
-    user_avaiability = Availability.objects.filter(user=user)
-    get_day_of_week(user_avaiability)
-
-    context["user_availability"] = user_avaiability
-
-    if request.POST:
-        if form.is_valid():
-            obj = Availability(user=user,
-                               day_of_week=form.cleaned_data['day_of_week'],
-                               start_time=form.cleaned_data['start_time'],
-                               end_time=form.cleaned_data['end_time'])
-            obj.save()
-            user_avaiability = Availability.objects.filter(user=user)
-            get_day_of_week(user_avaiability)
-            context["user_availability"] = user_avaiability
-            messages.success(request, "New Availability Added!")
-        else:
-            print(form.errors)
-
-    return render(request, "EventsApp/add_availability.html", context)
+# @login_required
+# def notifications(request):
+#     context = {}
+#     form = AvailabilityForm(request.POST or None,
+#                             instance=Availability(),
+#                             initial={'user': request.user})
+#
+#     context['form'] = form
+#     user = User.objects.get(email=request.user.email)
+#     user_avaiability = Availability.objects.filter(user=user)
+#     get_day_of_week(user_avaiability)
+#
+#     context["user_availability"] = user_avaiability
+#
+#     if request.POST:
+#         if form.is_valid():
+#             obj = Availability(user=user,
+#                                day_of_week=form.cleaned_data['day_of_week'],
+#                                start_time=form.cleaned_data['start_time'],
+#                                end_time=form.cleaned_data['end_time'])
+#             obj.save()
+#             user_avaiability = Availability.objects.filter(user=user)
+#             get_day_of_week(user_avaiability)
+#             context["user_availability"] = user_avaiability
+#             messages.success(request, "New Availability Added!")
+#         else:
+#             print(form.errors)
+#
+#     return render(request, "EventsApp/add_availability.html", context)
 
 
 def get_day_of_week(user_avaiability):
