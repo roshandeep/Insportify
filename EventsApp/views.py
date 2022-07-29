@@ -284,9 +284,13 @@ def add_sports_positions(request):
         selected_skill = request.POST['selected_skill_text']
         # print(selected_skill, selected_position, selected_sport)
         try:
-            obj = Secondary_SportsChoice(user=request.user, sport_type=selected_sport,
-                                         position=selected_position, skill=selected_skill)
-            obj.save()
+            if Secondary_SportsChoice.objects.filter(user=request.user, sport_type=selected_sport,
+                                             position=selected_position, skill=selected_skill).exists():
+                return JsonResponse({'status': 'Duplicate Position cannot be added!'}, safe=False)
+            else:
+                obj = Secondary_SportsChoice(user=request.user, sport_type=selected_sport,
+                                             position=selected_position, skill=selected_skill)
+                obj.save()
             return JsonResponse({'status': 'New Position added!'}, safe=False)
         except Exception:
             return JsonResponse({'status': 'An error occured!'}, safe=False)
@@ -315,11 +319,15 @@ def add_user_locations(request):
         selected_city = request.POST['selected_city_text']
         selected_province = request.POST['selected_province_text']
         selected_country = request.POST['selected_country_text']
-        print(selected_city, selected_province, selected_country)
+        # print(selected_city, selected_province, selected_country)
         try:
-            obj = Extra_Loctaions(user=request.user, city=selected_city,
-                                         province=selected_province, country=selected_country)
-            obj.save()
+            if Extra_Loctaions.objects.filter(user=request.user, city=selected_city,
+                                             province=selected_province, country=selected_country).exists():
+                return JsonResponse({'status': 'Duplicate Location cannot be added!'}, safe=False)
+            else:
+                obj = Extra_Loctaions(user=request.user, city=selected_city,
+                                             province=selected_province, country=selected_country)
+                obj.save()
             return JsonResponse({'status': 'New Location added!'}, safe=False)
         except Exception:
             return JsonResponse({'status': 'An error occured!'}, safe=False)
