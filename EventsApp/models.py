@@ -264,7 +264,7 @@ class Extra_Loctaions(models.Model):
     country = models.CharField(max_length=250, blank=True, null=True)
 
     def __str__(self):
-        return self.user.first_name + " Location_" + str(self.location_number)
+        return self.user.first_name + " Location_" + str(self.pk)
 
 
 class Secondary_SportsChoice(models.Model):

@@ -183,8 +183,8 @@ def user_profile(request):
         'user': request.user
     }
     sports_type = SportsType.objects.all().order_by('sports_type_text')
-    sec_sport_choices = Secondary_SportsChoice.objects.filter(user=request.user).order_by("sport_entry_number")
-    locations = Extra_Loctaions.objects.filter(user=request.user).order_by("location_number")
+    sec_sport_choices = Secondary_SportsChoice.objects.filter(user=request.user).order_by("sport_type")
+    locations = Extra_Loctaions.objects.filter(user=request.user).order_by("city")
     user_avaiability = Availability.objects.filter(user=request.user)
     get_day_of_week(user_avaiability)
     context['sports_type'] = sports_type
@@ -223,25 +223,18 @@ def user_profile(request):
                 individual.participation_interest = ','.join(item for item in request.POST.getlist('interest_gender'))
             if response["city"]:
                 individual.city = response["city"].strip() if response["city"] else ""
-                response["city0"] = response["city"].strip() if response["city"] else ""
             if response["province"]:
                 individual.province = response["province"].strip() if response["province"] else ""
-                response["province0"] = response["province"].strip() if response["province"] else ""
             if response["country"]:
                 individual.country = response["country"].strip() if response["country"] else ""
-                response["country0"] = response["country"].strip() if response["country"] else ""
             if response["contact_email"]:
                 individual.contact_email = response["contact_email"].strip() if response["contact_email"] else ""
             if response["sport_type"]:
                 individual.sports_type = response["sport_type"].strip() if response["sport_type"] else ""
-                response["type_0"] = response["sport_type"].strip() if response["sport_type"] else ""
             if response["position"]:
                 individual.sports_position = response["position"].strip() if response["position"] else ""
-                response["position_0"] = response["position"].strip() if response["position"] else ""
             if response["skill"]:
                 individual.sports_skill = response["skill"].strip() if response["skill"] else ""
-                response["skill_0"] = response["skill"].strip() if response["skill"] else ""
-            update_secondary_locations(request.user, response)
             individual.save()
             context['individual'] = individual
         else:
@@ -267,23 +260,16 @@ def user_profile(request):
                 obj.participation_interest = ','.join(item for item in request.POST.getlist('interest_gender'))
             if response["city"]:
                 obj.city = response["city"].strip() if response["city"] else ""
-                response["city0"] = response["city"].strip() if response["city"] else ""
             if response["province"]:
                 obj.province = response["province"].strip() if response["province"] else ""
-                response["province0"] = response["province"].strip() if response["province"] else ""
             if response["country"]:
                 obj.country = response["country"].strip() if response["country"] else ""
-                response["country0"] = response["country"].strip() if response["country"] else ""
             if response["sport_type"]:
                 obj.sports_type = response["sport_type"].strip() if response["sport_type"] else ""
-                response["type_0"] = response["sport_type"].strip() if response["sport_type"] else ""
             if response["position"]:
                 obj.sports_position = response["position"].strip() if response["position"] else ""
-                response["position_0"] = response["position"].strip() if response["position"] else ""
             if response["skill"]:
                 obj.sports_skill = response["skill"].strip() if response["skill"] else ""
-                response["skill_0"] = response["skill"].strip() if response["skill"] else ""
-            save_secondary_locations(request.user, response)
             obj.save()
             context['individual'] = obj
         messages.success(request, 'Individual details updated!')
@@ -324,34 +310,39 @@ def delete_sports_choice(request):
             return JsonResponse({'status': 'Some error occurred!'}, safe=False)
 
 
-def update_secondary_locations(user, response):
-    # print("Update Old Locs")
-    for i in range(0, 5):
-        obj = Extra_Loctaions.objects.filter(user=user, location_number=i).exists()
-        if obj:
-            obj = Extra_Loctaions.objects.get(user=user, location_number=i)
-            if 'city' + str(i) in response:
-                obj.city = response['city' + str(i)].strip()
-                obj.province = response['province' + str(i)].strip()
-                obj.country = response['country' + str(i)].strip()
-                obj.save()
-        else:
-            if 'city' + str(i) in response:
-                city = response['city' + str(i)].strip()
-                province = response['province' + str(i)].strip()
-                country = response['country' + str(i)].strip()
-                obj = Extra_Loctaions(user=user, city=city, province=province, country=country, location_number=i)
-                obj.save()
-
-
-def save_secondary_locations(user, response):
-    for i in range(0, 5):
-        if 'city' + str(i) in response:
-            city = response['city' + str(i)].strip()
-            province = response['province' + str(i)].strip()
-            country = response['country' + str(i)].strip()
-            obj = Extra_Loctaions(user=user, city=city, province=province, country=country, location_number=i)
+def add_user_locations(request):
+    if request.method == "POST":
+        selected_city = request.POST['selected_city_text']
+        selected_province = request.POST['selected_province_text']
+        selected_country = request.POST['selected_country_text']
+        print(selected_city, selected_province, selected_country)
+        try:
+            obj = Extra_Loctaions(user=request.user, city=selected_city,
+                                         province=selected_province, country=selected_country)
             obj.save()
+            return JsonResponse({'status': 'New Location added!'}, safe=False)
+        except Exception:
+            return JsonResponse({'status': 'An error occured!'}, safe=False)
+
+
+def fetch_user_locations(request):
+    if request.is_ajax():
+        location_choices = Extra_Loctaions.objects.filter(user=request.user).order_by("city")
+        location_choices = list(location_choices.values("city", "province", "country", "pk"))
+        return JsonResponse(location_choices, safe=False)
+
+
+def delete_user_location(request):
+    if request.POST:
+        try:
+            id = request.POST['id']
+            print(id)
+            obj = Extra_Loctaions.objects.get(pk=id)
+            print(obj)
+            obj.delete()
+            return JsonResponse({'status': 'Location removed successfully!'}, safe=False)
+        except:
+            return JsonResponse({'status': 'Some error occurred!'}, safe=False)
 
 
 def get_selected_sports_type(request):

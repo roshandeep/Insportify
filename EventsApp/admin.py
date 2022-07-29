@@ -30,14 +30,14 @@ admin.site.register(Events_PositionInfo, Events_PositionInfoAdmin)
 
 
 class Secondary_SportsChoiceAdmin(admin.ModelAdmin):
-    list_display = ('user', 'sport_entry_number', 'sport_type', 'position',)
+    list_display = ('user', 'sport_type', 'position',)
 
 
 admin.site.register(Secondary_SportsChoice, Secondary_SportsChoiceAdmin)
 
 
 class Extra_LoctaionsAdmin(admin.ModelAdmin):
-    list_display = ('user', 'location_number', 'city', 'province', 'country',)
+    list_display = ('user', 'city', 'province', 'country',)
 
 
 admin.site.register(Extra_Loctaions, Extra_LoctaionsAdmin)
