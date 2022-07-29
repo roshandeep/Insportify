@@ -143,6 +143,9 @@
                         {{user.first_name }} ,
                         add sports you play and the ones you would love to play</h4>
                     <div class="card-body">
+                        <div id="position_status">
+
+                        </div>
                         <div class="form-row p-2">
                             <select name='sport_type' id="sports" class="form-select"
                                     aria-label=".form-select-lg example">
@@ -169,22 +172,29 @@
                         </div>
                         <div class="form-row p-2 text-center">
                             <div id="input_fields">
-                                <button class="btn btn-primary"
-                                        id="add_button">Add Position
-                                </button>
+                                <input type="button" class="action-button btn btn-primary"
+                                        id="add_positions" value="Add Position" />
                             </div>
                         </div>
                         <div>
                             <h5>Your Saved Sport Preferences</h5>
+                            <div id="sports_position_table">
                             <table class="table table-striped">
                                 {% for item in sec_sport_choices %}
                                 <tr>
                                     <td>{{item.sport_type}}</td>
                                     <td>{{item.position}}</td>
                                     <td>{{item.skill}}</td>
+                                    <td>
+                                        <a href="#"
+                                           onclick="delete_sports_choice({{item.pk}})">
+                                            <i class="bi bi-trash" style="color:red"></i>
+                                        </a>
+                                    </td>
                                 </tr>
                                 {% endfor %}
                             </table>
+                            </div>
                         </div>
                         <div class="form-row p-2 text-center">
                             <input type="button" name="previous"
@@ -359,6 +369,85 @@ $("#sports").change(function () {
         });
     });
 
+
+$("#add_positions").click(function (e) {
+        e.preventDefault();
+        var selected_skill_value = $("#skill option:selected");
+        var selected_skill_text = selected_skill_value.text();
+        var selected_position_value = $("#position option:selected");
+        var selected_position_text = selected_position_value.text();
+        var selected_sport_value = $("#sports option:selected");
+        var selected_sport_text = selected_sport_value.text();
+        $.ajax({
+            type: "POST",
+            url: '{% url "EventsApp:add_sports_positions" %}',
+            data: {
+                'selected_sport_text': selected_sport_text,
+                'selected_position_text': selected_position_text,
+                'selected_skill_text': selected_skill_text,
+                'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
+            },
+            success: function (data) {
+                console.log(data["status"]);
+                let html_data = `<div class="alert alert-warning alert-dismissible fade show" role="alert">`;
+                html_data += `${data["status"]}`;
+                html_data += `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+                html_data += `</div>`;
+                let status = document.getElementById("position_status");
+                status.innerHTML = html_data;
+                fetchUserSportChoices();
+            }
+        });
+    });
+
+function fetchUserSportChoices(){
+    $.ajax({
+        type: "GET",
+        async:false,
+        url: '{% url "EventsApp:fetch_user_sports_positions" %}',
+        success: function (data) {
+            console.log(data);
+            let html_data = `<table class="table table-striped">`;
+            data.forEach(function (data) {
+                html_data += `<tr>`;
+                html_data += `<td>${data.sport_type}</td>`;
+                html_data += `<td>${data.position}</td>`;
+                html_data += `<td>${data.skill}</td>`;
+                html_data += `<td>`;
+                html_data += `<a href="#" onclick="delete_sports_choice(${data.pk})">`;
+                html_data += `<i class="bi bi-trash" style="color:red"></i>`;
+                html_data += `</a>`;
+                html_data += `</td>`;
+                html_data += `</tr>`;
+            });
+            html_data += `</table>`;
+            let tableData = document.getElementById("sports_position_table");
+            tableData.innerHTML = html_data;
+        }
+    });
+}
+
+function delete_sports_choice(sport_choice_id){
+    console.log(sport_choice_id);
+    $.ajax({
+        type: "POST",
+        url: '{% url "EventsApp:delete_sports_choice" %}',
+        data: {
+            'id': sport_choice_id,
+            'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
+        },
+        success: function (data) {
+            console.log(data["status"]);
+            let html_data = `<div class="alert alert-warning alert-dismissible fade show" role="alert">`;
+            html_data += `${data["status"]}`;
+            html_data += `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+            html_data += `</div>`;
+            let status = document.getElementById("position_status");
+            status.innerHTML = html_data;
+            fetchUserSportChoices();
+        }
+    });
+}
 
 $("#add_availability").click(function(e) {
     e.preventDefault();

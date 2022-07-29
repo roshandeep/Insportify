@@ -275,7 +275,7 @@ class Secondary_SportsChoice(models.Model):
     skill = models.CharField(max_length=30, blank=True, null=True)
 
     def __str__(self):
-        return self.user.first_name + " Sport_Choice_" + str(self.sport_entry_number)
+        return self.user.first_name + " Sport_Choice_" + str(self.pk)
 
 
 class SportsImage(models.Model):

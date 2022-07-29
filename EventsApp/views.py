@@ -242,7 +242,6 @@ def user_profile(request):
                 individual.sports_skill = response["skill"].strip() if response["skill"] else ""
                 response["skill_0"] = response["skill"].strip() if response["skill"] else ""
             update_secondary_locations(request.user, response)
-            save_secondary_sports_info(request.user, response)
             individual.save()
             context['individual'] = individual
         else:
@@ -285,7 +284,6 @@ def user_profile(request):
                 obj.sports_skill = response["skill"].strip() if response["skill"] else ""
                 response["skill_0"] = response["skill"].strip() if response["skill"] else ""
             save_secondary_locations(request.user, response)
-            save_secondary_sports_info(request.user, response)
             obj.save()
             context['individual'] = obj
         messages.success(request, 'Individual details updated!')
@@ -293,36 +291,37 @@ def user_profile(request):
     return render(request, 'registration/individual_view.html', context)
 
 
-def save_secondary_sports_info(user, response):
-    obj = Secondary_SportsChoice.objects.filter(user=user).exists()
-    print(response)
-    if obj:
-        for i in range(0, 4):
-            obj = Secondary_SportsChoice.objects.filter(user=user, sport_entry_number=i).exists()
-            if obj:
-                obj = Secondary_SportsChoice.objects.get(user=user, sport_entry_number=i)
-                if 'type_' + str(i) in response:
-                    obj.sport_type = response['type_' + str(i)].strip()
-                    obj.position = response['position_' + str(i)].strip()
-                    obj.skill = response['skill_' + str(i)].strip()
-                    obj.save()
-            else:
-                if 'type_' + str(i) in response:
-                    sport_type = response['type_' + str(i)].strip()
-                    position = response['position_' + str(i)].strip()
-                    skill = response['skill_' + str(i)].strip()
-                    newobj = Secondary_SportsChoice(user=user, sport_type=sport_type,
-                                                    position=position, sport_entry_number=i, skill=skill)
-                    newobj.save()
-    else:
-        for i in range(0, 4):
-            if 'type_' + str(i) in response:
-                sport_type = response['type_' + str(i)].strip()
-                position = response['position_' + str(i)].strip()
-                skill = response['skill_' + str(i)].strip()
-                obj = Secondary_SportsChoice(user=user, sport_type=sport_type,
-                                             position=position, sport_entry_number=i, skill=skill)
-                obj.save()
+def add_sports_positions(request):
+    if request.method == "POST":
+        selected_sport = request.POST['selected_sport_text']
+        selected_position = request.POST['selected_position_text']
+        selected_skill = request.POST['selected_skill_text']
+        # print(selected_skill, selected_position, selected_sport)
+        try:
+            obj = Secondary_SportsChoice(user=request.user, sport_type=selected_sport,
+                                         position=selected_position, skill=selected_skill)
+            obj.save()
+            return JsonResponse({'status': 'New Position added!'}, safe=False)
+        except Exception:
+            return JsonResponse({'status': 'An error occured!'}, safe=False)
+
+
+def fetch_user_sports_positions(request):
+    if request.is_ajax():
+        position_choices = Secondary_SportsChoice.objects.filter(user=request.user).order_by("sport_type")
+        position_choices = list(position_choices.values("sport_type", "position", "skill", "pk"))
+        return JsonResponse(position_choices, safe=False)
+
+
+def delete_sports_choice(request):
+    if request.POST:
+        try:
+            id = request.POST['id']
+            obj = Secondary_SportsChoice.objects.get(pk=id)
+            obj.delete()
+            return JsonResponse({'status': 'Sports Choice removed successfully!'}, safe=False)
+        except:
+            return JsonResponse({'status': 'Some error occurred!'}, safe=False)
 
 
 def update_secondary_locations(user, response):
