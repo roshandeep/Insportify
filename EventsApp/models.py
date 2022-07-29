@@ -258,7 +258,6 @@ class Events_PositionInfo(models.Model):
 
 class Extra_Loctaions(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    location_number = models.IntegerField(blank=True, null=True)
     city = models.CharField(max_length=50, blank=True, null=True)
     province = models.CharField(max_length=100, blank=True, null=True)
     country = models.CharField(max_length=250, blank=True, null=True)
@@ -269,7 +268,6 @@ class Extra_Loctaions(models.Model):
 
 class Secondary_SportsChoice(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    sport_entry_number = models.IntegerField(blank=True, null=True)
     sport_type = models.CharField(max_length=30, blank=True, null=True)
     position = models.CharField(max_length=30, blank=True, null=True)
     skill = models.CharField(max_length=30, blank=True, null=True)

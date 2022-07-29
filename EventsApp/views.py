@@ -664,7 +664,7 @@ def get_recommended_events(request):
 
     # FILTER BY Sports
     if user.is_individual:
-        sport_choices = Secondary_SportsChoice.objects.filter(user=user).order_by("sport_entry_number")
+        sport_choices = Secondary_SportsChoice.objects.filter(user=user).order_by("sport_type")
         sports_list = []
         for item in sport_choices:
             sports_list.append(item.sport_type)
