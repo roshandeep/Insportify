@@ -31,7 +31,7 @@ def multistep(request):
         values_valid = ValidateFormValues(request)
         # Handle Form Post
         if form.is_valid() and values_valid:
-            print(list(request.POST.items()))
+            # print(list(request.POST.items()))
             # Save data
             obj = form.save(commit=False)
             obj.created_by = request.user
@@ -344,9 +344,8 @@ def delete_user_location(request):
     if request.POST:
         try:
             id = request.POST['id']
-            print(id)
+            # print(id)
             obj = Extra_Loctaions.objects.get(pk=id)
-            print(obj)
             obj.delete()
             return JsonResponse({'status': 'Location removed successfully!'}, safe=False)
         except:
@@ -597,10 +596,10 @@ def get_recommended_events(request):
 
                 for i in range((end_datetime - start_datetime).days):
                     days_between = calendar.day_name[(start_datetime + timedelta(days=i + 1)).weekday()]
-                    print(days_between)
+                    # print(days_between)
                     for avail in user_avaiability:
                         if week_days[avail.day_of_week - 1] == days_between:
-                            if avail.start_time <= end_datetime.time() or avail.end_time >= start_datetime.time():
+                            if avail.start_time <= end_datetime.time() and avail.end_time >= start_datetime.time():
                                 recommended_events.add(event)
 
             else:
@@ -614,7 +613,7 @@ def get_recommended_events(request):
 
     # FILTER BY Location
     for event in recommended_events[:]:
-        if event.city != "":
+        if event.city is not None:
             if event.city.lower() not in loc_list:
                 recommended_events.remove(event)
 
@@ -941,8 +940,8 @@ def check_duplicate_availability(user_avaiability, new_availability):
 
     for avail in user_avaiability:
         if avail.day_of_week == int(new_availability.day_of_week) and \
-                avail.start_time.strftime("%H:%M") == new_availability.start_time and \
-                avail.end_time.strftime("%H:%M") == new_availability.end_time:
+                (new_availability.start_time >= avail.start_time.strftime("%H:%M") or \
+                new_availability.end_time <= avail.end_time.strftime("%H:%M")):
             return True
 
     return False
@@ -1043,7 +1042,7 @@ def load_pos_skill_type():
                                        sports_type=sports_type,
                                        position_type=position,
                                        skill_type=skill)
-            print(i, sports_category, sports_type, obj)
+            # print(i, sports_category, sports_type, obj)
             obj.save()
         except SportsType.DoesNotExist:
             s = SportsType(sports_category=sports_category,
