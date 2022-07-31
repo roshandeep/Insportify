@@ -588,19 +588,22 @@ def get_recommended_events(request):
     # FILTER by DateTime
     # If there is no user availability then add all events to recommended events
     if len(user_avaiability):
+        # print(user_avaiability)
         for event in events:
             if event.datetimes:
                 time = event.datetimes.split("-")
-                start_datetime = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
-                end_datetime = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p')
+                event_start_datetime = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
+                event_end_datetime = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p')
+                # Considering single day events only
+                event_date = event_start_datetime.date()
+                event_start_time = event_start_datetime.time()
+                event_end_time = event_end_datetime.time()
 
-                for i in range((end_datetime - start_datetime).days):
-                    days_between = calendar.day_name[(start_datetime + timedelta(days=i + 1)).weekday()]
-                    # print(days_between)
-                    for avail in user_avaiability:
-                        if week_days[avail.day_of_week - 1] == days_between:
-                            if avail.start_time <= end_datetime.time() and avail.end_time >= start_datetime.time():
-                                recommended_events.add(event)
+                for avail in user_avaiability:
+                    if avail.day_of_week == (event_date.weekday() + 1):
+                        print(event.event_title, avail.start_time, avail.end_time, event_start_time, event_end_time)
+                        if event_start_time >= avail.start_time and event_end_time <= avail.end_time:
+                            recommended_events.add(event)
 
             else:
                 recommended_events.add(event)
