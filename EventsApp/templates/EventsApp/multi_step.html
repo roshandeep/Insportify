@@ -39,7 +39,7 @@
                             <input type="text" class="form-control" name="description" placeholder="* Description"/>
                         </div>
                         <div class="form-row p-2" id="event_type">
-                            <select class="form-select" name="event_type">
+                            <select class="form-select select2" name="event_type" style="width:100%">
                                 <option value="" selected="selected">* Select Event Type</option>
                                 <option value="Camp">Camp</option>
                                 <option value="Charity">Charity</option>
@@ -56,7 +56,7 @@
                             <label>Gender</label>
                             <input type="checkbox" id="Male" name="gender" value="Male"> Male Only</input>
                             <input type="checkbox" id="Female" name="gender" value="Female"> Female Only </input>
-                            <input type="checkbox" id="Coed" name="gender" value="Coed"> Coed Only </input>
+                            <input type="checkbox" id="Coed" name="gender" value="Coed"> Coed </input>
                         </div>
                         <div class="form-row p-2">
                             <label>* Is this a recurring event? &nbsp &nbsp</label>
@@ -77,65 +77,177 @@
                             </select>
                         </div>
                         <div class="form-row p-2" id="Monday_dates" style="display:None">
-                            <label>Monday: Select Start and End Date &nbsp &nbsp</label>
-                            <div class="form-row p-2">
-                                <input type="text" class="form-control datetime" name="datetimes_monday"
-                                       placeholder="Date & Time"/>
+                            <label style="font-style:italic">Mondays: Select Start and End Date &nbsp &nbsp</label>
+                            <div class="form-group row p-2">
+                                <div class="col-md-6">
+                                    <input type="text" name="datetimes_monday_date" id="datetimes_monday_date"
+                                           placeholder="Event Date" class="form-control daterange-mon" />
+                                </div>
+                                 <div class="col-md-3">
+                                     <input type="text" onfocus="(this.type='time')" onblur="(this.type='text')"
+                                            id="datetimes_monday_start_time"
+                                            name="datetimes_monday_start_time" class="form-control timepicker" placeholder="Start Time"/>
+                                 </div>
+                                 <div class="col-md-3">
+                                     <input type="text" onfocus="(this.type='time')" onblur="(this.type='text')"
+                                            id="datetimes_monday_end_time"
+                                            name="datetimes_monday_end_time" class="form-control timepicker" placeholder="End Time"/>
+                                 </div>
                             </div>
+<!--                            <div class="form-row p-2">-->
+<!--                                <input type="text" class="form-control datetime" name="datetimes_monday"-->
+<!--                                       placeholder="Date & Time"/>-->
+<!--                            </div>-->
                         </div>
                         <div class="form-row p-2" id="Tuesday_dates" style="display:None">
                             <label>Tuesday: Select Start and End Date &nbsp &nbsp</label>
-                            <div class="form-row p-2">
-                                <input type="text" class="form-control datetime" name="datetimes_tuesday"
-                                       placeholder="Date & Time"/>
+                            <div class="form-group row p-2">
+                                <div class="col-md-6">
+                                    <input type="text" name="datetimes_tuesday_date" id="datetimes_tuesday_date"
+                                           placeholder="Event Date" class="form-control daterange-tue" />
+                                </div>
+                                 <div class="col-md-3">
+                                     <input type="text" onfocus="(this.type='time')" onblur="(this.type='text')"
+                                            id="datetimes_tuesday_start_time"
+                                            name="datetimes_tuesday_start_time" class="form-control timepicker" placeholder="Start Time"/>
+                                 </div>
+                                 <div class="col-md-3">
+                                     <input type="text" onfocus="(this.type='time')" onblur="(this.type='text')"
+                                            id="datetimes_tuesday_end_time"
+                                            name="datetimes_tuesday_end_time" class="form-control timepicker" placeholder="End Time"/>
+                                 </div>
                             </div>
+<!--                            <div class="form-row p-2">-->
+<!--                                <input type="text" class="form-control datetime" name="datetimes_tuesday"-->
+<!--                                       placeholder="Date & Time"/>-->
+<!--                            </div>-->
                         </div>
                         <div class="form-row p-2" id="Wednesday_dates" style="display:None">
                             <label>Wednesday: Select Start and End Date &nbsp &nbsp</label>
-                            <div class="form-row p-2">
-                                <input type="text" class="form-control datetime" name="datetimes_wednesday"
-                                       placeholder="Date & Time"/>
+                            <div class="form-group row p-2">
+                                <div class="col-md-6">
+                                    <input type="text" name="datetimes_wednesday_date" id="datetimes_wednesday_date"
+                                           placeholder="Event Date" class="form-control daterange-wed" />
+                                </div>
+                                 <div class="col-md-3">
+                                     <input type="text" onfocus="(this.type='time')" onblur="(this.type='text')"
+                                            id="datetimes_wednesday_start_time"
+                                            name="datetimes_wednesday_start_time" class="form-control timepicker" placeholder="Start Time"/>
+                                 </div>
+                                 <div class="col-md-3">
+                                     <input type="text" onfocus="(this.type='time')" onblur="(this.type='text')"
+                                            id="datetimes_wednesday_end_time"
+                                            name="datetimes_wednesday_end_time" class="form-control timepicker" placeholder="End Time"/>
+                                 </div>
                             </div>
+<!--                            <div class="form-row p-2">-->
+<!--                                <input type="text" class="form-control datetime" name="datetimes_wednesday"-->
+<!--                                       placeholder="Date & Time"/>-->
+<!--                            </div>-->
                         </div>
                         <div class="form-row p-2" id="Thursday_dates" style="display:None">
                             <label>Thursday: Select Start and End Date &nbsp &nbsp</label>
-                            <div class="form-row p-2">
-                                <input type="text" class="form-control datetime" name="datetimes_thursday"
-                                       placeholder="Date & Time"/>
+                            <div class="form-group row p-2">
+                                <div class="col-md-6">
+                                    <input type="text" name="datetimes_thursday_date" id="datetimes_thursday_date"
+                                           placeholder="Event Date" class="form-control daterange-thu" />
+                                </div>
+                                 <div class="col-md-3">
+                                     <input type="text" onfocus="(this.type='time')" onblur="(this.type='text')"
+                                            id="datetimes_thursday_start_time"
+                                            name="datetimes_thursday_start_time" class="form-control timepicker" placeholder="Start Time"/>
+                                 </div>
+                                 <div class="col-md-3">
+                                     <input type="text" onfocus="(this.type='time')" onblur="(this.type='text')"
+                                            id="datetimes_thursday_end_time"
+                                            name="datetimes_thursday_end_time" class="form-control timepicker" placeholder="End Time"/>
+                                 </div>
                             </div>
+<!--                            <div class="form-row p-2">-->
+<!--                                <input type="text" class="form-control datetime" name="datetimes_thursday"-->
+<!--                                       placeholder="Date & Time"/>-->
+<!--                            </div>-->
                         </div>
                         <div class="form-row p-2" id="Friday_dates" style="display:None">
                             <label>Friday: Select Start and End Date &nbsp &nbsp</label>
-                            <div class="form-row p-2">
-                                <input type="text" class="form-control datetime" name="datetimes_friday"
-                                       placeholder="Date & Time"/>
+                            <div class="form-group row p-2">
+                                <div class="col-md-6">
+                                    <input type="text" name="datetimes_friday_date" id="datetimes_friday_date"
+                                           placeholder="Event Date" class="form-control daterange-fri" />
+                                </div>
+                                 <div class="col-md-3">
+                                     <input type="text" onfocus="(this.type='time')" onblur="(this.type='text')"
+                                            id="datetimes_friday_start_time"
+                                            name="datetimes_friday_start_time" class="form-control timepicker" placeholder="Start Time"/>
+                                 </div>
+                                 <div class="col-md-3">
+                                     <input type="text" onfocus="(this.type='time')" onblur="(this.type='text')"
+                                            id="datetimes_friday_end_time"
+                                            name="datetimes_friday_end_time" class="form-control timepicker" placeholder="End Time"/>
+                                 </div>
                             </div>
+<!--                            <div class="form-row p-2">-->
+<!--                                <input type="text" class="form-control datetime" name="datetimes_friday"-->
+<!--                                       placeholder="Date & Time"/>-->
+<!--                            </div>-->
                         </div>
                         <div class="form-row p-2" id="Saturday_dates" style="display:None">
                             <label>Saturday: Select Start and End Date &nbsp &nbsp</label>
-                            <div class="form-row p-2">
-                                <input type="text" class="form-control datetime" name="datetimes_saturday"
-                                       placeholder="Date & Time"/>
+                            <div class="form-group row p-2">
+                                <div class="col-md-6">
+                                    <input type="text" name="datetimes_saturday_date" id="datetimes_saturday_date"
+                                           placeholder="Event Date" class="form-control daterange-sat" />
+                                </div>
+                                 <div class="col-md-3">
+                                     <input type="text" onfocus="(this.type='time')" onblur="(this.type='text')"
+                                            id="datetimes_saturday_start_time"
+                                            name="datetimes_saturday_start_time" class="form-control timepicker" placeholder="Start Time"/>
+                                 </div>
+                                 <div class="col-md-3">
+                                     <input type="text" onfocus="(this.type='time')" onblur="(this.type='text')"
+                                            id="datetimes_saturday_end_time"
+                                            name="datetimes_saturday_end_time" class="form-control timepicker" placeholder="End Time"/>
+                                 </div>
                             </div>
+<!--                            <div class="form-row p-2">-->
+<!--                                <input type="text" class="form-control datetime" name="datetimes_saturday"-->
+<!--                                       placeholder="Date & Time"/>-->
+<!--                            </div>-->
                         </div>
                         <div class="form-row p-2" id="Sunday_dates" style="display:None">
                             <label>Sunday: Select Start and End Date &nbsp &nbsp</label>
-                            <div class="form-row p-2">
-                                <input type="text" class="form-control datetime" name="datetimes_sunday"
-                                       placeholder="Date & Time"/>
+                            <div class="form-group row p-2">
+                                <div class="col-md-6">
+                                    <input type="text" name="datetimes_sunday_date" id="datetimes_sunday_date"
+                                           placeholder="Event Date" class="form-control daterange-sun" />
+                                </div>
+                                 <div class="col-md-3">
+                                     <input type="text" onfocus="(this.type='time')" onblur="(this.type='text')"
+                                            id="datetimes_sunday_start_time"
+                                            name="datetimes_sunday_start_time" class="form-control timepicker" placeholder="Start Time"/>
+                                 </div>
+                                 <div class="col-md-3">
+                                     <input type="text" onfocus="(this.type='time')" onblur="(this.type='text')"
+                                            id="datetimes_sunday_end_time"
+                                            name="datetimes_sunday_end_time" class="form-control timepicker" placeholder="End Time"/>
+                                 </div>
                             </div>
+<!--                            <div class="form-row p-2">-->
+<!--                                <input type="text" class="form-control datetime" name="datetimes_sunday"-->
+<!--                                       placeholder="Date & Time"/>-->
+<!--                            </div>-->
                         </div>
                         <div class="form-row p-2" id="Exception_dates" style="display:None">
                             <label>Enter Exceptions &nbsp &nbsp</label>
                             <div class="form-row p-2">
-                                <input type="text" class="form-control date" name="datetimes_exceptions"/>
+                                <input type="text" class="form-control date" name="datetimes_exceptions" id="datetimes_exceptions"/>
                             </div>
                         </div>
                         <div class="form-row p-2" id="single_dates" style="display:None">
                             <label>* Select Event Date &nbsp &nbsp</label>
                             <div class="form-group row p-2">
                                 <div class="col-md-4">
-                                    <input type="text" name="datetimes_date"
+                                    <input type="text" name="datetimes_date" id="datetimes_date"
                                            placeholder="Event Date" class="form-control datesingle" />
                                 </div>
                                  <div class="col-md-4">
@@ -166,8 +278,8 @@
                         style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">
                         Sports Information</h3>
                     <div class="card-body">
-                        <div class="form-row p-2">
-                            <select name='sport_type' id="sport_type" class="form-select"
+                        <div class="form-row p-2" id="sport_type_container">
+                            <select name='sport_type' id="sport_type" class="form-select select2"
                                     aria-label=".form-select-lg example">
                                 <option selected disabled>* Choose Sport</option>
                                 {% for type in sports_type %}
@@ -175,11 +287,11 @@
                                 {% endfor %}
                             </select>
                         </div>
-                        <div class="form-row p-2">
-                            <select name='position' class="form-select" id="position" aria-label=".form-select-lg example">
-                                <option selected disabled>* Choose Position</option>
-                            </select>
-                        </div>
+<!--                        <div class="form-row p-2">-->
+<!--                            <select name='position' class="form-select" id="position" aria-label=".form-select-lg example">-->
+<!--                                <option selected disabled>* Choose Position</option>-->
+<!--                            </select>-->
+<!--                        </div>-->
                         <div class="form-row p-2 text-center">
                             <div id="input_fields_wrap">
                             </div>
@@ -188,9 +300,9 @@
                             <input type="button" name="previous"
                                    class="previous action-button-previous btn btn-primary"
                                    value="Previous" id="previous-tab-2"/>
-                            <button class="btn btn-primary"
-                                        id="add_field_button">Add Position
-                                </button>
+<!--                            <button class="btn btn-primary"-->
+<!--                                        id="add_field_button">Add Position-->
+<!--                                </button>-->
                             <input type="button" name="next" class="next action-button btn btn-primary"
                                    value="Next" id="next-tab-2"/>
                         </div>
@@ -349,7 +461,6 @@ $("#venue").change(function () {
             },
             success: function (data) {
                 let html_data = data[0];
-                console.log(html_data["vm_venue_street"]);
                 $("#street").val(html_data["vm_venue_street"]);
                 $("#city").val(html_data["vm_venuecity"]);
                 $("#province").val(html_data["vm_venue_province"]);
@@ -357,6 +468,12 @@ $("#venue").change(function () {
                 $("#zip_code").val(html_data["vm_venue_zip"]);
             }
         });
+        var inputs = document.getElementsByTagName('input');
+        for (let i of inputs){
+            i.addEventListener('input', addInputLabel, false);
+            let event = new Event("input");
+            i.dispatchEvent(event);
+        }
     });
 
 $("#datetimes_start_time").change(function () {
@@ -369,6 +486,8 @@ $("#datetimes_start_time").change(function () {
 
 
 $("#sport_type").change(function () {
+        var index = 1;
+        $(".positions-container").remove();
         var selected_type_value = $("#sport_type option:selected");
         var selected_type_text = selected_type_value.text();
         $.ajax({
@@ -380,10 +499,50 @@ $("#sport_type").change(function () {
             },
             success: function (data) {
                 let html_data = '<option selected disabled>Choose Position</option>';
+                let html2 = '<div class="form-row p-2 text-center positions-container">';
+                html2 += '<div class="row g-2"><div class="col-md-2" style="font-style: italic;">Position</div>';
+                html2 += '<div class="col-md-2" style="font-style: italic;">* # of Positions</div>';
+                html2 += '<div class="col-md-2" style="font-style: italic;">* Cost</div>';
+                html2 += '<div class="col-md-2" style="font-style: italic;">* Min Age</div>';
+                html2 += '<div class="col-md-2" style="font-style: italic;">* Max Age</div>';
+                html2 += '<div class="col-md-2" style="font-style: italic;">* Skills</div></div>';
+
                 data.forEach(function (data) {
+                    var selected_position_value = data.position_type;
+                    var selected_type_value = $("#sport_type option:selected");
+                    var selected_type_text = selected_type_value.text();
+                    let skills_dropdown = '';
+                    $.ajax({
+                        async: false,
+                        type: "POST",
+                        url: '{% url "EventsApp:get_selected_sports_skill" %}',
+                        data: {
+                            'selected_position_text': selected_position_value,
+                            'selected_type_text': selected_type_text,
+                            'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
+                        },
+                        success: function (data) {
+                            skills_dropdown = '<select class="select2 form-control" name="type_of_skill'+index+'" multiple="multiple">';
+                            data.forEach(function (data) {
+                                skills_dropdown += `<option value="${data.skill_type}">${data.skill_type}</option>`;
+                            });
+                            skills_dropdown += '</select>';
+                        }
+                    });
+                    html2 += `<div class="row g-2"><label class="col-md-2 align-middle my-4"  style="font-weight: bold;">${data.position_type}</label>`
+                    html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2" name="no_of_position' + index + '" placeholder = "#" min=0></div>'
+                    html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2" name ="position_cost' + index + '" placeholder="$"></div>'
+                    html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2" name="min_age' + index + '" min=0></div>'
+                    html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2" name="max_age' + index + '" min=0 ></div>'
+                    html2 += `<div class="col-md-2 py-2">${skills_dropdown}</div>`
+                    html2 += `<div style="display:none"><input value="${data.position_type}" name="position_name${index}" value=></div>`
+                    html2 += '</div>'
                     html_data += `<option value="${data.position_type}">${data.position_type}</option>`
+                    index++;
                 });
-                $("#position").html(html_data);
+                html2 += '</div>'
+                $(html2).insertAfter($("#sport_type_container"));
+                $('.select2').select2();
             }
         });
     });
@@ -460,7 +619,7 @@ function sports_skill_dropdown(skill_field_id){
                 $("#" + skill_field_id).html(html_data);
             }
         });
-    }
+   }
 
 
 
@@ -514,7 +673,8 @@ $(function() {
   $('.datetime').val("");
 
   $('.date').datepicker({
-    multidate: true
+    multidate: true,
+    orientation: 'top'
   });
 
   $('.datesingle').daterangepicker({
@@ -524,6 +684,70 @@ $(function() {
     }
   });
 
+
+  $('.daterange-mon').daterangepicker({
+    timePicker: false,
+    isInvalidDate: function(date) {
+      return (date.day() != 1);
+    },
+    locale: {
+      format: 'MM/DD/YYYY'
+    }
+  });
+  $('.daterange-tue').daterangepicker({
+    timePicker: false,
+    isInvalidDate: function(date) {
+      return (date.day() != 2);
+    },
+    locale: {
+      format: 'MM/DD/YYYY'
+    }
+  });
+  $('.daterange-wed').daterangepicker({
+    timePicker: false,
+    isInvalidDate: function(date) {
+      return (date.day() != 3);
+    },
+    locale: {
+      format: 'MM/DD/YYYY'
+    }
+  });
+  $('.daterange-thu').daterangepicker({
+    timePicker: false,
+    isInvalidDate: function(date) {
+      return (date.day() != 4);
+    },
+    locale: {
+      format: 'MM/DD/YYYY'
+    }
+  });
+  $('.daterange-fri').daterangepicker({
+    timePicker: false,
+    isInvalidDate: function(date) {
+      return (date.day() != 5);
+    },
+    locale: {
+      format: 'MM/DD/YYYY'
+    }
+  });
+  $('.daterange-sat').daterangepicker({
+    timePicker: false,
+    isInvalidDate: function(date) {
+      return (date.day() != 6);
+    },
+    locale: {
+      format: 'MM/DD/YYYY'
+    }
+  });
+  $('.daterange-sun').daterangepicker({
+    timePicker: false,
+    isInvalidDate: function(date) {
+      return (date.day() != 0);
+    },
+    locale: {
+      format: 'MM/DD/YYYY'
+    }
+  });
 });
 
 
@@ -582,6 +806,40 @@ $(function () {
         });
     };
 });
+
+
+// Make Placeholders title when user types something
+function addInputLabel(evt) {
+    var myLabel = document.createElement('div');
+    myLabel.textContent = evt.currentTarget.placeholder;
+    myLabel.classList.add('my-label');
+    var parentDiv = document.getElementsByName(evt.currentTarget.name)[0].parentElement;
+    if(parentDiv.getElementsByClassName('my-label').length < 1) {
+        parentDiv.insertBefore(myLabel, evt.currentTarget);
+    }
+    else{
+        if(evt.currentTarget.value.length == 0){
+            parentDiv.removeChild(parentDiv.getElementsByClassName('my-label')[0]);
+        }
+    }
+}
+// Fix daterangepicker position to given element
+function updateDateRangePickerPosition(evt) {
+    $('.daterangepicker').css('margin-top',$('#' + evt.currentTarget.id).offset().top);
+}
+
+
+var inputs = document.getElementsByTagName('input');
+var inputs = document.getElementsByTagName('input');
+for (let i of inputs){
+    i.addEventListener('input', addInputLabel, false);
+    i.addEventListener('focus', updateDateRangePickerPosition, false);
+    let event = new Event("input");
+    i.dispatchEvent(event);
+}
+
+//$('.datepicker').css('top',$("#datetimes_exceptions").offset().top);
+
 
 </script>
 

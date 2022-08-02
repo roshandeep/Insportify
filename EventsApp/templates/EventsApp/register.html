@@ -42,5 +42,28 @@
     </div>
 </div>
 
+<script>
+
+// Make Placeholders title when user types something
+function addInputLabel(evt) {
+    var myLabel = document.createElement('div');
+    myLabel.textContent = evt.currentTarget.placeholder;
+    myLabel.classList.add('my-label');
+    var parentDiv = document.getElementsByName(evt.currentTarget.name)[0].parentElement;
+    if(parentDiv.getElementsByClassName('my-label').length < 1) {
+        parentDiv.insertBefore(myLabel, evt.currentTarget);
+    }
+    else{
+        if(evt.currentTarget.value.length == 0){
+            parentDiv.removeChild(parentDiv.getElementsByClassName('my-label')[0]);
+        }
+    }
+}
+
+var inputs = document.getElementsByTagName('input');
+for (let i of inputs){
+    i.addEventListener('keyup', addInputLabel, false);
+}
+</script>
 
 {% endblock %}
