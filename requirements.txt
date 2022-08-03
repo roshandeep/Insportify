@@ -2,6 +2,7 @@ certifi==2021.10.8
 colorama==0.4.1
 Django==3.2.12
 django-crispy-forms==1.14.0
+django-select2==7.10.0
 django-widget-tweaks==1.4.12
 docx2txt==0.8
 EbookLib==0.17.1
@@ -25,5 +26,3 @@ stripe==2.74.0
 typing-extensions==3.7.4.3
 tzlocal==1.5.1
 wincertstore==0.2
-openpyxl
-six

@@ -7,8 +7,9 @@
 
 <form class="row p-3" action="{% url 'EventsApp:home' %}" method="get">
     <div class="col">
-        <select id="events_types" class="form-select" size="2" multiple name="events_types">
-            <option value="" selected="selected">Select Event Type</option>
+        <p style="margin-bottom:0">Event Type</p>
+        <select id="events_types" class="form-select select2" multiple name="events_types">
+<!--            <option value="" selected="selected">Select Event Type</option>-->
             <option value="Camp">Camp</option>
             <option value="Charity">Charity</option>
             <option value="Conditioning">Conditioning</option>
@@ -21,6 +22,7 @@
         </select>
     </div>
     <div class="col">
+        <p style="margin-bottom:0">Sport</p>
         <select class="form-select" name="sports">
             <option value="" selected="selected">Select Sport</option>
             {% for sports in sports_list %}
@@ -29,9 +31,11 @@
         </select>
     </div>
     <div class="col">
+        <p style="margin-bottom:0">Event Date</p>
         <input class="form-control" onfocus="(this.type='date')" onblur="(this.type='text')" placeholder="Select Date" name="date_range"/>
     </div>
     <div class="col">
+        <p style="margin-bottom:0">Event Venue</p>
         <select class="form-select" name="venues">
             <option value="" selected="selected">Select Venue</option>
             {% for venues in venues_list %}
@@ -134,6 +138,12 @@
 
 <script>
 $(document).ready(function() {
+
+    $('.select2').select2({
+    placeholder: "Select Event Type",
+    allowClear: true
+    });;
+
     let para = document.getElementsByClassName("eventdatetime");
     for (let i = 0; i < para.length; i++) {
       let pval = para[i].innerHTML.split("from");

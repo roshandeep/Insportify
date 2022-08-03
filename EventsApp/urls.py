@@ -38,6 +38,8 @@ urlpatterns = [
     path('get_sports_type/', views.get_sports_type, name='get_sports_type'),
     path('get_sports_skill/', views.get_selected_sports_skill, name='get_selected_sports_skill'),
     path('get_sports_position/', views.get_selected_sports_positions, name='get_selected_sports_positions'),
+    path('get_sports_position_and_skill/', views.get_selected_sports_position_and_skill,
+         name='get_selected_sports_position_and_skill'),
     path('add_sports_positions/', views.add_sports_positions, name='add_sports_positions'),
     path('fetch_user_sports_positions/', views.fetch_user_sports_positions, name='fetch_user_sports_positions'),
     path('delete_sports_choice/', views.delete_sports_choice, name='delete_sports_choice'),

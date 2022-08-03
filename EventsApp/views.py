@@ -31,7 +31,7 @@ def multistep(request):
         values_valid = ValidateFormValues(request)
         # Handle Form Post
         if form.is_valid() and values_valid:
-            # print(list(request.POST.items()))
+            print(list(request.POST.items()))
             # Save data
             obj = form.save(commit=False)
             obj.created_by = request.user
@@ -42,23 +42,59 @@ def multistep(request):
             obj.country = request.POST['country']
             obj.province = request.POST['province']
             obj.zipcode = request.POST['zip_code']
-            obj.position = request.POST['position']
+            # obj.position = request.POST['position']
             obj.gender = ','.join(item for item in request.POST.getlist('gender'))
-            obj.is_recurring = request.POST['recurring_event'] == "Yes"
-            obj.datetimes_monday = request.POST.get('datetimes_monday') if obj.is_recurring else ""
-            obj.datetimes_tuesday = request.POST.get('datetimes_tuesday') if obj.is_recurring else ""
-            obj.datetimes_wednesday = request.POST.get('datetimes_wednesday') if obj.is_recurring else ""
-            obj.datetimes_thursday = request.POST.get('datetimes_thursday') if obj.is_recurring else ""
-            obj.datetimes_friday = request.POST.get('datetimes_friday') if obj.is_recurring else ""
-            obj.datetimes_saturday = request.POST.get('datetimes_saturday') if obj.is_recurring else ""
-            obj.datetimes_sunday = request.POST.get('datetimes_sunday') if obj.is_recurring else ""
-            obj.datetimes_exceptions = request.POST.get('datetimes_exceptions') if obj.is_recurring else ""
-            obj.datetimes = "" if obj.is_recurring else request.POST.get('datetimes_date') + " " \
-                                                        + datetime.strptime(request.POST.get('datetimes_start_time'),
-                                                                            "%H:%M").strftime("%I:%M %p") + " - " \
-                                                        + request.POST.get('datetimes_date') + " " + \
-                                                        datetime.strptime(request.POST.get('datetimes_end_time'),
-                                                                          "%H:%M").strftime("%I:%M %p")
+            obj.is_recurring = request.POST.get('recurring_event') == "Yes"
+            selected_days = request.POST.getlist('recurring_days')
+            obj.datetimes_monday = ""
+            obj.datetimes_tuesday = ""
+            obj.datetimes_wednesday = ""
+            obj.datetimes_thursday = ""
+            obj.datetimes_friday = ""
+            obj.datetimes_saturday = ""
+            obj.datetimes_sunday = ""
+            if obj.is_recurring and 'Monday' in selected_days:
+                date = request.POST.get('datetimes_monday_date')
+                ts = datetime.strptime(request.POST.get('datetimes_monday_start_time'), "%H:%M").strftime("%I:%M %p")
+                te = datetime.strptime(request.POST.get('datetimes_monday_end_time'), "%H:%M").strftime("%I:%M %p")
+                obj.datetimes_monday = date + " " + ts + " - " + date + " " + te
+            if obj.is_recurring and 'Tuesday' in selected_days:
+                date = request.POST.get('datetimes_tuesday_date')
+                ts = datetime.strptime(request.POST.get('datetimes_tuesday_start_time'), "%H:%M").strftime("%I:%M %p")
+                te = datetime.strptime(request.POST.get('datetimes_tuesday_end_time'), "%H:%M").strftime("%I:%M %p")
+                obj.datetimes_tuesday = date + " " + ts + " - " + date + " " + te
+            if obj.is_recurring and 'Wednesday' in selected_days:
+                date = request.POST.get('datetimes_wednesday_date')
+                ts = datetime.strptime(request.POST.get('datetimes_wednesday_start_time'), "%H:%M").strftime("%I:%M %p")
+                te = datetime.strptime(request.POST.get('datetimes_wednesday_end_time'), "%H:%M").strftime("%I:%M %p")
+                obj.datetimes_wednesday = date + " " + ts + " - " + date + " " + te
+            if obj.is_recurring and 'Thursday' in selected_days:
+                date = request.POST.get('datetimes_thursday_date')
+                ts = datetime.strptime(request.POST.get('datetimes_thursday_start_time'), "%H:%M").strftime("%I:%M %p")
+                te = datetime.strptime(request.POST.get('datetimes_thursday_end_time'), "%H:%M").strftime("%I:%M %p")
+                obj.datetimes_thursday = date + " " + ts + " - " + date + " " + te
+            if obj.is_recurring and 'Friday' in selected_days:
+                date = request.POST.get('datetimes_friday_date')
+                ts = datetime.strptime(request.POST.get('datetimes_friday_start_time'), "%H:%M").strftime("%I:%M %p")
+                te = datetime.strptime(request.POST.get('datetimes_friday_end_time'), "%H:%M").strftime("%I:%M %p")
+                obj.datetimes_friday = date + " " + ts + " - " + date + " " + te
+            if obj.is_recurring and 'Saturday' in selected_days:
+                date = request.POST.get('datetimes_saturday_date')
+                ts = datetime.strptime(request.POST.get('datetimes_saturday_start_time'), "%H:%M").strftime("%I:%M %p")
+                te = datetime.strptime(request.POST.get('datetimes_saturday_end_time'), "%H:%M").strftime("%I:%M %p")
+                obj.datetimes_saturday = date + " " + ts + " - " + date + " " + te
+            if obj.is_recurring and 'Sunday' in selected_days:
+                date = request.POST.get('datetimes_sunday_date')
+                ts = datetime.strptime(request.POST.get('datetimes_sunday_start_time'), "%H:%M").strftime("%I:%M %p")
+                te = datetime.strptime(request.POST.get('datetimes_sunday_end_time'), "%H:%M").strftime("%I:%M %p")
+                obj.datetimes_sunday = date + " " + ts + " - " + date + " " + te
+            obj.datetimes_exceptions = request.POST.get('datetimes_exceptions') if not obj.is_recurring else ""
+            obj.datetimes = ""
+            if not obj.is_recurring:
+                date = request.POST.get('datetimes_date')
+                ts = datetime.strptime(request.POST.get('datetimes_start_time'), "%H:%M").strftime("%I:%M %p")
+                te = datetime.strptime(request.POST.get('datetimes_end_time'), "%H:%M").strftime("%I:%M %p")
+                obj.datetimes = date + " " + ts + " - " + date + " " + te
             obj.save()
             save_event_position_info(request, obj)
 
@@ -93,16 +129,76 @@ def ValidateFormValues(request):
         date_valid = False
     else:
         if request.POST['recurring_event'] == "Yes":
-            if (not request.POST.get('datetimes_monday') or request.POST['datetimes_monday'] == "") and \
-                    (not request.POST.get('datetimes_tuesday') or request.POST['datetimes_tuesday'] == "") and \
-                    (not request.POST.get('datetimes_wednesday') or request.POST['datetimes_wednesday'] == "") and \
-                    (not request.POST.get('datetimes_thursday') or request.POST['datetimes_thursday'] == "") and \
-                    (not request.POST.get('datetimes_friday') or request.POST['datetimes_friday'] == "") and \
-                    (not request.POST.get('datetimes_saturday') or request.POST['datetimes_saturday'] == "") and \
-                    (not request.POST.get('datetimes_sunday') or request.POST['datetimes_sunday'] == ""):
-                messages.error(request, "No date times entered, please enter dates for one of the selected "
-                                        "recurring days")
-                date_valid = False
+            selected_days = request.POST.getlist('recurring_days')
+            monday_valid = True
+            if 'Monday' in selected_days and \
+                    ((not request.POST.get('datetimes_monday_date') or request.POST['datetimes_monday_date'] == "") and
+                     (not request.POST.get('datetimes_monday_start_time') or request.POST[
+                         'datetimes_monday_start_time'] == "") and
+                     (not request.POST.get('datetimes_monday_end_time') or request.POST[
+                         'datetimes_monday_end_time'] == "")):
+                messages.error(request, "Invalid date-time selection for Monday, please enter valid dates and times.")
+                monday_valid = False
+            tuesday_valid = True
+            if 'Tuesday' in selected_days and \
+                    ((not request.POST.get('datetimes_tuesday_date') or request.POST[
+                        'datetimes_tuesday_date'] == "") and
+                     (not request.POST.get('datetimes_tuesday_start_time') or request.POST[
+                         'datetimes_tuesday_start_time'] == "") and
+                     (not request.POST.get('datetimes_tuesday_end_time') or request.POST[
+                         'datetimes_tuesday_end_time'] == "")):
+                messages.error(request, "Invalid date-time selection for Tuesday, please enter valid dates and times.")
+                tuesday_valid = False
+            wednesday_valid = True
+            if 'Wednesday' in selected_days and \
+                    ((not request.POST.get('datetimes_wednesday_date') or request.POST[
+                        'datetimes_wednesday_date'] == "") and
+                     (not request.POST.get('datetimes_wednesday_start_time') or request.POST[
+                         'datetimes_wednesday_start_time'] == "") and
+                     (not request.POST.get('datetimes_wednesday_end_time') or request.POST[
+                         'datetimes_wednesday_end_time'] == "")):
+                messages.error(request, "Invalid date-time selection for Wednesday, please enter valid dates and times.")
+                wednesday_valid = False
+            thursday_valid = True
+            if 'Thursday' in selected_days and \
+                    ((not request.POST.get('datetimes_thursday_date') or request.POST[
+                        'datetimes_thursday_date'] == "") and
+                     (not request.POST.get('datetimes_thursday_start_time') or request.POST[
+                         'datetimes_thursday_start_time'] == "") and
+                     (not request.POST.get('datetimes_thursday_end_time') or request.POST[
+                         'datetimes_thursday_end_time'] == "")):
+                messages.error(request, "Invalid date-time selection for Thursday, please enter valid dates and times.")
+                thursday_valid = False
+            friday_valid = True
+            if 'Friday' in selected_days and \
+                    ((not request.POST.get('datetimes_friday_date') or request.POST[
+                        'datetimes_friday_date'] == "") and
+                     (not request.POST.get('datetimes_friday_start_time') or request.POST[
+                         'datetimes_friday_start_time'] == "") and
+                     (not request.POST.get('datetimes_friday_end_time') or request.POST[
+                         'datetimes_friday_end_time'] == "")):
+                messages.error(request, "Invalid date-time selection for Friday, please enter valid dates and times.")
+                friday_valid = False
+            saturday_valid = True
+            if 'Saturday' in selected_days and \
+                    ((not request.POST.get('datetimes_saturday_date') or request.POST[
+                        'datetimes_saturday_date'] == "") and
+                     (not request.POST.get('datetimes_saturday_start_time') or request.POST[
+                         'datetimes_saturday_start_time'] == "") and
+                     (not request.POST.get('datetimes_saturday_end_time') or request.POST[
+                         'datetimes_saturday_end_time'] == "")):
+                messages.error(request, "Invalid date-time selection for Saturday, please enter valid dates and times.")
+                saturday_valid = False
+            sunday_valid = True
+            if 'Sunday' in selected_days and \
+                    ((not request.POST.get('datetimes_sunday_date') or request.POST[
+                        'datetimes_sunday_date'] == "") and
+                     (not request.POST.get('datetimes_sunday_start_time') or request.POST[
+                         'datetimes_sunday_start_time'] == "") and
+                     (not request.POST.get('datetimes_sunday_end_time') or request.POST[
+                         'datetimes_sunday_end_time'] == "")):
+                messages.error(request, "Invalid date-time selection for Sunday, please enter valid dates and times.")
+                sunday_valid = False
         else:
             if (not request.POST.get('datetimes_date') or request.POST['datetimes_date'] == "") and \
                     (not request.POST.get('datetimes_start_time') or request.POST['datetimes_start_time'] == "") and \
@@ -110,10 +206,11 @@ def ValidateFormValues(request):
                 messages.error(request, "No date times entered, please enter a date for the event")
                 date_valid = False
     for i in range(1, 10):
-        if request.POST.get('no_of_position' + str(i)) == '' \
-                or request.POST.get('type_of_skill' + str(i)) == '' \
-                or request.POST.get('position_cost' + str(i)) == '' \
-                or request.POST.get('min_age' + str(i)) == '':
+        if request.POST.get('no_of_position' + str(i)) != '' \
+                and (request.POST.get('type_of_skill' + str(i)) == ''
+                     or request.POST.get('position_cost' + str(i)) == ''
+                     or request.POST.get('min_age' + str(i)) == ''
+                     or request.POST.get('max_age' + str(i)) == ''):
             messages.error(request, "All position fields are required, please enter valid information")
             fields_valid = False
 
@@ -135,14 +232,16 @@ def get_venue_details(request):
 
 def save_event_position_info(request, event):
     for i in range(1, 10):
-        if 'no_of_position' + str(i) in request.POST:
+        if 'no_of_position' + str(i) in request.POST and request.POST['no_of_position' + str(i)].strip() != "":
+            position_name = request.POST['position_name' + str(i)].strip()
             position_type = request.POST['type_of_skill' + str(i)].strip()
             no_of_position = request.POST['no_of_position' + str(i)].strip()
             position_cost = request.POST['position_cost' + str(i)].strip()
             min_age = request.POST['min_age' + str(i)].strip()
             max_age = request.POST['max_age' + str(i)].strip() if request.POST['max_age' + str(i)] else "999"
-            # print(request.POST['min_age' + str(i)].strip(), request.POST['max_age' + str(i)].strip())
-            obj = Events_PositionInfo(event=event, max_age=max_age, min_age=min_age, no_of_position=no_of_position,
+            print(request.POST['min_age' + str(i)].strip(), request.POST['max_age' + str(i)].strip())
+            obj = Events_PositionInfo(event=event, position_name=position_name, max_age=max_age, min_age=min_age,
+                                      no_of_position=no_of_position,
                                       position_cost=position_cost, position_number=i, position_type=position_type)
             obj.save()
 
@@ -213,6 +312,10 @@ def user_profile(request):
                 individual.phone = mobile
             if response["contact_email"]:
                 individual.email = response["contact_email"].strip() if response["contact_email"] else ""
+            if "website" in response:
+                individual.website = response["website"].strip()
+            if "job_title" in response:
+                individual.job_title = response["job_title"].strip()
             if response["dob"]:
                 individual.dob = response["dob"].strip() if response["dob"] else ""
             if "is_concussion" in response:
@@ -374,6 +477,26 @@ def get_sports_type(request):
             data['error_message'] = 'error'
             return JsonResponse(data)
         return JsonResponse(list(sports_type.values('pk', 'sports_type_text')), safe=False)
+
+
+def get_selected_sports_position_and_skill(request):
+    data = {}
+    data_list = []
+    if request.method == "POST":
+        selected_sport = request.POST['selected_type_text']
+        try:
+            positions = PositionAndSkillType.objects.filter(sports_type__sports_type_text=selected_sport).values(
+                'position_type').distinct('position_type')
+            for position in positions:
+                skills = PositionAndSkillType.objects.filter(position_type=position.position_type).values(
+                    'pk', 'skill_type').distinct('skill_type')
+
+                print(position.position_type, skills)
+            print(data_list)
+        except Exception:
+            data['error_message'] = 'error'
+            return JsonResponse(data)
+        return JsonResponse()
 
 
 def get_selected_sports_skill(request):
@@ -601,7 +724,7 @@ def get_recommended_events(request):
 
                 for avail in user_avaiability:
                     if avail.day_of_week == (event_date.weekday() + 1):
-                        print(event.event_title, avail.start_time, avail.end_time, event_start_time, event_end_time)
+                        print(event.event_title, avail.start_time, avail.end_time, event_start_time, event_end_time, event_start_time >= avail.start_time, event_end_time <= avail.end_time)
                         if event_start_time >= avail.start_time and event_end_time <= avail.end_time:
                             recommended_events.add(event)
 

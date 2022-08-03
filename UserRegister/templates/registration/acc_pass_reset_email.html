@@ -1,7 +1,7 @@
 
 
 {% autoescape off %}
-Hi {{ user.username }},
+Hi {{ user.first_name }},
 
 We received your password reset request, please click on the link to reset your password
 http://{{ domain }}{% url 'UserRegister:password_reset_confirm' uidb64=uid token=token %}
