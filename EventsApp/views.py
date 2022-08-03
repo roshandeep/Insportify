@@ -310,7 +310,7 @@ def user_profile(request):
                 mobile = response["mobile"].strip()
                 mobile = ''.join(i for i in mobile if i.isdigit())
                 individual.phone = mobile
-            if response["contact_email"]:
+            if "contact_email" in response:
                 individual.email = response["contact_email"].strip() if response["contact_email"] else ""
             if "website" in response:
                 individual.website = response["website"].strip()

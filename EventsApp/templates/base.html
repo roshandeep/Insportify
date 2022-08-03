@@ -41,58 +41,58 @@
             {% if request.user.is_authenticated %}
 <!--            <li class="nav-item">-->
 <!--                <a class="nav-link link-secondary text-white" href="{% url 'EventsApp:home' %}"-->
-<!--                   {% if request.path == '/' %} style="font-weight:bold" {% endif %}>-->
+<!--                   {% if request.path == '/' %} style="display:none" {% endif %}>-->
 <!--                <p>Home</p>-->
 <!--                </a>-->
 <!--            </li>-->
             {% if request.user.is_organization == True %}
             <li class="nav-item">
                 <a class="nav-link link-secondary text-white" href="{% url 'EventsApp:organization_profile' %}"
-                   {% if request.path == '/organization/profile/' %} style="font-weight:bold" {% endif %}>
+                   {% if request.path == '/organization/profile/' %} style="display:none" {% endif %}>
                 <p>User Profile</p>
                 </a>
             </li>
             {% else %}
             <li class="nav-item">
                 <a class="nav-link link-secondary text-white" href="{% url 'EventsApp:user_profile' %}"
-                   {% if request.path == '/individual/profile/' %} style="font-weight:bold" {% endif %}>
+                   {% if request.path == '/individual/profile/' %} style="display:none" {% endif %}>
                 <p>User Profile</p>
                 </a>
             </li>
             {% endif %}
             <li class="nav-item">
                 <a class="nav-link link-secondary text-white" href="{% url 'EventsApp:multistep' %}"
-                   {% if request.path == '/create/' %} style="font-weight:bold" {% endif %}>
+                   {% if request.path == '/create/' %} style="display:none" {% endif %}>
                 <p>Create Events</p>
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link link-secondary text-white" href="{% url 'EventsApp:list-events' %}"
-                   {% if request.path == '/show/' %} style="font-weight:bold" {% endif %}>
+                   {% if request.path == '/show/' %} style="display:none" {% endif %}>
                 <p>My Events</p>
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link link-secondary text-white" href="{% url 'EventsApp:committed_events' %}"
-                   {% if request.path == '/committed/' %} style="font-weight:bold" {% endif %}>
+                   {% if request.path == '/committed/' %} style="display:none" {% endif %}>
                 <p>Committed Events</p>
                 </a>
             </li>
 <!--            <li class="nav-item">-->
 <!--                <a class="nav-link link-secondary text-white" href="{% url 'EventsApp:logo_upload' %}"-->
-<!--                   {% if request.path == '/upload/' %} style="font-weight:bold" {% endif %}>-->
+<!--                   {% if request.path == '/upload/' %} style="display:none" {% endif %}>-->
 <!--                <p>Add Logo</p>-->
 <!--                </a>-->
 <!--            </li>-->
 <!--            <li class="nav-item">-->
 <!--                <a class="nav-link link-secondary text-white" href="/invite/"-->
-<!--                   {% if request.path == '/invite/' %} style="font-weight:bold" {% endif %}>-->
+<!--                   {% if request.path == '/invite/' %} style="display:none" {% endif %}>-->
 <!--                <p>Invite Friends</p>-->
 <!--                </a>-->
 <!--            </li>-->
             <li class="nav-item">
                 <a class="nav-link link-secondary text-white" href="{% url 'EventsApp:cart_summary' %}"
-                   {% if request.path == '/cart_summary/' %} style="font-weight:bold" {% endif %}>
+                   {% if request.path == '/cart_summary/' %} style="display:none" {% endif %}>
                 <p>Cart</p>
                 </a>
             </li>
