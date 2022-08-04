@@ -69,9 +69,24 @@
                         <img src="{{event.sport_logo}}" class="card-img-top" alt="...">
                         <div class="card-body">
                             <h5 class="card-title">{{event.sport_type}}</h5>
-                            <p class="card-text">{{event.venue}}, {{event.city}}, {{event.province}}
-                            <p class="text-dark text-start eventdatetime">{{event.datetimes}}
-                            </p>
+                            <p class="card-text">{{event.venue}}, {{event.city}}, {{event.province}}</p>
+                            {% if event.datetimes %}
+                            <p class="text-dark text-start eventdatetime">{{event.datetimes}}</p>
+                            {% elif event.datetimes_monday %}
+                            <p class="text-dark text-start eventdatetime">{{event.datetimes_monday}}</p>
+                            {% elif event.datetimes_tuesday %}
+                            <p class="text-dark text-start eventdatetime">{{event.datetimes_tuesday}}</p>
+                            {% elif event.datetimes_wednesday %}
+                            <p class="text-dark text-start eventdatetime">{{event.datetimes_wednesday}}</p>
+                            {% elif event.datetimes_thursday %}
+                            <p class="text-dark text-start eventdatetime">{{event.datetimes_thursday}}</p>
+                            {% elif event.datetimes_friday %}
+                            <p class="text-dark text-start eventdatetime">{{event.datetimes_friday}}</p>
+                            {% elif event.datetimes_saturday %}
+                            <p class="text-dark text-start eventdatetime">{{event.datetimes_saturday}}</p>
+                            {% elif event.datetimes_sunday %}
+                            <p class="text-dark text-start eventdatetime">{{event.datetimes_sunday}}</p>
+                            {% endif %}
                         </div>
                     </div>
                     {% endfor %}
@@ -108,10 +123,24 @@
                         <img src="{{event.sport_logo}}" class="card-img-top" alt="...">
                         <div class="card-body" >
                             <h5 class="card-title">{{event.sport_type}}</h5>
-                            <p class="card-text">{{event.venue}}, {{event.city}}, {{event.province}}
-                            <p class="text-dark text-start eventdatetime">
-                            {{event.datetimes}}
-                            </p>
+                            <p class="card-text">{{event.venue}}, {{event.city}}, {{event.province}}</p>
+                            {% if event.datetimes %}
+                            <p class="text-dark text-start eventdatetime">{{event.datetimes}}</p>
+                            {% elif event.datetimes_monday %}
+                            <p class="text-dark text-start eventdatetime">{{event.datetimes_monday}}</p>
+                            {% elif event.datetimes_tuesday %}
+                            <p class="text-dark text-start eventdatetime">{{event.datetimes_tuesday}}</p>
+                            {% elif event.datetimes_wednesday %}
+                            <p class="text-dark text-start eventdatetime">{{event.datetimes_wednesday}}</p>
+                            {% elif event.datetimes_thursday %}
+                            <p class="text-dark text-start eventdatetime">{{event.datetimes_thursday}}</p>
+                            {% elif event.datetimes_friday %}
+                            <p class="text-dark text-start eventdatetime">{{event.datetimes_friday}}</p>
+                            {% elif event.datetimes_saturday %}
+                            <p class="text-dark text-start eventdatetime">{{event.datetimes_saturday}}</p>
+                            {% elif event.datetimes_sunday %}
+                            <p class="text-dark text-start eventdatetime">{{event.datetimes_sunday}}</p>
+                            {% endif %}
                         </div>
                     </div>
                     {% endfor %}
