@@ -54,40 +54,55 @@ def multistep(request):
             obj.datetimes_saturday = ""
             obj.datetimes_sunday = ""
             if obj.is_recurring and 'Monday' in selected_days:
-                date = request.POST.get('datetimes_monday_date')
+                date = request.POST.get('datetimes_monday_date').split("-")
+                start_date = date[0]
+                end_date = date[1]
+                # print(start_date, end_date)
                 ts = datetime.strptime(request.POST.get('datetimes_monday_start_time'), "%H:%M").strftime("%I:%M %p")
                 te = datetime.strptime(request.POST.get('datetimes_monday_end_time'), "%H:%M").strftime("%I:%M %p")
-                obj.datetimes_monday = date + " - " + ts + " - " + te
+                obj.datetimes_monday = start_date + " " + ts + " - " + end_date + " " + te
             if obj.is_recurring and 'Tuesday' in selected_days:
-                date = request.POST.get('datetimes_tuesday_date')
+                date = request.POST.get('datetimes_tuesday_date').split("-")
+                start_date = date[0]
+                end_date = date[1]
                 ts = datetime.strptime(request.POST.get('datetimes_tuesday_start_time'), "%H:%M").strftime("%I:%M %p")
                 te = datetime.strptime(request.POST.get('datetimes_tuesday_end_time'), "%H:%M").strftime("%I:%M %p")
-                obj.datetimes_tuesday = date + " - " + ts + " - " + te
+                obj.datetimes_tuesday = start_date + " " + ts + " - " + end_date + " " + te
             if obj.is_recurring and 'Wednesday' in selected_days:
-                date = request.POST.get('datetimes_wednesday_date')
+                date = request.POST.get('datetimes_wednesday_date').split("-")
+                start_date = date[0]
+                end_date = date[1]
                 ts = datetime.strptime(request.POST.get('datetimes_wednesday_start_time'), "%H:%M").strftime("%I:%M %p")
                 te = datetime.strptime(request.POST.get('datetimes_wednesday_end_time'), "%H:%M").strftime("%I:%M %p")
-                obj.datetimes_wednesday = date + " - " + ts + " - " + te
+                obj.datetimes_wednesday = start_date + " " + ts + " - " + end_date + " " + te
             if obj.is_recurring and 'Thursday' in selected_days:
-                date = request.POST.get('datetimes_thursday_date')
+                date = request.POST.get('datetimes_thursday_date').split("-")
+                start_date = date[0]
+                end_date = date[1]
                 ts = datetime.strptime(request.POST.get('datetimes_thursday_start_time'), "%H:%M").strftime("%I:%M %p")
                 te = datetime.strptime(request.POST.get('datetimes_thursday_end_time'), "%H:%M").strftime("%I:%M %p")
-                obj.datetimes_thursday = date + " - " + ts + " - " + te
+                obj.datetimes_thursday = start_date + " " + ts + " - " + end_date + " " + te
             if obj.is_recurring and 'Friday' in selected_days:
-                date = request.POST.get('datetimes_friday_date')
+                date = request.POST.get('datetimes_friday_date').split("-")
+                start_date = date[0]
+                end_date = date[1]
                 ts = datetime.strptime(request.POST.get('datetimes_friday_start_time'), "%H:%M").strftime("%I:%M %p")
                 te = datetime.strptime(request.POST.get('datetimes_friday_end_time'), "%H:%M").strftime("%I:%M %p")
-                obj.datetimes_friday = date + " - " + ts + " - " + te
+                obj.datetimes_friday = start_date + " " + ts + " - " + end_date + " " + te
             if obj.is_recurring and 'Saturday' in selected_days:
-                date = request.POST.get('datetimes_saturday_date')
+                date = request.POST.get('datetimes_saturday_date').split("-")
+                start_date = date[0]
+                end_date = date[1]
                 ts = datetime.strptime(request.POST.get('datetimes_saturday_start_time'), "%H:%M").strftime("%I:%M %p")
                 te = datetime.strptime(request.POST.get('datetimes_saturday_end_time'), "%H:%M").strftime("%I:%M %p")
-                obj.datetimes_saturday = date + " - " + ts + " - " + te
+                obj.datetimes_saturday = start_date + " " + ts + " - " + end_date + " " + te
             if obj.is_recurring and 'Sunday' in selected_days:
-                date = request.POST.get('datetimes_sunday_date')
+                date = request.POST.get('datetimes_sunday_date').split("-")
+                start_date = date[0]
+                end_date = date[1]
                 ts = datetime.strptime(request.POST.get('datetimes_sunday_start_time'), "%H:%M").strftime("%I:%M %p")
                 te = datetime.strptime(request.POST.get('datetimes_sunday_end_time'), "%H:%M").strftime("%I:%M %p")
-                obj.datetimes_sunday = date + " - " + ts + " - " + te
+                obj.datetimes_sunday = start_date + " " + ts + " - " + end_date + " " + te
             obj.datetimes_exceptions = request.POST.get('datetimes_exceptions') if not obj.is_recurring else ""
             obj.datetimes = ""
             if not obj.is_recurring:
@@ -703,9 +718,9 @@ def get_recommended_events(request):
     user = User.objects.get(email=request.user.email)
     user_avaiability = Availability.objects.filter(user=user)
     events = master_table.objects.all()
-    # week_days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    week_days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
     locations_saved = Extra_Loctaions.objects.filter(user=user)
-    loc_list = [item.city.lower().strip() for item in locations_saved]
+    loc_list = [item.city.lower() for item in locations_saved]
     recommended_events = set()
 
     # FILTER by DateTime
@@ -713,6 +728,8 @@ def get_recommended_events(request):
     if len(user_avaiability):
         # print(user_avaiability)
         for event in events:
+            # if event.datetimes_monday:
+            #     time =
             if event.datetimes:
                 time = event.datetimes.split("-")
                 event_start_datetime = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
@@ -740,7 +757,7 @@ def get_recommended_events(request):
     # FILTER BY Location
     for event in recommended_events[:]:
         if event.city is not None:
-            if event.city.lower().strip() not in loc_list:
+            if event.city.lower() not in loc_list:
                 recommended_events.remove(event)
 
     recommended_events = list(recommended_events)
