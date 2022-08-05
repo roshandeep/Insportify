@@ -209,7 +209,7 @@ def ValidateFormValues(request):
             if ((not request.POST.get('datetimes_date')) or request.POST['datetimes_date'] == "") or \
                     ((not request.POST.get('datetimes_start_time')) or request.POST['datetimes_start_time'] == "") or \
                     ((not request.POST.get('datetimes_end_time')) or request.POST['datetimes_end_time'] == ""):
-                messages.error(request, "No date times entered, please enter a date for the event")
+                messages.error(request, "No date times entered, please enter a date and time for the event")
                 date_valid = False
     for i in range(1, 10):
         if request.POST.get('no_of_position' + str(i)) != '' \
