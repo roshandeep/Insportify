@@ -94,7 +94,7 @@ def multistep(request):
                 date = request.POST.get('datetimes_date')
                 ts = datetime.strptime(request.POST.get('datetimes_start_time'), "%H:%M").strftime("%I:%M %p")
                 te = datetime.strptime(request.POST.get('datetimes_end_time'), "%H:%M").strftime("%I:%M %p")
-                obj.datetimes = date + " - " + ts + " - " + te
+                obj.datetimes = date + " " + ts + " - " + date + " " + te
             obj.save()
             save_event_position_info(request, obj)
 
