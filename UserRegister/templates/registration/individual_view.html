@@ -171,7 +171,7 @@
                                 {% endfor %}
                             </select>
                         </div>
-                        <div class="form-row p-2">
+                        <div class="form-row p-2" id="position_div">
                             <select name='position' class="form-select" id='position'
                                     aria-label=".form-select-lg example">
                                 <option value=""
@@ -179,7 +179,7 @@
                                 Choose Position</option>
                             </select>
                         </div>
-                        <div class="form-row p-2">
+                        <div class="form-row p-2" id="skill_div">
                             <select name='skill' class="form-select" id='skill'
                                     aria-label=".form-select-lg example">
                                 <option value="" selected>Choose Skill</option>
@@ -371,7 +371,6 @@ $("#add_locations").click(function (e) {
         var selected_city_text = document.getElementById("city").value;
         var selected_province_text = document.getElementById("province").value;
         var selected_country_text = document.getElementById("country").value;
-        console.log(selected_city_text, selected_province_text, selected_country_text);
 
         $.ajax({
             type: "POST",
@@ -383,7 +382,6 @@ $("#add_locations").click(function (e) {
                 'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
             },
             success: function (data) {
-                console.log(data["status"]);
                 let html_data = `<div class="alert alert-warning alert-dismissible fade show" role="alert">`;
                 html_data += `${data["status"]}`;
                 html_data += `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
@@ -401,7 +399,6 @@ function fetchUserLocations(){
         async:false,
         url: '{% url "EventsApp:fetch_user_locations" %}',
         success: function (data) {
-            console.log(data);
             let html_data = `<table class="table table-striped">`;
             data.forEach(function (data) {
                 html_data += `<tr>`;
@@ -423,7 +420,6 @@ function fetchUserLocations(){
 }
 
 function delete_user_location(user_location_id){
-    console.log(user_location_id);
     $.ajax({
         type: "POST",
         url: '{% url "EventsApp:delete_user_location" %}',
@@ -432,7 +428,6 @@ function delete_user_location(user_location_id){
             'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
         },
         success: function (data) {
-            console.log(data["status"]);
             let html_data = `<div class="alert alert-warning alert-dismissible fade show" role="alert">`;
             html_data += `${data["status"]}`;
             html_data += `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
@@ -484,7 +479,6 @@ $("#add_positions").click(function (e) {
                 'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
             },
             success: function (data) {
-                console.log(data["status"]);
                 let html_data = `<div class="alert alert-warning alert-dismissible fade show" role="alert">`;
                 html_data += `${data["status"]}`;
                 html_data += `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
@@ -492,6 +486,12 @@ $("#add_positions").click(function (e) {
                 let status = document.getElementById("position_status");
                 status.innerHTML = html_data;
                 fetchUserSportChoices();
+
+                $('#position option:not(:first)').remove();
+                $("#position").val($("#position option:first").val());
+
+                $('#skill option:not(:first)').remove();
+                $("#skill").val($("#skill option:first").val());
             }
         });
     });
@@ -502,7 +502,6 @@ function fetchUserSportChoices(){
         async:false,
         url: '{% url "EventsApp:fetch_user_sports_positions" %}',
         success: function (data) {
-            console.log(data);
             let html_data = `<table class="table table-striped">`;
             data.forEach(function (data) {
                 html_data += `<tr>`;
@@ -524,7 +523,6 @@ function fetchUserSportChoices(){
 }
 
 function delete_sports_choice(sport_choice_id){
-    console.log(sport_choice_id);
     $.ajax({
         type: "POST",
         url: '{% url "EventsApp:delete_sports_choice" %}',
@@ -533,7 +531,6 @@ function delete_sports_choice(sport_choice_id){
             'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
         },
         success: function (data) {
-            console.log(data["status"]);
             let html_data = `<div class="alert alert-warning alert-dismissible fade show" role="alert">`;
             html_data += `${data["status"]}`;
             html_data += `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
@@ -573,7 +570,6 @@ $("#add_availability").click(function(e) {
                 'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
             },
             success: function (data) {
-                console.log(data["status"]);
                 let html_data = `<div class="alert alert-warning alert-dismissible fade show" role="alert">`;
                 html_data += `${data["status"]}`;
                 html_data += `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
@@ -592,7 +588,6 @@ function getUserAvailability(){
         async:false,
         url: '{% url "EventsApp:get_user_availability" %}',
         success: function (data) {
-            console.log(data);
             let html_data = `<table class="table table-striped">`;
             data.forEach(function (data) {
                 html_data += `<tr>`;
@@ -615,7 +610,6 @@ function getUserAvailability(){
 
 
 function delete_availability(availability_id){
-    console.log(availability_id);
     $.ajax({
         type: "POST",
         url: '{% url "EventsApp:delete_availability" %}',
@@ -624,7 +618,6 @@ function delete_availability(availability_id){
             'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
         },
         success: function (data) {
-            console.log(data["status"]);
             let html_data = `<div class="alert alert-warning alert-dismissible fade show" role="alert">`;
             html_data += `${data["status"]}`;
             html_data += `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
@@ -661,6 +654,7 @@ $("#position").change(function () {
     var selected_position_text = selected_position_value.text();
     var selected_type_value = $("#sports option:selected");
     var selected_type_text = selected_type_value.text();
+    console.log(selected_position_text, selected_type_text);
         $.ajax({
             type: "POST",
             url: '{% url "EventsApp:get_selected_sports_skill" %}',

@@ -703,9 +703,9 @@ def get_recommended_events(request):
     user = User.objects.get(email=request.user.email)
     user_avaiability = Availability.objects.filter(user=user)
     events = master_table.objects.all()
-    week_days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    # week_days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
     locations_saved = Extra_Loctaions.objects.filter(user=user)
-    loc_list = [item.city.lower() for item in locations_saved]
+    loc_list = [item.city.lower().strip() for item in locations_saved]
     recommended_events = set()
 
     # FILTER by DateTime
@@ -713,8 +713,6 @@ def get_recommended_events(request):
     if len(user_avaiability):
         # print(user_avaiability)
         for event in events:
-            # if event.datetimes_monday:
-            #     time =
             if event.datetimes:
                 time = event.datetimes.split("-")
                 event_start_datetime = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
@@ -742,7 +740,7 @@ def get_recommended_events(request):
     # FILTER BY Location
     for event in recommended_events[:]:
         if event.city is not None:
-            if event.city.lower() not in loc_list:
+            if event.city.lower().strip() not in loc_list:
                 recommended_events.remove(event)
 
     recommended_events = list(recommended_events)
