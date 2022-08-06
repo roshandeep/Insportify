@@ -734,8 +734,6 @@ def get_recommended_events(request):
     if len(user_avaiability):
         # print(user_avaiability)
         for event in events:
-            # if event.datetimes_monday:
-            #     time =
             if event.datetimes:
                 time = event.datetimes.split("-")
                 event_start_datetime = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
