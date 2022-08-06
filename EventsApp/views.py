@@ -830,6 +830,23 @@ def format_time(events):
     for event in events:
         if event.datetimes:
             time = event.datetimes.split("-")
+        elif event.datetimes_monday:
+            time = event.datetimes_monday.split("-")
+        elif event.datetimes_tuesday:
+            time = event.datetimes_tuesday.split("-")
+        elif event.datetimes_wednesday:
+            time = event.datetimes_wednesday.split("-")
+        elif event.datetimes_thursday:
+            time = event.datetimes_thursday.split("-")
+        elif event.datetimes_friday:
+            time = event.datetimes_friday.split("-")
+        elif event.datetimes_saturday:
+            time = event.datetimes_saturday.split("-")
+        elif event.datetimes_sunday:
+            time = event.datetimes_sunday.split("-")
+
+        # print(event.event_title, time, type(time))
+        if time is not None and time != "":
             start_time = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p').time()
             end_time = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p').time()
             start_time = start_time.strftime("%I:%M %p")
@@ -844,7 +861,23 @@ def format_time(events):
             else:
                 str_datetime = start_date + " - " + end_date + " from " + start_time + " - " + end_time
 
-            event.datetimes = str_datetime
+            if event.datetimes:
+                event.datetimes = str_datetime
+            elif event.datetimes_monday:
+                event.datetimes_monday = str_datetime
+            elif event.datetimes_tuesday:
+                event.datetimes_tuesday = str_datetime
+            elif event.datetimes_wednesday:
+                event.datetimes_wednesday = str_datetime
+            elif event.datetimes_thursday:
+                event.datetimes_thursday = str_datetime
+            elif event.datetimes_friday:
+                event.datetimes_friday = str_datetime
+            elif event.datetimes_saturday:
+                event.datetimes_saturday = str_datetime
+            elif event.datetimes_sunday:
+                event.datetimes_sunday = str_datetime
+
     return events
 
 

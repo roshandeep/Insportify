@@ -421,6 +421,16 @@ var inputs = document.getElementsByTagName('input');
 for (let i of inputs){
     i.addEventListener('keyup', addInputLabel, false);
 }
+
+$(document).ready(function() {
+  $(window).keydown(function(event){
+    if(event.keyCode == 13) {
+      event.preventDefault();
+      return false;
+    }
+  });
+});
+
 </script>
 
 

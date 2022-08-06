@@ -499,6 +499,8 @@ $("#add_positions").click(function (e) {
                     status.innerHTML = html_data;
                     fetchUserSportChoices();
 
+                    $("#sports").val($("#skill option:first").val());
+
                     $('#position option:not(:first)').remove();
                     $("#position").val($("#position option:first").val());
 
@@ -751,103 +753,6 @@ $(document).ready(function(){
 });
 
 
-    $(document).ready(function() {
-    var max_fields      = 6; //maximum input boxes allowed
-    var wrapper         = $("#input_fields_wrap"); //Fields wrapper
-    var add_button      = $("#add_field_button"); //Add button ID
-
-    var x = 1; //initlal text box count
-
-
-   $(add_button).click(function(e){
-        e.preventDefault();
-        if(x < max_fields){
-             var html= '';
-             html += '<div>'
-             html += '<input name="city'+ x + '" class="form-control" type="text" placeholder="City">'
-             html += '<input type="text" class="form-control" name ="province' + x + '" placeholder="Province">'
-             html += '<input type="text" class="form-control" name="country' + x + '" placeholder= "Country">'
-             html += '<a href="#" class="remove_field">Remove</a>'
-             html += '</div>'
-            $(wrapper).append(html);
-            x++;
-      }
-    });
-
-    $(wrapper).on("click",".remove_field", function(e){ //user click on remove text
-
-        e.preventDefault();
-        $(this).parent('div').remove();
-        x--;
-    })
-});
-
-    $(document).ready(function() {
-    var max_fields      = 5;
-    var wrapper         = $("#input_fields");
-    var add_button      = $("#add_button");
-
-    var x = 1;
-
-
-   $(add_button).click(function(e){
-        e.preventDefault();
-        if(x < max_fields){
-            var type_id = "type_" + x;
-            var position_id = "position_" + x;
-            var skill_id = "skill_" + x;
-            var sports_type_func = "populate_sportstype" + x;
-            var sports_position_func = "populate_sportsposition" + x;
-            var sports_skill_func = "populate_sportsskill" + x;
-
-            var html='';
-            html += '<div class="mt-2">'
-            html += '<select name="' + type_id + '" id="' + type_id + '" class="form-select mt-2" onchange="' + sports_position_func + '()">'
-            html += '<option selected disabled>Choose Sport</option>'
-            html += '</select>'
-            html += '<select name="' + position_id + '" id="' + position_id + '" class="form-select mt-2" onchange="' + sports_skill_func + '()">'
-            html += '<option selected disabled>Choose Position</option>'
-            html += '</select>'
-            html += '<select name="' + skill_id + '" id="' + skill_id + '" class="form-select mt-2">'
-            html += '<option selected disabled>Choose Skill</option>'
-            html += '</select>'
-            html += '<a href="#" class="remove_field">Remove</a>'
-            html += '</div>'
-            $(wrapper).append(html);
-            x++;
-            populate_sportstype(type_id)
-      }
-    });
-
-    $(wrapper).on("click",".remove_field", function(e){
-        e.preventDefault();
-        $(this).parent('div').remove();
-        x--;
-    })
-
-   function populate_sportstype(type_id) {
-    $.ajax({
-        type: "GET",
-        url: '{% url "EventsApp:get_sports_type" %}',
-        data: {
-            'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
-        },
-        success: function (data) {
-            let html_data = '<option selected disabled>Choose Sport</option>';
-            data.forEach(function (data) {
-                html_data += `<option value="${data.sports_type_text}">${data.sports_type_text}</option>`
-            });
-            $("#"+type_id).html(html_data);
-        }
-    });
-    }
-
-
-});
-
-
-
-
 // Logic to show alert when user leaving page without saving
 $(function () {
     var formSubmitting = false;
@@ -868,6 +773,14 @@ $(function () {
     };
 });
 
+$(document).ready(function() {
+  $(window).keydown(function(event){
+    if(event.keyCode == 13) {
+      event.preventDefault();
+      return false;
+    }
+  });
+});
 
 </script>
 
