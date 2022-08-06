@@ -440,19 +440,22 @@ def delete_sports_choice(request):
 
 def add_user_locations(request):
     if request.method == "POST":
-        selected_city = request.POST['selected_city_text'].strip()
-        selected_province = request.POST['selected_province_text'].strip()
-        selected_country = request.POST['selected_country_text'].strip()
+        selected_city = request.POST['selected_city_text'].strip() if request.POST['selected_city_text'] else ""
+        selected_province = request.POST['selected_province_text'].strip() if request.POST['selected_province_text'] else ""
+        selected_country = request.POST['selected_country_text'].strip() if request.POST['selected_country_text'] else ""
         # print(selected_city, selected_province, selected_country)
         try:
-            if Extra_Loctaions.objects.filter(user=request.user, city=selected_city,
-                                             province=selected_province, country=selected_country).exists():
-                return JsonResponse({'status': 'Duplicate Location cannot be added!'}, safe=False)
+            if selected_city != "" and selected_province != "" and selected_country != "":
+                if Extra_Loctaions.objects.filter(user=request.user, city=selected_city,
+                                                 province=selected_province, country=selected_country).exists():
+                    return JsonResponse({'status': 'Duplicate Location cannot be added!'}, safe=False)
+                else:
+                    obj = Extra_Loctaions(user=request.user, city=selected_city,
+                                                 province=selected_province, country=selected_country)
+                    obj.save()
+                return JsonResponse({'status': 'New Location added!'}, safe=False)
             else:
-                obj = Extra_Loctaions(user=request.user, city=selected_city,
-                                             province=selected_province, country=selected_country)
-                obj.save()
-            return JsonResponse({'status': 'New Location added!'}, safe=False)
+                return JsonResponse({'status': 'Missing values!'}, safe=False)
         except Exception:
             return JsonResponse({'status': 'An error occured!'}, safe=False)
 
@@ -734,18 +737,12 @@ def get_recommended_events(request):
     if len(user_avaiability):
         # print(user_avaiability)
         for event in events:
-            if event.datetimes:
-                time = event.datetimes.split("-")
-                event_start_datetime = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
-                event_end_datetime = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p')
-                # Considering single day events only
-                event_date = event_start_datetime.date()
-                event_start_time = event_start_datetime.time()
-                event_end_time = event_end_datetime.time()
+            event_date, event_start_time, event_end_time = extract_event_datetime(event)
+            if event_date is not None and event_start_time is not None and event_end_time is not None:
 
                 for avail in user_avaiability:
                     if avail.day_of_week == (event_date.weekday() + 1):
-                        print(event.event_title, avail.start_time, avail.end_time, event_start_time, event_end_time, event_start_time >= avail.start_time, event_end_time <= avail.end_time)
+                        # print(event.event_title, avail.start_time, avail.end_time, event_start_time, event_end_time, event_start_time >= avail.start_time, event_end_time <= avail.end_time)
                         if event_start_time >= avail.start_time and event_end_time <= avail.end_time:
                             recommended_events.add(event)
 
@@ -822,6 +819,41 @@ def get_recommended_events(request):
     print("Sports Filter", recommended_events)
 
     return list(recommended_events)
+
+
+def extract_event_datetime(event):
+    event_date = None
+    event_start_time = None
+    event_end_time = None
+
+    if event.datetimes:
+        time = event.datetimes.split("-")
+    elif event.datetimes_monday:
+        time = event.datetimes_monday.split("-")
+    elif event.datetimes_tuesday:
+        time = event.datetimes_tuesday.split("-")
+    elif event.datetimes_wednesday:
+        time = event.datetimes_wednesday.split("-")
+    elif event.datetimes_thursday:
+        time = event.datetimes_thursday.split("-")
+    elif event.datetimes_friday:
+        time = event.datetimes_friday.split("-")
+    elif event.datetimes_saturday:
+        time = event.datetimes_saturday.split("-")
+    elif event.datetimes_sunday:
+        time = event.datetimes_sunday.split("-")
+
+    # print(event.event_title, time, type(time))
+    if time is not None and time != "":
+        event_start_datetime = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
+        event_end_datetime = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p')
+        event_date = event_start_datetime.date()
+        event_start_time = event_start_datetime.time()
+        event_end_time = event_end_datetime.time()
+
+        return event_date, event_start_time, event_end_time
+
+    return event_date, event_start_time, event_end_time
 
 
 def format_time(events):
