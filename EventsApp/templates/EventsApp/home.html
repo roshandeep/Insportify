@@ -69,6 +69,14 @@
                         <img src="{{event.sport_logo}}" class="card-img-top" alt="...">
                         <div class="card-body">
                             <h5 class="card-title">{{event.sport_type}}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">
+                                {% if event.event_title %}
+                                    {{event.event_title}} :
+                                {% endif %}
+                                {% if event.event_type %}
+                                    {{event.event_type}}
+                                {% endif %}
+                            </h6>
                             <p class="card-text">{{event.venue}}, {{event.city}}, {{event.province}}</p>
                             {% if event.datetimes %}
                             <p class="text-dark text-start eventdatetime">{{event.datetimes}}</p>
@@ -123,6 +131,14 @@
                         <img src="{{event.sport_logo}}" class="card-img-top" alt="...">
                         <div class="card-body" >
                             <h5 class="card-title">{{event.sport_type}}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">
+                                {% if event.event_title %}
+                                    {{event.event_title}} :
+                                {% endif %}
+                                {% if event.event_type %}
+                                    {{event.event_type}}
+                                {% endif %}
+                            </h6>
                             <p class="card-text">{{event.venue}}, {{event.city}}, {{event.province}}</p>
                             {% if event.datetimes %}
                             <p class="text-dark text-start eventdatetime">{{event.datetimes}}</p>

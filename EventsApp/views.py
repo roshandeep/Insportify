@@ -323,11 +323,11 @@ def user_profile(request):
         if individual.exists():
             individual = Individual.objects.get(user=request.user)
             individual.user = request.user
-            if response["first_name"]:
+            if "first_name" in response:
                 individual.first_name = response["first_name"].strip() if response["first_name"] else ""
-            if response["last_name"]:
+            if "last_name" in response:
                 individual.last_name = response["last_name"].strip() if response["last_name"] else ""
-            if response["mobile"]:
+            if "mobile" in response:
                 mobile = response["mobile"].strip()
                 mobile = ''.join(i for i in mobile if i.isdigit())
                 individual.phone = mobile
@@ -337,7 +337,7 @@ def user_profile(request):
                 individual.website = response["website"].strip()
             if "job_title" in response:
                 individual.job_title = response["job_title"].strip()
-            if response["dob"]:
+            if "dob" in response:
                 individual.dob = response["dob"].strip() if response["dob"] else ""
             if "is_concussion" in response:
                 individual.concussion = response["is_concussion"].strip()
@@ -345,36 +345,36 @@ def user_profile(request):
                 individual.is_student = response["is_student"].strip()
             if "interest_gender" in response:
                 individual.participation_interest = ','.join(item for item in request.POST.getlist('interest_gender'))
-            if response["city"]:
+            if "city" in response:
                 individual.city = response["city"].strip() if response["city"] else ""
-            if response["province"]:
+            if "province" in response:
                 individual.province = response["province"].strip() if response["province"] else ""
-            if response["country"]:
+            if "country" in response:
                 individual.country = response["country"].strip() if response["country"] else ""
-            if response["contact_email"]:
+            if "contact_email" in response:
                 individual.contact_email = response["contact_email"].strip() if response["contact_email"] else ""
-            if response["sport_type"]:
+            if "sport_type" in response:
                 individual.sports_type = response["sport_type"].strip() if response["sport_type"] else ""
-            if response["position"]:
+            if "position" in response:
                 individual.sports_position = response["position"].strip() if response["position"] else ""
-            if response["skill"]:
+            if "skill" in response:
                 individual.sports_skill = response["skill"].strip() if response["skill"] else ""
             individual.save()
             context['individual'] = individual
         else:
             obj = Individual()
             obj.user = request.user
-            if response["first_name"]:
+            if "first_name" in response:
                 obj.first_name = response["first_name"].strip() if response["first_name"] else ""
-            if response["last_name"]:
+            if "last_name" in response:
                 obj.last_name = response["last_name"].strip() if response["last_name"] else ""
-            if response["mobile"]:
+            if "mobile" in response:
                 mobile = response["mobile"].strip()
                 mobile = ''.join(i for i in mobile if i.isdigit())
                 obj.phone = mobile
-            if response["contact_email"]:
+            if "contact_email" in response:
                 obj.email = response["contact_email"].strip() if response["contact_email"] else ""
-            if response["dob"]:
+            if "dob" in response:
                 obj.dob = response["dob"].strip() if response["dob"] else ""
             if "is_concussion" in response:
                 obj.concussion = response["is_concussion"].strip()
@@ -382,17 +382,17 @@ def user_profile(request):
                 obj.is_student = response["is_student"].strip()
             if "interest_gender" in response:
                 obj.participation_interest = ','.join(item for item in request.POST.getlist('interest_gender'))
-            if response["city"]:
+            if "city" in response:
                 obj.city = response["city"].strip() if response["city"] else ""
-            if response["province"]:
+            if "province" in response:
                 obj.province = response["province"].strip() if response["province"] else ""
-            if response["country"]:
+            if "country" in response:
                 obj.country = response["country"].strip() if response["country"] else ""
-            if response["sport_type"]:
+            if "sport_type" in response:
                 obj.sports_type = response["sport_type"].strip() if response["sport_type"] else ""
-            if response["position"]:
+            if "position" in response:
                 obj.sports_position = response["position"].strip() if response["position"] else ""
-            if response["skill"]:
+            if "skill" in response:
                 obj.sports_skill = response["skill"].strip() if response["skill"] else ""
             obj.save()
             context['individual'] = obj
@@ -570,41 +570,41 @@ def organization_profile(request):
         if organization.exists():
             organization = Organization.objects.get(user=request.user)
             organization.user = request.user
-            if response["type_of_organization"]:
+            if "type_of_organization" in response:
                 organization.type_of_organization = response["type_of_organization"].strip() if response[
                     "type_of_organization"] else ""
-            if response["company_name"]:
+            if "company_name" in response:
                 organization.organization_name = response["company_name"].strip() if response["company_name"] else ""
-            if response["parent_organization"]:
+            if "parent_organization" in response:
                 organization.parent_organization_name = response["parent_organization"].strip() if response[
                     "parent_organization"] else ""
-            if response["registration"]:
+            if "registration" in response:
                 organization.registration_no = response["registration"].strip() if response["registration"] else ""
-            if response["year_established"]:
+            if "year_established" in response:
                 organization.year_established = response["year_established"].strip() if response[
                     "year_established"] else ""
-            if response["street_name"]:
+            if "street_name" in response:
                 organization.street = response["street_name"].strip() if response["street_name"] else ""
-            if response["city"]:
+            if "city" in response:
                 organization.city = response["city"].strip() if response["city"] else ""
-            if response["province"]:
+            if "province" in response:
                 organization.province = response["province"].strip() if response["province"] else ""
-            if response["country"]:
+            if "country" in response:
                 organization.country = response["country"].strip() if response["country"] else ""
-            if response["postal_code"]:
+            if "postal_code" in response:
                 organization.postal_code = response["postal_code"].strip() if response["postal_code"] else ""
-            if response["email"]:
+            if "email" in response:
                 organization.email = response["email"].strip() if response["email"] else ""
-            if response["phone"]:
+            if "phone" in response:
                 phone = response["phone"].strip()
                 phone = ''.join(i for i in phone if i.isdigit())
                 organization.phone = phone
-            if response["website"]:
+            if "website" in response:
                 organization.website = response["website"].strip() if response["website"] else ""
-            if response["gender"]:
+            if "gender" in response:
                 organization.gender_focus = ','.join(item for item in request.POST.getlist('gender'))
-            if response["age_group"]:
-                organization.age_group = response["age_group"].strip() if response["age_group"] else ""
+            if "age_group" in response:
+                organization.age_group = ','.join(item for item in request.POST.getlist('age_group'))
             organization.save()
             context['organization'] = organization
         else:
@@ -643,7 +643,7 @@ def organization_profile(request):
             if response["gender"]:
                 obj.gender_focus = ','.join(item for item in request.POST.getlist('gender'))
             if response["age_group"]:
-                obj.age_group = response["age_group"].strip() if response["age_group"] else ""
+                obj.age_group = ','.join(item for item in request.POST.getlist('age_group'))
             obj.save()
             context['organization'] = obj
         messages.success(request, 'Organization details updated!')

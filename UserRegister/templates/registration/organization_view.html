@@ -174,19 +174,16 @@
                             <input type="checkbox" id="Female" name="gender" value="Female"
                             {% if "Female" in organization.gender_focus %} checked {% endif %}> Female Only </input>
                             <input type="checkbox" id="Coed" name="gender" value="Coed"
-                            {% if "Coed" in organization.gender_focus %} checked {% endif %}> Coed Only </input>
+                            {% if "Coed" in organization.gender_focus %} checked {% endif %}> Coed </input>
                         </div>
                         <div class="form-row p-2">
-                            <select id="select-state" name='age_group' class="form-select"
-                                    placeholder="Pick a state...">
-                                <option value="">Select an Age group</option>
-                                <option value="Youth"
-                                {% if organization.age_group == "Youth" %} selected {% endif %}>Youth</option>
-                                <option value="Adult"
-                                {% if organization.age_group == "Adult" %} selected {% endif %}>Adult</option>
-                                <option value="Senior"
-                                {% if organization.age_group == "Senior" %} selected {% endif %}>Senior</option>
-                            </select>
+                            <label>Pick a Age Group?</label>
+                            <input type="checkbox" id="Youth" name='age_group' value="Youth"
+                                   {% if "Youth" in organization.age_group %} checked {% endif %}> Youth </input>
+                            <input type="checkbox" id="Adult" name='age_group' value="Adult"
+                                   {% if "Adult" in organization.age_group %} checked {% endif %}> Adult </input>
+                            <input type="checkbox" id="Senior" name='age_group' value="Senior"
+                                   {% if "Senior" in organization.age_group %} checked {% endif %}> Senior </input>
                         </div>
                         <div class="form-row p-2 text-center">
                             <input type="button" name="previous"
