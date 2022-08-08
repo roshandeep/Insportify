@@ -561,11 +561,15 @@ def organization_profile(request):
     if request.method == "GET":
         organization = Organization.objects.get(user=request.user)
         # print(organization.__dict__)
+        locations = Extra_Loctaions.objects.filter(user=request.user).order_by("city")
+        context['locations'] = locations
         context['organization'] = organization
         return render(request, 'registration/organization_view.html', context)
 
     if request.method == "POST":
         organization = Organization.objects.filter(user=request.user)
+        locations = Extra_Loctaions.objects.filter(user=request.user).order_by("city")
+        context['locations'] = locations
         response = request.POST.dict()
         if organization.exists():
             organization = Organization.objects.get(user=request.user)
@@ -648,6 +652,39 @@ def organization_profile(request):
             context['organization'] = obj
         messages.success(request, 'Organization details updated!')
     return render(request, 'registration/organization_view.html', context)
+
+
+def add_organization_locations(request):
+    if request.method == "POST":
+        selected_street = request.POST['selected_street_text'].strip() if request.POST['selected_street_text'] else ""
+        selected_city = request.POST['selected_city_text'].strip() if request.POST['selected_city_text'] else ""
+        selected_province = request.POST['selected_province_text'].strip() if request.POST['selected_province_text'] else ""
+        selected_country = request.POST['selected_country_text'].strip() if request.POST['selected_country_text'] else ""
+        selected_zipcode = request.POST['selected_zipcode_text'].strip() if request.POST['selected_zipcode_text'] else ""
+
+        try:
+            if selected_street != "" and selected_city != "" and selected_province != "" and selected_country != "" and selected_zipcode != "":
+                if Extra_Loctaions.objects.filter(user=request.user, street=selected_street, city=selected_city,
+                                                  province=selected_province, country=selected_country,
+                                                  zipcode=selected_zipcode).exists():
+                    return JsonResponse({'status': 'Duplicate Location cannot be added!'}, safe=False)
+                else:
+                    obj = Extra_Loctaions(user=request.user, street=selected_street, city=selected_city,
+                                                 province=selected_province, country=selected_country,
+                                                zipcode=selected_zipcode)
+                    obj.save()
+                return JsonResponse({'status': 'New Location added!'}, safe=False)
+            else:
+                return JsonResponse({'status': 'Missing values!'}, safe=False)
+        except Exception:
+            return JsonResponse({'status': 'An error occured!'}, safe=False)
+
+
+def fetch_organization_locations(request):
+    if request.is_ajax():
+        location_choices = Extra_Loctaions.objects.filter(user=request.user).order_by("city")
+        location_choices = list(location_choices.values("street", "city", "province", "country", "zipcode", "pk"))
+        return JsonResponse(location_choices, safe=False)
 
 
 def home(request):
