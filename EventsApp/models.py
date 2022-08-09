@@ -141,6 +141,7 @@ class Organization(models.Model):
     website = models.CharField(max_length=50, null=True)
     gender_focus = models.CharField(max_length=50, null=True)
     age_group = models.CharField(max_length=50, null=True)
+    participants = models.CharField(max_length=100, null=True)
 
     def __str__(self):
         return self.organization_name

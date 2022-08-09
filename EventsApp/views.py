@@ -562,14 +562,18 @@ def organization_profile(request):
         organization = Organization.objects.get(user=request.user)
         # print(organization.__dict__)
         locations = Extra_Loctaions.objects.filter(user=request.user).order_by("city")
+        sports_type = SportsType.objects.all().order_by('sports_type_text')
         context['locations'] = locations
+        context['sports_type'] = sports_type
         context['organization'] = organization
         return render(request, 'registration/organization_view.html', context)
 
     if request.method == "POST":
         organization = Organization.objects.filter(user=request.user)
         locations = Extra_Loctaions.objects.filter(user=request.user).order_by("city")
+        sports_type = SportsType.objects.all().order_by('sports_type_text')
         context['locations'] = locations
+        context['sports_type'] = sports_type
         response = request.POST.dict()
         if organization.exists():
             organization = Organization.objects.get(user=request.user)
@@ -609,49 +613,74 @@ def organization_profile(request):
                 organization.gender_focus = ','.join(item for item in request.POST.getlist('gender'))
             if "age_group" in response:
                 organization.age_group = ','.join(item for item in request.POST.getlist('age_group'))
+            if "participants" in response:
+                organization.participants = response["participants"].strip() if response["participants"] else ""
+            if "sport_type" in response:
+                 save_organization_sports(request.user, request.POST.getlist('sport_type'))
             organization.save()
             context['organization'] = organization
         else:
             obj = Organization()
             obj.user = request.user
-            if response["type_of_organization"]:
+            if "type_of_organization" in response:
                 obj.type_of_organization = response["type_of_organization"].strip() if response[
                     "type_of_organization"] else ""
-            if response["company_name"]:
+            if "company_name" in response:
                 obj.organization_name = response["company_name"].strip() if response["company_name"] else ""
-            if response["parent_organization"]:
+            if "parent_organization" in response:
                 obj.parent_organization_name = response["parent_organization"].strip() if response[
                     "parent_organization"] else ""
-            if response["registration"]:
+            if "registration" in response:
                 obj.registration_no = response["registration"].strip() if response["registration"] else ""
-            if response["year_established"]:
+            if "year_established" in response:
                 obj.year_established = response["year_established"].strip() if response["year_established"] else ""
-            if response["street_name"]:
+            if "street_name" in response:
                 obj.street = response["street_name"].strip() if response["street_name"] else ""
-            if response["city"]:
+            if "city" in response:
                 obj.city = response["city"].strip() if response["city"] else ""
-            if response["province"]:
+            if "province" in response:
                 obj.province = response["province"].strip() if response["province"] else ""
-            if response["country"]:
+            if "country" in response:
                 obj.country = response["country"].strip() if response["country"] else ""
-            if response["postal_code"]:
+            if "postal_code" in response:
                 obj.postal_code = response["postal_code"].strip() if response["postal_code"] else ""
-            if response["email"]:
+            if "email" in response:
                 obj.email = response["email"].strip() if response["email"] else ""
-            if response["phone"]:
+            if "phone" in response:
                 phone = response["phone"].strip()
                 phone = ''.join(i for i in phone if i.isdigit())
                 obj.phone = phone
-            if response["website"]:
+            if "website" in response:
                 obj.website = response["website"].strip() if response["website"] else ""
-            if response["gender"]:
+            if "gender" in response:
                 obj.gender_focus = ','.join(item for item in request.POST.getlist('gender'))
-            if response["age_group"]:
+            if "age_group" in response:
                 obj.age_group = ','.join(item for item in request.POST.getlist('age_group'))
+            if "participants" in response:
+                organization.participants = response["participants"].strip() if response["participants"] else ""
+            if "sport_type" in response:
+                 save_organization_sports(request.user, request.POST.getlist('sport_type'))
             obj.save()
             context['organization'] = obj
         messages.success(request, 'Organization details updated!')
     return render(request, 'registration/organization_view.html', context)
+
+
+
+def save_organization_sports(user, sport_type_list):
+    user_choice = Secondary_SportsChoice.objects.filter(user=user)
+    # Remove the sport choces from DB if they have been removed from current list
+    if len(user_choice):
+        for item in user_choice:
+            if item.sport_type not in sport_type_list:
+                Secondary_SportsChoice.objects.filter(id=item.pk).delete()
+
+    # Add/Update sport choices for user
+    for sport in sport_type_list:
+        if not Secondary_SportsChoice.objects.filter(user=user, sport_type=sport).exists():
+            obj = Secondary_SportsChoice(user=user, sport_type=sport)
+            obj.save()
+    return
 
 
 def add_organization_locations(request):
