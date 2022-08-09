@@ -394,6 +394,8 @@ def user_profile(request):
                 obj.sports_position = response["position"].strip() if response["position"] else ""
             if "skill" in response:
                 obj.sports_skill = response["skill"].strip() if response["skill"] else ""
+            # if "sunday_start_time" in response:
+            #     print
             obj.save()
             context['individual'] = obj
         messages.success(request, 'Individual details updated!')
@@ -692,7 +694,7 @@ def add_organization_locations(request):
         selected_zipcode = request.POST['selected_zipcode_text'].strip() if request.POST['selected_zipcode_text'] else ""
 
         try:
-            if selected_street != "" and selected_city != "" and selected_province != "" and selected_country != "" and selected_zipcode != "":
+            if selected_city != "" and selected_province != "" and selected_country != "" and selected_zipcode != "":
                 if Extra_Loctaions.objects.filter(user=request.user, street=selected_street, city=selected_city,
                                                   province=selected_province, country=selected_country,
                                                   zipcode=selected_zipcode).exists():
