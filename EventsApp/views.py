@@ -761,6 +761,7 @@ def get_organization_timings(request):
 
 def save_organization_sports(user, sport_type_list):
     user_choice = Secondary_SportsChoice.objects.filter(user=user)
+    print(user_choice, sport_type_list)
     # Remove the sport choces from DB if they have been removed from current list
     if len(user_choice):
         for item in user_choice:
@@ -958,21 +959,20 @@ def get_recommended_events(request):
                         # print(event.event_title, gender_list, individual_gender, flag, item)
 
                 if flag == 0:
-                    # print(event.event_title, gender_list, individual_gender, flag)
                     recommended_events.remove(event)
 
     print("Gender Filter", recommended_events)
 
     # FILTER BY Sports
-    if user.is_individual:
-        sport_choices = Secondary_SportsChoice.objects.filter(user=user).order_by("sport_type")
-        sports_list = []
-        for item in sport_choices:
-            sports_list.append(item.sport_type)
+    # if user.is_individual:
+    sport_choices = Secondary_SportsChoice.objects.filter(user=user).order_by("sport_type")
+    sports_list = []
+    for item in sport_choices:
+        sports_list.append(item.sport_type)
 
-        for event in recommended_events[:]:
-            if event.sport_type not in sports_list:
-                recommended_events.remove(event)
+    for event in recommended_events[:]:
+        if event.sport_type not in sports_list:
+            recommended_events.remove(event)
 
     print("Sports Filter", recommended_events)
 
