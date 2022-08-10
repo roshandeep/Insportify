@@ -243,12 +243,16 @@
                                <label>Sunday</label>
                             </div>
                             <div class="col-md-4">
-                                <input type="time" class="form-control" id="sunday_start_time" name="sunday_start_time"
-                                       placeholder="HH:MM 24 hr format"/>
+                                <input type="time" class="form-control" id="sunday_start_time"
+                                       name="sunday_start_time"
+                                       placeholder="HH:MM 24 hr format"
+                                value="{% if avail.day_of_week == 'Sunday' %} {{avail.start_time}} {% endif %}"/>
                             </div>
                             <div class="col-md-4">
-                                <input type="time" class="form-control" id="sunday_end_time" name="sunday_end_time"
-                                       placeholder="HH:MM 24 hr format"/>
+                                <input type="time" class="form-control" id="sunday_end_time"
+                                       name="sunday_end_time"
+                                       placeholder="HH:MM 24 hr format"
+                                value="{% if avail.day_of_week == 'Sunday' %} {{avail.start_time}} {% endif %}"/>
                             </div>
                         </div>
                         <div class="form-group row p-2">
@@ -329,6 +333,7 @@
                                        placeholder="HH:MM 24 hr format"/>
                             </div>
                         </div>
+
                         <div class="form-row p-2 text-center">
                             <input type="button" name="previous"
                                    class="previous action-button-previous btn btn-primary"
@@ -501,6 +506,7 @@ $(document).ready(function(){
   });
 
     populate_sport_choices();
+    get_organization_timings();
 
   $(window).keydown(function(event){
     if(event.keyCode == 13) {
@@ -522,6 +528,46 @@ $(document).ready(function(){
                 sports_list.push(data.sport_type);
             });
             $('#sport_type').val(sports_list).trigger('change');
+        }
+    });
+  };
+
+  function get_organization_timings(){
+    $.ajax({
+        type: "GET",
+        url: '{% url "EventsApp:get_organization_timings" %}',
+        success: function (data) {
+            console.log(data);
+            data.forEach(function (data) {
+                if(data.day_of_week === "Sunday"){
+                    $("#sunday_start_time").val(data.start_time);
+                    $("#sunday_end_time").val(data.end_time);
+                }
+                if(data.day_of_week === "Monday"){
+                    $("#monday_start_time").val(data.start_time);
+                    $("#monday_end_time").val(data.end_time);
+                }
+                if(data.day_of_week === "Tuesday"){
+                    $("#tuesday_start_time").val(data.start_time);
+                    $("#tuesday_end_time").val(data.end_time);
+                }
+                if(data.day_of_week === "Wednesday"){
+                    $("#wednesday_start_time").val(data.start_time);
+                    $("#wednesday_end_time").val(data.end_time);
+                }
+                if(data.day_of_week === "Thursday"){
+                    $("#thursday_start_time").val(data.start_time);
+                    $("#thursday_end_time").val(data.end_time);
+                }
+                if(data.day_of_week === "Friday"){
+                    $("#friday_start_time").val(data.start_time);
+                    $("#friday_end_time").val(data.end_time);
+                }
+                if(data.day_of_week === "Saturday"){
+                    $("#saturday_start_time").val(data.start_time);
+                    $("#saturday_end_time").val(data.end_time);
+                }
+            });
         }
     });
   };
@@ -549,29 +595,6 @@ $(function() {
   });
 });
 
-
-$(function () {
-        $("input[name='event_cost']").click(function () {
-            if ($("#chkYes").is(":checked")) {
-                $("#dvPassport").show();
-            } else {
-                $("#dvPassport").hide();
-            }
-        });
-    });
-$(function () {
-        $("input[name='position_price']").click(function () {
-            if ($("#chkYes1").is(":checked")) {
-                $("#dvPassport1").show();
-            } else {
-                $("#dvPassport1").hide();
-            }
-        });
-    });
-
-$('.radio').change(function() {
-  $('#custom_amount').prop('disabled', !$(this).is('.other'));
-});
 
 // Make Placeholders title when user types something
 function addInputLabel(evt) {

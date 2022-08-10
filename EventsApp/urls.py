@@ -50,6 +50,7 @@ urlpatterns = [
     # path('add_availability/', views.add_availability, name='add_availability'),
     path('add_organization_locations/', views.add_organization_locations, name='add_organization_locations'),
     path('fetch_organization_locations/', views.fetch_organization_locations, name='fetch_organization_locations'),
+    path('get_organization_timings/', views.get_organization_timings, name='get_organization_timings'),
     path('get_user_availability/', views.get_user_availability, name='get_user_availability'),
     path('add_user_availability/', views.add_user_availability, name='add_user_availability'),
     # path('notifications/', views.notifications, name='notifications'),
