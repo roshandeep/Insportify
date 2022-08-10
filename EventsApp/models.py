@@ -237,6 +237,13 @@ class Availability(models.Model):
     end_time = models.TimeField()
 
 
+class Organization_Availability(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    day_of_week = models.CharField(max_length=100)
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+
+
 class Logo(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='images')
