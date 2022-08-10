@@ -15,7 +15,7 @@ from Insportify import settings
 from .forms import MultiStepForm, AvailabilityForm, LogoForm, InviteForm
 from .models import master_table, Individual, Organization, Venues, SportsCategory, SportsType, Order, User, \
     Availability, Logo, Extra_Loctaions, Events_PositionInfo, Secondary_SportsChoice, Cart, Invite, \
-    PositionAndSkillType, SportsImage
+    PositionAndSkillType, SportsImage, Organization_Availability
 import util
 
 
@@ -394,8 +394,7 @@ def user_profile(request):
                 obj.sports_position = response["position"].strip() if response["position"] else ""
             if "skill" in response:
                 obj.sports_skill = response["skill"].strip() if response["skill"] else ""
-            # if "sunday_start_time" in response:
-            #     print
+
             obj.save()
             context['individual'] = obj
         messages.success(request, 'Individual details updated!')
@@ -619,6 +618,7 @@ def organization_profile(request):
                 organization.participants = response["participants"].strip() if response["participants"] else ""
             if "sport_type" in response:
                  save_organization_sports(request.user, request.POST.getlist('sport_type'))
+            save_organization_timings(request.user, response)
             organization.save()
             context['organization'] = organization
         else:
@@ -662,11 +662,95 @@ def organization_profile(request):
                 organization.participants = response["participants"].strip() if response["participants"] else ""
             if "sport_type" in response:
                  save_organization_sports(request.user, request.POST.getlist('sport_type'))
+            save_organization_timings(request.user, response)
             obj.save()
             context['organization'] = obj
         messages.success(request, 'Organization details updated!')
     return render(request, 'registration/organization_view.html', context)
 
+
+def save_organization_timings(user, response):
+    if "sunday_start_time" in response and response["sunday_start_time"] != "" and "sunday_end_time" in response and response["sunday_end_time"] != "":
+        if Organization_Availability.objects.filter(user=user, day_of_week="Sunday").exists():
+            obj = Organization_Availability.objects.get(user=user, day_of_week="Sunday")
+            obj.start_time = response["sunday_start_time"]
+            obj.end_time = response["sunday_end_time"]
+            obj.save()
+        else:
+            obj = Organization_Availability(user=user, day_of_week="Sunday", start_time=response["sunday_start_time"],
+                                            end_time=response["sunday_end_time"])
+            obj.save()
+    if "monday_start_time" in response and response["monday_start_time"] != "" and "monday_end_time" in response and response["monday_end_time"] != "":
+        if Organization_Availability.objects.filter(user=user, day_of_week="Monday").exists():
+            obj = Organization_Availability.objects.get(user=user, day_of_week="Monday")
+            obj.start_time = response["monday_start_time"]
+            obj.end_time = response["monday_end_time"]
+            obj.save()
+        else:
+            obj = Organization_Availability(user=user, day_of_week="Monday", start_time=response["monday_start_time"],
+                                            end_time=response["monday_end_time"])
+            obj.save()
+    if "tuesday_start_time" in response and response["tuesday_start_time"] != "" and "tuesday_end_time" in response and response["tuesday_end_time"] != "":
+        if Organization_Availability.objects.filter(user=user, day_of_week="Tuesday").exists():
+            obj = Organization_Availability.objects.get(user=user, day_of_week="Tuesday")
+            obj.start_time = response["tuesday_start_time"]
+            obj.end_time = response["tuesday_end_time"]
+            obj.save()
+        else:
+            obj = Organization_Availability(user=user, day_of_week="Tuesday", start_time=response["tuesday_start_time"],
+                                            end_time=response["tuesday_end_time"])
+            obj.save()
+    if "wednesday_start_time" in response and response["wednesday_start_time"] != "" and "wednesday_end_time" in response and response["wednesday_end_time"] != "":
+        if Organization_Availability.objects.filter(user=user, day_of_week="Wednesday").exists():
+            obj = Organization_Availability.objects.get(user=user, day_of_week="Wednesday")
+            obj.start_time = response["wednesday_start_time"]
+            obj.end_time = response["wednesday_end_time"]
+            obj.save()
+        else:
+            obj = Organization_Availability(user=user, day_of_week="Wednesday", start_time=response["wednesday_start_time"],
+                                            end_time=response["wednesday_end_time"])
+            obj.save()
+    if "thursday_start_time" in response and response["thursday_start_time"] != "" and "thursday_end_time" in response and response["thursday_end_time"] != "":
+        if Organization_Availability.objects.filter(user=user, day_of_week="Thursday").exists():
+            obj = Organization_Availability.objects.get(user=user, day_of_week="Thursday")
+            obj.start_time = response["thursday_start_time"]
+            obj.end_time = response["thursday_end_time"]
+            obj.save()
+        else:
+            obj = Organization_Availability(user=user, day_of_week="Thursday",
+                                            start_time=response["thursday_start_time"],
+                                            end_time=response["thursday_end_time"])
+            obj.save()
+    if "friday_start_time" in response and response["friday_start_time"] != "" and "friday_end_time" in response and response["friday_end_time"] != "":
+        if Organization_Availability.objects.filter(user=user, day_of_week="Friday").exists():
+            obj = Organization_Availability.objects.get(user=user, day_of_week="Friday")
+            obj.start_time = response["friday_start_time"]
+            obj.end_time = response["friday_end_time"]
+            obj.save()
+        else:
+            obj = Organization_Availability(user=user, day_of_week="Friday",
+                                            start_time=response["friday_start_time"],
+                                            end_time=response["friday_end_time"])
+            obj.save()
+    if "saturday_start_time" in response and response["saturday_start_time"] != "" and "saturday_end_time" in response and response["saturday_end_time"] != "":
+        if Organization_Availability.objects.filter(user=user, day_of_week="Saturday").exists():
+            obj = Organization_Availability.objects.get(user=user, day_of_week="Saturday")
+            obj.start_time = response["saturday_start_time"]
+            obj.end_time = response["saturday_end_time"]
+            obj.save()
+        else:
+            obj = Organization_Availability(user=user, day_of_week="Saturday",
+
+                                            start_time=response["saturday_start_time"],
+                                            end_time=response["saturday_end_time"])
+            obj.save()
+
+
+def get_organization_timings(request):
+    if request.is_ajax():
+        availability = Organization_Availability.objects.filter(user=request.user)
+        availability = list(availability.values("day_of_week", "start_time", "end_time", "pk"))
+        return JsonResponse(availability, safe=False)
 
 
 def save_organization_sports(user, sport_type_list):
@@ -874,15 +958,15 @@ def get_recommended_events(request):
     print("Gender Filter", recommended_events)
 
     # FILTER BY Sports
-    if user.is_individual:
-        sport_choices = Secondary_SportsChoice.objects.filter(user=user).order_by("sport_type")
-        sports_list = []
-        for item in sport_choices:
-            sports_list.append(item.sport_type)
+    # if user.is_individual:
+    sport_choices = Secondary_SportsChoice.objects.filter(user=user).order_by("sport_type")
+    sports_list = []
+    for item in sport_choices:
+        sports_list.append(item.sport_type)
 
-        for event in recommended_events[:]:
-            if event.sport_type not in sports_list:
-                recommended_events.remove(event)
+    for event in recommended_events[:]:
+        if event.sport_type not in sports_list:
+            recommended_events.remove(event)
 
     print("Sports Filter", recommended_events)
 
