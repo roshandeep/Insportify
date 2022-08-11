@@ -15,7 +15,7 @@ from Insportify import settings
 from .forms import MultiStepForm, AvailabilityForm, LogoForm, InviteForm
 from .models import master_table, Individual, Organization, Venues, SportsCategory, SportsType, Order, User, \
     Availability, Logo, Extra_Loctaions, Events_PositionInfo, Secondary_SportsChoice, Cart, Invite, \
-    PositionAndSkillType, SportsImage
+    PositionAndSkillType, SportsImage, Organization_Availability
 import util
 
 
@@ -54,37 +54,52 @@ def multistep(request):
             obj.datetimes_saturday = ""
             obj.datetimes_sunday = ""
             if obj.is_recurring and 'Monday' in selected_days:
-                date = request.POST.get('datetimes_monday_date')
+                date = request.POST.get('datetimes_monday_date').split("-")
+                start_date = date[0].strip()
+                end_date = date[1].strip()
+                # print(start_date, end_date)
                 ts = datetime.strptime(request.POST.get('datetimes_monday_start_time'), "%H:%M").strftime("%I:%M %p")
                 te = datetime.strptime(request.POST.get('datetimes_monday_end_time'), "%H:%M").strftime("%I:%M %p")
-                obj.datetimes_monday = date.split('-')[0].strip() + " " + ts + " - " + date.split('-')[1].strip() + " " + te
+                obj.datetimes_monday = start_date + " " + ts + " - " + end_date + " " + te
             if obj.is_recurring and 'Tuesday' in selected_days:
-                date = request.POST.get('datetimes_tuesday_date')
+                date = request.POST.get('datetimes_tuesday_date').split("-")
+                start_date = date[0].strip()
+                end_date = date[1].strip()
                 ts = datetime.strptime(request.POST.get('datetimes_tuesday_start_time'), "%H:%M").strftime("%I:%M %p")
                 te = datetime.strptime(request.POST.get('datetimes_tuesday_end_time'), "%H:%M").strftime("%I:%M %p")
                 obj.datetimes_tuesday = date.split('-')[0].strip() + " " + ts + " - " + date.split('-')[1].strip() + " " + te
             if obj.is_recurring and 'Wednesday' in selected_days:
-                date = request.POST.get('datetimes_wednesday_date')
+                date = request.POST.get('datetimes_wednesday_date').split("-")
+                start_date = date[0].strip()
+                end_date = date[1].strip()
                 ts = datetime.strptime(request.POST.get('datetimes_wednesday_start_time'), "%H:%M").strftime("%I:%M %p")
                 te = datetime.strptime(request.POST.get('datetimes_wednesday_end_time'), "%H:%M").strftime("%I:%M %p")
                 obj.datetimes_wednesday = date.split('-')[0].strip() + " " + ts + " - " + date.split('-')[1].strip() + " " + te
             if obj.is_recurring and 'Thursday' in selected_days:
-                date = request.POST.get('datetimes_thursday_date')
+                date = request.POST.get('datetimes_thursday_date').split("-")
+                start_date = date[0].strip()
+                end_date = date[1].strip()
                 ts = datetime.strptime(request.POST.get('datetimes_thursday_start_time'), "%H:%M").strftime("%I:%M %p")
                 te = datetime.strptime(request.POST.get('datetimes_thursday_end_time'), "%H:%M").strftime("%I:%M %p")
                 obj.datetimes_thursday = date.split('-')[0].strip() + " " + ts + " - " + date.split('-')[1].strip() + " " + te
             if obj.is_recurring and 'Friday' in selected_days:
-                date = request.POST.get('datetimes_friday_date')
+                date = request.POST.get('datetimes_friday_date').split("-")
+                start_date = date[0].strip()
+                end_date = date[1].strip()
                 ts = datetime.strptime(request.POST.get('datetimes_friday_start_time'), "%H:%M").strftime("%I:%M %p")
                 te = datetime.strptime(request.POST.get('datetimes_friday_end_time'), "%H:%M").strftime("%I:%M %p")
                 obj.datetimes_friday = date.split('-')[0].strip() + " " + ts + " - " + date.split('-')[1].strip() + " " + te
             if obj.is_recurring and 'Saturday' in selected_days:
-                date = request.POST.get('datetimes_saturday_date')
+                date = request.POST.get('datetimes_saturday_date').split("-")
+                start_date = date[0].strip()
+                end_date = date[1].strip()
                 ts = datetime.strptime(request.POST.get('datetimes_saturday_start_time'), "%H:%M").strftime("%I:%M %p")
                 te = datetime.strptime(request.POST.get('datetimes_saturday_end_time'), "%H:%M").strftime("%I:%M %p")
                 obj.datetimes_saturday = date.split('-')[0].strip() + " " + ts + " - " + date.split('-')[1].strip() + " " + te
             if obj.is_recurring and 'Sunday' in selected_days:
-                date = request.POST.get('datetimes_sunday_date')
+                date = request.POST.get('datetimes_sunday_date').split("-")
+                start_date = date[0].strip()
+                end_date = date[1].strip()
                 ts = datetime.strptime(request.POST.get('datetimes_sunday_start_time'), "%H:%M").strftime("%I:%M %p")
                 te = datetime.strptime(request.POST.get('datetimes_sunday_end_time'), "%H:%M").strftime("%I:%M %p")
                 obj.datetimes_sunday = date.split('-')[0].strip() + " " + ts + " - " + date.split('-')[1].strip() + " " + te
@@ -308,11 +323,11 @@ def user_profile(request):
         if individual.exists():
             individual = Individual.objects.get(user=request.user)
             individual.user = request.user
-            if response["first_name"]:
+            if "first_name" in response:
                 individual.first_name = response["first_name"].strip() if response["first_name"] else ""
-            if response["last_name"]:
+            if "last_name" in response:
                 individual.last_name = response["last_name"].strip() if response["last_name"] else ""
-            if response["mobile"]:
+            if "mobile" in response:
                 mobile = response["mobile"].strip()
                 mobile = ''.join(i for i in mobile if i.isdigit())
                 individual.phone = mobile
@@ -322,7 +337,7 @@ def user_profile(request):
                 individual.website = response["website"].strip()
             if "job_title" in response:
                 individual.job_title = response["job_title"].strip()
-            if response["dob"]:
+            if "dob" in response:
                 individual.dob = response["dob"].strip() if response["dob"] else ""
             if "is_concussion" in response:
                 individual.concussion = response["is_concussion"].strip()
@@ -330,36 +345,36 @@ def user_profile(request):
                 individual.is_student = response["is_student"].strip()
             if "interest_gender" in response:
                 individual.participation_interest = ','.join(item for item in request.POST.getlist('interest_gender'))
-            if response["city"]:
+            if "city" in response:
                 individual.city = response["city"].strip() if response["city"] else ""
-            if response["province"]:
+            if "province" in response:
                 individual.province = response["province"].strip() if response["province"] else ""
-            if response["country"]:
+            if "country" in response:
                 individual.country = response["country"].strip() if response["country"] else ""
-            if response["contact_email"]:
+            if "contact_email" in response:
                 individual.contact_email = response["contact_email"].strip() if response["contact_email"] else ""
-            if response["sport_type"]:
+            if "sport_type" in response:
                 individual.sports_type = response["sport_type"].strip() if response["sport_type"] else ""
-            if response["position"]:
+            if "position" in response:
                 individual.sports_position = response["position"].strip() if response["position"] else ""
-            if response["skill"]:
+            if "skill" in response:
                 individual.sports_skill = response["skill"].strip() if response["skill"] else ""
             individual.save()
             context['individual'] = individual
         else:
             obj = Individual()
             obj.user = request.user
-            if response["first_name"]:
+            if "first_name" in response:
                 obj.first_name = response["first_name"].strip() if response["first_name"] else ""
-            if response["last_name"]:
+            if "last_name" in response:
                 obj.last_name = response["last_name"].strip() if response["last_name"] else ""
-            if response["mobile"]:
+            if "mobile" in response:
                 mobile = response["mobile"].strip()
                 mobile = ''.join(i for i in mobile if i.isdigit())
                 obj.phone = mobile
-            if response["contact_email"]:
+            if "contact_email" in response:
                 obj.email = response["contact_email"].strip() if response["contact_email"] else ""
-            if response["dob"]:
+            if "dob" in response:
                 obj.dob = response["dob"].strip() if response["dob"] else ""
             if "is_concussion" in response:
                 obj.concussion = response["is_concussion"].strip()
@@ -367,18 +382,19 @@ def user_profile(request):
                 obj.is_student = response["is_student"].strip()
             if "interest_gender" in response:
                 obj.participation_interest = ','.join(item for item in request.POST.getlist('interest_gender'))
-            if response["city"]:
+            if "city" in response:
                 obj.city = response["city"].strip() if response["city"] else ""
-            if response["province"]:
+            if "province" in response:
                 obj.province = response["province"].strip() if response["province"] else ""
-            if response["country"]:
+            if "country" in response:
                 obj.country = response["country"].strip() if response["country"] else ""
-            if response["sport_type"]:
+            if "sport_type" in response:
                 obj.sports_type = response["sport_type"].strip() if response["sport_type"] else ""
-            if response["position"]:
+            if "position" in response:
                 obj.sports_position = response["position"].strip() if response["position"] else ""
-            if response["skill"]:
+            if "skill" in response:
                 obj.sports_skill = response["skill"].strip() if response["skill"] else ""
+
             obj.save()
             context['individual'] = obj
         messages.success(request, 'Individual details updated!')
@@ -425,19 +441,22 @@ def delete_sports_choice(request):
 
 def add_user_locations(request):
     if request.method == "POST":
-        selected_city = request.POST['selected_city_text']
-        selected_province = request.POST['selected_province_text']
-        selected_country = request.POST['selected_country_text']
+        selected_city = request.POST['selected_city_text'].strip() if request.POST['selected_city_text'] else ""
+        selected_province = request.POST['selected_province_text'].strip() if request.POST['selected_province_text'] else ""
+        selected_country = request.POST['selected_country_text'].strip() if request.POST['selected_country_text'] else ""
         # print(selected_city, selected_province, selected_country)
         try:
-            if Extra_Loctaions.objects.filter(user=request.user, city=selected_city,
-                                              province=selected_province, country=selected_country).exists():
-                return JsonResponse({'status': 'Duplicate Location cannot be added!'}, safe=False)
+            if selected_city != "" and selected_province != "" and selected_country != "":
+                if Extra_Loctaions.objects.filter(user=request.user, city=selected_city,
+                                                 province=selected_province, country=selected_country).exists():
+                    return JsonResponse({'status': 'Duplicate Location cannot be added!'}, safe=False)
+                else:
+                    obj = Extra_Loctaions(user=request.user, city=selected_city,
+                                                 province=selected_province, country=selected_country)
+                    obj.save()
+                return JsonResponse({'status': 'New Location added!'}, safe=False)
             else:
-                obj = Extra_Loctaions(user=request.user, city=selected_city,
-                                      province=selected_province, country=selected_country)
-                obj.save()
-            return JsonResponse({'status': 'New Location added!'}, safe=False)
+                return JsonResponse({'status': 'Missing values!'}, safe=False)
         except Exception:
             return JsonResponse({'status': 'An error occured!'}, safe=False)
 
@@ -543,93 +562,244 @@ def organization_profile(request):
     if request.method == "GET":
         organization = Organization.objects.get(user=request.user)
         # print(organization.__dict__)
+        locations = Extra_Loctaions.objects.filter(user=request.user).order_by("city")
+        sports_type = SportsType.objects.all().order_by('sports_type_text')
+        context['locations'] = locations
+        context['sports_type'] = sports_type
         context['organization'] = organization
         return render(request, 'registration/organization_view.html', context)
 
     if request.method == "POST":
         organization = Organization.objects.filter(user=request.user)
+        locations = Extra_Loctaions.objects.filter(user=request.user).order_by("city")
+        sports_type = SportsType.objects.all().order_by('sports_type_text')
+        context['locations'] = locations
+        context['sports_type'] = sports_type
         response = request.POST.dict()
         if organization.exists():
             organization = Organization.objects.get(user=request.user)
             organization.user = request.user
-            if response["type_of_organization"]:
+            if "type_of_organization" in response:
                 organization.type_of_organization = response["type_of_organization"].strip() if response[
                     "type_of_organization"] else ""
-            if response["company_name"]:
+            if "company_name" in response:
                 organization.organization_name = response["company_name"].strip() if response["company_name"] else ""
-            if response["parent_organization"]:
+            if "parent_organization" in response:
                 organization.parent_organization_name = response["parent_organization"].strip() if response[
                     "parent_organization"] else ""
-            if response["registration"]:
+            if "registration" in response:
                 organization.registration_no = response["registration"].strip() if response["registration"] else ""
-            if response["year_established"]:
+            if "year_established" in response:
                 organization.year_established = response["year_established"].strip() if response[
                     "year_established"] else ""
-            if response["street_name"]:
+            if "street_name" in response:
                 organization.street = response["street_name"].strip() if response["street_name"] else ""
-            if response["city"]:
+            if "city" in response:
                 organization.city = response["city"].strip() if response["city"] else ""
-            if response["province"]:
+            if "province" in response:
                 organization.province = response["province"].strip() if response["province"] else ""
-            if response["country"]:
+            if "country" in response:
                 organization.country = response["country"].strip() if response["country"] else ""
-            if response["postal_code"]:
+            if "postal_code" in response:
                 organization.postal_code = response["postal_code"].strip() if response["postal_code"] else ""
-            if response["email"]:
+            if "email" in response:
                 organization.email = response["email"].strip() if response["email"] else ""
-            if response["phone"]:
+            if "phone" in response:
                 phone = response["phone"].strip()
                 phone = ''.join(i for i in phone if i.isdigit())
                 organization.phone = phone
-            if response["website"]:
+            if "website" in response:
                 organization.website = response["website"].strip() if response["website"] else ""
-            if response["gender"]:
+            if "gender" in response:
                 organization.gender_focus = ','.join(item for item in request.POST.getlist('gender'))
-            if response["age_group"]:
-                organization.age_group = response["age_group"].strip() if response["age_group"] else ""
+            if "age_group" in response:
+                organization.age_group = ','.join(item for item in request.POST.getlist('age_group'))
+            if "participants" in response:
+                organization.participants = response["participants"].strip() if response["participants"] else ""
+            if "sport_type" in response:
+                 save_organization_sports(request.user, request.POST.getlist('sport_type'))
+            save_organization_timings(request.user, response)
             organization.save()
             context['organization'] = organization
         else:
             obj = Organization()
             obj.user = request.user
-            if response["type_of_organization"]:
+            if "type_of_organization" in response:
                 obj.type_of_organization = response["type_of_organization"].strip() if response[
                     "type_of_organization"] else ""
-            if response["company_name"]:
+            if "company_name" in response:
                 obj.organization_name = response["company_name"].strip() if response["company_name"] else ""
-            if response["parent_organization"]:
+            if "parent_organization" in response:
                 obj.parent_organization_name = response["parent_organization"].strip() if response[
                     "parent_organization"] else ""
-            if response["registration"]:
+            if "registration" in response:
                 obj.registration_no = response["registration"].strip() if response["registration"] else ""
-            if response["year_established"]:
+            if "year_established" in response:
                 obj.year_established = response["year_established"].strip() if response["year_established"] else ""
-            if response["street_name"]:
+            if "street_name" in response:
                 obj.street = response["street_name"].strip() if response["street_name"] else ""
-            if response["city"]:
+            if "city" in response:
                 obj.city = response["city"].strip() if response["city"] else ""
-            if response["province"]:
+            if "province" in response:
                 obj.province = response["province"].strip() if response["province"] else ""
-            if response["country"]:
+            if "country" in response:
                 obj.country = response["country"].strip() if response["country"] else ""
-            if response["postal_code"]:
+            if "postal_code" in response:
                 obj.postal_code = response["postal_code"].strip() if response["postal_code"] else ""
-            if response["email"]:
+            if "email" in response:
                 obj.email = response["email"].strip() if response["email"] else ""
-            if response["phone"]:
+            if "phone" in response:
                 phone = response["phone"].strip()
                 phone = ''.join(i for i in phone if i.isdigit())
                 obj.phone = phone
-            if response["website"]:
+            if "website" in response:
                 obj.website = response["website"].strip() if response["website"] else ""
-            if response["gender"]:
+            if "gender" in response:
                 obj.gender_focus = ','.join(item for item in request.POST.getlist('gender'))
-            if response["age_group"]:
-                obj.age_group = response["age_group"].strip() if response["age_group"] else ""
+            if "age_group" in response:
+                obj.age_group = ','.join(item for item in request.POST.getlist('age_group'))
+            if "participants" in response:
+                organization.participants = response["participants"].strip() if response["participants"] else ""
+            if "sport_type" in response:
+                 save_organization_sports(request.user, request.POST.getlist('sport_type'))
+            save_organization_timings(request.user, response)
             obj.save()
             context['organization'] = obj
         messages.success(request, 'Organization details updated!')
     return render(request, 'registration/organization_view.html', context)
+
+
+def save_organization_timings(user, response):
+    if "sunday_start_time" in response and response["sunday_start_time"] != "" and "sunday_end_time" in response and response["sunday_end_time"] != "":
+        if Organization_Availability.objects.filter(user=user, day_of_week="Sunday").exists():
+            obj = Organization_Availability.objects.get(user=user, day_of_week="Sunday")
+            obj.start_time = response["sunday_start_time"]
+            obj.end_time = response["sunday_end_time"]
+            obj.save()
+        else:
+            obj = Organization_Availability(user=user, day_of_week="Sunday", start_time=response["sunday_start_time"],
+                                            end_time=response["sunday_end_time"])
+            obj.save()
+    if "monday_start_time" in response and response["monday_start_time"] != "" and "monday_end_time" in response and response["monday_end_time"] != "":
+        if Organization_Availability.objects.filter(user=user, day_of_week="Monday").exists():
+            obj = Organization_Availability.objects.get(user=user, day_of_week="Monday")
+            obj.start_time = response["monday_start_time"]
+            obj.end_time = response["monday_end_time"]
+            obj.save()
+        else:
+            obj = Organization_Availability(user=user, day_of_week="Monday", start_time=response["monday_start_time"],
+                                            end_time=response["monday_end_time"])
+            obj.save()
+    if "tuesday_start_time" in response and response["tuesday_start_time"] != "" and "tuesday_end_time" in response and response["tuesday_end_time"] != "":
+        if Organization_Availability.objects.filter(user=user, day_of_week="Tuesday").exists():
+            obj = Organization_Availability.objects.get(user=user, day_of_week="Tuesday")
+            obj.start_time = response["tuesday_start_time"]
+            obj.end_time = response["tuesday_end_time"]
+            obj.save()
+        else:
+            obj = Organization_Availability(user=user, day_of_week="Tuesday", start_time=response["tuesday_start_time"],
+                                            end_time=response["tuesday_end_time"])
+            obj.save()
+    if "wednesday_start_time" in response and response["wednesday_start_time"] != "" and "wednesday_end_time" in response and response["wednesday_end_time"] != "":
+        if Organization_Availability.objects.filter(user=user, day_of_week="Wednesday").exists():
+            obj = Organization_Availability.objects.get(user=user, day_of_week="Wednesday")
+            obj.start_time = response["wednesday_start_time"]
+            obj.end_time = response["wednesday_end_time"]
+            obj.save()
+        else:
+            obj = Organization_Availability(user=user, day_of_week="Wednesday", start_time=response["wednesday_start_time"],
+                                            end_time=response["wednesday_end_time"])
+            obj.save()
+    if "thursday_start_time" in response and response["thursday_start_time"] != "" and "thursday_end_time" in response and response["thursday_end_time"] != "":
+        if Organization_Availability.objects.filter(user=user, day_of_week="Thursday").exists():
+            obj = Organization_Availability.objects.get(user=user, day_of_week="Thursday")
+            obj.start_time = response["thursday_start_time"]
+            obj.end_time = response["thursday_end_time"]
+            obj.save()
+        else:
+            obj = Organization_Availability(user=user, day_of_week="Thursday",
+                                            start_time=response["thursday_start_time"],
+                                            end_time=response["thursday_end_time"])
+            obj.save()
+    if "friday_start_time" in response and response["friday_start_time"] != "" and "friday_end_time" in response and response["friday_end_time"] != "":
+        if Organization_Availability.objects.filter(user=user, day_of_week="Friday").exists():
+            obj = Organization_Availability.objects.get(user=user, day_of_week="Friday")
+            obj.start_time = response["friday_start_time"]
+            obj.end_time = response["friday_end_time"]
+            obj.save()
+        else:
+            obj = Organization_Availability(user=user, day_of_week="Friday",
+                                            start_time=response["friday_start_time"],
+                                            end_time=response["friday_end_time"])
+            obj.save()
+    if "saturday_start_time" in response and response["saturday_start_time"] != "" and "saturday_end_time" in response and response["saturday_end_time"] != "":
+        if Organization_Availability.objects.filter(user=user, day_of_week="Saturday").exists():
+            obj = Organization_Availability.objects.get(user=user, day_of_week="Saturday")
+            obj.start_time = response["saturday_start_time"]
+            obj.end_time = response["saturday_end_time"]
+            obj.save()
+        else:
+            obj = Organization_Availability(user=user, day_of_week="Saturday",
+
+                                            start_time=response["saturday_start_time"],
+                                            end_time=response["saturday_end_time"])
+            obj.save()
+
+
+def get_organization_timings(request):
+    if request.is_ajax():
+        availability = Organization_Availability.objects.filter(user=request.user)
+        availability = list(availability.values("day_of_week", "start_time", "end_time", "pk"))
+        return JsonResponse(availability, safe=False)
+
+
+def save_organization_sports(user, sport_type_list):
+    user_choice = Secondary_SportsChoice.objects.filter(user=user)
+    # Remove the sport choces from DB if they have been removed from current list
+    if len(user_choice):
+        for item in user_choice:
+            if item.sport_type not in sport_type_list:
+                Secondary_SportsChoice.objects.filter(id=item.pk).delete()
+
+    # Add/Update sport choices for user
+    for sport in sport_type_list:
+        if not Secondary_SportsChoice.objects.filter(user=user, sport_type=sport).exists():
+            obj = Secondary_SportsChoice(user=user, sport_type=sport)
+            obj.save()
+    return
+
+
+def add_organization_locations(request):
+    if request.method == "POST":
+        selected_street = request.POST['selected_street_text'].strip() if request.POST['selected_street_text'] else ""
+        selected_city = request.POST['selected_city_text'].strip() if request.POST['selected_city_text'] else ""
+        selected_province = request.POST['selected_province_text'].strip() if request.POST['selected_province_text'] else ""
+        selected_country = request.POST['selected_country_text'].strip() if request.POST['selected_country_text'] else ""
+        selected_zipcode = request.POST['selected_zipcode_text'].strip() if request.POST['selected_zipcode_text'] else ""
+
+        try:
+            if selected_city != "" and selected_province != "" and selected_country != "" and selected_zipcode != "":
+                if Extra_Loctaions.objects.filter(user=request.user, street=selected_street, city=selected_city,
+                                                  province=selected_province, country=selected_country,
+                                                  zipcode=selected_zipcode).exists():
+                    return JsonResponse({'status': 'Duplicate Location cannot be added!'}, safe=False)
+                else:
+                    obj = Extra_Loctaions(user=request.user, street=selected_street, city=selected_city,
+                                                 province=selected_province, country=selected_country,
+                                                zipcode=selected_zipcode)
+                    obj.save()
+                return JsonResponse({'status': 'New Location added!'}, safe=False)
+            else:
+                return JsonResponse({'status': 'Missing values!'}, safe=False)
+        except Exception:
+            return JsonResponse({'status': 'An error occured!'}, safe=False)
+
+
+def fetch_organization_locations(request):
+    if request.is_ajax():
+        location_choices = Extra_Loctaions.objects.filter(user=request.user).order_by("city")
+        location_choices = list(location_choices.values("street", "city", "province", "country", "zipcode", "pk"))
+        return JsonResponse(location_choices, safe=False)
 
 
 def home(request):
@@ -719,18 +889,12 @@ def get_recommended_events(request):
     if len(user_avaiability):
         # print(user_avaiability)
         for event in events:
-            if event.datetimes:
-                time = event.datetimes.split("-")
-                event_start_datetime = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
-                event_end_datetime = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p')
-                # Considering single day events only
-                event_date = event_start_datetime.date()
-                event_start_time = event_start_datetime.time()
-                event_end_time = event_end_datetime.time()
+            event_date, event_start_time, event_end_time = extract_event_datetime(event)
+            if event_date is not None and event_start_time is not None and event_end_time is not None:
 
                 for avail in user_avaiability:
                     if avail.day_of_week == (event_date.weekday() + 1):
-                        print(event.event_title, avail.start_time, avail.end_time, event_start_time, event_end_time,
+                        # print(event.event_title, avail.start_time, avail.end_time, event_start_time, event_end_time, event_start_time >= avail.start_time, event_end_time <= avail.end_time)
                               event_start_time >= avail.start_time, event_end_time <= avail.end_time)
                         if event_start_time >= avail.start_time and event_end_time <= avail.end_time:
                             recommended_events.add(event)
@@ -794,25 +958,77 @@ def get_recommended_events(request):
     print("Gender Filter", recommended_events)
 
     # FILTER BY Sports
-    if user.is_individual:
-        sport_choices = Secondary_SportsChoice.objects.filter(user=user).order_by("sport_type")
-        sports_list = []
-        for item in sport_choices:
-            sports_list.append(item.sport_type)
+    # if user.is_individual:
+    sport_choices = Secondary_SportsChoice.objects.filter(user=user).order_by("sport_type")
+    sports_list = []
+    for item in sport_choices:
+        sports_list.append(item.sport_type)
 
-        for event in recommended_events[:]:
-            if event.sport_type not in sports_list:
-                recommended_events.remove(event)
+    for event in recommended_events[:]:
+        if event.sport_type not in sports_list:
+            recommended_events.remove(event)
 
     print("Sports Filter", recommended_events)
 
     return list(recommended_events)
 
 
+def extract_event_datetime(event):
+    event_date = None
+    event_start_time = None
+    event_end_time = None
+
+    if event.datetimes:
+        time = event.datetimes.split("-")
+    elif event.datetimes_monday:
+        time = event.datetimes_monday.split("-")
+    elif event.datetimes_tuesday:
+        time = event.datetimes_tuesday.split("-")
+    elif event.datetimes_wednesday:
+        time = event.datetimes_wednesday.split("-")
+    elif event.datetimes_thursday:
+        time = event.datetimes_thursday.split("-")
+    elif event.datetimes_friday:
+        time = event.datetimes_friday.split("-")
+    elif event.datetimes_saturday:
+        time = event.datetimes_saturday.split("-")
+    elif event.datetimes_sunday:
+        time = event.datetimes_sunday.split("-")
+
+    # print(event.event_title, time, type(time))
+    if time is not None and time != "":
+        event_start_datetime = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
+        event_end_datetime = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p')
+        event_date = event_start_datetime.date()
+        event_start_time = event_start_datetime.time()
+        event_end_time = event_end_datetime.time()
+
+        return event_date, event_start_time, event_end_time
+
+    return event_date, event_start_time, event_end_time
+
+
 def format_time(events):
     for event in events:
         if event.datetimes:
             time = event.datetimes.split("-")
+        elif event.datetimes_monday:
+            time = event.datetimes_monday.split("-")
+        elif event.datetimes_tuesday:
+            time = event.datetimes_tuesday.split("-")
+        elif event.datetimes_wednesday:
+            time = event.datetimes_wednesday.split("-")
+        elif event.datetimes_thursday:
+            time = event.datetimes_thursday.split("-")
+        elif event.datetimes_friday:
+            time = event.datetimes_friday.split("-")
+        elif event.datetimes_saturday:
+            time = event.datetimes_saturday.split("-")
+        elif event.datetimes_sunday:
+            time = event.datetimes_sunday.split("-")
+
+        # print(event.event_title, time, type(time))
+        if time is not None and time != "":
             start_time = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p').time()
             end_time = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p').time()
             start_time = start_time.strftime("%I:%M %p")
@@ -827,7 +1043,23 @@ def format_time(events):
             else:
                 str_datetime = start_date + " - " + end_date + " from " + start_time + " - " + end_time
 
-            event.datetimes = str_datetime
+            if event.datetimes:
+                event.datetimes = str_datetime
+            elif event.datetimes_monday:
+                event.datetimes_monday = str_datetime
+            elif event.datetimes_tuesday:
+                event.datetimes_tuesday = str_datetime
+            elif event.datetimes_wednesday:
+                event.datetimes_wednesday = str_datetime
+            elif event.datetimes_thursday:
+                event.datetimes_thursday = str_datetime
+            elif event.datetimes_friday:
+                event.datetimes_friday = str_datetime
+            elif event.datetimes_saturday:
+                event.datetimes_saturday = str_datetime
+            elif event.datetimes_sunday:
+                event.datetimes_sunday = str_datetime
+
     return events
 
 

@@ -12,7 +12,7 @@
             <li class="active" id="step1">Organization Type</li>
             <li id="step2">Organization Information</li>
             <li id="step3">Sports Information</li>
-            <li id="step4">Program Types</li>
+<!--            <li id="step4">Program Types</li>-->
         </ul>
     </div>
 </div>
@@ -38,6 +38,7 @@
                         Type of Organization
                     </h3>
                     <div class="card-body">
+
                         <div class="form-row p-2 text-center">
                             <input type="radio" name="type_of_organization" value='Charity'
                                    {% if organization.type_of_organization == "Charity" %} checked {% endif %}>Charity
@@ -79,6 +80,9 @@
                         Organization
                         Information</h3>
                     <div class="card-body">
+                        <div id="location_status">
+
+                        </div>
                         <div class="form-row p-2">
                             <input type="text" name="company_name" class="form-control"
                                    placeholder="Organization Name"
@@ -100,44 +104,6 @@
                             </select>
                         </div>
                         <div class="form-row p-2">
-                            <span>Office location</span>
-                            <input type="text" name="street_name" class="form-control" placeholder="Street"
-                            value="{% if organization.street %} {{organization.street}} {% endif %}">
-                        </div>
-                        <div class="form-row p-2">
-                            <input type="text" name="city" class="form-control" placeholder="City"
-                            value="{% if organization.city %} {{organization.city}} {% endif %}">
-                        </div>
-                        <div class="form-row p-2">
-                            <input type="text" name="province" class="form-control" placeholder="Province"
-                            value="{% if organization.province %} {{organization.province}} {% endif %}">
-                        </div>
-                        <div class="form-row p-2">
-                            <input type="text" name="country" class="form-control" placeholder="Country"
-                            value="{% if organization.country %} {{organization.country}} {% endif %}">
-                        </div>
-                        <div class="form-row p-2">
-                            <input type="text" name="postal_code" class="form-control" placeholder="Postal Code"
-                            value="{% if organization.postal_code %} {{organization.postal_code}} {% endif %}">
-                        </div>
-                        <div class="form-row p-2 text-center">
-                            <input type="button" name="previous"
-                                   class="previous action-button-previous btn btn-primary"
-                                   value="Previous" id="previous-tab-2"/>
-                            <input type="button" name="next" class="next action-button btn btn-primary"
-                                   value="Next" id="next-tab-2"/>
-                        </div>
-                    </div>
-                </div>
-            </fieldset>
-
-            <fieldset id="tab-3" class="p-2">
-                <div class="card shadow">
-                    <h3 class="card-header text-white text-center"
-                        style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">
-                        Sports</h3>
-                    <div class="card-body">
-                        <div class="form-row p-2">
                             <span>What is the most appropriate contact info for the athletes and the organizer to contact you?</span>
                             <input type="text" name="email" class="form-control" placeholder="Email"
                             value="{% if organization.email %} {{organization.email}} {% endif %}">
@@ -150,18 +116,84 @@
                             <input type="text" name="website" class="form-control" placeholder="Website"
                             value="{% if organization.website %} {{organization.website}} {% endif %}">
                         </div>
+                        <div class="form-row p-2">
+                            <span>Office location</span>
+                            <input type="text" name="street_name" id="street_name" class="form-control" placeholder="Street"
+                            value="{% if organization.street %} {{organization.street}} {% endif %}">
+                        </div>
+                        <div class="form-row p-2">
+                            <input type="text" name="city" id="city" class="form-control" placeholder="City"
+                            value="{% if organization.city %} {{organization.city}} {% endif %}">
+                        </div>
+                        <div class="form-row p-2">
+                            <input type="text" name="province" id="province" class="form-control" placeholder="Province"
+                            value="{% if organization.province %} {{organization.province}} {% endif %}">
+                        </div>
+                        <div class="form-row p-2">
+                            <input type="text" name="country" id="country" class="form-control" placeholder="Country"
+                            value="{% if organization.country %} {{organization.country}} {% endif %}">
+                        </div>
+                        <div class="form-row p-2">
+                            <input type="text" name="postal_code" id="postal_code" class="form-control" placeholder="Postal Code"
+                            value="{% if organization.postal_code %} {{organization.postal_code}} {% endif %}">
+                        </div>
+                        <div class="form-row p-2 text-center">
+                            <div id="input_fields_wrap">
+                                <input type="button" class="action-button btn btn-primary"
+                                            id="add_locations" value="Add Location" />
+                            </div>
+                        </div>
+                        <div class="form-row p-2 text-center">
+                            <h5>Your Saved Locations</h5>
+                            <div id="user_location_table">
+                                <table class="table table-striped">
+                                {% for item in locations %}
+                                <tr>
+                                    <td>{{item.street}}</td>
+                                    <td>{{item.city}}</td>
+                                    <td>{{item.province}}</td>
+                                    <td>{{item.country}}</td>
+                                    <td>{{item.zipcode}}</td>
+                                    <td>
+                                        <a href="#"
+                                           onclick="delete_user_location({{item.pk}})">
+                                            <i class="bi bi-trash" style="color:red"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </table>
+                            </div>
+                        </div>
                         <div class="form-row p-2 text-center">
                             <input type="button" name="previous"
                                    class="previous action-button-previous btn btn-primary"
-                                   value="Previous" id="previous-tab-3"/>
+                                   value="Previous" id="previous-tab-2"/>
                             <input type="button" name="next" class="next action-button btn btn-primary"
-                                   value="Next" id="next-tab-3"/>
+                                   value="Next" id="next-tab-2"/>
                         </div>
                     </div>
                 </div>
             </fieldset>
 
-            <fieldset id="tab-4" class="p-2">
+<!--            <fieldset id="tab-3" class="p-2">-->
+<!--                <div class="card shadow">-->
+<!--                    <h3 class="card-header text-white text-center"-->
+<!--                        style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">-->
+<!--                        Sports</h3>-->
+<!--                    <div class="card-body">-->
+<!--                        <div class="form-row p-2 text-center">-->
+<!--                            <input type="button" name="previous"-->
+<!--                                   class="previous action-button-previous btn btn-primary"-->
+<!--                                   value="Previous" id="previous-tab-3"/>-->
+<!--                            <input type="button" name="next" class="next action-button btn btn-primary"-->
+<!--                                   value="Next" id="next-tab-3"/>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </fieldset>-->
+
+            <fieldset id="tab-3" class="p-2">
                 <div class="card shadow">
                     <h3 class="card-header text-white text-center"
                         style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">
@@ -174,24 +206,133 @@
                             <input type="checkbox" id="Female" name="gender" value="Female"
                             {% if "Female" in organization.gender_focus %} checked {% endif %}> Female Only </input>
                             <input type="checkbox" id="Coed" name="gender" value="Coed"
-                            {% if "Coed" in organization.gender_focus %} checked {% endif %}> Coed Only </input>
+                            {% if "Coed" in organization.gender_focus %} checked {% endif %}> Coed </input>
                         </div>
                         <div class="form-row p-2">
-                            <select id="select-state" name='age_group' class="form-select"
-                                    placeholder="Pick a state...">
-                                <option value="">Select an Age group</option>
-                                <option value="Youth"
-                                {% if organization.age_group == "Youth" %} selected {% endif %}>Youth</option>
-                                <option value="Adult"
-                                {% if organization.age_group == "Adult" %} selected {% endif %}>Adult</option>
-                                <option value="Senior"
-                                {% if organization.age_group == "Senior" %} selected {% endif %}>Senior</option>
+                            <label>Pick a Age Group?</label>
+                            <input type="checkbox" id="Youth" name='age_group' value="Youth"
+                                   {% if "Youth" in organization.age_group %} checked {% endif %}> Youth </input>
+                            <input type="checkbox" id="Adult" name='age_group' value="Adult"
+                                   {% if "Adult" in organization.age_group %} checked {% endif %}> Adult </input>
+                            <input type="checkbox" id="Senior" name='age_group' value="Senior"
+                                   {% if "Senior" in organization.age_group %} checked {% endif %}> Senior </input>
+                        </div>
+                        <div class="form-row p-2">
+                            <label>How many participants your Organization has? </label>
+                            <input type="radio" name='participants' value="0-100"
+                            {% if "0-100" in organization.participants %} checked {% endif %}> 0-100 </input>
+                            <input type="radio" name='participants' value="100-250"
+                            {% if "100-250" in organization.participants %} checked {% endif %}> 100-250 </input>
+                            <input type="radio" name='participants' value="250-500"
+                            {% if "250-500" in organization.participants %} checked {% endif %}> 250-500 </input>
+                            <input type="radio" name='participants' value="500+"
+                            {% if "500+" in organization.participants %} checked {% endif %}> 500+ </input>
+                        </div>
+                        <div class="form-row p-2">
+                            <label>List of sports that you facilitate are: </label>
+                            <select class="form-select select2" multiple name="sport_type"
+                                    id="sport_type" style="width:100%">
+                                {% for st in sports_type %}
+                                    <option value="{{st}}">{{st}}</option>
+                                {% endfor %}
                             </select>
+                        </div>
+                        <div class="form-group row p-2">
+                            <label>Your Hours of Operation: </label>
+                            <div class="col-md-4">
+                               <label>Sunday</label>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="time" class="form-control" id="sunday_start_time" name="sunday_start_time"
+                                       placeholder="HH:MM 24 hr format"/>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="time" class="form-control" id="sunday_end_time" name="sunday_end_time"
+                                       placeholder="HH:MM 24 hr format"/>
+                            </div>
+                        </div>
+                        <div class="form-group row p-2">
+                            <div class="col-md-4">
+                               <label>Monday</label>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="time" class="form-control" id="monday_start_time" name="monday_start_time"
+                                       placeholder="HH:MM 24 hr format"/>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="time" class="form-control" id="monday_end_time" name="monday_end_time"
+                                       placeholder="HH:MM 24 hr format"/>
+                            </div>
+                        </div>
+                        <div class="form-group row p-2">
+                            <div class="col-md-4">
+                               <label>Tuesday</label>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="time" class="form-control" id="tuesday_start_time" name="tuesday_start_time"
+                                       placeholder="HH:MM 24 hr format"/>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="time" class="form-control" id="tuesday_end_time" name="tuesday_end_time"
+                                       placeholder="HH:MM 24 hr format"/>
+                            </div>
+                        </div>
+                        <div class="form-group row p-2">
+                            <div class="col-md-4">
+                               <label>Wednesday</label>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="time" class="form-control" id="wednesday_start_time" name="wednesday_start_time"
+                                       placeholder="HH:MM 24 hr format"/>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="time" class="form-control" id="wednesday_end_time" name="wednesday_end_time"
+                                       placeholder="HH:MM 24 hr format"/>
+                            </div>
+                        </div>
+                        <div class="form-group row p-2">
+                            <div class="col-md-4">
+                               <label>Thursday</label>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="time" class="form-control" id="thursday_start_time" name="thursday_start_time"
+                                       placeholder="HH:MM 24 hr format"/>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="time" class="form-control" id="thursday_end_time" name="thursday_end_time"
+                                       placeholder="HH:MM 24 hr format"/>
+                            </div>
+                        </div>
+                        <div class="form-group row p-2">
+                            <div class="col-md-4">
+                               <label>Friday</label>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="time" class="form-control" id="friday_start_time" name="friday_start_time"
+                                       placeholder="HH:MM 24 hr format"/>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="time" class="form-control" id="friday_end_time" name="friday_end_time"
+                                       placeholder="HH:MM 24 hr format"/>
+                            </div>
+                        </div>
+                        <div class="form-group row p-2">
+                            <div class="col-md-4">
+                               <label>Saturday</label>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="time" class="form-control" id="saturday_start_time" name="saturday_start_time"
+                                       placeholder="HH:MM 24 hr format"/>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="time" class="form-control" id="saturday_end_time" name="saturday_end_time"
+                                       placeholder="HH:MM 24 hr format"/>
+                            </div>
                         </div>
                         <div class="form-row p-2 text-center">
                             <input type="button" name="previous"
                                    class="previous action-button-previous btn btn-primary"
-                                   value="Previous" id="previous-tab-4"/>
+                                   value="Previous" id="previous-tab-3"/>
 
                             <input type="submit" name="submit" class="submit action-button btn btn-primary"
                                    value="Submit"/>
@@ -210,7 +351,8 @@
 <script src='http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/jquery-ui.min.js'></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"/>
-
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <style>
    #progressbar {
     margin-bottom: 30px;
@@ -275,20 +417,20 @@
 $(document).ready(function(){
   var tab2 = $("#tab-2");
   var tab3 = $("#tab-3");
-  var tab4 = $("#tab-4");
+  // var tab4 = $("#tab-4");
   tab2.hide();
   tab3.hide();
-  tab4.hide();
+  // tab4.hide();
 
   $("#next-tab-1").click(function(){
     var tab1 = $("#tab-1");
     var tab2 = $("#tab-2");
     var tab3 = $("#tab-3");
-    var tab4 = $("#tab-4");
+    // var tab4 = $("#tab-4");
     tab1.hide();
     tab2.show();
     tab3.hide();
-    tab4.hide();
+    // tab4.hide();
     $("#step2").addClass("active");
   });
 
@@ -296,11 +438,11 @@ $(document).ready(function(){
     var tab1 = $("#tab-1");
     var tab2 = $("#tab-2");
     var tab3 = $("#tab-3");
-    var tab4 = $("#tab-4");
+    // var tab4 = $("#tab-4");
     tab1.hide();
     tab2.hide();
     tab3.show();
-    tab4.hide();
+    // tab4.hide();
     $("#step3").addClass("active");
   });
 
@@ -308,11 +450,11 @@ $(document).ready(function(){
     var tab1 = $("#tab-1");
     var tab2 = $("#tab-2");
     var tab3 = $("#tab-3");
-    var tab4 = $("#tab-4");
+    // var tab4 = $("#tab-4");
     tab1.hide();
     tab2.hide();
     tab3.hide();
-    tab4.show();
+    // tab4.show();
     $("#step4").addClass("active");
   });
 
@@ -320,11 +462,11 @@ $(document).ready(function(){
     var tab1 = $("#tab-1");
     var tab2 = $("#tab-2");
     var tab3 = $("#tab-3");
-    var tab4 = $("#tab-4");
+    // var tab4 = $("#tab-4");
     tab1.show();
     tab2.hide();
     tab3.hide();
-    tab4.hide();
+    // tab4.hide();
     $("#step2").removeClass("active");
   });
 
@@ -332,11 +474,11 @@ $(document).ready(function(){
     var tab1 = $("#tab-1");
     var tab2 = $("#tab-2");
     var tab3 = $("#tab-3");
-    var tab4 = $("#tab-4");
+    // var tab4 = $("#tab-4");
     tab1.hide();
     tab2.show();
     tab3.hide();
-    tab4.hide();
+    // tab4.hide();
     $("#step3").removeClass("active");
   });
 
@@ -352,7 +494,78 @@ $(document).ready(function(){
     $("#step4").removeClass("active");
   });
 
+ $('.select2').select2({
+    placeholder: "Select Event Type",
+    allowClear: true,
+    closeOnSelect: false,
+  });
+
+    populate_sport_choices();
+    get_organization_timings();
+
+  $(window).keydown(function(event){
+    if(event.keyCode == 13) {
+      event.preventDefault();
+      return false;
+    }
+  });
+
 });
+
+  function populate_sport_choices(){
+    $.ajax({
+        type: "GET",
+        url: '{% url "EventsApp:fetch_user_sports_positions" %}',
+        success: function (data) {
+            var sports_list = [];
+            data.forEach(function (data) {
+                console.log(data.sport_type);
+                sports_list.push(data.sport_type);
+            });
+            $('#sport_type').val(sports_list).trigger('change');
+        }
+    });
+  };
+
+  function get_organization_timings(){
+    $.ajax({
+        type: "GET",
+        url: '{% url "EventsApp:get_organization_timings" %}',
+        success: function (data) {
+            console.log(data);
+            data.forEach(function (data) {
+                if(data.day_of_week === "Sunday"){
+                    $("#sunday_start_time").val(data.start_time);
+                    $("#sunday_end_time").val(data.end_time);
+                }
+                if(data.day_of_week === "Monday"){
+                    $("#monday_start_time").val(data.start_time);
+                    $("#monday_end_time").val(data.end_time);
+                }
+                if(data.day_of_week === "Tuesday"){
+                    $("#tuesday_start_time").val(data.start_time);
+                    $("#tuesday_end_time").val(data.end_time);
+                }
+                if(data.day_of_week === "Wednesday"){
+                    $("#wednesday_start_time").val(data.start_time);
+                    $("#wednesday_end_time").val(data.end_time);
+                }
+                if(data.day_of_week === "Thursday"){
+                    $("#thursday_start_time").val(data.start_time);
+                    $("#thursday_end_time").val(data.end_time);
+                }
+                if(data.day_of_week === "Friday"){
+                    $("#friday_start_time").val(data.start_time);
+                    $("#friday_end_time").val(data.end_time);
+                }
+                if(data.day_of_week === "Saturday"){
+                    $("#saturday_start_time").val(data.start_time);
+                    $("#saturday_end_time").val(data.end_time);
+                }
+            });
+        }
+    });
+  };
 
 for(y = 1900; y <= 2022; y++) {
     var selected_year = "{{organization.year_established}}";
@@ -378,29 +591,6 @@ $(function() {
 });
 
 
-$(function () {
-        $("input[name='event_cost']").click(function () {
-            if ($("#chkYes").is(":checked")) {
-                $("#dvPassport").show();
-            } else {
-                $("#dvPassport").hide();
-            }
-        });
-    });
-$(function () {
-        $("input[name='position_price']").click(function () {
-            if ($("#chkYes1").is(":checked")) {
-                $("#dvPassport1").show();
-            } else {
-                $("#dvPassport1").hide();
-            }
-        });
-    });
-
-$('.radio').change(function() {
-  $('#custom_amount').prop('disabled', !$(this).is('.other'));
-});
-
 // Make Placeholders title when user types something
 function addInputLabel(evt) {
     var myLabel = document.createElement('div');
@@ -421,6 +611,89 @@ var inputs = document.getElementsByTagName('input');
 for (let i of inputs){
     i.addEventListener('keyup', addInputLabel, false);
 }
+
+
+
+
+$("#add_locations").click(function (e) {
+        e.preventDefault();
+        var selected_street_text = document.getElementById("street_name").value;
+        var selected_city_text = document.getElementById("city").value;
+        var selected_province_text = document.getElementById("province").value;
+        var selected_country_text = document.getElementById("country").value;
+        var selected_zipcode_text = document.getElementById("postal_code").value;
+
+        $.ajax({
+            type: "POST",
+            url: '{% url "EventsApp:add_organization_locations" %}',
+            data: {
+                'selected_street_text': selected_street_text,
+                'selected_city_text': selected_city_text,
+                'selected_province_text': selected_province_text,
+                'selected_country_text': selected_country_text,
+                'selected_zipcode_text': selected_zipcode_text,
+                'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
+            },
+            success: function (data) {
+                let html_data = `<div class="alert alert-warning alert-dismissible fade show" role="alert">`;
+                html_data += `${data["status"]}`;
+                html_data += `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+                html_data += `</div>`;
+                let status = document.getElementById("location_status");
+                status.innerHTML = html_data;
+                fetchUserLocations();
+            }
+        });
+    });
+
+function fetchUserLocations(){
+    $.ajax({
+        type: "GET",
+        async:false,
+        url: '{% url "EventsApp:fetch_organization_locations" %}',
+        success: function (data) {
+            let html_data = `<table class="table table-striped">`;
+            data.forEach(function (data) {
+                html_data += `<tr>`;
+                html_data += `<td>${data.street}</td>`;
+                html_data += `<td>${data.city}</td>`;
+                html_data += `<td>${data.province}</td>`;
+                html_data += `<td>${data.country}</td>`;
+                html_data += `<td>${data.zipcode}</td>`;
+                html_data += `<td>`;
+                html_data += `<a href="#" onclick="delete_user_location(${data.pk})">`;
+                html_data += `<i class="bi bi-trash" style="color:red"></i>`;
+                html_data += `</a>`;
+                html_data += `</td>`;
+                html_data += `</tr>`;
+            });
+            html_data += `</table>`;
+            let tableData = document.getElementById("user_location_table");
+            tableData.innerHTML = html_data;
+        }
+    });
+}
+
+function delete_user_location(user_location_id){
+    $.ajax({
+        type: "POST",
+        url: '{% url "EventsApp:delete_user_location" %}',
+        data: {
+            'id': user_location_id,
+            'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
+        },
+        success: function (data) {
+            let html_data = `<div class="alert alert-warning alert-dismissible fade show" role="alert">`;
+            html_data += `${data["status"]}`;
+            html_data += `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+            html_data += `</div>`;
+            let status = document.getElementById("location_status");
+            status.innerHTML = html_data;
+            fetchUserLocations();
+        }
+    });
+}
+
 </script>
 
 
