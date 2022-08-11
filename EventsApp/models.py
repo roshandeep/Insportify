@@ -135,7 +135,7 @@ class Organization(models.Model):
     city = models.CharField(max_length=50, blank=True, null=True)
     province = models.CharField(max_length=100, blank=True, null=True)
     country = models.CharField(max_length=250, blank=True, null=True)
-    postal_code = models.CharField(max_length=6, blank=True, null=True)
+    postal_code = models.CharField(max_length=50, blank=True, null=True)
     phone = models.CharField(max_length=50, null=True)
     email = models.CharField(max_length=50, null=True)
     website = models.CharField(max_length=50, null=True)
