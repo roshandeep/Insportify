@@ -54,52 +54,37 @@ def multistep(request):
             obj.datetimes_saturday = ""
             obj.datetimes_sunday = ""
             if obj.is_recurring and 'Monday' in selected_days:
-                date = request.POST.get('datetimes_monday_date').split("-")
-                start_date = date[0].strip()
-                end_date = date[1].strip()
-                # print(start_date, end_date)
+                date = request.POST.get('datetimes_monday_date')
                 ts = datetime.strptime(request.POST.get('datetimes_monday_start_time'), "%H:%M").strftime("%I:%M %p")
                 te = datetime.strptime(request.POST.get('datetimes_monday_end_time'), "%H:%M").strftime("%I:%M %p")
                 obj.datetimes_monday = start_date + " " + ts + " - " + end_date + " " + te
             if obj.is_recurring and 'Tuesday' in selected_days:
-                date = request.POST.get('datetimes_tuesday_date').split("-")
-                start_date = date[0].strip()
-                end_date = date[1].strip()
+                date = request.POST.get('datetimes_tuesday_date')
                 ts = datetime.strptime(request.POST.get('datetimes_tuesday_start_time'), "%H:%M").strftime("%I:%M %p")
                 te = datetime.strptime(request.POST.get('datetimes_tuesday_end_time'), "%H:%M").strftime("%I:%M %p")
                 obj.datetimes_tuesday = date.split('-')[0].strip() + " " + ts + " - " + date.split('-')[1].strip() + " " + te
             if obj.is_recurring and 'Wednesday' in selected_days:
-                date = request.POST.get('datetimes_wednesday_date').split("-")
-                start_date = date[0].strip()
-                end_date = date[1].strip()
+                date = request.POST.get('datetimes_wednesday_date')
                 ts = datetime.strptime(request.POST.get('datetimes_wednesday_start_time'), "%H:%M").strftime("%I:%M %p")
                 te = datetime.strptime(request.POST.get('datetimes_wednesday_end_time'), "%H:%M").strftime("%I:%M %p")
                 obj.datetimes_wednesday = date.split('-')[0].strip() + " " + ts + " - " + date.split('-')[1].strip() + " " + te
             if obj.is_recurring and 'Thursday' in selected_days:
-                date = request.POST.get('datetimes_thursday_date').split("-")
-                start_date = date[0].strip()
-                end_date = date[1].strip()
+                date = request.POST.get('datetimes_thursday_date')
                 ts = datetime.strptime(request.POST.get('datetimes_thursday_start_time'), "%H:%M").strftime("%I:%M %p")
                 te = datetime.strptime(request.POST.get('datetimes_thursday_end_time'), "%H:%M").strftime("%I:%M %p")
                 obj.datetimes_thursday = date.split('-')[0].strip() + " " + ts + " - " + date.split('-')[1].strip() + " " + te
             if obj.is_recurring and 'Friday' in selected_days:
-                date = request.POST.get('datetimes_friday_date').split("-")
-                start_date = date[0].strip()
-                end_date = date[1].strip()
+                date = request.POST.get('datetimes_friday_date')
                 ts = datetime.strptime(request.POST.get('datetimes_friday_start_time'), "%H:%M").strftime("%I:%M %p")
                 te = datetime.strptime(request.POST.get('datetimes_friday_end_time'), "%H:%M").strftime("%I:%M %p")
                 obj.datetimes_friday = date.split('-')[0].strip() + " " + ts + " - " + date.split('-')[1].strip() + " " + te
             if obj.is_recurring and 'Saturday' in selected_days:
-                date = request.POST.get('datetimes_saturday_date').split("-")
-                start_date = date[0].strip()
-                end_date = date[1].strip()
+                date = request.POST.get('datetimes_saturday_date')
                 ts = datetime.strptime(request.POST.get('datetimes_saturday_start_time'), "%H:%M").strftime("%I:%M %p")
                 te = datetime.strptime(request.POST.get('datetimes_saturday_end_time'), "%H:%M").strftime("%I:%M %p")
                 obj.datetimes_saturday = date.split('-')[0].strip() + " " + ts + " - " + date.split('-')[1].strip() + " " + te
             if obj.is_recurring and 'Sunday' in selected_days:
-                date = request.POST.get('datetimes_sunday_date').split("-")
-                start_date = date[0].strip()
-                end_date = date[1].strip()
+                date = request.POST.get('datetimes_sunday_date')
                 ts = datetime.strptime(request.POST.get('datetimes_sunday_start_time'), "%H:%M").strftime("%I:%M %p")
                 te = datetime.strptime(request.POST.get('datetimes_sunday_end_time'), "%H:%M").strftime("%I:%M %p")
                 obj.datetimes_sunday = date.split('-')[0].strip() + " " + ts + " - " + date.split('-')[1].strip() + " " + te
@@ -895,7 +880,7 @@ def get_recommended_events(request):
                 for avail in user_avaiability:
                     if avail.day_of_week == (event_date.weekday() + 1):
                         # print(event.event_title, avail.start_time, avail.end_time, event_start_time, event_end_time, event_start_time >= avail.start_time, event_end_time <= avail.end_time)
-                              event_start_time >= avail.start_time, event_end_time <= avail.end_time)
+                        # event_start_time >= avail.start_time, event_end_time <= avail.end_time
                         if event_start_time >= avail.start_time and event_end_time <= avail.end_time:
                             recommended_events.add(event)
 
