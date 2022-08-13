@@ -940,7 +940,10 @@ def get_recommended_events(request):
     # FILTER BY Gender
     if user.is_individual:
         individual = Individual.objects.get(user=user)
-        individual_gender = individual.participation_interest.split(",")
+        individual_gender=[]
+        if individual.participation_interest and individual.participation_interest != "":
+            print(individual.participation_interest)
+            individual_gender = individual.participation_interest.split(",")
         # print(individual_gender)
         for event in recommended_events[:]:
             flag = 0

@@ -15,7 +15,7 @@ class IndividualSignUpForm(UserCreationForm):
     phone = forms.CharField(required=True)
     email = forms.CharField(required=True)
     password1 = forms.CharField(widget=forms.PasswordInput(
-        attrs={'class': 'form-control', 'type': 'password', 'name': 'password2'}),
+        attrs={'class': 'form-control', 'type': 'password', 'name': 'password1'}),
         label="Password")
     password2 = forms.CharField(widget=forms.PasswordInput(
         attrs={'class': 'form-control', 'type': 'password', 'name': 'password2'}),
@@ -39,6 +39,7 @@ class IndividualSignUpForm(UserCreationForm):
         user.first_name = self.cleaned_data.get('first_name')
         user.last_name = self.cleaned_data.get('last_name')
         user.email = self.cleaned_data.get('email')
+        user.set_password(self.cleaned_data["password1"])
         user.save()
         individual = Individual.objects.create(user=user)
         individual.phone = self.cleaned_data.get('phone')
@@ -56,7 +57,7 @@ class MVPSignUpForm(forms.ModelForm):
     email = forms.CharField(required=True)
     website = forms.CharField(required=False)
     password1 = forms.CharField(widget=forms.PasswordInput(
-        attrs={'class': 'form-control', 'type': 'password', 'name': 'password2'}),
+        attrs={'class': 'form-control', 'type': 'password', 'name': 'password1'}),
         label="Password")
     password2 = forms.CharField(widget=forms.PasswordInput(
         attrs={'class': 'form-control', 'type': 'password', 'name': 'password2'}),
@@ -81,6 +82,7 @@ class MVPSignUpForm(forms.ModelForm):
         user.first_name = self.cleaned_data.get('first_name')
         user.last_name = self.cleaned_data.get('last_name')
         user.email = self.cleaned_data.get('email')
+        user.set_password(self.cleaned_data["password1"])
         user.save()
         individual = Individual.objects.create(user=user)
         individual.phone = self.cleaned_data.get('phone')
@@ -106,7 +108,7 @@ class OrganizationSignUpForm(forms.ModelForm):
     phone = forms.CharField(required=True)
     email = forms.CharField(required=True)
     password1 = forms.CharField(widget=forms.PasswordInput(
-        attrs={'class': 'form-control', 'type': 'password', 'name': 'password2'}),
+        attrs={'class': 'form-control', 'type': 'password', 'name': 'password1'}),
         label="Password")
     password2 = forms.CharField(widget=forms.PasswordInput(
         attrs={'class': 'form-control', 'type': 'password', 'name': 'password2'}),
@@ -129,6 +131,8 @@ class OrganizationSignUpForm(forms.ModelForm):
         user.is_staff = True
         user.first_name = self.cleaned_data.get('organization_name')
         user.email = self.cleaned_data.get('email')
+        user.set_password(self.cleaned_data["password1"])
+        # print(self.cleaned_data["password1"])
         user.save()
         organization = Organization.objects.create(user=user)
         organization.organization_name = self.cleaned_data.get('organization_name')
