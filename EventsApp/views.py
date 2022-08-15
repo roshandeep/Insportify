@@ -961,7 +961,6 @@ def get_recommended_events(request):
     print("Gender Filter", recommended_events)
 
     # FILTER BY Sports
-    # if user.is_individual:
     sport_choices = Secondary_SportsChoice.objects.filter(user=user).order_by("sport_type")
     sports_list = []
     for item in sport_choices:
@@ -972,6 +971,44 @@ def get_recommended_events(request):
             recommended_events.remove(event)
 
     print("Sports Filter", recommended_events)
+
+    # FILTER BY Positions
+    if user.is_individual:
+        position_choices = Secondary_SportsChoice.objects.filter(user=user)
+        position_list = []
+        for item in position_choices:
+            position_list.append(item.position)
+
+        for event in recommended_events[:]:
+            event_positions_list = Events_PositionInfo.objects.filter(event=event.pk)
+            flag = 0
+            for item in event_positions_list:
+                if item.position_name not in position_list:
+                    flag = flag + 1
+
+            if flag > 0:
+                recommended_events.remove(event)
+
+    print("Positions Filter", recommended_events)
+
+    # FILTER BY Skills
+    if user.is_individual:
+        skill_choices = Secondary_SportsChoice.objects.filter(user=user)
+        skill_list = []
+        for item in skill_choices:
+            skill_list.append(item.skill)
+
+        for event in recommended_events[:]:
+            event_skill_list = Events_PositionInfo.objects.filter(event=event.pk)
+            flag = 0
+            for item in event_skill_list:
+                if item.position_type not in skill_list:
+                    flag = flag + 1
+
+            if flag > 0:
+                recommended_events.remove(event)
+
+    print("Skills Filter", recommended_events)
 
     return list(recommended_events)
 
