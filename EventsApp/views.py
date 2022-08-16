@@ -14,8 +14,8 @@ from django.views.decorators.csrf import csrf_exempt
 from Insportify import settings
 from .forms import MultiStepForm, AvailabilityForm, LogoForm, InviteForm
 from .models import master_table, Individual, Organization, Venues, SportsCategory, SportsType, Order, User, \
-    Availability, Logo, Extra_Loctaions, Events_PositionInfo, Secondary_SportsChoice, Cart, Invite, \
-    PositionAndSkillType, SportsImage, Organization_Availability
+    Availability, Logo, Extra_Loctaions, Events_PositionInfo, Secondary_SportsChoice, Invite, \
+    PositionAndSkillType, SportsImage, Organization_Availability, OrderItems
 import util
 
 
@@ -278,7 +278,7 @@ def all_events(request):
 @login_required
 def committed_events(request):
     event_list = set()
-    cart = Cart.objects.filter(user=request.user)
+    cart = OrderItems.objects.filter(user=request.user)
     if len(cart) > 0:
         for item in cart:
             event = master_table.objects.get(pk=item.event.pk)
@@ -287,14 +287,14 @@ def committed_events(request):
     return render(request, 'EventsApp/events_committed.html', {'event_list': list(event_list)})
 
 
-@login_required
-def event_by_id(request, event_id):
-    event = master_table.objects.get(pk=event_id)
-    context = {
-        'STRIPE_PUBLISHABLE_KEY': settings.STRIPE_PUBLISHABLE_KEY,
-        'event': event
-    }
-    return render(request, 'EventsApp/event_detail.html', context)
+# @login_required
+# def event_by_id(request, event_id):
+#     event = master_table.objects.get(pk=event_id)
+#     context = {
+#         'STRIPE_PUBLISHABLE_KEY': settings.STRIPE_PUBLISHABLE_KEY,
+#         'event': event
+#     }
+#     return render(request, 'EventsApp/event_detail.html', context)
 
 
 @login_required
@@ -410,7 +410,7 @@ def add_sports_positions(request):
         # print(selected_skill, selected_position, selected_sport)
         try:
             if Secondary_SportsChoice.objects.filter(user=request.user, sport_type=selected_sport,
-                                             position=selected_position, skill=selected_skill).exists():
+                                                     position=selected_position, skill=selected_skill).exists():
                 return JsonResponse({'status': 'Duplicate Position cannot be added!'}, safe=False)
             else:
                 obj = Secondary_SportsChoice(user=request.user, sport_type=selected_sport,
@@ -442,17 +442,19 @@ def delete_sports_choice(request):
 def add_user_locations(request):
     if request.method == "POST":
         selected_city = request.POST['selected_city_text'].strip() if request.POST['selected_city_text'] else ""
-        selected_province = request.POST['selected_province_text'].strip() if request.POST['selected_province_text'] else ""
-        selected_country = request.POST['selected_country_text'].strip() if request.POST['selected_country_text'] else ""
+        selected_province = request.POST['selected_province_text'].strip() if request.POST[
+            'selected_province_text'] else ""
+        selected_country = request.POST['selected_country_text'].strip() if request.POST[
+            'selected_country_text'] else ""
         # print(selected_city, selected_province, selected_country)
         try:
             if selected_city != "" and selected_province != "" and selected_country != "":
                 if Extra_Loctaions.objects.filter(user=request.user, city=selected_city,
-                                                 province=selected_province, country=selected_country).exists():
+                                                  province=selected_province, country=selected_country).exists():
                     return JsonResponse({'status': 'Duplicate Location cannot be added!'}, safe=False)
                 else:
                     obj = Extra_Loctaions(user=request.user, city=selected_city,
-                                                 province=selected_province, country=selected_country)
+                                          province=selected_province, country=selected_country)
                     obj.save()
                 return JsonResponse({'status': 'New Location added!'}, safe=False)
             else:
@@ -617,7 +619,7 @@ def organization_profile(request):
             if "participants" in response:
                 organization.participants = response["participants"].strip() if response["participants"] else ""
             if "sport_type" in response:
-                 save_organization_sports(request.user, request.POST.getlist('sport_type'))
+                save_organization_sports(request.user, request.POST.getlist('sport_type'))
             save_organization_timings(request.user, response)
             organization.save()
             context['organization'] = organization
@@ -661,7 +663,7 @@ def organization_profile(request):
             if "participants" in response:
                 organization.participants = response["participants"].strip() if response["participants"] else ""
             if "sport_type" in response:
-                 save_organization_sports(request.user, request.POST.getlist('sport_type'))
+                save_organization_sports(request.user, request.POST.getlist('sport_type'))
             save_organization_timings(request.user, response)
             obj.save()
             context['organization'] = obj
@@ -670,7 +672,8 @@ def organization_profile(request):
 
 
 def save_organization_timings(user, response):
-    if "sunday_start_time" in response and response["sunday_start_time"] != "" and "sunday_end_time" in response and response["sunday_end_time"] != "":
+    if "sunday_start_time" in response and response["sunday_start_time"] != "" and "sunday_end_time" in response and \
+            response["sunday_end_time"] != "":
         if Organization_Availability.objects.filter(user=user, day_of_week="Sunday").exists():
             obj = Organization_Availability.objects.get(user=user, day_of_week="Sunday")
             obj.start_time = response["sunday_start_time"]
@@ -680,7 +683,8 @@ def save_organization_timings(user, response):
             obj = Organization_Availability(user=user, day_of_week="Sunday", start_time=response["sunday_start_time"],
                                             end_time=response["sunday_end_time"])
             obj.save()
-    if "monday_start_time" in response and response["monday_start_time"] != "" and "monday_end_time" in response and response["monday_end_time"] != "":
+    if "monday_start_time" in response and response["monday_start_time"] != "" and "monday_end_time" in response and \
+            response["monday_end_time"] != "":
         if Organization_Availability.objects.filter(user=user, day_of_week="Monday").exists():
             obj = Organization_Availability.objects.get(user=user, day_of_week="Monday")
             obj.start_time = response["monday_start_time"]
@@ -690,7 +694,8 @@ def save_organization_timings(user, response):
             obj = Organization_Availability(user=user, day_of_week="Monday", start_time=response["monday_start_time"],
                                             end_time=response["monday_end_time"])
             obj.save()
-    if "tuesday_start_time" in response and response["tuesday_start_time"] != "" and "tuesday_end_time" in response and response["tuesday_end_time"] != "":
+    if "tuesday_start_time" in response and response["tuesday_start_time"] != "" and "tuesday_end_time" in response and \
+            response["tuesday_end_time"] != "":
         if Organization_Availability.objects.filter(user=user, day_of_week="Tuesday").exists():
             obj = Organization_Availability.objects.get(user=user, day_of_week="Tuesday")
             obj.start_time = response["tuesday_start_time"]
@@ -700,17 +705,20 @@ def save_organization_timings(user, response):
             obj = Organization_Availability(user=user, day_of_week="Tuesday", start_time=response["tuesday_start_time"],
                                             end_time=response["tuesday_end_time"])
             obj.save()
-    if "wednesday_start_time" in response and response["wednesday_start_time"] != "" and "wednesday_end_time" in response and response["wednesday_end_time"] != "":
+    if "wednesday_start_time" in response and response[
+        "wednesday_start_time"] != "" and "wednesday_end_time" in response and response["wednesday_end_time"] != "":
         if Organization_Availability.objects.filter(user=user, day_of_week="Wednesday").exists():
             obj = Organization_Availability.objects.get(user=user, day_of_week="Wednesday")
             obj.start_time = response["wednesday_start_time"]
             obj.end_time = response["wednesday_end_time"]
             obj.save()
         else:
-            obj = Organization_Availability(user=user, day_of_week="Wednesday", start_time=response["wednesday_start_time"],
+            obj = Organization_Availability(user=user, day_of_week="Wednesday",
+                                            start_time=response["wednesday_start_time"],
                                             end_time=response["wednesday_end_time"])
             obj.save()
-    if "thursday_start_time" in response and response["thursday_start_time"] != "" and "thursday_end_time" in response and response["thursday_end_time"] != "":
+    if "thursday_start_time" in response and response[
+        "thursday_start_time"] != "" and "thursday_end_time" in response and response["thursday_end_time"] != "":
         if Organization_Availability.objects.filter(user=user, day_of_week="Thursday").exists():
             obj = Organization_Availability.objects.get(user=user, day_of_week="Thursday")
             obj.start_time = response["thursday_start_time"]
@@ -721,7 +729,8 @@ def save_organization_timings(user, response):
                                             start_time=response["thursday_start_time"],
                                             end_time=response["thursday_end_time"])
             obj.save()
-    if "friday_start_time" in response and response["friday_start_time"] != "" and "friday_end_time" in response and response["friday_end_time"] != "":
+    if "friday_start_time" in response and response["friday_start_time"] != "" and "friday_end_time" in response and \
+            response["friday_end_time"] != "":
         if Organization_Availability.objects.filter(user=user, day_of_week="Friday").exists():
             obj = Organization_Availability.objects.get(user=user, day_of_week="Friday")
             obj.start_time = response["friday_start_time"]
@@ -732,7 +741,8 @@ def save_organization_timings(user, response):
                                             start_time=response["friday_start_time"],
                                             end_time=response["friday_end_time"])
             obj.save()
-    if "saturday_start_time" in response and response["saturday_start_time"] != "" and "saturday_end_time" in response and response["saturday_end_time"] != "":
+    if "saturday_start_time" in response and response[
+        "saturday_start_time"] != "" and "saturday_end_time" in response and response["saturday_end_time"] != "":
         if Organization_Availability.objects.filter(user=user, day_of_week="Saturday").exists():
             obj = Organization_Availability.objects.get(user=user, day_of_week="Saturday")
             obj.start_time = response["saturday_start_time"]
@@ -773,9 +783,12 @@ def add_organization_locations(request):
     if request.method == "POST":
         selected_street = request.POST['selected_street_text'].strip() if request.POST['selected_street_text'] else ""
         selected_city = request.POST['selected_city_text'].strip() if request.POST['selected_city_text'] else ""
-        selected_province = request.POST['selected_province_text'].strip() if request.POST['selected_province_text'] else ""
-        selected_country = request.POST['selected_country_text'].strip() if request.POST['selected_country_text'] else ""
-        selected_zipcode = request.POST['selected_zipcode_text'].strip() if request.POST['selected_zipcode_text'] else ""
+        selected_province = request.POST['selected_province_text'].strip() if request.POST[
+            'selected_province_text'] else ""
+        selected_country = request.POST['selected_country_text'].strip() if request.POST[
+            'selected_country_text'] else ""
+        selected_zipcode = request.POST['selected_zipcode_text'].strip() if request.POST[
+            'selected_zipcode_text'] else ""
 
         try:
             if selected_city != "" and selected_province != "" and selected_country != "" and selected_zipcode != "":
@@ -785,8 +798,8 @@ def add_organization_locations(request):
                     return JsonResponse({'status': 'Duplicate Location cannot be added!'}, safe=False)
                 else:
                     obj = Extra_Loctaions(user=request.user, street=selected_street, city=selected_city,
-                                                 province=selected_province, country=selected_country,
-                                                zipcode=selected_zipcode)
+                                          province=selected_province, country=selected_country,
+                                          zipcode=selected_zipcode)
                     obj.save()
                 return JsonResponse({'status': 'New Location added!'}, safe=False)
             else:
@@ -906,7 +919,6 @@ def get_recommended_events(request):
     recommended_events = list(recommended_events)
     print("Availability Filter", recommended_events)
 
-
     # FILTER BY Location
     for event in recommended_events[:]:
         if event.city is not None:
@@ -940,7 +952,7 @@ def get_recommended_events(request):
     # FILTER BY Gender
     if user.is_individual:
         individual = Individual.objects.get(user=user)
-        individual_gender=[]
+        individual_gender = []
         if individual.participation_interest and individual.participation_interest != "":
             print(individual.participation_interest)
             individual_gender = individual.participation_interest.split(",")
@@ -1123,43 +1135,45 @@ def event_details(request, event_id):
     context['event_postions'] = event_postions
 
     if request.method == 'POST':
-        # print(request.POST.dict())
+        print(request.POST.dict())
         response = request.POST.dict()
         for key in response:
             if 'chk' in key:
                 idx = key.split("_")[-1]
                 position_id = response['posId_' + idx]
-                pos_type = response['posType_' + idx]
+                pos_type = response['posName_' + idx]
+                skill = response['skill_' + idx]
                 needed_pos = response['needed_' + idx]
                 no_of_pos = response['noOfPos_' + idx]
                 pos_cost = response['cost_' + idx]
-                # print(pos_type, needed_pos, no_of_pos, pos_cost)
                 ## Add to cart
-                cart = Cart()
+                cart = OrderItems()
                 cart.event = master_table.objects.get(pk=event_id)
                 cart.user = User.objects.get(email=request.user.email)
                 cart.position_id = Events_PositionInfo.objects.get(pk=position_id)
                 cart.date = date.today()
                 cart.position_type = pos_type
+                cart.skill = skill
                 cart.no_of_position = needed_pos
                 cart.position_cost = pos_cost
                 cart.total_cost = int(pos_cost) * int(needed_pos)
                 cart.save()
 
-                ## Update Inventory
+                # Update Inventory
                 event_pos = Events_PositionInfo.objects.get(pk=position_id)
                 event_pos.no_of_position = int(event_pos.no_of_position) - int(needed_pos)
-                event_pos.save()
+                # event_pos.save()
 
-                ## Email Creator - New Subscriber
+                # Email Creator - New Subscriber
                 event_subject = "New subscriber for Event: " + event.event_title
                 event_message = "A new user has subscribed to event: " + event.event_title + "\n" + \
                                 "Subscriber Name: " + request.user.first_name + " " + request.user.last_name + "\n" + \
-                                "Subscriber Email: " + request.user.email + "\n" + \
-                                "Subscriber User Name: " + request.user.username
-                if event.created_by:
-                    util.email(event_subject, event_message, [event.created_by.email])
+                                "Subscriber Email: " + request.user.email + "\n"
+                # if event.created_by:
+                #     util.email(event_subject, event_message, [event.created_by.email])
                 return redirect('EventsApp:cart_summary')
+            else:
+                context['message'] = "Please select the positions and enter the number of positions."
 
     return render(request, "EventsApp/detail_dashboard.html", context)
 
@@ -1170,7 +1184,7 @@ def cart_summary(request):
     total = 0
     user = request.user
     context['STRIPE_PUBLISHABLE_KEY'] = settings.STRIPE_PUBLISHABLE_KEY,
-    cart = Cart.objects.filter(user=user)
+    cart = OrderItems.objects.filter(user=user)
     for item in cart:
         total = total + item.total_cost
     context["cart"] = cart
@@ -1181,7 +1195,7 @@ def cart_summary(request):
 @csrf_exempt
 def create_checkout_session(request, id):
     user = request.user
-    cart = Cart.objects.filter(user=user)
+    cart = OrderItems.objects.filter(user=user)
     name = cart[0].event.event_title
     event = cart[0].event
     total = 0
@@ -1345,7 +1359,7 @@ def check_duplicate_availability(user_avaiability, new_availability):
     for avail in user_avaiability:
         if avail.day_of_week == int(new_availability.day_of_week) and \
                 (new_availability.start_time >= avail.start_time.strftime("%H:%M") or \
-                new_availability.end_time <= avail.end_time.strftime("%H:%M")):
+                 new_availability.end_time <= avail.end_time.strftime("%H:%M")):
             return True
 
     return False
@@ -1482,7 +1496,7 @@ def delete_by_id(request, event_id):
                                                                      + (
                                                                          "\nExc: " + event.datetimes_exceptions if event.datetimes_exceptions is not None else ""))
 
-        for cart_item in Cart.objects.filter(event=event):
+        for cart_item in OrderItems.objects.filter(event=event):
             subs_email = cart_item.user.email
             util.email(event_subject, "Hello " + user.first_name + " " + user.last_name
                        + ", the following subscribed event in your cart has been cancelled by the creator:\n\n"
@@ -1580,9 +1594,6 @@ def invite(request):
             print(form.errors)
 
     return render(request, "EventsApp/invite.html", context)
-
-
-
 
 
 @login_required

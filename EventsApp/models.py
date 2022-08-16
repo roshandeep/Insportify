@@ -204,16 +204,6 @@ class PositionAndSkillType(models.Model):
         return self.position_type + ' ' + self.skill_type
 
 
-class Order(models.Model):
-    customer = models.ForeignKey(User, on_delete=models.CASCADE)
-    event = models.ForeignKey(master_table, on_delete=models.CASCADE)
-    order_date = models.DateTimeField()
-    order_amount = models.IntegerField()
-
-    def __str__(self):
-        return self.customer.first_name + " " + self.event.event_title
-
-
 class Invite(models.Model):
     email = models.CharField(max_length=100)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -297,12 +287,23 @@ class SportsImage(models.Model):
         return self.sport
 
 
-class Cart(models.Model):
+class OrderItems(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     event = models.ForeignKey(master_table, on_delete=models.CASCADE)
     position_id = models.ForeignKey(Events_PositionInfo, on_delete=models.CASCADE)
     date = models.DateField()
     position_type = models.CharField(max_length=100, blank=True, null=True)
+    skill = models.CharField(max_length=100, blank=True, null=True)
     no_of_position = models.IntegerField(blank=True, null=True)
     position_cost = models.IntegerField(blank=True, null=True)
     total_cost = models.IntegerField(blank=True, null=True)
+
+
+class Order(models.Model):
+    customer = models.ForeignKey(User, on_delete=models.CASCADE)
+    items = models.ManyToManyField(OrderItems)
+    order_date = models.DateTimeField()
+    order_amount = models.IntegerField()
+
+    def __str__(self):
+        return self.customer.first_name + " " + self.event.event_title
