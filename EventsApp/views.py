@@ -1181,19 +1181,40 @@ def event_details(request, event_id):
 def delete_cart_item(request):
     if request.POST:
         try:
-            id = request.POST['id']
-            print(id)
-            order_item = OrderItems.objects.get(pk=id)
+            event_pos_id = request.POST['event_pos_id']
+            cart_item_id = request.POST['cart_item_id']
+            print(event_pos_id, cart_item_id)
+            order_item = OrderItems.objects.get(pk=cart_item_id)
+            print(order_item)
             # Revert back Event Position info
-            evnt_pos_info = Events_PositionInfo.object.get(pk=id)
-            print(evnt_pos_info)
-            evnt_pos_info.no_of_position += order_item.no_of_position
+            evnt_pos_info = Events_PositionInfo.objects.get(pk=event_pos_id)
+            evnt_pos_info.no_of_position = evnt_pos_info.no_of_position + order_item.no_of_position
             evnt_pos_info.save()
+            print(evnt_pos_info)
             order_item.delete()
             return JsonResponse({'status': 'Order Item deleted!'}, safe=False)
         except:
             return JsonResponse({'status': 'Some error occurred!'}, safe=False)
-    return
+
+
+def fetch_cart_items(request):
+    total=0
+    order_items=[]
+    if request.is_ajax():
+        cart = OrderItems.objects.filter(user=request.user)
+        for item in cart:
+            total = total + item.total_cost
+
+        for item in cart:
+            order_items.append({
+                'event_title': item.event.event_title,
+                'position_type': item.position_type,
+                'no_of_position': item.no_of_position,
+                'position_cost': item.position_cost,
+                'position_id': item.position_id.pk,
+                'pk': item.pk,
+            })
+        return JsonResponse({"cart": order_items, "total": total}, safe=False)
 
 
 @login_required

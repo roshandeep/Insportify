@@ -59,6 +59,7 @@ urlpatterns = [
     path('event_details/<int:event_id>/', views.event_details, name='event_details'),
     path('cart_summary/', views.cart_summary, name='cart_summary'),
     path('delete_cart_item/', views.delete_cart_item, name='delete_cart_item'),
+    path('fetch_cart_items/', views.fetch_cart_items, name='fetch_cart_items'),
 
     # PAYMENT URL'S
     path('payment-success/', views.paymentSuccess, name='payment-success'),
