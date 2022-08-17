@@ -28,15 +28,19 @@
     </style>
 </head>
 <body>
-
-
-<nav class="col-1 shadow p-3 bg-body rounded" class="navbar navbar-expand-lg"
-     style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">
+    <div class="container-fluid" id="main-page">
+    
+    <nav class="navbar-settings"
+     style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);" id="navbar">
     <div class="container-fluid" style="margin:10px;">
         <a class="navbar-brand" href="{% url 'EventsApp:home' %}">
             <img src="{% static 'img/logo.PNG' %}" alt="Logo" style="width: 200px;"/>
         </a>
-        <hr>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <!-- <hr> -->
+        <div class="collapse navbar-collapse" id="collapsibleNavbar">
         <ul class="navbar-nav">
             {% if request.user.is_authenticated %}
 <!--            <li class="nav-item">-->
@@ -98,9 +102,28 @@
             </li>
             {% endif %}
         </ul>
+        <ul class="navbar-nav mb-2 mb-lg-0">
+            {% if request.user.is_authenticated %}
+            <li class="nav-item">
+                <a class="nav-link link-secondary" href="{% url 'UserRegister:logout' %}"><p>Logout</p></a>
+            </li>
+            {% else %}
+            {% if request.path != '/users/register/' and request.path != '/users/organization_register/' and request.path != '/users/individual_register/' and request.path != '/users/login/' %}
+
+            <li class="nav-item">
+                <a class="nav-link link-secondary" href="{% url 'UserRegister:register' %}">
+                    Register</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link link-secondary" href="{% url 'UserRegister:login' %}">Login</a>
+            </li>
+            {% endif %}
+            {% endif %}
+        </ul>
+        </div>
     </div>
 </nav>
-<div class="col-2 shadow bg-body">
+<div class="shadow bg-body">
     <header>
         <nav class="navbar navbar-expand-lg bg-light shadow">
             <div class="container-fluid">
@@ -148,10 +171,33 @@
         </div>
     </footer>
 </div>
+</div>
+
 </body>
+<script>
+    function callNavbar(myWidth, myHeight) {
+        var x = document.getElementById("navbar");
+        if (myWidth >= 768) {
+            x.className = 'shadow navbar-expand-sm rounded navbar-settings p-3 bg-body';
+        } else {
+            x.className = 'navbar-light rounded navbar-settings p-3 bg-body navbar navbar-expand-md ';
+        }
+    }
+
+    (function () {
+        window.onresize = changeClassName;
+        window.onload = changeClassName;
+
+        function changeClassName() {
+            let myWidth = window.innerWidth;
+            let myHeight = window.innerHeight;
+            // your size calculation code here
+            console.log(myWidth);
+            callNavbar(myWidth, myHeight);
+        };
+    })();
+</script>
 <style>
-
-
 .btn-primary {
   color: #fff;
   background-color: #ff6f3d;
@@ -220,6 +266,5 @@
 .navbar {
     min-height: 56px;
 }
-
 </style>
 </html>
