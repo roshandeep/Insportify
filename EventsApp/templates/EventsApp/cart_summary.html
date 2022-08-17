@@ -8,6 +8,9 @@
     <div class="row pt-2">
         <div class="col">
             <h3>Summary</h3>
+            <div id="item_status">
+
+            </div>
         </div>
         <table class="table table-striped">
             <thead>
@@ -25,9 +28,9 @@
                 <td>{{item.no_of_position }}</td>
                 <td>{{item.position_cost}}</td>
                 <td>
-                    <a href="" onclick="return confirm('Remove Item?');">
-                                <i class="bi bi-trash" style="color:red"></i>
-                            </a>
+                    <a href="" onclick="delete_cart_item({{item.position_id.pk}}); return confirm('Remove Item?');">
+                        <i class="bi bi-trash" style="color:red"></i>
+                    </a>
                 </td>
             </tr>
             {% endfor %}
@@ -73,6 +76,26 @@
                 console.log('Error:', error);
             });
     });
+
+
+function delete_cart_item(item_id){
+    $.ajax({
+        type: "POST",
+        url: '{% url "EventsApp:delete_cart_item" %}',
+        data: {
+            'id': item_id,
+        },
+        success: function (data) {
+            let html_data = `<div class="alert alert-warning alert-dismissible fade show" role="alert">`;
+            html_data += `${data["status"]}`;
+            html_data += `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+            html_data += `</div>`;
+            let status = document.getElementById("item_status");
+            status.innerHTML = html_data;
+        }
+    });
+}
+
 
 </script>
 

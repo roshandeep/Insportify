@@ -1139,9 +1139,10 @@ def event_details(request, event_id):
         response = request.POST.dict()
         for key in response:
             if 'chk' in key:
+                print(key)
                 idx = key.split("_")[-1]
                 position_id = response['posId_' + idx]
-                pos_type = response['posName_' + idx]
+                pos_name = response['posName_' + idx]
                 skill = response['skill_' + idx]
                 needed_pos = response['needed_' + idx]
                 no_of_pos = response['noOfPos_' + idx]
@@ -1152,7 +1153,7 @@ def event_details(request, event_id):
                 cart.user = User.objects.get(email=request.user.email)
                 cart.position_id = Events_PositionInfo.objects.get(pk=position_id)
                 cart.date = date.today()
-                cart.position_type = pos_type
+                cart.position_type = pos_name
                 cart.skill = skill
                 cart.no_of_position = needed_pos
                 cart.position_cost = pos_cost
@@ -1162,7 +1163,7 @@ def event_details(request, event_id):
                 # Update Inventory
                 event_pos = Events_PositionInfo.objects.get(pk=position_id)
                 event_pos.no_of_position = int(event_pos.no_of_position) - int(needed_pos)
-                # event_pos.save()
+                event_pos.save()
 
                 # Email Creator - New Subscriber
                 event_subject = "New subscriber for Event: " + event.event_title
@@ -1171,11 +1172,28 @@ def event_details(request, event_id):
                                 "Subscriber Email: " + request.user.email + "\n"
                 # if event.created_by:
                 #     util.email(event_subject, event_message, [event.created_by.email])
-                return redirect('EventsApp:cart_summary')
-            else:
-                context['message'] = "Please select the positions and enter the number of positions."
+
+        return redirect('EventsApp:cart_summary')
 
     return render(request, "EventsApp/detail_dashboard.html", context)
+
+@csrf_exempt
+def delete_cart_item(request):
+    if request.POST:
+        try:
+            id = request.POST['id']
+            print(id)
+            order_item = OrderItems.objects.get(pk=id)
+            # Revert back Event Position info
+            evnt_pos_info = Events_PositionInfo.object.get(pk=id)
+            print(evnt_pos_info)
+            evnt_pos_info.no_of_position += order_item.no_of_position
+            evnt_pos_info.save()
+            order_item.delete()
+            return JsonResponse({'status': 'Order Item deleted!'}, safe=False)
+        except:
+            return JsonResponse({'status': 'Some error occurred!'}, safe=False)
+    return
 
 
 @login_required

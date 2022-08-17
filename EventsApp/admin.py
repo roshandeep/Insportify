@@ -23,7 +23,7 @@ admin.site.register(Venues, VenuesAdmin)
 
 
 class Events_PositionInfoAdmin(admin.ModelAdmin):
-    list_display = ('position_number', 'event', 'max_age', 'min_age', 'no_of_position', 'position_cost',)
+    list_display = ('position_number', 'event', 'position_name', 'position_type', 'max_age', 'min_age', 'no_of_position', 'position_cost',)
 
 
 admin.site.register(Events_PositionInfo, Events_PositionInfoAdmin)
@@ -51,7 +51,7 @@ admin.site.register(Availability, AvailabilityAdmin)
 
 
 class OrderItemsAdmin(admin.ModelAdmin):
-    list_display = ('user', 'event', 'position_type', 'no_of_position', 'position_cost', 'total_cost', )
+    list_display = ('user', 'event', 'position_type', 'skill', 'no_of_position', 'position_cost', 'total_cost', )
 
 
 admin.site.register(OrderItems, OrderItemsAdmin)
