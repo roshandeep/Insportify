@@ -4,9 +4,10 @@
 {% load static %}
 {% block content %}
 
-
-<form class="row p-3" action="{% url 'EventsApp:home' %}" method="get">
-    <div class="col">
+<!-- <div class="col-9 mx-auto"> -->
+<form id="form-events" class="row p-3" action="{% url 'EventsApp:home' %}" method="get">
+    <!-- <div id="events-wrap" class="row"> -->
+    <div class="col" id="events_types_select">
         <p style="margin-bottom:0">Event Type</p>
         <select id="events_types" class="form-select select2" multiple name="events_types">
             <option value="Camp">Camp</option>
@@ -42,6 +43,7 @@
             {% endfor %}
         </select>
     </div>
+    <!-- </div> -->
     <div class="col text-center">
         <button type="submit" class="btn btn-primary mr-2">
             Search
@@ -51,9 +53,11 @@
         </a>
     </div>
 </form>
+<!-- </div> -->
 
 {% if user.is_authenticated %}
 
+<div class="col-9 mx-auto">
 <div class="row p-3">
     <h5>Recommended Events For You</h5>
     <hr class="my-2">
@@ -112,6 +116,7 @@
             <span class="visually-hidden">Next</span>
         </button>
     </div>
+</div>
 </div>
 
 {% else %}
@@ -181,6 +186,17 @@
 <script>
 $(document).ready(function() {
 
+    // window.onresize = changeClassName;
+    // window.onload = changeClassName;
+    changeClassName();
+    function changeClassName() {
+        let myWidth = window.innerWidth;
+        let myHeight = window.innerHeight;
+        console.log("myWidth=" + myWidth + ", myHeight=" + myHeight)
+        // your size calculation code here
+        callFormSizeChange(myWidth, myHeight);
+    };
+
     $('.select2').select2({
     placeholder: "Select Event Type",
     allowClear: true
@@ -194,6 +210,33 @@ $(document).ready(function() {
       para[i].innerHTML = pval[0] + "<br>" + pval[1];
     }
 });
+
+function callFormSizeChange(myWidth, myHeight) {
+        if (myWidth >= 768) {
+            document.getElementById("events_types").style.width = "155px";
+            // document.getElementById("logo-image").style.width = "200px";
+            document.getElementById("form-events").classList.remove('col-9');
+            document.getElementById("form-events").classList.add('row');
+        } else {
+            document.getElementById("events_types").style.width = "100%";
+            // document.getElementById("logo-image").style.width = "150px";
+            document.getElementById("form-events").classList.remove('row');
+            document.getElementById("form-events").classList.add('col-12');
+        }
+    }
+
+    // (function () {
+    //     window.onresize = changeClassName;
+    //     window.onload = changeClassName;
+
+    //     function changeClassName() {
+    //         let myWidth = window.innerWidth;
+    //         let myHeight = window.innerHeight;
+    //         console.log("myWidth=" + myWidth + ", myHeight=" + myHeight)
+    //         // your size calculation code here
+    //         callFormSizeChange(myWidth, myHeight);
+    //     };
+    // })();
 </script>
 
 <style>
@@ -237,21 +280,6 @@ $(document).ready(function() {
     transition: all .4s ease;
 -webkit-transition: all .4s ease;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 </style>
 
 {% endblock %}

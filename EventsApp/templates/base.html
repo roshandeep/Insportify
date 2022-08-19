@@ -28,20 +28,19 @@
     </style>
 </head>
 <body>
-    <div class="container-fluid" id="main-page">
+    <div class="container-fluid" id="main-page" style="padding: 0;">
     
-    <nav class="navbar-settings"
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top"
      style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);" id="navbar">
     <div class="container-fluid" style="margin:10px;">
         <a class="navbar-brand" href="{% url 'EventsApp:home' %}">
-            <img src="{% static 'img/logo.PNG' %}" alt="Logo" style="width: 200px;"/>
+            <img id="logo-image" src="{% static 'img/logo.PNG' %}" alt="Logo"/>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <!-- <hr> -->
-        <div class="collapse navbar-collapse" id="collapsibleNavbar">
-        <ul class="navbar-nav">
+        <div class="collapse navbar-collapse " id="collapsibleNavbar">
+        <ul class="navbar-nav me-auto">
             {% if request.user.is_authenticated %}
 <!--            <li class="nav-item">-->
 <!--                <a class="nav-link link-secondary text-white" href="{% url 'EventsApp:home' %}"-->
@@ -123,11 +122,11 @@
         </div>
     </div>
 </nav>
-<div class="shadow bg-body">
-    <header>
+<div class="shadow bg-body" style="margin-top:100px;">
+    <!-- <header>
         <nav class="navbar navbar-expand-lg bg-light shadow">
             <div class="container-fluid">
-                <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <div id='authentication-header' class="collapse navbar-collapse justify-content-end hide">
                     <ul class="navbar-nav mb-2 mb-lg-0">
                         {% if request.user.is_authenticated %}
                         <li class="nav-item">
@@ -149,7 +148,7 @@
                 </div>
             </div>
         </nav>
-    </header>
+    </header> -->
     <main class="content">
         <article>
             {% block content %}
@@ -178,9 +177,11 @@
     function callNavbar(myWidth, myHeight) {
         var x = document.getElementById("navbar");
         if (myWidth >= 768) {
-            x.className = 'shadow navbar-expand-sm rounded navbar-settings p-3 bg-body';
+            // document.getElementById("select2-data-1-anc0").style.width = "136.5px";
+            document.getElementById("logo-image").style.width = "200px";
         } else {
-            x.className = 'navbar-light rounded navbar-settings p-3 bg-body navbar navbar-expand-md ';
+            // document.getElementById("select2-data-1-anc0").style.width = "100%";
+            document.getElementById("logo-image").style.width = "150px";
         }
     }
 
@@ -192,12 +193,16 @@
             let myWidth = window.innerWidth;
             let myHeight = window.innerHeight;
             // your size calculation code here
-            console.log(myWidth);
             callNavbar(myWidth, myHeight);
         };
     })();
 </script>
-<style>
+<style> 
+
+.hide {
+    display: none;
+}
+
 .btn-primary {
   color: #fff;
   background-color: #ff6f3d;
