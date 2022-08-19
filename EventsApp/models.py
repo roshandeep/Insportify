@@ -135,7 +135,7 @@ class Organization(models.Model):
     city = models.CharField(max_length=50, blank=True, null=True)
     province = models.CharField(max_length=100, blank=True, null=True)
     country = models.CharField(max_length=250, blank=True, null=True)
-    postal_code = models.CharField(max_length=6, blank=True, null=True)
+    postal_code = models.CharField(max_length=50, blank=True, null=True)
     phone = models.CharField(max_length=50, null=True)
     email = models.CharField(max_length=50, null=True)
     website = models.CharField(max_length=50, null=True)
@@ -204,16 +204,6 @@ class PositionAndSkillType(models.Model):
         return self.position_type + ' ' + self.skill_type
 
 
-class Order(models.Model):
-    customer = models.ForeignKey(User, on_delete=models.CASCADE)
-    event = models.ForeignKey(master_table, on_delete=models.CASCADE)
-    order_date = models.DateTimeField()
-    order_amount = models.IntegerField()
-
-    def __str__(self):
-        return self.customer.first_name + " " + self.event.event_title
-
-
 class Invite(models.Model):
     email = models.CharField(max_length=100)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -237,6 +227,13 @@ class Availability(models.Model):
     end_time = models.TimeField()
 
 
+class Organization_Availability(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    day_of_week = models.CharField(max_length=100)
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+
+
 class Logo(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='images')
@@ -249,6 +246,7 @@ class Events_PositionInfo(models.Model):
     event = models.ForeignKey(master_table, on_delete=models.CASCADE)
     position_number = models.IntegerField(blank=True, null=True)
     position_name = models.CharField(max_length=100, blank=True, null=True)
+    # Position Type refers to Skill relevant to the position
     position_type = models.CharField(max_length=100, blank=True, null=True)
     max_age = models.IntegerField(blank=True, null=True)
     min_age = models.IntegerField(blank=True, null=True)
@@ -289,12 +287,23 @@ class SportsImage(models.Model):
         return self.sport
 
 
-class Cart(models.Model):
+class OrderItems(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     event = models.ForeignKey(master_table, on_delete=models.CASCADE)
     position_id = models.ForeignKey(Events_PositionInfo, on_delete=models.CASCADE)
     date = models.DateField()
     position_type = models.CharField(max_length=100, blank=True, null=True)
+    skill = models.CharField(max_length=100, blank=True, null=True)
     no_of_position = models.IntegerField(blank=True, null=True)
     position_cost = models.IntegerField(blank=True, null=True)
     total_cost = models.IntegerField(blank=True, null=True)
+
+
+class Order(models.Model):
+    customer = models.ForeignKey(User, on_delete=models.CASCADE)
+    items = models.ManyToManyField(OrderItems)
+    order_date = models.DateTimeField()
+    order_amount = models.IntegerField()
+
+    def __str__(self):
+        return self.customer.first_name + " " + self.event.event_title

@@ -29,7 +29,7 @@ urlpatterns = [
     path('individual/profile/', views.user_profile, name='user_profile'),
     path('organization/profile/', views.organization_profile, name='organization_profile'),
     path('create/', views.multistep, name='multistep'),
-    path('<int:event_id>/', views.event_by_id, name='event_by_id'),
+    # path('<int:event_id>/', views.event_by_id, name='event_by_id'),
     path('invite/<int:event_id>/', views.invite_by_id, name='invite_by_id'),
     path('invite/<int:event_id>/<str:email>/', views.invite_by_id, name='invite_by_id'),
     path('invite/', views.invite, name='invite'),
@@ -50,6 +50,7 @@ urlpatterns = [
     # path('add_availability/', views.add_availability, name='add_availability'),
     path('add_organization_locations/', views.add_organization_locations, name='add_organization_locations'),
     path('fetch_organization_locations/', views.fetch_organization_locations, name='fetch_organization_locations'),
+    path('get_organization_timings/', views.get_organization_timings, name='get_organization_timings'),
     path('get_user_availability/', views.get_user_availability, name='get_user_availability'),
     path('add_user_availability/', views.add_user_availability, name='add_user_availability'),
     # path('notifications/', views.notifications, name='notifications'),
@@ -57,6 +58,8 @@ urlpatterns = [
     path('upload/', views.logo_upload_view, name='logo_upload'),
     path('event_details/<int:event_id>/', views.event_details, name='event_details'),
     path('cart_summary/', views.cart_summary, name='cart_summary'),
+    path('delete_cart_item/', views.delete_cart_item, name='delete_cart_item'),
+    path('fetch_cart_items/', views.fetch_cart_items, name='fetch_cart_items'),
 
     # PAYMENT URL'S
     path('payment-success/', views.paymentSuccess, name='payment-success'),

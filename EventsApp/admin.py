@@ -1,7 +1,7 @@
 from django.contrib import admin
 from EventsApp.models import master_table, User, \
     Individual, Organization, SportsCategory, SportsType, Venues, Availability, Order, Logo, Extra_Loctaions, \
-    Events_PositionInfo, Secondary_SportsChoice, Cart, PositionAndSkillType, SportsImage
+    Events_PositionInfo, Secondary_SportsChoice, OrderItems, PositionAndSkillType, SportsImage, Organization_Availability
 
 admin.site.register(master_table)
 admin.site.register(User)
@@ -23,7 +23,7 @@ admin.site.register(Venues, VenuesAdmin)
 
 
 class Events_PositionInfoAdmin(admin.ModelAdmin):
-    list_display = ('position_number', 'event', 'max_age', 'min_age', 'no_of_position', 'position_cost',)
+    list_display = ('position_number', 'event', 'position_name', 'position_type', 'max_age', 'min_age', 'no_of_position', 'position_cost',)
 
 
 admin.site.register(Events_PositionInfo, Events_PositionInfoAdmin)
@@ -50,8 +50,15 @@ class AvailabilityAdmin(admin.ModelAdmin):
 admin.site.register(Availability, AvailabilityAdmin)
 
 
-class CartAdmin(admin.ModelAdmin):
-    list_display = ('user', 'event', 'position_type', 'no_of_position', 'position_cost', 'total_cost', )
+class OrderItemsAdmin(admin.ModelAdmin):
+    list_display = ('user', 'event', 'position_type', 'skill', 'no_of_position', 'position_cost', 'total_cost', )
 
 
-admin.site.register(Cart, CartAdmin)
+admin.site.register(OrderItems, OrderItemsAdmin)
+
+
+class Organization_AvailabilityAdmin(admin.ModelAdmin):
+    list_display = ('user', 'day_of_week', 'start_time', 'end_time',)
+
+
+admin.site.register(Organization_Availability, Organization_AvailabilityAdmin)
