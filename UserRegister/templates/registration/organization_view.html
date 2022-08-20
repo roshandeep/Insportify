@@ -41,7 +41,7 @@
 
                         <div class="form-row p-2 text-center">
                             <input type="radio" name="type_of_organization" value='Charity'
-                                   {% if organization.type_of_organization == "Charity" %} checked {% endif %}>Charity
+                                   {% if organization.type_of_organization == "Charity" %} checked {% endif %}> Charity
                             </input>
                             <br/>
                             <input type="radio" name="type_of_organization" value='Facility'
@@ -85,7 +85,7 @@
                         </div>
                         <div class="form-row p-2">
                             <input type="text" name="company_name" class="form-control"
-                                   placeholder="Organization Name"
+                                   placeholder="* Organization Name"
                             value="{% if organization.organization_name %} {{organization.organization_name}} {% endif %}"/>
                         </div>
                         <div class="form-row p-2">
@@ -94,22 +94,22 @@
                             value="{% if organization.parent_organization_name %} {{organization.parent_organization_name}} {% endif %}"/>
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" name="registration" class="form-control" placeholder="Registration No."
+                            <input type="text" name="registration" class="form-control" placeholder="* Registration No."
                             value="{% if organization.registration_no %} {{organization.registration_no}} {% endif %}">
                         </div>
                         <div class="form-row p-2">
-                            <span>Which year were you eastablished?</span>
+                            <span>Which year were you established?</span>
                             <select id="year" class="form-select mb-3" name="year_established" aria-label=".form-select-lg example">
                                 <option selected>Select Year</option>
                             </select>
                         </div>
                         <div class="form-row p-2">
                             <span>What is the most appropriate contact info for the athletes and the organizer to contact you?</span>
-                            <input type="text" name="email" class="form-control" placeholder="Email"
+                            <input type="text" name="email" class="form-control" placeholder="* Email"
                             value="{% if organization.email %} {{organization.email}} {% endif %}">
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" name="phone" class="form-control" placeholder="Enter 10 digit phone number"
+                            <input type="text" name="phone" class="form-control" placeholder="* Phone number"
                             value="{% if organization.phone %} {{organization.phone}} {% endif %}">
                         </div>
                         <div class="form-row p-2">
@@ -118,23 +118,23 @@
                         </div>
                         <div class="form-row p-2">
                             <span>Office location</span>
-                            <input type="text" name="street_name" id="street_name" class="form-control" placeholder="Street"
+                            <input type="text" name="street_name" id="street_name" class="form-control" placeholder="* Street"
                             value="{% if organization.street %} {{organization.street}} {% endif %}">
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" name="city" id="city" class="form-control" placeholder="City"
+                            <input type="text" name="city" id="city" class="form-control" placeholder="* City"
                             value="{% if organization.city %} {{organization.city}} {% endif %}">
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" name="province" id="province" class="form-control" placeholder="Province"
+                            <input type="text" name="province" id="province" class="form-control" placeholder="* Province"
                             value="{% if organization.province %} {{organization.province}} {% endif %}">
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" name="country" id="country" class="form-control" placeholder="Country"
+                            <input type="text" name="country" id="country" class="form-control" placeholder="* Country"
                             value="{% if organization.country %} {{organization.country}} {% endif %}">
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" name="postal_code" id="postal_code" class="form-control" placeholder="Postal Code"
+                            <input type="text" name="postal_code" id="postal_code" class="form-control" placeholder="* Postal Code"
                             value="{% if organization.postal_code %} {{organization.postal_code}} {% endif %}">
                         </div>
                         <div class="form-row p-2 text-center">
@@ -200,7 +200,7 @@
                         Program Types</h3>
                     <div class="card-body">
                         <div class="form-row p-2">
-                            <span>Your focus?</span>
+                            <span>* Your focus?</span>
                            <input type="checkbox" id="Male" name="gender" value="Male"
                             {% if "Male" in organization.gender_focus  %} checked {% endif %}> Male Only </input>
                             <input type="checkbox" id="Female" name="gender" value="Female"
@@ -209,7 +209,7 @@
                             {% if "Coed" in organization.gender_focus %} checked {% endif %}> Coed </input>
                         </div>
                         <div class="form-row p-2">
-                            <label>Pick a Age Group?</label>
+                            <label>* Pick a Age Group?</label>
                             <input type="checkbox" id="Youth" name='age_group' value="Youth"
                                    {% if "Youth" in organization.age_group %} checked {% endif %}> Youth </input>
                             <input type="checkbox" id="Adult" name='age_group' value="Adult"
@@ -229,7 +229,7 @@
                             {% if "500+" in organization.participants %} checked {% endif %}> 500+ </input>
                         </div>
                         <div class="form-row p-2">
-                            <label>List of sports that you facilitate are: </label>
+                            <label>* List of sports that you facilitate are: </label>
                             <select class="form-select select2" multiple name="sport_type"
                                     id="sport_type" style="width:100%">
                                 {% for st in sports_type %}

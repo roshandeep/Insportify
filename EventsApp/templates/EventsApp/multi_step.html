@@ -64,7 +64,7 @@
                         </div>
                         <div class="form-row p-2">
                             <label>* Is this a recurring event? &nbsp &nbsp</label>
-                            <input type="radio" value="Yes" id="chkYes" name="recurring_event">Yes</input>
+                            <input type="radio" value="Yes" id="chkYes" name="recurring_event"> Yes</input>
                             <input type="radio" value="No" id="chkNo" name="recurring_event"> No </input>
                         </div>
                         <div class="form-row p-2" id="fields_recurring" style="display:None">
@@ -104,7 +104,7 @@
 <!--                            </div>-->
                         </div>
                         <div class="form-row p-2" id="Tuesday_dates" style="display:None">
-                            <label>Tuesday: Select Start and End Date &nbsp &nbsp</label>
+                            <label style="font-style:italic">Tuesday: Select Start and End Date &nbsp &nbsp</label>
                             <div class="form-group row p-2">
                                 <div class="col-md-6">
                                     <input type="text" name="datetimes_tuesday_date" id="datetimes_tuesday_date"
@@ -127,7 +127,7 @@
 <!--                            </div>-->
                         </div>
                         <div class="form-row p-2" id="Wednesday_dates" style="display:None">
-                            <label>Wednesday: Select Start and End Date &nbsp &nbsp</label>
+                            <label style="font-style:italic">Wednesday: Select Start and End Date &nbsp &nbsp</label>
                             <div class="form-group row p-2">
                                 <div class="col-md-6">
                                     <input type="text" name="datetimes_wednesday_date" id="datetimes_wednesday_date"
@@ -150,7 +150,7 @@
 <!--                            </div>-->
                         </div>
                         <div class="form-row p-2" id="Thursday_dates" style="display:None">
-                            <label>Thursday: Select Start and End Date &nbsp &nbsp</label>
+                            <label style="font-style:italic">Thursday: Select Start and End Date &nbsp &nbsp</label>
                             <div class="form-group row p-2">
                                 <div class="col-md-6">
                                     <input type="text" name="datetimes_thursday_date" id="datetimes_thursday_date"
@@ -173,7 +173,7 @@
 <!--                            </div>-->
                         </div>
                         <div class="form-row p-2" id="Friday_dates" style="display:None">
-                            <label>Friday: Select Start and End Date &nbsp &nbsp</label>
+                            <label style="font-style:italic">Friday: Select Start and End Date &nbsp &nbsp</label>
                             <div class="form-group row p-2">
                                 <div class="col-md-6">
                                     <input type="text" name="datetimes_friday_date" id="datetimes_friday_date"
@@ -196,7 +196,7 @@
 <!--                            </div>-->
                         </div>
                         <div class="form-row p-2" id="Saturday_dates" style="display:None">
-                            <label>Saturday: Select Start and End Date &nbsp &nbsp</label>
+                            <label style="font-style:italic">Saturday: Select Start and End Date &nbsp &nbsp</label>
                             <div class="form-group row p-2">
                                 <div class="col-md-6">
                                     <input type="text" name="datetimes_saturday_date" id="datetimes_saturday_date"
@@ -219,7 +219,7 @@
 <!--                            </div>-->
                         </div>
                         <div class="form-row p-2" id="Sunday_dates" style="display:None">
-                            <label>Sunday: Select Start and End Date &nbsp &nbsp</label>
+                            <label style="font-style:italic">Sunday: Select Start and End Date &nbsp &nbsp</label>
                             <div class="form-group row p-2">
                                 <div class="col-md-6">
                                     <input type="text" name="datetimes_sunday_date" id="datetimes_sunday_date"
@@ -242,7 +242,7 @@
 <!--                            </div>-->
                         </div>
                         <div class="form-row p-2" id="Exception_dates" style="display:None">
-                            <label>Enter Exceptions &nbsp &nbsp</label>
+                            <label style="font-style:italic">Enter Exceptions &nbsp &nbsp</label>
                             <div class="form-row p-2">
                                 <input type="text" class="form-control date-except"  name="datetimes_exceptions" id="datetimes_exceptions"/>
                             </div>
@@ -675,7 +675,7 @@ function getDaysBetweenDates(start, end, dayName) {
   // Copy start date
   var current = new Date(start);
   // Shift to next of required days
-  current.setDate(current.getDate() + (day - current.getDay() + 7) % 7);
+  current.setDate(current.getDate() + (day - current.getDay()) % 7);
   // While less than end date, add dates to result array
   while (current < end) {
     result.push(new Date(+current).toLocaleString().split(/\D/).slice(0,3).map(num=>num.padStart(2,"0")).join("/"));
@@ -685,13 +685,13 @@ function getDaysBetweenDates(start, end, dayName) {
 }
 
 function isExcluded(date){
-  su = $('.daterange-sun')[0].value
-  mo = $('.daterange-mon')[0].value
-  tu = $('.daterange-tue')[0].value
-  we = $('.daterange-wed')[0].value
-  th = $('.daterange-thu')[0].value
-  fr = $('.daterange-fri')[0].value
-  sa = $('.daterange-sat')[0].value
+  su = $('.daterange-sun').is(":visible") ? $('.daterange-sun')[0].value : "";
+  mo = $('.daterange-mon').is(":visible") ? $('.daterange-mon')[0].value : "";
+  tu = $('.daterange-tue').is(":visible") ? $('.daterange-tue')[0].value : "";
+  we = $('.daterange-wed').is(":visible") ? $('.daterange-wed')[0].value : "";
+  th = $('.daterange-thu').is(":visible") ? $('.daterange-thu')[0].value : "";
+  fr = $('.daterange-fri').is(":visible") ? $('.daterange-fri')[0].value : "";
+  sa = $('.daterange-sat').is(":visible") ? $('.daterange-sat')[0].value : "";
 
   var su_dates = [];
   if(su && su.trim().length > 0){
@@ -792,7 +792,6 @@ $(function() {
     beforeShowDay: function(date){
         return isExcluded(date);
     },
-    startDate: '0'
   });
 
 
