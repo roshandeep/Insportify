@@ -1183,14 +1183,14 @@ def delete_cart_item(request):
         try:
             event_pos_id = request.POST['event_pos_id']
             cart_item_id = request.POST['cart_item_id']
-            print(event_pos_id, cart_item_id)
+            # print(event_pos_id, cart_item_id)
             order_item = OrderItems.objects.get(pk=cart_item_id)
-            print(order_item)
+            # print(order_item)
             # Revert back Event Position info
             evnt_pos_info = Events_PositionInfo.objects.get(pk=event_pos_id)
             evnt_pos_info.no_of_position = evnt_pos_info.no_of_position + order_item.no_of_position
             evnt_pos_info.save()
-            print(evnt_pos_info)
+            # print(evnt_pos_info)
             order_item.delete()
             return JsonResponse({'status': 'Order Item deleted!'}, safe=False)
         except:
