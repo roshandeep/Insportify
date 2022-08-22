@@ -185,17 +185,14 @@
         }
     }
 
-    (function () {
-        window.onresize = changeClassName;
-        window.onload = changeClassName;
+    $(document).ready(function() {
 
-        function changeClassName() {
-            let myWidth = window.innerWidth;
+        let myWidth = window.innerWidth;
             let myHeight = window.innerHeight;
             // your size calculation code here
             callNavbar(myWidth, myHeight);
-        };
-    })();
+});
+
 </script>
 <style> 
 

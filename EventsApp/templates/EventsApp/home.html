@@ -4,7 +4,7 @@
 {% load static %}
 {% block content %}
 
-<!-- <div class="col-9 mx-auto"> -->
+<div id="event-page" class="col-9 mx-auto">
 <form id="form-events" class="row p-3" action="{% url 'EventsApp:home' %}" method="get">
     <!-- <div id="events-wrap" class="row"> -->
     <div class="col" id="events_types_select">
@@ -45,19 +45,19 @@
     </div>
     <!-- </div> -->
     <div class="col text-center">
-        <button type="submit" class="btn btn-primary mr-2">
+        <button type="submit" class="btn btn-primary mr-2 m-2" style="width: 90px;">
             Search
         </button>
-        <a href="{% url 'EventsApp:home' %}" class="btn btn-primary ml-2">
+        <a href="{% url 'EventsApp:home' %}" class="btn btn-primary ml-2 m-2" style="width: 90px;">
             Clear
         </a>
     </div>
 </form>
-<!-- </div> -->
+</div>
 
 {% if user.is_authenticated %}
 
-<div class="col-9 mx-auto">
+<div id="events-show" class="col-9 mx-auto">
 <div class="row p-3">
     <h5>Recommended Events For You</h5>
     <hr class="my-2">
@@ -184,59 +184,54 @@
 {% endif %}
 
 <script>
-$(document).ready(function() {
+    $(document).ready(function () {
 
-    // window.onresize = changeClassName;
-    // window.onload = changeClassName;
-    changeClassName();
-    function changeClassName() {
-        let myWidth = window.innerWidth;
-        let myHeight = window.innerHeight;
-        console.log("myWidth=" + myWidth + ", myHeight=" + myHeight)
-        // your size calculation code here
-        callFormSizeChange(myWidth, myHeight);
-    };
+        changeClassName();
+        function changeClassName() {
+            let myWidth = window.innerWidth;
+            let myHeight = window.innerHeight;
+            console.log("myWidth=" + myWidth + ", myHeight=" + myHeight)
+            // your size calculation code here
+            callFormSizeChange(myWidth, myHeight);
+        };
 
-    $('.select2').select2({
-    placeholder: "Select Event Type",
-    allowClear: true
-    });;
+        $('.select2').select2({
+            placeholder: "Select Event Type",
+            allowClear: true
+        });;
 
-    let para = document.getElementsByClassName("eventdatetime");
-    for (let i = 0; i < para.length; i++) {
-      let pval = para[i].innerHTML.split("from");
-      console.log(pval);
-      para[i].innerHTML = "";
-      para[i].innerHTML = pval[0] + "<br>" + pval[1];
-    }
-});
+        let para = document.getElementsByClassName("eventdatetime");
+        for (let i = 0; i < para.length; i++) {
+            let pval = para[i].innerHTML.split("from");
+            console.log(pval);
+            para[i].innerHTML = "";
+            para[i].innerHTML = pval[0] + "<br>" + pval[1];
+        }
+    });
 
-function callFormSizeChange(myWidth, myHeight) {
+    function callFormSizeChange(myWidth, myHeight) {
         if (myWidth >= 768) {
             document.getElementById("events_types").style.width = "155px";
             // document.getElementById("logo-image").style.width = "200px";
-            document.getElementById("form-events").classList.remove('col-9');
+            document.getElementById("form-events").classList.remove('col-12');
             document.getElementById("form-events").classList.add('row');
+            document.getElementById("event-page").classList.remove('col-12');
+            document.getElementById("event-page").classList.add('col-9');
+            document.getElementById("events-show").classList.remove('col-12');
+            document.getElementById("events-show").classList.add('col-9');
+
         } else {
             document.getElementById("events_types").style.width = "100%";
             // document.getElementById("logo-image").style.width = "150px";
             document.getElementById("form-events").classList.remove('row');
             document.getElementById("form-events").classList.add('col-12');
+            document.getElementById("event-page").classList.remove('col-9');
+            document.getElementById("event-page").classList.add('col-12');
+            document.getElementById("events-show").classList.remove('col-9');
+            document.getElementById("events-show").classList.add('col-12');
         }
     }
 
-    // (function () {
-    //     window.onresize = changeClassName;
-    //     window.onload = changeClassName;
-
-    //     function changeClassName() {
-    //         let myWidth = window.innerWidth;
-    //         let myHeight = window.innerHeight;
-    //         console.log("myWidth=" + myWidth + ", myHeight=" + myHeight)
-    //         // your size calculation code here
-    //         callFormSizeChange(myWidth, myHeight);
-    //     };
-    // })();
 </script>
 
 <style>

@@ -5,7 +5,7 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-6 mx-auto">
+    <div id="user-profile" class="col-6 mx-auto">
         <div>
             <h3 class="mx-auto text-center fw-light">User Profile</h3>
             <hr>
@@ -35,6 +35,10 @@
                         style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">
                         Tell us little
                         about you</h4>
+                        <div class="p-2 d-flex justify-content-end">
+                            <input type="button" name="next" class="next action-button btn btn-primary"
+                                   value="Next" id="next-tab-1" style="width: 90px;"/>
+                        </div>
                     <div class="card-body">
                         <div class="form-row p-2">
                             <input type="text" class="form-control" name="first_name" placeholder="First Name"
@@ -83,11 +87,6 @@
                             <input type="radio" id="No" name="is_concussion" value="No"
                                    {% if individual.concussion == "No" %} checked {% endif %}> No</input>
                         </div>
-
-                        <div class="form-row p-2 text-center">
-                            <input type="button" name="next" class="next action-button btn btn-primary"
-                                   value="Next" id="next-tab-1"/>
-                        </div>
                     </div>
                 </div>
 
@@ -98,6 +97,13 @@
                     <h4 class="card-header text-white text-center"
                         style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">
                         Hey {{ user.first_name }} list your locations where you can participate in </h4>
+                        <div class="d-flex justify-content-between p-2">
+                            <input type="button" name="previous"
+                                   class="previous action-button-previous btn btn-primary"
+                                   value="Previous" id="previous-tab-2" style="width: 90px;"/>
+                            <input type="button" name="next" class="next action-button btn btn-primary"
+                                   value="Next" id="next-tab-2 " style="width: 90px;"/>
+                        </div>
                     <label></label>
                     <div class="card-body">
                         <div id="location_status">
@@ -141,13 +147,7 @@
                             </table>
                             </div>
                         </div>
-                        <div class="form-row p-2 text-center">
-                            <input type="button" name="previous"
-                                   class="previous action-button-previous btn btn-primary"
-                                   value="Previous" id="previous-tab-2"/>
-                            <input type="button" name="next" class="next action-button btn btn-primary"
-                                   value="Next" id="next-tab-2"/>
-                        </div>
+
                     </div>
                 </div>
             </fieldset>
@@ -158,6 +158,13 @@
                         style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">
                         {{user.first_name }} ,
                         add sports you play and the ones you would love to play</h4>
+                        <div class="d-flex justify-content-between p-2">
+                            <input type="button" name="previous"
+                                   class="previous action-button-previous btn btn-primary"
+                                   value="Previous" id="previous-tab-3" style="width: 90px;"/>
+                            <input type="button" name="next" class="next action-button btn btn-primary"
+                                   value="Next" id="next-tab-3" style="width: 90px;"/>
+                        </div>
                     <div class="card-body">
                         <div id="position_status">
 
@@ -212,13 +219,6 @@
                             </table>
                             </div>
                         </div>
-                        <div class="form-row p-2 text-center">
-                            <input type="button" name="previous"
-                                   class="previous action-button-previous btn btn-primary"
-                                   value="Previous" id="previous-tab-3"/>
-                            <input type="button" name="next" class="next action-button btn btn-primary"
-                                   value="Next" id="next-tab-3"/>
-                        </div>
                     </div>
                 </div>
             </fieldset>
@@ -229,6 +229,11 @@
                         style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">
                         {{user.first_name }} ,
                         add your availability</h4>
+                        <div class="p-2 d-flex justify-content-start">
+                            <input type="button" name="previous"
+                                   class="previous action-button-previous btn btn-primary"
+                                   value="Previous" id="previous-tab-4" style="width: 90px;"/>
+                        </div>
                     <div class="card-body">
                         <div id="availability_status">
 
@@ -280,12 +285,9 @@
                             </div>
                         </div>
                         <div class="form-row p-2 text-center">
-                            <input type="button" name="previous"
-                                   class="previous action-button-previous btn btn-primary"
-                                   value="Previous" id="previous-tab-4"/>
 
                             <input type="submit" name="submit" class="submit action-button btn btn-primary"
-                                   value="Submit"/>
+                                   value="Submit" style="width: 90px;"/>
                         </div>
                     </div>
                 </div>
@@ -366,7 +368,26 @@
 <script>
 
 
-$("#add_locations").click(function (e) {
+    function callWidthChange(myWidth, myHeight) {
+        if (myWidth >= 768) {
+            document.getElementById("user-profile").classList.remove("col-12");
+            document.getElementById("user-profile").classList.add("col-6");
+        } else {
+            document.getElementById("user-profile").classList.remove("col-6");
+            document.getElementById("user-profile").classList.add("col-12");
+        }
+    }
+
+    $(document).ready(function () {
+
+        let myWidth = window.innerWidth;
+        let myHeight = window.innerHeight;
+        // your size calculation code here
+        callWidthChange(myWidth, myHeight);
+    });
+
+
+    $("#add_locations").click(function (e) {
         e.preventDefault();
         var selected_city_text = document.getElementById("city").value;
         var selected_province_text = document.getElementById("province").value;
@@ -379,7 +400,7 @@ $("#add_locations").click(function (e) {
                 'selected_city_text': selected_city_text,
                 'selected_province_text': selected_province_text,
                 'selected_country_text': selected_country_text,
-                'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
+                'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
             },
             success: function (data) {
                 let html_data = `<div class="alert alert-warning alert-dismissible fade show" role="alert">`;
@@ -393,54 +414,54 @@ $("#add_locations").click(function (e) {
         });
     });
 
-function fetchUserLocations(){
-    $.ajax({
-        type: "GET",
-        async:false,
-        url: '{% url "EventsApp:fetch_user_locations" %}',
-        success: function (data) {
-            let html_data = `<table class="table table-striped">`;
-            data.forEach(function (data) {
-                html_data += `<tr>`;
-                html_data += `<td>${data.city}</td>`;
-                html_data += `<td>${data.province}</td>`;
-                html_data += `<td>${data.country}</td>`;
-                html_data += `<td>`;
-                html_data += `<a href="#" onclick="delete_user_location(${data.pk})">`;
-                html_data += `<i class="bi bi-trash" style="color:red"></i>`;
-                html_data += `</a>`;
-                html_data += `</td>`;
-                html_data += `</tr>`;
-            });
-            html_data += `</table>`;
-            let tableData = document.getElementById("user_location_table");
-            tableData.innerHTML = html_data;
-        }
-    });
-}
+    function fetchUserLocations() {
+        $.ajax({
+            type: "GET",
+            async: false,
+            url: '{% url "EventsApp:fetch_user_locations" %}',
+            success: function (data) {
+                let html_data = `<table class="table table-striped">`;
+                data.forEach(function (data) {
+                    html_data += `<tr>`;
+                    html_data += `<td>${data.city}</td>`;
+                    html_data += `<td>${data.province}</td>`;
+                    html_data += `<td>${data.country}</td>`;
+                    html_data += `<td>`;
+                    html_data += `<a href="#" onclick="delete_user_location(${data.pk})">`;
+                    html_data += `<i class="bi bi-trash" style="color:red"></i>`;
+                    html_data += `</a>`;
+                    html_data += `</td>`;
+                    html_data += `</tr>`;
+                });
+                html_data += `</table>`;
+                let tableData = document.getElementById("user_location_table");
+                tableData.innerHTML = html_data;
+            }
+        });
+    }
 
-function delete_user_location(user_location_id){
-    $.ajax({
-        type: "POST",
-        url: '{% url "EventsApp:delete_user_location" %}',
-        data: {
-            'id': user_location_id,
-            'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
-        },
-        success: function (data) {
-            let html_data = `<div class="alert alert-warning alert-dismissible fade show" role="alert">`;
-            html_data += `${data["status"]}`;
-            html_data += `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
-            html_data += `</div>`;
-            let status = document.getElementById("location_status");
-            status.innerHTML = html_data;
-            fetchUserLocations();
-        }
-    });
-}
+    function delete_user_location(user_location_id) {
+        $.ajax({
+            type: "POST",
+            url: '{% url "EventsApp:delete_user_location" %}',
+            data: {
+                'id': user_location_id,
+                'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+            },
+            success: function (data) {
+                let html_data = `<div class="alert alert-warning alert-dismissible fade show" role="alert">`;
+                html_data += `${data["status"]}`;
+                html_data += `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+                html_data += `</div>`;
+                let status = document.getElementById("location_status");
+                status.innerHTML = html_data;
+                fetchUserLocations();
+            }
+        });
+    }
 
 
-$("#sports").change(function () {
+    $("#sports").change(function () {
         var selected_type_value = $("#sports option:selected");
         var selected_type_text = selected_type_value.text();
         $.ajax({
@@ -448,7 +469,7 @@ $("#sports").change(function () {
             url: '{% url "EventsApp:get_selected_sports_positions" %}',
             data: {
                 'selected_type_text': selected_type_text,
-                'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
+                'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
             },
             success: function (data) {
                 let html_data = '<option value="" selected disabled>Choose Position</option>';
@@ -461,7 +482,7 @@ $("#sports").change(function () {
     });
 
 
-$("#add_positions").click(function (e) {
+    $("#add_positions").click(function (e) {
         e.preventDefault();
         var selected_skill_value = $("#skill option:selected");
         var selected_skill_text = selected_skill_value.text();
@@ -471,7 +492,7 @@ $("#add_positions").click(function (e) {
         var selected_sport_text = selected_sport_value.text();
 
         console.log(selected_skill_value.val(), selected_position_value.val(), selected_sport_value.val());
-        if(selected_skill_value.val() === "" || selected_position_value.val() === "" || selected_sport_value.val() === ""){
+        if (selected_skill_value.val() === "" || selected_position_value.val() === "" || selected_sport_value.val() === "") {
             let msg = "Please fill in he empty fields!";
             let html_data = `<div class="alert alert-warning alert-dismissible fade show" role="alert">`;
             html_data += `${msg}`;
@@ -488,7 +509,7 @@ $("#add_positions").click(function (e) {
                     'selected_sport_text': selected_sport_text,
                     'selected_position_text': selected_position_text,
                     'selected_skill_text': selected_skill_text,
-                    'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
+                    'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
                 },
                 success: function (data) {
                     let html_data = `<div class="alert alert-warning alert-dismissible fade show" role="alert">`;
@@ -511,78 +532,126 @@ $("#add_positions").click(function (e) {
         }
     });
 
-function fetchUserSportChoices(){
-    $.ajax({
-        type: "GET",
-        async:false,
-        url: '{% url "EventsApp:fetch_user_sports_positions" %}',
-        success: function (data) {
-            let html_data = `<table class="table table-striped">`;
-            data.forEach(function (data) {
-                html_data += `<tr>`;
-                html_data += `<td>${data.sport_type}</td>`;
-                html_data += `<td>${data.position}</td>`;
-                html_data += `<td>${data.skill}</td>`;
-                html_data += `<td>`;
-                html_data += `<a href="#" onclick="delete_sports_choice(${data.pk})">`;
-                html_data += `<i class="bi bi-trash" style="color:red"></i>`;
-                html_data += `</a>`;
-                html_data += `</td>`;
-                html_data += `</tr>`;
-            });
-            html_data += `</table>`;
-            let tableData = document.getElementById("sports_position_table");
-            tableData.innerHTML = html_data;
-        }
-    });
-}
-
-function delete_sports_choice(sport_choice_id){
-    $.ajax({
-        type: "POST",
-        url: '{% url "EventsApp:delete_sports_choice" %}',
-        data: {
-            'id': sport_choice_id,
-            'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
-        },
-        success: function (data) {
-            let html_data = `<div class="alert alert-warning alert-dismissible fade show" role="alert">`;
-            html_data += `${data["status"]}`;
-            html_data += `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
-            html_data += `</div>`;
-            let status = document.getElementById("position_status");
-            status.innerHTML = html_data;
-            fetchUserSportChoices();
-        }
-    });
-}
-
-$("#add_availability").click(function(e) {
-    e.preventDefault();
-    var day_of_week_value = $("#day_of_week option:selected");
-    var day_of_week_text = day_of_week_value.val();
-    var start_time_val = $("#start_time").val();
-    var end_time_val = $("#end_time").val();
-
-    if(start_time_val === "" || end_time_val === "" || day_of_week_text === ""){
-        let msg = "Please fill in he empty fields!";
-        let html_data = `<div class="alert alert-warning alert-dismissible fade show" role="alert">`;
-        html_data += `${msg}`;
-        html_data += `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
-        html_data += `</div>`;
-        let status = document.getElementById("availability_status");
-        status.innerHTML = html_data;
+    function fetchUserSportChoices() {
+        $.ajax({
+            type: "GET",
+            async: false,
+            url: '{% url "EventsApp:fetch_user_sports_positions" %}',
+            success: function (data) {
+                let html_data = `<table class="table table-striped">`;
+                data.forEach(function (data) {
+                    html_data += `<tr>`;
+                    html_data += `<td>${data.sport_type}</td>`;
+                    html_data += `<td>${data.position}</td>`;
+                    html_data += `<td>${data.skill}</td>`;
+                    html_data += `<td>`;
+                    html_data += `<a href="#" onclick="delete_sports_choice(${data.pk})">`;
+                    html_data += `<i class="bi bi-trash" style="color:red"></i>`;
+                    html_data += `</a>`;
+                    html_data += `</td>`;
+                    html_data += `</tr>`;
+                });
+                html_data += `</table>`;
+                let tableData = document.getElementById("sports_position_table");
+                tableData.innerHTML = html_data;
+            }
+        });
     }
-    else{
 
+    function delete_sports_choice(sport_choice_id) {
         $.ajax({
             type: "POST",
-            url: '{% url "EventsApp:add_user_availability" %}',
+            url: '{% url "EventsApp:delete_sports_choice" %}',
             data: {
-                'day_of_week': day_of_week_text,
-                'start_time': start_time_val,
-                'end_time': end_time_val,
-                'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
+                'id': sport_choice_id,
+                'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+            },
+            success: function (data) {
+                let html_data = `<div class="alert alert-warning alert-dismissible fade show" role="alert">`;
+                html_data += `${data["status"]}`;
+                html_data += `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+                html_data += `</div>`;
+                let status = document.getElementById("position_status");
+                status.innerHTML = html_data;
+                fetchUserSportChoices();
+            }
+        });
+    }
+
+    $("#add_availability").click(function (e) {
+        e.preventDefault();
+        var day_of_week_value = $("#day_of_week option:selected");
+        var day_of_week_text = day_of_week_value.val();
+        var start_time_val = $("#start_time").val();
+        var end_time_val = $("#end_time").val();
+
+        if (start_time_val === "" || end_time_val === "" || day_of_week_text === "") {
+            let msg = "Please fill in he empty fields!";
+            let html_data = `<div class="alert alert-warning alert-dismissible fade show" role="alert">`;
+            html_data += `${msg}`;
+            html_data += `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+            html_data += `</div>`;
+            let status = document.getElementById("availability_status");
+            status.innerHTML = html_data;
+        }
+        else {
+
+            $.ajax({
+                type: "POST",
+                url: '{% url "EventsApp:add_user_availability" %}',
+                data: {
+                    'day_of_week': day_of_week_text,
+                    'start_time': start_time_val,
+                    'end_time': end_time_val,
+                    'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+                },
+                success: function (data) {
+                    let html_data = `<div class="alert alert-warning alert-dismissible fade show" role="alert">`;
+                    html_data += `${data["status"]}`;
+                    html_data += `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+                    html_data += `</div>`;
+                    let status = document.getElementById("availability_status");
+                    status.innerHTML = html_data;
+                    getUserAvailability();
+                }
+            });
+        }
+    });
+
+    function getUserAvailability() {
+        $.ajax({
+            type: "GET",
+            async: false,
+            url: '{% url "EventsApp:get_user_availability" %}',
+            success: function (data) {
+                let html_data = `<table class="table table-striped">`;
+                data.forEach(function (data) {
+                    html_data += `<tr>`;
+                    html_data += `<td>${data.day_of_week}</td>`;
+                    html_data += `<td>${data.start_time}</td>`;
+                    html_data += `<td>${data.end_time}</td>`;
+                    html_data += `<td>`;
+                    html_data += `<a href="#" onclick="delete_availability(${data.pk})">`;
+                    html_data += `<i class="bi bi-trash" style="color:red"></i>`;
+                    html_data += `</a>`;
+                    html_data += `</td>`;
+                    html_data += `</tr>`;
+                });
+                html_data += `</table>`;
+                let tableData = document.getElementById("availability_table");
+                tableData.innerHTML = html_data;
+            }
+        });
+    }
+
+
+    function delete_availability(availability_id) {
+        $.ajax({
+            type: "POST",
+            url: '{% url "EventsApp:delete_availability" %}',
+            data: {
+                'id': availability_id,
+                'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
             },
             success: function (data) {
                 let html_data = `<div class="alert alert-warning alert-dismissible fade show" role="alert">`;
@@ -594,70 +663,22 @@ $("#add_availability").click(function(e) {
                 getUserAvailability();
             }
         });
-     }
-});
-
-function getUserAvailability(){
-    $.ajax({
-        type: "GET",
-        async:false,
-        url: '{% url "EventsApp:get_user_availability" %}',
-        success: function (data) {
-            let html_data = `<table class="table table-striped">`;
-            data.forEach(function (data) {
-                html_data += `<tr>`;
-                html_data += `<td>${data.day_of_week}</td>`;
-                html_data += `<td>${data.start_time}</td>`;
-                html_data += `<td>${data.end_time}</td>`;
-                html_data += `<td>`;
-                html_data += `<a href="#" onclick="delete_availability(${data.pk})">`;
-                html_data += `<i class="bi bi-trash" style="color:red"></i>`;
-                html_data += `</a>`;
-                html_data += `</td>`;
-                html_data += `</tr>`;
-            });
-            html_data += `</table>`;
-            let tableData = document.getElementById("availability_table");
-            tableData.innerHTML = html_data;
-        }
-    });
-}
+    }
 
 
-function delete_availability(availability_id){
-    $.ajax({
-        type: "POST",
-        url: '{% url "EventsApp:delete_availability" %}',
-        data: {
-            'id': availability_id,
-            'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
-        },
-        success: function (data) {
-            let html_data = `<div class="alert alert-warning alert-dismissible fade show" role="alert">`;
-            html_data += `${data["status"]}`;
-            html_data += `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
-            html_data += `</div>`;
-            let status = document.getElementById("availability_status");
-            status.innerHTML = html_data;
-            getUserAvailability();
-        }
-    });
-}
-
-
-$("#position").change(function () {
-    var selected_position_value = $("#position option:selected");
-    var selected_position_text = selected_position_value.text();
-    var selected_type_value = $("#sports option:selected");
-    var selected_type_text = selected_type_value.text();
-    console.log(selected_position_text, selected_type_text);
+    $("#position").change(function () {
+        var selected_position_value = $("#position option:selected");
+        var selected_position_text = selected_position_value.text();
+        var selected_type_value = $("#sports option:selected");
+        var selected_type_text = selected_type_value.text();
+        console.log(selected_position_text, selected_type_text);
         $.ajax({
             type: "POST",
             url: '{% url "EventsApp:get_selected_sports_skill" %}',
             data: {
                 'selected_position_text': selected_position_text,
                 'selected_type_text': selected_type_text,
-                'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
+                'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
             },
             success: function (data) {
                 let html_data = '<option value="" selected disabled>Choose Skill</option>';
@@ -670,117 +691,117 @@ $("#position").change(function () {
         });
     });
 
-$(document).ready(function(){
-  var tab2 = $("#tab-2");
-  var tab3 = $("#tab-3");
-  var tab4 = $("#tab-4");
-  tab2.hide();
-  tab3.hide();
-  tab4.hide();
+    $(document).ready(function () {
+        var tab2 = $("#tab-2");
+        var tab3 = $("#tab-3");
+        var tab4 = $("#tab-4");
+        tab2.hide();
+        tab3.hide();
+        tab4.hide();
 
-  $("#next-tab-1").click(function(){
-    var tab1 = $("#tab-1");
-    var tab2 = $("#tab-2");
-    var tab3 = $("#tab-3");
-    var tab4 = $("#tab-4");
-    tab1.hide();
-    tab2.show();
-    tab3.hide();
-    tab4.hide();
-    $("#step2").addClass("active");
-  });
-
-  $("#next-tab-2").click(function(){
-    var tab1 = $("#tab-1");
-    var tab2 = $("#tab-2");
-    var tab3 = $("#tab-3");
-    var tab4 = $("#tab-4");
-    tab1.hide();
-    tab2.hide();
-    tab3.show();
-    tab4.hide();
-    $("#step3").addClass("active");
-  });
-
-  $("#next-tab-3").click(function(){
-    var tab1 = $("#tab-1");
-    var tab2 = $("#tab-2");
-    var tab3 = $("#tab-3");
-    var tab4 = $("#tab-4");
-    tab1.hide();
-    tab2.hide();
-    tab3.hide();
-    tab4.show();
-    $("#step4").addClass("active");
-  });
-
-  $("#previous-tab-2").click(function(){
-    var tab1 = $("#tab-1");
-    var tab2 = $("#tab-2");
-    var tab3 = $("#tab-3");
-    var tab4 = $("#tab-4");
-    tab1.show();
-    tab2.hide();
-    tab3.hide();
-    tab4.hide();
-    $("#step2").removeClass("active");
-  });
-
-  $("#previous-tab-3").click(function(){
-    var tab1 = $("#tab-1");
-    var tab2 = $("#tab-2");
-    var tab3 = $("#tab-3");
-    var tab4 = $("#tab-4");
-    tab1.hide();
-    tab2.show();
-    tab3.hide();
-    tab4.hide();
-    $("#step3").removeClass("active");
-  });
-
-  $("#previous-tab-4").click(function(){
-    var tab1 = $("#tab-1");
-    var tab2 = $("#tab-2");
-    var tab3 = $("#tab-3");
-    var tab4 = $("#tab-4");
-    tab1.hide();
-    tab2.hide();
-    tab3.show();
-    tab4.hide();
-    $("#step4").removeClass("active");
-  });
-
-});
-
-
-// Logic to show alert when user leaving page without saving
-$(function () {
-    var formSubmitting = false;
-    $("#msform").on('submit', function(){
-        formSubmitting = true;
-    });
-    window.onload = function() {
-        window.addEventListener("beforeunload", function (e) {
-            if (formSubmitting) {
-                return undefined;
-            }
-
-            var confirmationMessage = 'It appears you have unsaved changes, if you leave now, your changes will be lost.';
-
-            (e || window.event).returnValue = confirmationMessage; //Gecko + IE
-            return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
+        $("#next-tab-1").click(function () {
+            var tab1 = $("#tab-1");
+            var tab2 = $("#tab-2");
+            var tab3 = $("#tab-3");
+            var tab4 = $("#tab-4");
+            tab1.hide();
+            tab2.show();
+            tab3.hide();
+            tab4.hide();
+            $("#step2").addClass("active");
         });
-    };
-});
 
-$(document).ready(function() {
-  $(window).keydown(function(event){
-    if(event.keyCode == 13) {
-      event.preventDefault();
-      return false;
-    }
-  });
-});
+        $("#next-tab-2").click(function () {
+            var tab1 = $("#tab-1");
+            var tab2 = $("#tab-2");
+            var tab3 = $("#tab-3");
+            var tab4 = $("#tab-4");
+            tab1.hide();
+            tab2.hide();
+            tab3.show();
+            tab4.hide();
+            $("#step3").addClass("active");
+        });
+
+        $("#next-tab-3").click(function () {
+            var tab1 = $("#tab-1");
+            var tab2 = $("#tab-2");
+            var tab3 = $("#tab-3");
+            var tab4 = $("#tab-4");
+            tab1.hide();
+            tab2.hide();
+            tab3.hide();
+            tab4.show();
+            $("#step4").addClass("active");
+        });
+
+        $("#previous-tab-2").click(function () {
+            var tab1 = $("#tab-1");
+            var tab2 = $("#tab-2");
+            var tab3 = $("#tab-3");
+            var tab4 = $("#tab-4");
+            tab1.show();
+            tab2.hide();
+            tab3.hide();
+            tab4.hide();
+            $("#step2").removeClass("active");
+        });
+
+        $("#previous-tab-3").click(function () {
+            var tab1 = $("#tab-1");
+            var tab2 = $("#tab-2");
+            var tab3 = $("#tab-3");
+            var tab4 = $("#tab-4");
+            tab1.hide();
+            tab2.show();
+            tab3.hide();
+            tab4.hide();
+            $("#step3").removeClass("active");
+        });
+
+        $("#previous-tab-4").click(function () {
+            var tab1 = $("#tab-1");
+            var tab2 = $("#tab-2");
+            var tab3 = $("#tab-3");
+            var tab4 = $("#tab-4");
+            tab1.hide();
+            tab2.hide();
+            tab3.show();
+            tab4.hide();
+            $("#step4").removeClass("active");
+        });
+
+    });
+
+
+    // Logic to show alert when user leaving page without saving
+    $(function () {
+        var formSubmitting = false;
+        $("#msform").on('submit', function () {
+            formSubmitting = true;
+        });
+        window.onload = function () {
+            window.addEventListener("beforeunload", function (e) {
+                if (formSubmitting) {
+                    return undefined;
+                }
+
+                var confirmationMessage = 'It appears you have unsaved changes, if you leave now, your changes will be lost.';
+
+                (e || window.event).returnValue = confirmationMessage; //Gecko + IE
+                return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
+            });
+        };
+    });
+
+    $(document).ready(function () {
+        $(window).keydown(function (event) {
+            if (event.keyCode == 13) {
+                event.preventDefault();
+                return false;
+            }
+        });
+    });
 
 </script>
 
