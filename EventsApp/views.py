@@ -10,6 +10,7 @@ from django.template import loader
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.crypto import get_random_string
 from django.views.decorators.csrf import csrf_exempt
 from Insportify import settings
 from .forms import MultiStepForm, AvailabilityForm, LogoForm, InviteForm
@@ -286,15 +287,6 @@ def committed_events(request):
         event_list = format_time(event_list)
     return render(request, 'EventsApp/events_committed.html', {'event_list': list(event_list)})
 
-
-# @login_required
-# def event_by_id(request, event_id):
-#     event = master_table.objects.get(pk=event_id)
-#     context = {
-#         'STRIPE_PUBLISHABLE_KEY': settings.STRIPE_PUBLISHABLE_KEY,
-#         'event': event
-#     }
-#     return render(request, 'EventsApp/event_detail.html', context)
 
 
 @login_required
@@ -1231,39 +1223,15 @@ def cart_summary(request):
     return render(request, "EventsApp/cart_summary.html", context)
 
 
-@csrf_exempt
-def create_checkout_session(request, id):
+def checkout(request):
     user = request.user
     cart = OrderItems.objects.filter(user=user)
-    print(cart)
-    name = cart[0].event.event_title
     event = cart[0].event
     total = 0
     for item in cart:
         total = total + item.total_cost
 
-    stripe.api_key = settings.STRIPE_SECRET_KEY
-    try:
-        checkout_session = stripe.checkout.Session.create(
-            payment_method_types=['card'],
-            line_items=[
-                {
-                    'price_data': {
-                        'currency': 'cad',
-                        'product_data': {
-                            'name': name,
-                        },
-                        'unit_amount': int(total*100),
-                    },
-                    'quantity': 1,
-                }
-            ],
-            mode='payment',
-            success_url=request.build_absolute_uri(
-                reverse('EventsApp:payment-success')) + "?session_id={CHECKOUT_SESSION_ID}",
-            cancel_url=request.build_absolute_uri(reverse('EventsApp:payment-cancel')),
-        )
-
+    if request.method == 'POST':
         order = Order()
         order.customer = User.objects.get(email=request.user.email)
         order.event = event
@@ -1273,11 +1241,32 @@ def create_checkout_session(request, id):
         for order_items in cart:
             order.items.add(order_items)
 
-        return JsonResponse({'sessionId': checkout_session.id})
 
-    except Exception as e:
-        print(str(e))
-        return JsonResponse({'error': str(e)})
+
+def charge(request):
+    order = Order.objects.get(user=request.user, ordered=False)
+    orderitems = order.orderitems.all()
+    order_total = order.get_totals()
+    totalCents = int(float(order_total * 100))
+    if request.method == 'POST':
+        charge = stripe.Charge.create(amount=totalCents,
+                                      currency='inr',
+                                      description=order,
+                                      source=request.POST['stripeToken'])
+        print(charge)
+        if charge.status == "succeeded":
+            orderId = get_random_string(length=16,
+                                        allowed_chars=u'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
+            print(charge.id)
+            order.ordered = True
+            order.paymentId = charge.id
+            order.orderId = f'#{request.user}{orderId}'
+            order.save()
+            cartItems = Order.objects.filter(user=request.user)
+            for item in cartItems:
+                item.purchased = True
+                item.save()
+        return render(request, 'checkout/charge.html', {"items": orderitems, "order": order})
 
 
 def paymentSuccess(request):
@@ -1417,37 +1406,6 @@ def delete_availability(request):
             return JsonResponse({'status': 'Availability removed successfully!'}, safe=False)
         except:
             return JsonResponse({'status': 'Some error occurred!'}, safe=False)
-
-
-# @login_required
-# def notifications(request):
-#     context = {}
-#     form = AvailabilityForm(request.POST or None,
-#                             instance=Availability(),
-#                             initial={'user': request.user})
-#
-#     context['form'] = form
-#     user = User.objects.get(email=request.user.email)
-#     user_avaiability = Availability.objects.filter(user=user)
-#     get_day_of_week(user_avaiability)
-#
-#     context["user_availability"] = user_avaiability
-#
-#     if request.POST:
-#         if form.is_valid():
-#             obj = Availability(user=user,
-#                                day_of_week=form.cleaned_data['day_of_week'],
-#                                start_time=form.cleaned_data['start_time'],
-#                                end_time=form.cleaned_data['end_time'])
-#             obj.save()
-#             user_avaiability = Availability.objects.filter(user=user)
-#             get_day_of_week(user_avaiability)
-#             context["user_availability"] = user_avaiability
-#             messages.success(request, "New Availability Added!")
-#         else:
-#             print(form.errors)
-#
-#     return render(request, "EventsApp/add_availability.html", context)
 
 
 def get_day_of_week(user_avaiability):

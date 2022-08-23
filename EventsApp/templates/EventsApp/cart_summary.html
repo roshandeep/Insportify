@@ -47,7 +47,7 @@
         </div>
 
         <div class="mx-auto text-center">
-            <a class="btn btn-primary" id="checkout-button">Checkout</a>
+            <a class="btn btn-primary">Checkout</a>
         </div>
     </div>
 </div>
@@ -60,7 +60,7 @@
 
     checkoutButton.addEventListener('click', function () {
 
-        fetch("{% url 'EventsApp:create-checkout-session' id=request.user.pk %}", {
+        fetch("{% url 'EventsApp:create-checkout-session' %}", {
             method: 'POST',
         })
             .then(function (response) {

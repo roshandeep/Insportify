@@ -89,29 +89,29 @@ EMAIL_HOST_PASSWORD = 'ywfveonmuyxadyao'
 
 ## Dev DB Configurations
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'insportify',
-#         'USER': 'postgres',
-#         'PASSWORD': 'admin',
-#         'HOST': 'localhost',
-#         'PORT': '5432',
-#     }
-# }
-
-## Prod DB Configurations
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
+        'NAME': 'insportify',
         'USER': 'postgres',
-        'PASSWORD': 'Admin2022',
-        'HOST': 'insportify3.cz5lufvg1olp.ca-central-1.rds.amazonaws.com',
+        'PASSWORD': 'admin',
+        'HOST': 'localhost',
         'PORT': '5432',
     }
 }
+
+## Prod DB Configurations
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'postgres',
+#         'USER': 'postgres',
+#         'PASSWORD': 'Admin2022',
+#         'HOST': 'insportify3.cz5lufvg1olp.ca-central-1.rds.amazonaws.com',
+#         'PORT': '5432',
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -170,7 +170,11 @@ MESSAGE_TAGS = {
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10240
 
 
-# DEV
+# TEST Mode
 STRIPE_PUBLISHABLE_KEY = 'pk_test_cBzZxJm1Sk4UFJ5i0nypvIEv00HazZHrCi'
 STRIPE_SECRET_KEY = 'sk_test_L940ji4j5UAJZm9qmsKICL1Z00Xel3ppet'
-STRIPE_WEBHOOK_KEY = ''
+
+# PROD Mode
+# STRIPE_PUBLISHABLE_KEY = 'pk_test_cBzZxJm1Sk4UFJ5i0nypvIEv00HazZHrCi'
+# STRIPE_SECRET_KEY = 'sk_test_L940ji4j5UAJZm9qmsKICL1Z00Xel3ppet'
+
