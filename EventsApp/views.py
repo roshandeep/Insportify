@@ -1183,14 +1183,14 @@ def delete_cart_item(request):
         try:
             event_pos_id = request.POST['event_pos_id']
             cart_item_id = request.POST['cart_item_id']
-            print(event_pos_id, cart_item_id)
+            # print(event_pos_id, cart_item_id)
             order_item = OrderItems.objects.get(pk=cart_item_id)
-            print(order_item)
+            # print(order_item)
             # Revert back Event Position info
             evnt_pos_info = Events_PositionInfo.objects.get(pk=event_pos_id)
             evnt_pos_info.no_of_position = evnt_pos_info.no_of_position + order_item.no_of_position
             evnt_pos_info.save()
-            print(evnt_pos_info)
+            # print(evnt_pos_info)
             order_item.delete()
             return JsonResponse({'status': 'Order Item deleted!'}, safe=False)
         except:
@@ -1235,6 +1235,7 @@ def cart_summary(request):
 def create_checkout_session(request, id):
     user = request.user
     cart = OrderItems.objects.filter(user=user)
+    print(cart)
     name = cart[0].event.event_title
     event = cart[0].event
     total = 0
@@ -1252,7 +1253,7 @@ def create_checkout_session(request, id):
                         'product_data': {
                             'name': name,
                         },
-                        'unit_amount': int(total),
+                        'unit_amount': int(total*100),
                     },
                     'quantity': 1,
                 }
@@ -1267,8 +1268,10 @@ def create_checkout_session(request, id):
         order.customer = User.objects.get(email=request.user.email)
         order.event = event
         order.order_date = timezone.now()
-        order.order_amount = int(total)
+        order.order_amount = int(total*100)
         order.save()
+        for order_items in cart:
+            order.items.add(order_items)
 
         return JsonResponse({'sessionId': checkout_session.id})
 
