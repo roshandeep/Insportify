@@ -1235,6 +1235,7 @@ def cart_summary(request):
 def create_checkout_session(request, id):
     user = request.user
     cart = OrderItems.objects.filter(user=user)
+    print(cart)
     name = cart[0].event.event_title
     event = cart[0].event
     total = 0
@@ -1252,7 +1253,7 @@ def create_checkout_session(request, id):
                         'product_data': {
                             'name': name,
                         },
-                        'unit_amount': int(total),
+                        'unit_amount': int(total*100),
                     },
                     'quantity': 1,
                 }
@@ -1267,8 +1268,10 @@ def create_checkout_session(request, id):
         order.customer = User.objects.get(email=request.user.email)
         order.event = event
         order.order_date = timezone.now()
-        order.order_amount = int(total)
+        order.order_amount = int(total*100)
         order.save()
+        for order_items in cart:
+            order.items.add(order_items)
 
         return JsonResponse({'sessionId': checkout_session.id})
 
