@@ -44,7 +44,7 @@
         </select>
     </div>
     <!-- </div> -->
-    <div class="col text-center">
+    <div class="row-12 text-center">
         <button type="submit" class="btn btn-primary mr-2 m-2" style="width: 90px;">
             Search
         </button>
@@ -184,16 +184,31 @@
 {% endif %}
 
 <script>
+        $(document).ready(function() {
+
+let myWidth = window.innerWidth;
+$(window).resize(function () {
+    var nw = $(window).width();
+    //compare new and old width   
+    let myHeight = window.innerHeight;
+    // your size calculation code here
+    myWidth = nw;
+    console.log(myWidth)
+    callNavbar(myWidth, myHeight);   
+});
+});
     $(document).ready(function () {
 
-        changeClassName();
-        function changeClassName() {
-            let myWidth = window.innerWidth;
-            let myHeight = window.innerHeight;
-            console.log("myWidth=" + myWidth + ", myHeight=" + myHeight)
-            // your size calculation code here
-            callFormSizeChange(myWidth, myHeight);
-        };
+        let myWidth = window.innerWidth;
+        let myHeight = window.innerHeight;
+        callFormSizeChange(myWidth, myHeight);   
+        $(window).resize(function () {
+        var nw = $(window).width();
+        let myHeight = window.innerHeight;
+        myWidth = nw;
+        callFormSizeChange(myWidth, myHeight);   
+    });
+
 
         $('.select2').select2({
             placeholder: "Select Event Type",

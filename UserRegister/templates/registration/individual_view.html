@@ -370,20 +370,28 @@
 
     function callWidthChange(myWidth, myHeight) {
         if (myWidth >= 768) {
-            document.getElementById("user-profile").classList.remove("col-12");
-            document.getElementById("user-profile").classList.add("col-6");
+            if(document.getElementById("user-profile")){
+                document.getElementById("user-profile").classList.remove("col-12");
+                document.getElementById("user-profile").classList.add("col-6");
+            }
         } else {
-            document.getElementById("user-profile").classList.remove("col-6");
-            document.getElementById("user-profile").classList.add("col-12");
+            if(document.getElementById("user-profile")){
+                document.getElementById("user-profile").classList.remove("col-6");
+                document.getElementById("user-profile").classList.add("col-12");
+            }
         }
     }
 
     $(document).ready(function () {
-
         let myWidth = window.innerWidth;
         let myHeight = window.innerHeight;
-        // your size calculation code here
-        callWidthChange(myWidth, myHeight);
+        callWidthChange(myWidth, myHeight);   
+        $(window).resize(function () {
+        var nw = $(window).width();
+        let myHeight = window.innerHeight;
+        myWidth = nw;
+        callWidthChange(myWidth, myHeight);   
+    });
     });
 
 
