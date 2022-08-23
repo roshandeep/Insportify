@@ -7,9 +7,9 @@
 <div id="event-page" class="col-9 mx-auto">
 <form id="form-events" class="row p-3" action="{% url 'EventsApp:home' %}" method="get">
     <!-- <div id="events-wrap" class="row"> -->
-    <div class="col" id="events_types_select">
+    <div class="col" id="events_types_select" style="flex-grow: 1;">
         <p style="margin-bottom:0">Event Type</p>
-        <select id="events_types" class="form-select select2" multiple name="events_types">
+        <select id="events_types" class="form-select select2" multiple name="events_types" style="height:26px; flex-grow: 1;">
             <option value="Camp">Camp</option>
             <option value="Charity">Charity</option>
             <option value="Conditioning">Conditioning</option>
@@ -57,7 +57,7 @@
 
 {% if user.is_authenticated %}
 
-<div id="events-show" class="col-9 mx-auto">
+<div id="events-show" class="col-11 mx-auto">
 <div class="row p-3">
     <h5>Recommended Events For You</h5>
     <hr class="my-2">
@@ -121,6 +121,7 @@
 
 {% else %}
 
+<div id="events-show" class="col-11 mx-auto">
 <div class="row p-3">
     <h5>All Events</h5>
     <hr class="my-2">
@@ -130,7 +131,7 @@
             <div class="carousel-item {% if forloop.counter0 == 0 %}active{% endif %}">
                 <div class="cards-wrapper">
                     {% for event in sublist %}
-                    <div class="card {% if forloop.counter0 != 0 %}d-none d-md-block{% endif %} col-4"
+                    <div id="event-card" class="card {% if forloop.counter0 != 0 %}d-none d-md-block{% endif %} col-4"
                          onclick="location.href='event_details/{{event.pk}}/';" style="cursor:pointer">
                         <img src="{{event.sport_logo}}" class="card-img-top" alt="...">
                         <div class="card-body" >
@@ -180,25 +181,12 @@
         </button>
     </div>
 </div>
+</div>
 
 {% endif %}
 
 <script>
-        $(document).ready(function() {
-
-let myWidth = window.innerWidth;
-$(window).resize(function () {
-    var nw = $(window).width();
-    //compare new and old width   
-    let myHeight = window.innerHeight;
-    // your size calculation code here
-    myWidth = nw;
-    console.log(myWidth)
-    callNavbar(myWidth, myHeight);   
-});
-});
     $(document).ready(function () {
-
         let myWidth = window.innerWidth;
         let myHeight = window.innerHeight;
         callFormSizeChange(myWidth, myHeight);   
@@ -226,24 +214,48 @@ $(window).resize(function () {
 
     function callFormSizeChange(myWidth, myHeight) {
         if (myWidth >= 768) {
+            if(document.getElementById("events_types")){
             document.getElementById("events_types").style.width = "155px";
+            }
             // document.getElementById("logo-image").style.width = "200px";
+            if(document.getElementById('form-events')){
             document.getElementById("form-events").classList.remove('col-12');
             document.getElementById("form-events").classList.add('row');
+            }
+            if(document.getElementById('event-page')){
             document.getElementById("event-page").classList.remove('col-12');
             document.getElementById("event-page").classList.add('col-9');
-            document.getElementById("events-show").classList.remove('col-12');
-            document.getElementById("events-show").classList.add('col-9');
+            }
+            if(document.getElementById('events-show')){
+            document.getElementById("events-show").classList.remove('col-11');
+            document.getElementById("events-show").classList.add('col-11');
+            }
+            if(document.getElementById('event-card')){
+                document.getElementById("event-card").classList.remove('col-12');
+                document.getElementById("event-card").classList.add('col-4');
+            }
 
         } else {
+            if(document.getElementById("events_types")){
             document.getElementById("events_types").style.width = "100%";
+            }
             // document.getElementById("logo-image").style.width = "150px";
+            if(document.getElementById('form-events')){
             document.getElementById("form-events").classList.remove('row');
             document.getElementById("form-events").classList.add('col-12');
+            }
+            if(document.getElementById('event-page')){
             document.getElementById("event-page").classList.remove('col-9');
             document.getElementById("event-page").classList.add('col-12');
+            }
+            if(document.getElementById('events-show')){
             document.getElementById("events-show").classList.remove('col-9');
             document.getElementById("events-show").classList.add('col-12');
+            }
+            if(document.getElementById('event-card')){
+                document.getElementById("event-card").classList.remove('col-4');
+                document.getElementById("event-card").classList.add('col-12');
+            }
         }
     }
 
@@ -282,6 +294,10 @@ $(window).resize(function () {
   .card img {
     height: 11em;
   }
+}
+
+.select2-search__field{
+    height:26px !important;
 }
 
 .card:hover {
