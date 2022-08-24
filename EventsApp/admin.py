@@ -9,7 +9,6 @@ admin.site.register(SportsCategory)
 admin.site.register(SportsType)
 admin.site.register(Individual)
 admin.site.register(Organization)
-admin.site.register(Order)
 admin.site.register(Logo)
 admin.site.register(PositionAndSkillType)
 admin.site.register(SportsImage)
@@ -57,8 +56,17 @@ class OrderItemsAdmin(admin.ModelAdmin):
 admin.site.register(OrderItems, OrderItemsAdmin)
 
 
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ('orderId', 'customer', 'order_date', 'paymentId', 'order_amount',)
+
+
+admin.site.register(Order, OrderAdmin)
+
+
+
 class Organization_AvailabilityAdmin(admin.ModelAdmin):
     list_display = ('user', 'day_of_week', 'start_time', 'end_time',)
 
 
 admin.site.register(Organization_Availability, Organization_AvailabilityAdmin)
+

@@ -297,6 +297,7 @@ class OrderItems(models.Model):
     no_of_position = models.IntegerField(blank=True, null=True)
     position_cost = models.IntegerField(blank=True, null=True)
     total_cost = models.IntegerField(blank=True, null=True)
+    purchased = models.BooleanField(blank=True, null=True, default=False)
 
 
 class Order(models.Model):

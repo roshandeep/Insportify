@@ -279,6 +279,7 @@ def all_events(request):
 @login_required
 def committed_events(request):
     event_list = set()
+
     cart = OrderItems.objects.filter(user=request.user)
     if len(cart) > 0:
         for item in cart:
@@ -1190,10 +1191,10 @@ def delete_cart_item(request):
 
 
 def fetch_cart_items(request):
-    total=0
-    order_items=[]
+    total = 0
+    order_items = []
     if request.is_ajax():
-        cart = OrderItems.objects.filter(user=request.user)
+        cart = OrderItems.objects.filter(user=request.user, purchased=False)
         for item in cart:
             total = total + item.total_cost
 
@@ -1215,14 +1216,15 @@ def cart_summary(request):
     total = 0
     user = request.user
     context['STRIPE_PUBLISHABLE_KEY'] = settings.STRIPE_PUBLISHABLE_KEY,
-    cart = OrderItems.objects.filter(user=user)
+    cart = OrderItems.objects.filter(user=user, purchased=False)
     for item in cart:
         total = total + item.total_cost
     context["cart"] = cart
     context["total"] = total
     if request.method == 'POST':
-        order_obj = Order.objects.filter(customer=request.user)
+        order_obj = Order.objects.filter(customer=request.user, payment=False)
         if order_obj.exists():
+            order_obj = Order.objects.get(customer=request.user, payment=False)
             order_obj.items.clear()
             order_obj.order_amount = total
             order_obj.order_date = timezone.now()
@@ -1233,6 +1235,7 @@ def cart_summary(request):
             order.customer = User.objects.get(email=request.user.email)
             order.order_date = timezone.now()
             order.order_amount = total
+            order.payment = False
             order.save()
             for order_items in cart:
                 order.items.add(order_items)
@@ -1246,24 +1249,38 @@ def cart_summary(request):
 @login_required
 def charge(request):
     context={}
+    char_set = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
     key = settings.STRIPE_PUBLISHABLE_KEY
     context['key'] = key
-    order = Order.objects.get(customer=request.user)
-    order_total = order.order_amount
-    # totalCents = int(float(order_total * 100))
-    context['totalCents'] = order_total
+    order = Order.objects.get(customer=request.user, payment=False)
+    totalCents = order.order_amount * 100
+    context['totalCents'] = totalCents
 
     if request.method == 'POST':
         try:
-            charge = stripe.Charge.create(amount=order_total,
+            charge = stripe.Charge.create(amount=totalCents,
                                           currency='cad',
                                           description=order,
                                           source=request.POST['stripeToken'])
-            print(charge)
+            # print(charge)
             if charge.status == "succeeded":
                 print('payment success')
-                orderId = get_random_string(length=16,
-                                            allowed_chars=u'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
+                orderId = get_random_string(length=16, allowed_chars=char_set)
+                paymentId = get_random_string(length=16, allowed_chars=char_set)
+                order.orderId = f'#{request.user}{orderId}'
+                order.paymentId = paymentId
+                order.payment = True
+                for order_item in order.items.all():
+                    item = OrderItems.objects.get(pk=order_item.pk)
+                    item.purchased = True
+                    item.save()
+
+                order.save()
+
+                return redirect('EventsApp:payment-success')
+
+            elif charge.status == "failed":
+                return redirect('EventsApp:payment-cancel')
 
         except Exception as e:
             print(e)
