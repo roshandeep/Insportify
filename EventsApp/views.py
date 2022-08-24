@@ -8,7 +8,6 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
 from django.template import loader
 from django.shortcuts import render, redirect
-from django.urls import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.views.decorators.csrf import csrf_exempt
@@ -19,6 +18,7 @@ from .models import master_table, Individual, Organization, Venues, SportsCatego
     PositionAndSkillType, SportsImage, Organization_Availability, OrderItems
 import util
 
+stripe.api_key = settings.STRIPE_SECRET_KEY
 
 @login_required
 def multistep(request):
@@ -1220,53 +1220,55 @@ def cart_summary(request):
         total = total + item.total_cost
     context["cart"] = cart
     context["total"] = total
+    if request.method == 'POST':
+        order_obj = Order.objects.filter(customer=request.user)
+        if order_obj.exists():
+            order_obj.items.clear()
+            order_obj.order_amount = total
+            order_obj.order_date = timezone.now()
+            for order_items in cart:
+                order_obj.items.add(order_items)
+        else:
+            order = Order()
+            order.customer = User.objects.get(email=request.user.email)
+            order.order_date = timezone.now()
+            order.order_amount = total
+            order.save()
+            for order_items in cart:
+                order.items.add(order_items)
+
+        return redirect('EventsApp:charge')
+
     return render(request, "EventsApp/cart_summary.html", context)
 
 
-def checkout(request):
-    user = request.user
-    cart = OrderItems.objects.filter(user=user)
-    event = cart[0].event
-    total = 0
-    for item in cart:
-        total = total + item.total_cost
 
-    if request.method == 'POST':
-        order = Order()
-        order.customer = User.objects.get(email=request.user.email)
-        order.event = event
-        order.order_date = timezone.now()
-        order.order_amount = int(total*100)
-        order.save()
-        for order_items in cart:
-            order.items.add(order_items)
-
-
-
+@login_required
 def charge(request):
-    order = Order.objects.get(user=request.user, ordered=False)
-    orderitems = order.orderitems.all()
-    order_total = order.get_totals()
-    totalCents = int(float(order_total * 100))
+    context={}
+    key = settings.STRIPE_PUBLISHABLE_KEY
+    context['key'] = key
+    order = Order.objects.get(customer=request.user)
+    order_total = order.order_amount
+    # totalCents = int(float(order_total * 100))
+    context['totalCents'] = order_total
+
     if request.method == 'POST':
-        charge = stripe.Charge.create(amount=totalCents,
-                                      currency='inr',
-                                      description=order,
-                                      source=request.POST['stripeToken'])
-        print(charge)
-        if charge.status == "succeeded":
-            orderId = get_random_string(length=16,
-                                        allowed_chars=u'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
-            print(charge.id)
-            order.ordered = True
-            order.paymentId = charge.id
-            order.orderId = f'#{request.user}{orderId}'
-            order.save()
-            cartItems = Order.objects.filter(user=request.user)
-            for item in cartItems:
-                item.purchased = True
-                item.save()
-        return render(request, 'checkout/charge.html', {"items": orderitems, "order": order})
+        try:
+            charge = stripe.Charge.create(amount=order_total,
+                                          currency='cad',
+                                          description=order,
+                                          source=request.POST['stripeToken'])
+            print(charge)
+            if charge.status == "succeeded":
+                print('payment success')
+                orderId = get_random_string(length=16,
+                                            allowed_chars=u'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
+
+        except Exception as e:
+            print(e)
+
+    return render(request, 'EventsApp/charge.html', context)
 
 
 def paymentSuccess(request):

@@ -14,73 +14,47 @@
         </div>
         <div id="cart_items_table">
             <table class="table table-striped">
-            <thead>
-            <th>Event</th>
-            <th>Position Type</th>
-            <th>No. of Positions</th>
-            <th>Position Cost</th>
-            <th>Remove</th>
-            </thead>
-            <tbody>
-            {% for item in cart %}
-            <tr>
-                <td>{{item.event.event_title}}</td>
-                <td>{{item.position_type}}</td>
-                <td>{{item.no_of_position }}</td>
-                <td>{{item.position_cost}}</td>
-                <td>
-                    <a href="#" onclick="delete_cart_item({{item.position_id.pk}}, {{item.pk}})">
-                        <i class="bi bi-trash" style="color:red"></i>
-                    </a>
-                </td>
-            </tr>
-            {% endfor %}
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td>Total: ${{total}}</td>
-                <td></td>
-            </tr>
-            </tbody>
-        </table>
+                <thead>
+                <th>Event</th>
+                <th>Position Type</th>
+                <th>No. of Positions</th>
+                <th>Position Cost</th>
+                <th>Remove</th>
+                </thead>
+                <tbody>
+                {% for item in cart %}
+                <tr>
+                    <td>{{item.event.event_title}}</td>
+                    <td>{{item.position_type}}</td>
+                    <td>{{item.no_of_position }}</td>
+                    <td>{{item.position_cost}}</td>
+                    <td>
+                        <a href="#" onclick="delete_cart_item({{item.position_id.pk}}, {{item.pk}})">
+                            <i class="bi bi-trash" style="color:red"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>Total: ${{total}}</td>
+                    <td></td>
+                </tr>
+                </tbody>
+            </table>
         </div>
-
-        <div class="mx-auto text-center">
-            <a class="btn btn-primary">Checkout</a>
-        </div>
+        <form action="{% url 'EventsApp:cart_summary' %}" method="post">
+            {% csrf_token %}
+            <div class="mx-auto text-center">
+                <button class="btn btn-primary">Checkout</button>
+            </div>
+        </form>
     </div>
 </div>
 
-<script src="https://js.stripe.com/v3/"></script>
 <script type="text/javascript">
-
-    var stripe = Stripe('{{ STRIPE_PUBLISHABLE_KEY }}');
-    var checkoutButton = document.getElementById('checkout-button');
-
-    checkoutButton.addEventListener('click', function () {
-
-        fetch("{% url 'EventsApp:create-checkout-session' %}", {
-            method: 'POST',
-        })
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (session) {
-                return stripe.redirectToCheckout({ sessionId: session.sessionId });
-            })
-            .then(function (result) {
-                if (result.error) {
-                    console.log('Error:', error);
-                    alert(result.error.message);
-                }
-            })
-            .catch(function (error) {
-                console.log('Error:', error);
-            });
-    });
-
-
 function delete_cart_item(event_pos_id, cart_item_id){
     $.ajax({
         type: "POST",
@@ -147,6 +121,7 @@ function fetchOrderItems(){
         }
     });
 }
+
 
 </script>
 

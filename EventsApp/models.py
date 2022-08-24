@@ -304,6 +304,11 @@ class Order(models.Model):
     items = models.ManyToManyField(OrderItems)
     order_date = models.DateTimeField()
     order_amount = models.IntegerField()
+    payment = models.BooleanField(blank=True, null=True)
+    created = models.DateTimeField(auto_now_add=True)
+    paymentId = models.CharField(max_length=200, blank=True, null=True)
+    orderId = models.CharField(max_length=200, blank=True, null=True)
 
     def __str__(self):
-        return self.customer.first_name + " " + self.event.event_title
+        return self.customer.first_name
+
