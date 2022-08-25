@@ -5,6 +5,7 @@
 {% block content %}
 
 <div class="container">
+    {% if cart %}
     <div class="row pt-2">
         <div class="col">
             <h3>Summary</h3>
@@ -52,6 +53,16 @@
             </div>
         </form>
     </div>
+    {% else %}
+    <div class="row pt-2">
+        <div class="col">
+            <div class="jumbotron text-justify mt-5">
+            <h1 class="text-info">Your Cart is Empty. </h1>
+            <hr class="my-4">
+            <p class="lead">Go Back <a href="{% url 'EventsApp:home' %}">Home</a> and shop some positions
+            </p>
+    </div>
+    {% endif %}
 </div>
 
 <script type="text/javascript">
