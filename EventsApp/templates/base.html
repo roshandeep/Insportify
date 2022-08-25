@@ -123,32 +123,6 @@
     </div>
 </nav>
 <div class="bg-body" style="margin-top:100px;">
-    <!-- <header>
-        <nav class="navbar navbar-expand-lg bg-light shadow">
-            <div class="container-fluid">
-                <div id='authentication-header' class="collapse navbar-collapse justify-content-end hide">
-                    <ul class="navbar-nav mb-2 mb-lg-0">
-                        {% if request.user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link link-secondary" href="{% url 'UserRegister:logout' %}"><p>Logout</p></a>
-                        </li>
-                        {% else %}
-                        {% if request.path != '/users/register/' and request.path != '/users/organization_register/' and request.path != '/users/individual_register/' and request.path != '/users/login/' %}
-
-                        <li class="nav-item">
-                            <a class="nav-link link-secondary" href="{% url 'UserRegister:register' %}">
-                                Register</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link link-secondary" href="{% url 'UserRegister:login' %}">Login</a>
-                        </li>
-                        {% endif %}
-                        {% endif %}
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header> -->
     <main class="content">
         <article>
             {% block content %}
@@ -157,8 +131,8 @@
     </main>
 </div>
 </div>
-
-<footer class="bg-light text-center text-lg-start bg-body justify-content-end mt-auto">
+<div class="d-flex justify-content-center  mt-auto" style="width: 100%;">
+<footer class="bg-light text-center text-lg-start bg-body justify-content-center mt-auto">
     <div class="text-center text-muted">
         © 2022 Copyright:
         <a target="_blank" href="" class="link-secondary">INSPORTIFY</a>
@@ -172,6 +146,7 @@
                 class="bi bi-twitter p-2"></i></a>
     </div>
 </footer>
+</div>
 </body>
 <script>
     function callNavbar(myWidth, myHeight) {

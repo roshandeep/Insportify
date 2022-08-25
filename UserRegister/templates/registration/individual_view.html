@@ -22,7 +22,7 @@
             {% endif %}
 
 
-            <ul id="progressbar" class="mx-auto text-center" style="padding-left: 0px;">
+            <ul id="progressbar" class="d-flex justify-content-around mx-auto text-center" style="padding-left: 0px;">
                 <li class="active" id="step1">Personal Details</li>
                 <li id="step2">Location Details</li>
                 <li id="step3">Sports Choices</li>
@@ -63,6 +63,7 @@
                         </div>
                         <div class="form-row p-2">
                             <label>I am interest in participating in ?</label>
+                            <br>
                             <input type="checkbox" id="Male" name="interest_gender" value="Male"
                                    {% if "Male" in individual.participation_interest %} checked {% endif %}> Male
                             Only</input>
@@ -75,6 +76,7 @@
                         </div>
                         <div class="form-row p-2">
                             <label>Are you a Student?</label>
+                            <br>
                             <input type="radio" id="Yes" name="is_student" value="Yes"
                                    {% if individual.is_student == "Yes" %} checked {% endif %}>Yes</input>
                             <input type="radio" id="No" name="is_student" value="No"
@@ -82,6 +84,7 @@
                         </div>
                         <div class="form-row p-2">
                             <label>Have you ever suffered concussion?</label>
+                            <br>
                             <input type="radio" id="Yes" name="is_concussion" value="Yes"
                                    {% if individual.concussion == "Yes" %} checked {% endif %}>Yes</input>
                             <input type="radio" id="No" name="is_concussion" value="No"
@@ -342,6 +345,21 @@
 }
 
 #progressbar li:before {
+    width: 40px;
+    height: 40px;
+    line-height: 35px;
+    display: block;
+    font-size: 20px;
+    color: #ffffff;
+    background: lightgray;
+    border-radius: 50%;
+    margin: 0 auto 10px auto;
+    padding: 2px
+}
+
+@media only screen and (min-width: 768px) {
+  /* For desktop: */
+  #progressbar li:before {
     width: 50px;
     height: 50px;
     line-height: 45px;
@@ -352,6 +370,7 @@
     border-radius: 50%;
     margin: 0 auto 10px auto;
     padding: 2px
+}
 }
 
 #progressbar li.active:before,

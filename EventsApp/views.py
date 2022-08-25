@@ -868,7 +868,7 @@ def home(request):
             else:
                 event.sport_logo = "/media/images/Multisport.jpg"
 
-        recommended_events = [recommended_events[i:i + 3] for i in range(0, len(recommended_events), 3)]
+        # recommended_events = [recommended_events[i:i + 3] for i in range(0, len(recommended_events), 3)]
 
     for event in events:
         sport_img = SportsImage.objects.filter(sport=event.sport_type).values("img")
@@ -884,6 +884,7 @@ def home(request):
         'events': events,
         'recommended_events': recommended_events
     }
+    print(events)
     html_template = loader.get_template('EventsApp/home.html')
     return HttpResponse(html_template.render(context, request))
 

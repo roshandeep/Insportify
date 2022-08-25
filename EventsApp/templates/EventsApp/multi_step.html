@@ -6,7 +6,7 @@
 {% block content %}
 
 <div class="row">
-    <div class="col-6 mx-auto">
+    <div id="create-event-card" class="col-6 mx-auto">
         <div>
             <h3 class="mx-auto text-center fw-light">Create Event</h3>
             <hr>
@@ -23,7 +23,7 @@
             {% endif %}
 
 
-            <ul id="progressbar" class="mx-auto text-center" style="padding-left: 0px;">
+            <ul id="progressbar" class="d-flex justify-content-around mx-auto text-center" style="padding-left: 0px;">
                 <li class="active" id="step1">Event Information</li>
                 <li id="step2">Sports</li>
                 <li id="step3">Venue</li>
@@ -35,6 +35,10 @@
                         style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">
                         Event
                         Information</h3>
+                        <div class="p-2 d-flex justify-content-end">
+                            <input type="button" name="next" class="next action-button btn btn-primary"
+                                   value="Next" id="next-tab-1" style="width: 90px;"/>
+                        </div>
                     <div class="card-body">
                         <div class="form-row p-2">
                             <input type="text" class="form-control" name="event_title" placeholder="* Event Title"/>
@@ -266,11 +270,6 @@
                                  </div>
                             </div>
                         </div>
-                        <div class="form-row p-2 text-center">
-                            <input type="button" name="next" class="next action-button btn btn-primary"
-                                   value="Next"
-                                   id="next-tab-1"/>
-                        </div>
                     </div>
                 </div>
 
@@ -281,9 +280,16 @@
                     <h3 class="card-header text-white text-center"
                         style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">
                         Sports Information</h3>
+                        <div class="d-flex justify-content-between p-2">
+                            <input type="button" name="previous"
+                                   class="previous action-button-previous btn btn-primary"
+                                   value="Previous" id="previous-tab-2" style="width: 90px;"/>
+                            <input type="button" name="next" class="next action-button btn btn-primary"
+                                   value="Next" id="next-tab-2 " style="width: 90px;"/>
+                        </div>
                     <div class="card-body">
                         <div class="form-row p-2" id="sport_type_container">
-                            <select name='sport_type' id="sport_type" class="form-select select2"
+                            <select name='sport_type' id="sport_type" class="form-select select2 row-11"
                                     aria-label=".form-select-lg example">
                                 <option selected disabled>* Choose Sport</option>
                                 {% for type in sports_type %}
@@ -300,16 +306,6 @@
                             <div id="input_fields_wrap">
                             </div>
                         </div>
-                        <div class="form-row p-2 text-center">
-                            <input type="button" name="previous"
-                                   class="previous action-button-previous btn btn-primary"
-                                   value="Previous" id="previous-tab-2"/>
-<!--                            <button class="btn btn-primary"-->
-<!--                                        id="add_field_button">Add Position-->
-<!--                                </button>-->
-                            <input type="button" name="next" class="next action-button btn btn-primary"
-                                   value="Next" id="next-tab-2"/>
-                        </div>
                     </div>
                 </div>
             </fieldset>
@@ -319,6 +315,11 @@
                     <h2 class="card-header text-white text-center"
                         style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">
                         Venue</h2>
+                        <div class="p-2 d-flex justify-content-start">
+                            <input type="button" name="previous"
+                                   class="previous action-button-previous btn btn-primary"
+                                   value="Previous" id="previous-tab-4" style="width: 90px;"/>
+                        </div>
                     <div class="card-body">
                         <div class="form-row p-2">
                             <select name='venue' id="venue" class="form-select"
@@ -350,12 +351,9 @@
                                    placeholder="Area Code" readonly/>
                         </div>
                         <div class="form-row p-2 text-center">
-                            <input type="button" name="previous"
-                                   class="previous action-button-previous btn btn-primary"
-                                   value="Previous" id="previous-tab-3"/>
 
                             <input type="submit" name="submit" class="submit action-button btn btn-primary"
-                                   value="Submit"/>
+                                   value="Submit" style="width: 90px;"/>
                         </div>
                     </div>
                 </div>
@@ -428,15 +426,36 @@
 
 
 
-
-
-
-
-
-
 </style>
 
 <script>
+
+function callWidthChange(myWidth, myHeight) {
+        if (myWidth >= 768) {
+            if(document.getElementById("create-event-card")){
+                document.getElementById("create-event-card").classList.remove("col-12");
+                document.getElementById("create-event-card").classList.add("col-6");
+            }
+        } else {
+            if(document.getElementById("create-event-card")){
+                document.getElementById("create-event-card").classList.remove("col-6");
+                document.getElementById("create-event-card").classList.add("col-12");
+            }
+        }
+    }
+
+    $(document).ready(function () {
+        let myWidth = window.innerWidth;
+        let myHeight = window.innerHeight;
+        callWidthChange(myWidth, myHeight);   
+        $(window).resize(function () {
+        var nw = $(window).width();
+        let myHeight = window.innerHeight;
+        myWidth = nw;
+        callWidthChange(myWidth, myHeight);   
+    });
+    });
+
 $(function () {
   $('[data-toggle="tooltip"]').tooltip()
 })
