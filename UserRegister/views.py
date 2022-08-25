@@ -105,7 +105,6 @@ class organization_register(CreateView):
     template_name = 'registration/organization_register.html'
 
     def form_valid(self, form):
-        print(form)
         if form.is_valid():
             user = form.save()
             user.is_active = False
@@ -132,6 +131,7 @@ def login_request(request):
         if form.is_valid():
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
+            # print(username, password)
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)

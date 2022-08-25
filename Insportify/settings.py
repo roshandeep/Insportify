@@ -82,7 +82,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'insportifyinfo@gmail.com'
-EMAIL_HOST_PASSWORD = 'vgqwluqxsyrcdqwd'
+EMAIL_HOST_PASSWORD = 'ywfveonmuyxadyao'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
@@ -170,7 +170,11 @@ MESSAGE_TAGS = {
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10240
 
 
-# DEV
+# TEST Mode
 STRIPE_PUBLISHABLE_KEY = 'pk_test_cBzZxJm1Sk4UFJ5i0nypvIEv00HazZHrCi'
 STRIPE_SECRET_KEY = 'sk_test_L940ji4j5UAJZm9qmsKICL1Z00Xel3ppet'
-STRIPE_WEBHOOK_KEY = ''
+
+# PROD Mode
+# STRIPE_PUBLISHABLE_KEY = 'pk_test_cBzZxJm1Sk4UFJ5i0nypvIEv00HazZHrCi'
+# STRIPE_SECRET_KEY = 'sk_test_L940ji4j5UAJZm9qmsKICL1Z00Xel3ppet'
+

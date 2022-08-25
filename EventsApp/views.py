@@ -8,16 +8,17 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
 from django.template import loader
 from django.shortcuts import render, redirect
-from django.urls import reverse
 from django.utils import timezone
+from django.utils.crypto import get_random_string
 from django.views.decorators.csrf import csrf_exempt
 from Insportify import settings
 from .forms import MultiStepForm, AvailabilityForm, LogoForm, InviteForm
 from .models import master_table, Individual, Organization, Venues, SportsCategory, SportsType, Order, User, \
-    Availability, Logo, Extra_Loctaions, Events_PositionInfo, Secondary_SportsChoice, Cart, Invite, \
-    PositionAndSkillType, SportsImage, Organization_Availability
+    Availability, Logo, Extra_Loctaions, Events_PositionInfo, Secondary_SportsChoice, Invite, \
+    PositionAndSkillType, SportsImage, Organization_Availability, OrderItems
 import util
 
+stripe.api_key = settings.STRIPE_SECRET_KEY
 
 @login_required
 def multistep(request):
@@ -312,7 +313,8 @@ def all_events(request):
 @login_required
 def committed_events(request):
     event_list = set()
-    cart = Cart.objects.filter(user=request.user)
+
+    cart = OrderItems.objects.filter(user=request.user)
     if len(cart) > 0:
         for item in cart:
             event = master_table.objects.get(pk=item.event.pk)
@@ -320,15 +322,6 @@ def committed_events(request):
         event_list = format_time(event_list)
     return render(request, 'EventsApp/events_committed.html', {'event_list': list(event_list)})
 
-
-@login_required
-def event_by_id(request, event_id):
-    event = master_table.objects.get(pk=event_id)
-    context = {
-        'STRIPE_PUBLISHABLE_KEY': settings.STRIPE_PUBLISHABLE_KEY,
-        'event': event
-    }
-    return render(request, 'EventsApp/event_detail.html', context)
 
 
 @login_required
@@ -991,7 +984,10 @@ def get_recommended_events(request):
     # FILTER BY Gender
     if user.is_individual:
         individual = Individual.objects.get(user=user)
-        individual_gender = individual.participation_interest.split(",")
+        individual_gender = []
+        if individual.participation_interest and individual.participation_interest != "":
+            print(individual.participation_interest)
+            individual_gender = individual.participation_interest.split(",")
         # print(individual_gender)
         for event in recommended_events[:]:
             flag = 0
@@ -1009,7 +1005,6 @@ def get_recommended_events(request):
     print("Gender Filter", recommended_events)
 
     # FILTER BY Sports
-    # if user.is_individual:
     sport_choices = Secondary_SportsChoice.objects.filter(user=user).order_by("sport_type")
     sports_list = []
     for item in sport_choices:
@@ -1020,6 +1015,44 @@ def get_recommended_events(request):
             recommended_events.remove(event)
 
     print("Sports Filter", recommended_events)
+
+    # FILTER BY Positions
+    if user.is_individual:
+        position_choices = Secondary_SportsChoice.objects.filter(user=user)
+        position_list = []
+        for item in position_choices:
+            position_list.append(item.position)
+
+        for event in recommended_events[:]:
+            event_positions_list = Events_PositionInfo.objects.filter(event=event.pk)
+            flag = 0
+            for item in event_positions_list:
+                if item.position_name not in position_list:
+                    flag = flag + 1
+
+            if flag > 0:
+                recommended_events.remove(event)
+
+    print("Positions Filter", recommended_events)
+
+    # FILTER BY Skills
+    if user.is_individual:
+        skill_choices = Secondary_SportsChoice.objects.filter(user=user)
+        skill_list = []
+        for item in skill_choices:
+            skill_list.append(item.skill)
+
+        for event in recommended_events[:]:
+            event_skill_list = Events_PositionInfo.objects.filter(event=event.pk)
+            flag = 0
+            for item in event_skill_list:
+                if item.position_type not in skill_list:
+                    flag = flag + 1
+
+            if flag > 0:
+                recommended_events.remove(event)
+
+    print("Skills Filter", recommended_events)
 
     return list(recommended_events)
 
@@ -1134,45 +1167,86 @@ def event_details(request, event_id):
     context['event_postions'] = event_postions
 
     if request.method == 'POST':
-        # print(request.POST.dict())
+        print(request.POST.dict())
         response = request.POST.dict()
         for key in response:
             if 'chk' in key:
+                print(key)
                 idx = key.split("_")[-1]
                 position_id = response['posId_' + idx]
-                pos_type = response['posType_' + idx]
+                pos_name = response['posName_' + idx]
+                skill = response['skill_' + idx]
                 needed_pos = response['needed_' + idx]
                 no_of_pos = response['noOfPos_' + idx]
                 pos_cost = response['cost_' + idx]
-                # print(pos_type, needed_pos, no_of_pos, pos_cost)
                 ## Add to cart
-                cart = Cart()
+                cart = OrderItems()
                 cart.event = master_table.objects.get(pk=event_id)
                 cart.user = User.objects.get(email=request.user.email)
                 cart.position_id = Events_PositionInfo.objects.get(pk=position_id)
                 cart.date = date.today()
-                cart.position_type = pos_type
+                cart.position_type = pos_name
+                cart.skill = skill
                 cart.no_of_position = needed_pos
                 cart.position_cost = pos_cost
                 cart.total_cost = int(pos_cost) * int(needed_pos)
                 cart.save()
 
-                ## Update Inventory
+                # Update Inventory
                 event_pos = Events_PositionInfo.objects.get(pk=position_id)
                 event_pos.no_of_position = int(event_pos.no_of_position) - int(needed_pos)
                 event_pos.save()
 
-                ## Email Creator - New Subscriber
+                # Email Creator - New Subscriber
                 event_subject = "New subscriber for Event: " + event.event_title
                 event_message = "A new user has subscribed to event: " + event.event_title + "\n" + \
                                 "Subscriber Name: " + request.user.first_name + " " + request.user.last_name + "\n" + \
-                                "Subscriber Email: " + request.user.email + "\n" + \
-                                "Subscriber User Name: " + request.user.username
-                if event.created_by:
-                    util.email(event_subject, event_message, [event.created_by.email])
-                return redirect('EventsApp:cart_summary')
+                                "Subscriber Email: " + request.user.email + "\n"
+                # if event.created_by:
+                #     util.email(event_subject, event_message, [event.created_by.email])
+
+        return redirect('EventsApp:cart_summary')
 
     return render(request, "EventsApp/detail_dashboard.html", context)
+
+@csrf_exempt
+def delete_cart_item(request):
+    if request.POST:
+        try:
+            event_pos_id = request.POST['event_pos_id']
+            cart_item_id = request.POST['cart_item_id']
+            # print(event_pos_id, cart_item_id)
+            order_item = OrderItems.objects.get(pk=cart_item_id)
+            # print(order_item)
+            # Revert back Event Position info
+            evnt_pos_info = Events_PositionInfo.objects.get(pk=event_pos_id)
+            evnt_pos_info.no_of_position = evnt_pos_info.no_of_position + order_item.no_of_position
+            evnt_pos_info.save()
+            # print(evnt_pos_info)
+            order_item.delete()
+            return JsonResponse({'status': 'Order Item deleted!'}, safe=False)
+        except:
+            return JsonResponse({'status': 'Some error occurred!'}, safe=False)
+
+
+def fetch_cart_items(request):
+    total = 0
+    order_items = []
+    if request.is_ajax():
+        cart = OrderItems.objects.filter(user=request.user, purchased=False)
+        for item in cart:
+            total = total + item.total_cost
+
+        for item in cart:
+            order_items.append({
+                'event_title': item.event.event_title,
+                'position_type': item.position_type,
+                'no_of_position': item.no_of_position,
+                'position_cost': item.position_cost,
+                'position_id': item.position_id.pk,
+                'pk': item.pk,
+            })
+        return JsonResponse({"cart": order_items, "total": total}, safe=False)
 
 
 @login_required
@@ -1181,58 +1255,76 @@ def cart_summary(request):
     total = 0
     user = request.user
     context['STRIPE_PUBLISHABLE_KEY'] = settings.STRIPE_PUBLISHABLE_KEY,
-    cart = Cart.objects.filter(user=user)
+    cart = OrderItems.objects.filter(user=user, purchased=False)
     for item in cart:
         total = total + item.total_cost
     context["cart"] = cart
     context["total"] = total
+    if request.method == 'POST':
+        order_obj = Order.objects.filter(customer=request.user, payment=False)
+        if order_obj.exists():
+            order_obj = Order.objects.get(customer=request.user, payment=False)
+            order_obj.items.clear()
+            order_obj.order_amount = total
+            order_obj.order_date = timezone.now()
+            for order_items in cart:
+                order_obj.items.add(order_items)
+        else:
+            order = Order()
+            order.customer = User.objects.get(email=request.user.email)
+            order.order_date = timezone.now()
+            order.order_amount = total
+            order.payment = False
+            order.save()
+            for order_items in cart:
+                order.items.add(order_items)
+
+        return redirect('EventsApp:charge')
+
     return render(request, "EventsApp/cart_summary.html", context)
 
 
-@csrf_exempt
-def create_checkout_session(request, id):
-    user = request.user
-    cart = Cart.objects.filter(user=user)
-    name = cart[0].event.event_title
-    event = cart[0].event
-    total = 0
-    for item in cart:
-        total = total + item.total_cost
 
-    stripe.api_key = settings.STRIPE_SECRET_KEY
-    try:
-        checkout_session = stripe.checkout.Session.create(
-            payment_method_types=['card'],
-            line_items=[
-                {
-                    'price_data': {
-                        'currency': 'cad',
-                        'product_data': {
-                            'name': name,
-                        },
-                        'unit_amount': int(total),
-                    },
-                    'quantity': 1,
-                }
-            ],
-            mode='payment',
-            success_url=request.build_absolute_uri(
-                reverse('EventsApp:payment-success')) + "?session_id={CHECKOUT_SESSION_ID}",
-            cancel_url=request.build_absolute_uri(reverse('EventsApp:payment-cancel')),
-        )
+@login_required
+def charge(request):
+    context={}
+    char_set = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+    key = settings.STRIPE_PUBLISHABLE_KEY
+    context['key'] = key
+    order = Order.objects.get(customer=request.user, payment=False)
+    totalCents = order.order_amount * 100
+    context['totalCents'] = totalCents
 
-        order = Order()
-        order.customer = User.objects.get(email=request.user.email)
-        order.event = event
-        order.order_date = timezone.now()
-        order.order_amount = int(total)
-        order.save()
+    if request.method == 'POST':
+        try:
+            charge = stripe.Charge.create(amount=totalCents,
+                                          currency='cad',
+                                          description=order,
+                                          source=request.POST['stripeToken'])
+            # print(charge)
+            if charge.status == "succeeded":
+                print('payment success')
+                orderId = get_random_string(length=16, allowed_chars=char_set)
+                paymentId = get_random_string(length=16, allowed_chars=char_set)
+                order.orderId = f'#{request.user}{orderId}'
+                order.paymentId = paymentId
+                order.payment = True
+                for order_item in order.items.all():
+                    item = OrderItems.objects.get(pk=order_item.pk)
+                    item.purchased = True
+                    item.save()
 
-        return JsonResponse({'sessionId': checkout_session.id})
+                order.save()
 
-    except Exception as e:
-        print(str(e))
-        return JsonResponse({'error': str(e)})
+                return redirect('EventsApp:payment-success')
+
+            elif charge.status == "failed":
+                return redirect('EventsApp:payment-cancel')
+
+        except Exception as e:
+            print(e)
+
+    return render(request, 'EventsApp/charge.html', context)
 
 
 def paymentSuccess(request):
@@ -1374,37 +1466,6 @@ def delete_availability(request):
             return JsonResponse({'status': 'Some error occurred!'}, safe=False)
 
 
-# @login_required
-# def notifications(request):
-#     context = {}
-#     form = AvailabilityForm(request.POST or None,
-#                             instance=Availability(),
-#                             initial={'user': request.user})
-#
-#     context['form'] = form
-#     user = User.objects.get(email=request.user.email)
-#     user_avaiability = Availability.objects.filter(user=user)
-#     get_day_of_week(user_avaiability)
-#
-#     context["user_availability"] = user_avaiability
-#
-#     if request.POST:
-#         if form.is_valid():
-#             obj = Availability(user=user,
-#                                day_of_week=form.cleaned_data['day_of_week'],
-#                                start_time=form.cleaned_data['start_time'],
-#                                end_time=form.cleaned_data['end_time'])
-#             obj.save()
-#             user_avaiability = Availability.objects.filter(user=user)
-#             get_day_of_week(user_avaiability)
-#             context["user_availability"] = user_avaiability
-#             messages.success(request, "New Availability Added!")
-#         else:
-#             print(form.errors)
-#
-#     return render(request, "EventsApp/add_availability.html", context)
-
-
 def get_day_of_week(user_avaiability):
     for avail in user_avaiability:
         if avail.day_of_week == 1:
@@ -1493,7 +1554,7 @@ def delete_by_id(request, event_id):
                                                                      + (
                                                                          "\nExc: " + event.datetimes_exceptions if event.datetimes_exceptions is not None else ""))
 
-        for cart_item in Cart.objects.filter(event=event):
+        for cart_item in OrderItems.objects.filter(event=event):
             subs_email = cart_item.user.email
             util.email(event_subject, "Hello " + user.first_name + " " + user.last_name
                        + ", the following subscribed event in your cart has been cancelled by the creator:\n\n"

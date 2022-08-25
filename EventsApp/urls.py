@@ -29,7 +29,7 @@ urlpatterns = [
     path('individual/profile/', views.user_profile, name='user_profile'),
     path('organization/profile/', views.organization_profile, name='organization_profile'),
     path('create/', views.multistep, name='multistep'),
-    path('<int:event_id>/', views.event_by_id, name='event_by_id'),
+    # path('<int:event_id>/', views.event_by_id, name='event_by_id'),
     path('invite/<int:event_id>/', views.invite_by_id, name='invite_by_id'),
     path('invite/<int:event_id>/<str:email>/', views.invite_by_id, name='invite_by_id'),
     path('invite/', views.invite, name='invite'),
@@ -58,9 +58,12 @@ urlpatterns = [
     path('upload/', views.logo_upload_view, name='logo_upload'),
     path('event_details/<int:event_id>/', views.event_details, name='event_details'),
     path('cart_summary/', views.cart_summary, name='cart_summary'),
+    path('delete_cart_item/', views.delete_cart_item, name='delete_cart_item'),
+    path('fetch_cart_items/', views.fetch_cart_items, name='fetch_cart_items'),
 
     # PAYMENT URL'S
     path('payment-success/', views.paymentSuccess, name='payment-success'),
     path('payment-cancel/', views.paymentCancel, name='payment-cancel'),
-    path('create-checkout-session/<id>/', views.create_checkout_session, name='create-checkout-session'),
+    path('charge/', views.charge, name='charge'),
+    # path('checkout/', views.checkout, name='checkout'),
 ]

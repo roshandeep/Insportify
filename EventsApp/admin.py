@@ -1,7 +1,7 @@
 from django.contrib import admin
 from EventsApp.models import master_table, User, \
     Individual, Organization, SportsCategory, SportsType, Venues, Availability, Order, Logo, Extra_Loctaions, \
-    Events_PositionInfo, Secondary_SportsChoice, Cart, PositionAndSkillType, SportsImage, Organization_Availability
+    Events_PositionInfo, Secondary_SportsChoice, OrderItems, PositionAndSkillType, SportsImage, Organization_Availability
 
 admin.site.register(master_table)
 admin.site.register(User)
@@ -9,7 +9,6 @@ admin.site.register(SportsCategory)
 admin.site.register(SportsType)
 admin.site.register(Individual)
 admin.site.register(Organization)
-admin.site.register(Order)
 admin.site.register(Logo)
 admin.site.register(PositionAndSkillType)
 admin.site.register(SportsImage)
@@ -23,7 +22,7 @@ admin.site.register(Venues, VenuesAdmin)
 
 
 class Events_PositionInfoAdmin(admin.ModelAdmin):
-    list_display = ('position_number', 'event', 'max_age', 'min_age', 'no_of_position', 'position_cost',)
+    list_display = ('position_number', 'event', 'position_name', 'position_type', 'max_age', 'min_age', 'no_of_position', 'position_cost',)
 
 
 admin.site.register(Events_PositionInfo, Events_PositionInfoAdmin)
@@ -50,11 +49,19 @@ class AvailabilityAdmin(admin.ModelAdmin):
 admin.site.register(Availability, AvailabilityAdmin)
 
 
-class CartAdmin(admin.ModelAdmin):
-    list_display = ('user', 'event', 'position_type', 'no_of_position', 'position_cost', 'total_cost', )
+class OrderItemsAdmin(admin.ModelAdmin):
+    list_display = ('user', 'event', 'position_type', 'skill', 'no_of_position', 'position_cost', 'total_cost', )
 
 
-admin.site.register(Cart, CartAdmin)
+admin.site.register(OrderItems, OrderItemsAdmin)
+
+
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ('orderId', 'customer', 'order_date', 'paymentId', 'order_amount',)
+
+
+admin.site.register(Order, OrderAdmin)
+
 
 
 class Organization_AvailabilityAdmin(admin.ModelAdmin):
@@ -62,3 +69,4 @@ class Organization_AvailabilityAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Organization_Availability, Organization_AvailabilityAdmin)
+

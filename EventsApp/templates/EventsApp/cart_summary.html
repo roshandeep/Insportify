@@ -5,74 +5,134 @@
 {% block content %}
 
 <div class="container">
+    {% if cart %}
     <div class="row pt-2">
         <div class="col">
             <h3>Summary</h3>
+            <div id="item_status">
+
+            </div>
         </div>
-        <table class="table table-striped">
-            <thead>
-            <th>Event</th>
-            <th>Position Type</th>
-            <th>No. of Positions</th>
-            <th>Position Cost</th>
-            <th>Remove</th>
-            </thead>
-            <tbody>
-            {% for item in cart %}
-            <tr>
-                <td>{{item.event.event_title}}</td>
-                <td>{{item.position_type}}</td>
-                <td>{{item.no_of_position }}</td>
-                <td>{{item.position_cost}}</td>
-                <td>
-                    <a href="" onclick="return confirm('Remove Item?');">
-                                <i class="bi bi-trash" style="color:red"></i>
-                            </a>
-                </td>
-            </tr>
-            {% endfor %}
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td>Total: ${{total}}</td>
-                <td></td>
-            </tr>
-            </tbody>
-        </table>
-        <div class="mx-auto text-center">
-            <a class="btn btn-primary" id="checkout-button">Checkout</a>
+        <div id="cart_items_table">
+            <table class="table table-striped">
+                <thead>
+                <th>Event</th>
+                <th>Position Type</th>
+                <th>No. of Positions</th>
+                <th>Position Cost</th>
+                <th>Remove</th>
+                </thead>
+                <tbody>
+                {% for item in cart %}
+                <tr>
+                    <td>{{item.event.event_title}}</td>
+                    <td>{{item.position_type}}</td>
+                    <td>{{item.no_of_position }}</td>
+                    <td>{{item.position_cost}}</td>
+                    <td>
+                        <a href="#" onclick="delete_cart_item({{item.position_id.pk}}, {{item.pk}})">
+                            <i class="bi bi-trash" style="color:red"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>Total: ${{total}}</td>
+                    <td></td>
+                </tr>
+                </tbody>
+            </table>
         </div>
+        <form action="{% url 'EventsApp:cart_summary' %}" method="post">
+            {% csrf_token %}
+            <div class="mx-auto text-center">
+                <button class="btn btn-primary">Checkout</button>
+            </div>
+        </form>
     </div>
+    {% else %}
+    <div class="row pt-2">
+        <div class="col">
+            <div class="jumbotron text-justify mt-5">
+            <h1 class="text-info">Your Cart is Empty. </h1>
+            <hr class="my-4">
+            <p class="lead">Go Back <a href="{% url 'EventsApp:home' %}">Home</a> and shop some positions
+            </p>
+    </div>
+    {% endif %}
 </div>
 
-<script src="https://js.stripe.com/v3/"></script>
 <script type="text/javascript">
-
-    var stripe = Stripe('{{ STRIPE_PUBLISHABLE_KEY }}');
-    var checkoutButton = document.getElementById('checkout-button');
-
-    checkoutButton.addEventListener('click', function () {
-
-        fetch("{% url 'EventsApp:create-checkout-session' id=request.user.pk %}", {
-            method: 'POST',
-        })
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (session) {
-                return stripe.redirectToCheckout({ sessionId: session.sessionId });
-            })
-            .then(function (result) {
-                if (result.error) {
-                    console.log('Error:', error);
-                    alert(result.error.message);
-                }
-            })
-            .catch(function (error) {
-                console.log('Error:', error);
-            });
+function delete_cart_item(event_pos_id, cart_item_id){
+    $.ajax({
+        type: "POST",
+        url: '{% url "EventsApp:delete_cart_item" %}',
+        data: {
+            'event_pos_id': event_pos_id,
+            'cart_item_id': cart_item_id,
+        },
+        success: function (data) {
+            let html_data = `<div class="alert alert-warning alert-dismissible fade show" role="alert">`;
+            html_data += `${data["status"]}`;
+            html_data += `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+            html_data += `</div>`;
+            let status = document.getElementById("item_status");
+            console.log(data["status"]);
+            status.innerHTML = html_data;
+            fetchOrderItems();
+        }
     });
+}
+
+function fetchOrderItems(){
+    $.ajax({
+        type: "GET",
+        async:false,
+        url: '{% url "EventsApp:fetch_cart_items" %}',
+        success: function (data) {
+            let html_data = '';
+            html_data += `<table class="table table-striped">`
+            html_data += `<thead>`;
+            html_data += `<th>Event</th>`;
+            html_data += `<th>Position Type</th>`;
+            html_data += `<th>No. of Positions</th>`;
+            html_data += `<th>Position Cost</th>`;
+            html_data += `<th>Remove</th>`;
+            html_data += `</thead>`;
+            html_data += `<tbody>`;
+            var cart_items = data["cart"];
+            cart_items.forEach(function (data) {
+                html_data += `<tr>`;
+                html_data += `<td>${data.event_title}</td>`;
+                html_data += `<td>${data.position_type}</td>`;
+                html_data += `<td>${data.no_of_position}</td>`;
+                html_data += `<td>${data.position_cost}</td>`;
+                html_data += `<td>`;
+                html_data += `<a href="#" onclick="delete_cart_item(${data.position_id}, ${data.pk})">`;
+                html_data += `<i class="bi bi-trash" style="color:red"></i>`;
+                html_data += `</a>`;
+                html_data += `</td>`;
+                html_data += `</tr>`;
+            });
+            html_data += `<tr>`;
+            html_data += `<td></td>`;
+            html_data += `<td></td>`;
+            html_data += `<td></td>`;
+            html_data += `<td>Total: ${data["total"]}</td>`;
+            html_data += `<td></td>`;
+            html_data += `</tr>`;
+            html_data += `</tbody>`;
+            html_data += `</table>`;
+            let tableData = document.getElementById("cart_items_table");
+            // console.log(tableData);
+            tableData.innerHTML = html_data;
+        }
+    });
+}
+
 
 </script>
 

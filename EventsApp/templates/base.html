@@ -27,17 +27,20 @@
         }
     </style>
 </head>
-<body>
-
-
-<nav class="col-1 shadow p-3 bg-body rounded" class="navbar navbar-expand-lg"
-     style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">
+<body class="d-flex flex-column min-vh-100">
+    <div class="container-fluid" id="main-page" style="padding: 0;">
+    
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top"
+     style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%); box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);" id="navbar">
     <div class="container-fluid" style="margin:10px;">
         <a class="navbar-brand" href="{% url 'EventsApp:home' %}">
-            <img src="{% static 'img/logo.PNG' %}" alt="Logo" style="width: 200px;"/>
+            <img id="logo-image" src="{% static 'img/logo.PNG' %}" alt="Logo"/>
         </a>
-        <hr>
-        <ul class="navbar-nav">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse " id="collapsibleNavbar">
+        <ul class="navbar-nav me-auto">
             {% if request.user.is_authenticated %}
 <!--            <li class="nav-item">-->
 <!--                <a class="nav-link link-secondary text-white" href="{% url 'EventsApp:home' %}"-->
@@ -98,13 +101,32 @@
             </li>
             {% endif %}
         </ul>
+        <ul class="navbar-nav mb-2 mb-lg-0">
+            {% if request.user.is_authenticated %}
+            <li class="nav-item">
+                <a class="nav-link link-secondary" href="{% url 'UserRegister:logout' %}"><p>Logout</p></a>
+            </li>
+            {% else %}
+            {% if request.path != '/users/register/' and request.path != '/users/organization_register/' and request.path != '/users/individual_register/' and request.path != '/users/login/' %}
+
+            <li class="nav-item">
+                <a class="nav-link link-secondary" href="{% url 'UserRegister:register' %}">
+                    Register</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link link-secondary" href="{% url 'UserRegister:login' %}">Login</a>
+            </li>
+            {% endif %}
+            {% endif %}
+        </ul>
+        </div>
     </div>
 </nav>
-<div class="col-2 shadow bg-body">
-    <header>
+<div class="bg-body" style="margin-top:100px;">
+    <!-- <header>
         <nav class="navbar navbar-expand-lg bg-light shadow">
             <div class="container-fluid">
-                <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <div id='authentication-header' class="collapse navbar-collapse justify-content-end hide">
                     <ul class="navbar-nav mb-2 mb-lg-0">
                         {% if request.user.is_authenticated %}
                         <li class="nav-item">
@@ -126,31 +148,62 @@
                 </div>
             </div>
         </nav>
-    </header>
+    </header> -->
     <main class="content">
         <article>
             {% block content %}
             {% endblock %}
         </article>
     </main>
-    <footer class="bg-light text-center text-lg-start shadow bg-body">
-        <div class="text-center text-muted">
-            © 2022 Copyright:
-            <a target="_blank" href="" class="link-secondary">INSPORTIFY</a>
-        </div>
-        <div class="text-center">
-            <a href="http://www.website.com" title="Fb insportify" style="color: #7b838a"><i
-                    class="bi bi-facebook p-2"></i></a>
-            <a href="http://www.website.com" title="insta insportify" style="color: #7b838a"><i
-                    class="bi bi-instagram p-2"></i></a>
-            <a href="http://www.website.com" title="twitter insportify" style="color: #7b838a"><i
-                    class="bi bi-twitter p-2"></i></a>
-        </div>
-    </footer>
 </div>
+</div>
+<footer class="bg-light text-center text-lg-start bg-body justify-content-end mt-auto">
+    <div class="text-center text-muted">
+        © 2022 Copyright:
+        <a target="_blank" href="" class="link-secondary">INSPORTIFY</a>
+    </div>
+    <div class="text-center">
+        <a href="http://www.website.com" title="Fb insportify" style="color: #7b838a"><i
+                class="bi bi-facebook p-2"></i></a>
+        <a href="http://www.website.com" title="insta insportify" style="color: #7b838a"><i
+                class="bi bi-instagram p-2"></i></a>
+        <a href="http://www.website.com" title="twitter insportify" style="color: #7b838a"><i
+                class="bi bi-twitter p-2"></i></a>
+    </div>
+</footer>
 </body>
-<style>
+<script>
+    function callNavbar(myWidth, myHeight) {
+        var x = document.getElementById("navbar");
+        if (myWidth >= 768) {
+            // document.getElementById("select2-data-1-anc0").style.width = "136.5px";
+            document.getElementById("logo-image").style.width = "200px";
+        } else {
+            // document.getElementById("select2-data-1-anc0").style.width = "100%";
+            document.getElementById("logo-image").style.width = "150px";
+        }
+    }
+    $(document).ready(function() {
 
+        let myWidth = window.innerWidth;
+        let myHeight = window.innerHeight;
+        callNavbar(myWidth, myHeight);   
+        $(window).resize(function () {
+            var nw = $(window).width();
+            //compare new and old width   
+            let myHeight = window.innerHeight;
+            // your size calculation code here
+            myWidth = nw;
+            callNavbar(myWidth, myHeight);   
+        });
+});
+
+</script>
+<style> 
+
+.hide {
+    display: none;
+}
 
 .btn-primary {
   color: #fff;
@@ -220,6 +273,5 @@
 .navbar {
     min-height: 56px;
 }
-
 </style>
 </html>
