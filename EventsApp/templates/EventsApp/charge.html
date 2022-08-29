@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% load widget_tweaks %}
+{% load static %}
+{% block content %}
+
+<script src="https://js.stripe.com/v3/"></script>
+<div class="row">
+    <div class="col">
+        <form action="{% url 'EventsApp:charge' %}" method="post">
+            {% csrf_token %}
+            <script
+                    src="https://checkout.stripe.com/checkout.js"
+                    class="stripe-button"
+                    data-key="{{ key }}"
+                    data-description="Complete your order"
+                    data-amount="{{ totalCents }}"
+                    data-locale="auto"
+            ></script>
+        </form>
+    </div>
+</div>
+
+
+{% endblock %}
+

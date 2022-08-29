@@ -8,8 +8,8 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
 from django.template import loader
 from django.shortcuts import render, redirect
-from django.urls import reverse
 from django.utils import timezone
+from django.utils.crypto import get_random_string
 from django.views.decorators.csrf import csrf_exempt
 from Insportify import settings
 from .forms import MultiStepForm, AvailabilityForm, LogoForm, InviteForm
@@ -18,6 +18,7 @@ from .models import master_table, Individual, Organization, Venues, SportsCatego
     PositionAndSkillType, SportsImage, Organization_Availability, OrderItems
 import util
 
+stripe.api_key = settings.STRIPE_SECRET_KEY
 
 @login_required
 def multistep(request):
@@ -278,6 +279,7 @@ def all_events(request):
 @login_required
 def committed_events(request):
     event_list = set()
+
     cart = OrderItems.objects.filter(user=request.user)
     if len(cart) > 0:
         for item in cart:
@@ -286,15 +288,6 @@ def committed_events(request):
         event_list = format_time(event_list)
     return render(request, 'EventsApp/events_committed.html', {'event_list': list(event_list)})
 
-
-# @login_required
-# def event_by_id(request, event_id):
-#     event = master_table.objects.get(pk=event_id)
-#     context = {
-#         'STRIPE_PUBLISHABLE_KEY': settings.STRIPE_PUBLISHABLE_KEY,
-#         'event': event
-#     }
-#     return render(request, 'EventsApp/event_detail.html', context)
 
 
 @login_required
@@ -1199,10 +1192,10 @@ def delete_cart_item(request):
 
 
 def fetch_cart_items(request):
-    total=0
-    order_items=[]
+    total = 0
+    order_items = []
     if request.is_ajax():
-        cart = OrderItems.objects.filter(user=request.user)
+        cart = OrderItems.objects.filter(user=request.user, purchased=False)
         for item in cart:
             total = total + item.total_cost
 
@@ -1224,61 +1217,76 @@ def cart_summary(request):
     total = 0
     user = request.user
     context['STRIPE_PUBLISHABLE_KEY'] = settings.STRIPE_PUBLISHABLE_KEY,
-    cart = OrderItems.objects.filter(user=user)
+    cart = OrderItems.objects.filter(user=user, purchased=False)
     for item in cart:
         total = total + item.total_cost
     context["cart"] = cart
     context["total"] = total
+    if request.method == 'POST':
+        order_obj = Order.objects.filter(customer=request.user, payment=False)
+        if order_obj.exists():
+            order_obj = Order.objects.get(customer=request.user, payment=False)
+            order_obj.items.clear()
+            order_obj.order_amount = total
+            order_obj.order_date = timezone.now()
+            for order_items in cart:
+                order_obj.items.add(order_items)
+        else:
+            order = Order()
+            order.customer = User.objects.get(email=request.user.email)
+            order.order_date = timezone.now()
+            order.order_amount = total
+            order.payment = False
+            order.save()
+            for order_items in cart:
+                order.items.add(order_items)
+
+        return redirect('EventsApp:charge')
+
     return render(request, "EventsApp/cart_summary.html", context)
 
 
-@csrf_exempt
-def create_checkout_session(request, id):
-    user = request.user
-    cart = OrderItems.objects.filter(user=user)
-    print(cart)
-    name = cart[0].event.event_title
-    event = cart[0].event
-    total = 0
-    for item in cart:
-        total = total + item.total_cost
 
-    stripe.api_key = settings.STRIPE_SECRET_KEY
-    try:
-        checkout_session = stripe.checkout.Session.create(
-            payment_method_types=['card'],
-            line_items=[
-                {
-                    'price_data': {
-                        'currency': 'cad',
-                        'product_data': {
-                            'name': name,
-                        },
-                        'unit_amount': int(total*100),
-                    },
-                    'quantity': 1,
-                }
-            ],
-            mode='payment',
-            success_url=request.build_absolute_uri(
-                reverse('EventsApp:payment-success')) + "?session_id={CHECKOUT_SESSION_ID}",
-            cancel_url=request.build_absolute_uri(reverse('EventsApp:payment-cancel')),
-        )
+@login_required
+def charge(request):
+    context={}
+    char_set = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+    key = settings.STRIPE_PUBLISHABLE_KEY
+    context['key'] = key
+    order = Order.objects.get(customer=request.user, payment=False)
+    totalCents = order.order_amount * 100
+    context['totalCents'] = totalCents
 
-        order = Order()
-        order.customer = User.objects.get(email=request.user.email)
-        order.event = event
-        order.order_date = timezone.now()
-        order.order_amount = int(total*100)
-        order.save()
-        for order_items in cart:
-            order.items.add(order_items)
+    if request.method == 'POST':
+        try:
+            charge = stripe.Charge.create(amount=totalCents,
+                                          currency='cad',
+                                          description=order,
+                                          source=request.POST['stripeToken'])
+            # print(charge)
+            if charge.status == "succeeded":
+                print('payment success')
+                orderId = get_random_string(length=16, allowed_chars=char_set)
+                paymentId = get_random_string(length=16, allowed_chars=char_set)
+                order.orderId = f'#{request.user}{orderId}'
+                order.paymentId = paymentId
+                order.payment = True
+                for order_item in order.items.all():
+                    item = OrderItems.objects.get(pk=order_item.pk)
+                    item.purchased = True
+                    item.save()
 
-        return JsonResponse({'sessionId': checkout_session.id})
+                order.save()
 
-    except Exception as e:
-        print(str(e))
-        return JsonResponse({'error': str(e)})
+                return redirect('EventsApp:payment-success')
+
+            elif charge.status == "failed":
+                return redirect('EventsApp:payment-cancel')
+
+        except Exception as e:
+            print(e)
+
+    return render(request, 'EventsApp/charge.html', context)
 
 
 def paymentSuccess(request):
@@ -1418,37 +1426,6 @@ def delete_availability(request):
             return JsonResponse({'status': 'Availability removed successfully!'}, safe=False)
         except:
             return JsonResponse({'status': 'Some error occurred!'}, safe=False)
-
-
-# @login_required
-# def notifications(request):
-#     context = {}
-#     form = AvailabilityForm(request.POST or None,
-#                             instance=Availability(),
-#                             initial={'user': request.user})
-#
-#     context['form'] = form
-#     user = User.objects.get(email=request.user.email)
-#     user_avaiability = Availability.objects.filter(user=user)
-#     get_day_of_week(user_avaiability)
-#
-#     context["user_availability"] = user_avaiability
-#
-#     if request.POST:
-#         if form.is_valid():
-#             obj = Availability(user=user,
-#                                day_of_week=form.cleaned_data['day_of_week'],
-#                                start_time=form.cleaned_data['start_time'],
-#                                end_time=form.cleaned_data['end_time'])
-#             obj.save()
-#             user_avaiability = Availability.objects.filter(user=user)
-#             get_day_of_week(user_avaiability)
-#             context["user_availability"] = user_avaiability
-#             messages.success(request, "New Availability Added!")
-#         else:
-#             print(form.errors)
-#
-#     return render(request, "EventsApp/add_availability.html", context)
 
 
 def get_day_of_week(user_avaiability):
