@@ -6,7 +6,7 @@
 {% block content %}
 
 <div class="row">
-    <div class="col-6 mx-auto">
+    <div id="create-event-card" class="col-6 mx-auto">
         <div>
             <h3 class="mx-auto text-center fw-light">Create Event</h3>
             <hr>
@@ -23,7 +23,7 @@
             {% endif %}
 
 
-            <ul id="progressbar" class="mx-auto text-center" style="padding-left: 0px;">
+            <ul id="progressbar" class="d-flex justify-content-around mx-auto text-center" style="padding-left: 0px;">
                 <li class="active" id="step1">Event Information</li>
                 <li id="step2">Sports</li>
                 <li id="step3">Venue</li>
@@ -35,6 +35,10 @@
                         style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">
                         Event
                         Information</h3>
+                        <div class="p-2 d-flex justify-content-end">
+                            <input type="button" name="next" class="next action-button btn btn-primary"
+                                   value="Next" id="next-tab-1" style="width: 90px;"/>
+                        </div>
                     <div class="card-body">
                         <div class="form-row p-2">
                             <input type="text" class="form-control" name="event_title" placeholder="* Event Title"/>
@@ -266,11 +270,6 @@
                                  </div>
                             </div>
                         </div>
-                        <div class="form-row p-2 text-center">
-                            <input type="button" name="next" class="next action-button btn btn-primary"
-                                   value="Next"
-                                   id="next-tab-1"/>
-                        </div>
                     </div>
                 </div>
 
@@ -281,9 +280,16 @@
                     <h3 class="card-header text-white text-center"
                         style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">
                         Sports Information</h3>
+                        <div class="d-flex justify-content-between p-2">
+                            <input type="button" name="previous"
+                                   class="previous action-button-previous btn btn-primary"
+                                   value="Previous" id="previous-tab-2" style="width: 90px;"/>
+                            <input type="button" name="next" class="next action-button btn btn-primary"
+                                   value="Next" id="next-tab-2 " style="width: 90px;"/>
+                        </div>
                     <div class="card-body">
                         <div class="form-row p-2" id="sport_type_container">
-                            <select name='sport_type' id="sport_type" class="form-select select2"
+                            <select name='sport_type' id="sport_type" class="form-select select2 row-11"
                                     aria-label=".form-select-lg example">
                                 <option selected disabled>* Choose Sport</option>
                                 {% for type in sports_type %}
@@ -300,16 +306,6 @@
                             <div id="input_fields_wrap">
                             </div>
                         </div>
-                        <div class="form-row p-2 text-center">
-                            <input type="button" name="previous"
-                                   class="previous action-button-previous btn btn-primary"
-                                   value="Previous" id="previous-tab-2"/>
-<!--                            <button class="btn btn-primary"-->
-<!--                                        id="add_field_button">Add Position-->
-<!--                                </button>-->
-                            <input type="button" name="next" class="next action-button btn btn-primary"
-                                   value="Next" id="next-tab-2"/>
-                        </div>
                     </div>
                 </div>
             </fieldset>
@@ -319,6 +315,11 @@
                     <h2 class="card-header text-white text-center"
                         style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">
                         Venue</h2>
+                        <div class="p-2 d-flex justify-content-start">
+                            <input type="button" name="previous"
+                                   class="previous action-button-previous btn btn-primary"
+                                   value="Previous" id="previous-tab-4" style="width: 90px;"/>
+                        </div>
                     <div class="card-body">
                         <div class="form-row p-2">
                             <select name='venue' id="venue" class="form-select"
@@ -350,12 +351,9 @@
                                    placeholder="Area Code" readonly/>
                         </div>
                         <div class="form-row p-2 text-center">
-                            <input type="button" name="previous"
-                                   class="previous action-button-previous btn btn-primary"
-                                   value="Previous" id="previous-tab-3"/>
 
                             <input type="submit" name="submit" class="submit action-button btn btn-primary"
-                                   value="Submit"/>
+                                   value="Submit" style="width: 90px;"/>
                         </div>
                     </div>
                 </div>
@@ -428,15 +426,36 @@
 
 
 
-
-
-
-
-
-
 </style>
 
 <script>
+
+function callWidthChange(myWidth, myHeight) {
+        if (myWidth >= 768) {
+            if(document.getElementById("create-event-card")){
+                document.getElementById("create-event-card").classList.remove("col-12");
+                document.getElementById("create-event-card").classList.add("col-6");
+            }
+        } else {
+            if(document.getElementById("create-event-card")){
+                document.getElementById("create-event-card").classList.remove("col-6");
+                document.getElementById("create-event-card").classList.add("col-12");
+            }
+        }
+    }
+
+    $(document).ready(function () {
+        let myWidth = window.innerWidth;
+        let myHeight = window.innerHeight;
+        callWidthChange(myWidth, myHeight);   
+        $(window).resize(function () {
+        var nw = $(window).width();
+        let myHeight = window.innerHeight;
+        myWidth = nw;
+        callWidthChange(myWidth, myHeight);   
+    });
+    });
+
 $(function () {
   $('[data-toggle="tooltip"]').tooltip()
 })
@@ -667,6 +686,102 @@ function sports_skill_dropdown(skill_field_id){
     })
 });
 
+function getDaysBetweenDates(start, end, dayName) {
+  var result = [];
+  var days = {sun:0,mon:1,tue:2,wed:3,thu:4,fri:5,sat:6};
+  var day = days[dayName.toLowerCase().substr(0,3)];
+  // Copy start date
+  var current = new Date(start);
+  // Shift to next of required days
+  current.setDate(current.getDate() + (day - current.getDay()) % 7);
+  // While less than end date, add dates to result array
+  while (current < end) {
+    result.push(new Date(+current).toLocaleString().split(/\D/).slice(0,3).map(num=>num.padStart(2,"0")).join("/"));
+    current.setDate(current.getDate() + 7);
+  }
+  return result;
+}
+
+function isExcluded(date){
+  su = $('.daterange-sun').is(":visible") ? $('.daterange-sun')[0].value : "";
+  mo = $('.daterange-mon').is(":visible") ? $('.daterange-mon')[0].value : "";
+  tu = $('.daterange-tue').is(":visible") ? $('.daterange-tue')[0].value : "";
+  we = $('.daterange-wed').is(":visible") ? $('.daterange-wed')[0].value : "";
+  th = $('.daterange-thu').is(":visible") ? $('.daterange-thu')[0].value : "";
+  fr = $('.daterange-fri').is(":visible") ? $('.daterange-fri')[0].value : "";
+  sa = $('.daterange-sat').is(":visible") ? $('.daterange-sat')[0].value : "";
+
+  var su_dates = [];
+  if(su && su.trim().length > 0){
+    su_s = su.split("-")[0].trim();
+    su_e = su.split("-")[1].trim();
+    su_dates = getDaysBetweenDates(
+        new Date(su_s.split("/")[2],parseInt(su_s.split("/")[0]),su_s.split("/")[1]),
+        new Date(su_e.split("/")[2],parseInt(su_e.split("/")[0]),parseInt(su_e.split("/")[1])+1),
+        "Sun");
+  }
+  var mo_dates = [];
+  if(mo && mo.trim().length > 0){
+    mo_s = mo.split("-")[0].trim();
+    mo_e = mo.split("-")[1].trim();
+    mo_dates = getDaysBetweenDates(
+        new Date(mo_s.split("/")[2],parseInt(mo_s.split("/")[0])-1,mo_s.split("/")[1]),
+        new Date(mo_e.split("/")[2],parseInt(mo_e.split("/")[0])-1,parseInt(mo_e.split("/")[1])+1),
+        "Mon");
+  }
+  var tu_dates = [];
+  if(tu && tu.trim().length > 0){
+    tu_s = tu.split("-")[0].trim();
+    tu_e = tu.split("-")[1].trim();
+    tu_dates = getDaysBetweenDates(
+        new Date(tu_s.split("/")[2],parseInt(tu_s.split("/")[0])-1,tu_s.split("/")[1]),
+        new Date(tu_e.split("/")[2],parseInt(tu_e.split("/")[0])-1,parseInt(tu_e.split("/")[1])+1),
+        "Tue");
+  }
+  var we_dates = [];
+  if(we && we.trim().length > 0){
+    we_s = we.split("-")[0].trim();
+    we_e = we.split("-")[1].trim();
+    we_dates = getDaysBetweenDates(
+        new Date(we_s.split("/")[2],parseInt(we_s.split("/")[0])-1,we_s.split("/")[1]),
+        new Date(we_e.split("/")[2],parseInt(we_e.split("/")[0])-1,parseInt(we_e.split("/")[1])+1),
+        "Wed");
+  }
+  var th_dates = [];
+  if(th && th.trim().length > 0){
+    th_s = th.split("-")[0].trim();
+    th_e = th.split("-")[1].trim();
+    th_dates = getDaysBetweenDates(
+        new Date(th_s.split("/")[2],parseInt(th_s.split("/")[0])-1,th_s.split("/")[1]),
+        new Date(th_e.split("/")[2],parseInt(th_e.split("/")[0])-1,parseInt(th_e.split("/")[1])+1),
+        "Thu");
+  }
+  var fr_dates = [];
+  if(fr && fr.trim().length > 0){
+    fr_s = fr.split("-")[0].trim();
+    fr_e = fr.split("-")[1].trim();
+    fr_dates = getDaysBetweenDates(
+        new Date(fr_s.split("/")[2],parseInt(fr_s.split("/")[0])-1,fr_s.split("/")[1]),
+        new Date(fr_e.split("/")[2],parseInt(fr_e.split("/")[0])-1,parseInt(fr_e.split("/")[1])+1),
+        "Fri");
+  }
+  var sa_dates = [];
+  if(sa && sa.trim().length > 0){
+    sa_s = sa.split("-")[0].trim();
+    sa_e = sa.split("-")[1].trim();
+    sa_dates = getDaysBetweenDates(
+        new Date(sa_s.split("/")[2],parseInt(sa_s.split("/")[0])-1,sa_s.split("/")[1]),
+        new Date(sa_e.split("/")[2],parseInt(sa_e.split("/")[0])-1,parseInt(sa_e.split("/")[1])+1),
+        "Sat");
+  }
+
+  var date1 = $.datepicker.formatDate('mm/dd/yy', date);
+  var show = mo_dates.includes(date1) || sa_dates.includes(date1)
+  || fr_dates.includes(date1) || th_dates.includes(date1)
+  || we_dates.includes(date1) || tu_dates.includes(date1)
+  || su_dates.includes(date1);
+  return show;
+}
 
 $(function() {
   $('.datetime').daterangepicker({
@@ -687,6 +802,14 @@ $(function() {
     locale: {
       format: 'MM/DD/YYYY'
     }
+  });
+
+  $('.date-except').datepicker({
+    multidate: true,
+    orientation: 'top',
+    beforeShowDay: function(date){
+        return isExcluded(date);
+    },
   });
 
 

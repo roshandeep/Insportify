@@ -239,6 +239,49 @@ def ValidateFormValues(request):
     return date_valid and event_count_valid and fields_valid
 
 
+def ValidateOrgProfileForm(request, context):
+    valid = True
+    if not request.POST.get('company_name') or request.POST['company_name'].strip() == "":
+        messages.error(request, "Please enter Organization Name")
+        valid = False
+    if not request.POST.get('registration') or request.POST['registration'].strip() == "":
+        messages.error(request, "Please enter Registration Number")
+        valid = False
+    if not request.POST.get('email') or request.POST['email'].strip() == "":
+        messages.error(request, "Please enter Contact Email")
+        valid = False
+    if not request.POST.get('phone') or request.POST['phone'].strip() == "":
+        messages.error(request, "Please enter Contact Phone Number")
+        valid = False
+    # if len(context['locations']) == 0:
+    if not request.POST.get('street_name') or request.POST['street_name'].strip() == "":
+        messages.error(request, "Please enter Street Name")
+        valid = False
+    if not request.POST.get('city') or request.POST['city'].strip() == "":
+        messages.error(request, "Please enter City")
+        valid = False
+    if not request.POST.get('province') or request.POST['province'].strip() == "":
+        messages.error(request, "Please enter Province")
+        valid = False
+    if not request.POST.get('country') or request.POST['country'].strip() == "":
+        messages.error(request, "Please enter Country")
+        valid = False
+    if not request.POST.get('postal_code') or request.POST['postal_code'].strip() == "":
+        messages.error(request, "Please enter Postal Code")
+        valid = False
+    if not request.POST.get('gender') or request.POST['gender'].strip() == "":
+        messages.error(request, "Please select Focus")
+        valid = False
+    if not request.POST.get('age_group') or request.POST['age_group'].strip() == "":
+        messages.error(request, "Please select Age Group")
+        valid = False
+    if not request.POST.get('sport_type') or request.POST['sport_type'].strip() == "":
+        messages.error(request, "Please select Sports you facilitate")
+        valid = False
+
+    return valid
+
+
 def get_venue_details(request):
     data = {}
     if request.method == "POST":
@@ -571,6 +614,10 @@ def organization_profile(request):
         context['locations'] = locations
         context['sports_type'] = sports_type
         response = request.POST.dict()
+        if not ValidateOrgProfileForm(request, context):
+            organization = Organization.objects.get(user=request.user)
+            context['organization'] = organization
+            return render(request, 'registration/organization_view.html', context)
         if organization.exists():
             organization = Organization.objects.get(user=request.user)
             organization.user = request.user
@@ -861,7 +908,7 @@ def home(request):
             else:
                 event.sport_logo = "/media/images/Multisport.jpg"
 
-        recommended_events = [recommended_events[i:i + 3] for i in range(0, len(recommended_events), 3)]
+    recommended_events = [recommended_events[i:i + 3] for i in range(0, len(recommended_events), 3)]
 
     for event in events:
         sport_img = SportsImage.objects.filter(sport=event.sport_type).values("img")
@@ -1253,8 +1300,11 @@ def charge(request):
     key = settings.STRIPE_PUBLISHABLE_KEY
     context['key'] = key
     order = Order.objects.get(customer=request.user, payment=False)
+    print(order.order_amount)
     totalCents = order.order_amount * 100
     context['totalCents'] = totalCents
+
+    print(order, totalCents)
 
     if request.method == 'POST':
         try:
@@ -1262,7 +1312,7 @@ def charge(request):
                                           currency='cad',
                                           description=order,
                                           source=request.POST['stripeToken'])
-            # print(charge)
+            print(charge)
             if charge.status == "succeeded":
                 print('payment success')
                 orderId = get_random_string(length=16, allowed_chars=char_set)

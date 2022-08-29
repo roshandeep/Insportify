@@ -13,7 +13,7 @@
 
             </div>
         </div>
-        <div id="cart_items_table">
+        <div id="cart_items_table" class="table-responsive-sm">
             <table class="table table-striped">
                 <thead>
                 <th>Event</th>
@@ -94,7 +94,7 @@ function fetchOrderItems(){
         url: '{% url "EventsApp:fetch_cart_items" %}',
         success: function (data) {
             let html_data = '';
-            html_data += `<table class="table table-striped">`
+            html_data += `<table id="cart_items_table" class="table-responsive-sm">`
             html_data += `<thead>`;
             html_data += `<th>Event</th>`;
             html_data += `<th>Position Type</th>`;
