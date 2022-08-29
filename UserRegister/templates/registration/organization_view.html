@@ -37,8 +37,11 @@
                         style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">
                         Type of Organization
                     </h3>
+                    <div class="d-flex justify-content-end p-2">
+                        <input type="button" name="next" class="next action-button btn btn-primary"
+                                       value="Next" id="next-tab-1"/>
+                    </div>
                     <div class="card-body">
-
                         <div class="form-row p-2 text-center">
                             <input type="radio" name="type_of_organization" value='Charity'
                                    {% if organization.type_of_organization == "Charity" %} checked {% endif %}> Charity
@@ -64,10 +67,6 @@
                             {% if organization.type_of_organization == "Developer/Trainer" %} checked {% endif %}>
                             Developer/Trainer</input>
                             <br/>
-                            <div class="form-row p-2 text-center">
-                                <input type="button" name="next" class="next action-button btn btn-primary"
-                                       value="Next" id="next-tab-1"/>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -79,6 +78,13 @@
                         style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">
                         Organization
                         Information</h3>
+                    <div class="d-flex justify-content-between p-2">
+                        <input type="button" name="previous"
+                               class="previous action-button-previous btn btn-primary"
+                               value="Previous" id="previous-tab-2"/>
+                        <input type="button" name="next" class="next action-button btn btn-primary"
+                               value="Next" id="next-tab-2"/>
+                    </div>
                     <div class="card-body">
                         <div id="location_status">
 
@@ -165,39 +171,21 @@
                             </table>
                             </div>
                         </div>
-                        <div class="form-row p-2 text-center">
-                            <input type="button" name="previous"
-                                   class="previous action-button-previous btn btn-primary"
-                                   value="Previous" id="previous-tab-2"/>
-                            <input type="button" name="next" class="next action-button btn btn-primary"
-                                   value="Next" id="next-tab-2"/>
-                        </div>
+
                     </div>
                 </div>
             </fieldset>
-
-<!--            <fieldset id="tab-3" class="p-2">-->
-<!--                <div class="card shadow">-->
-<!--                    <h3 class="card-header text-white text-center"-->
-<!--                        style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">-->
-<!--                        Sports</h3>-->
-<!--                    <div class="card-body">-->
-<!--                        <div class="form-row p-2 text-center">-->
-<!--                            <input type="button" name="previous"-->
-<!--                                   class="previous action-button-previous btn btn-primary"-->
-<!--                                   value="Previous" id="previous-tab-3"/>-->
-<!--                            <input type="button" name="next" class="next action-button btn btn-primary"-->
-<!--                                   value="Next" id="next-tab-3"/>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </fieldset>-->
 
             <fieldset id="tab-3" class="p-2">
                 <div class="card shadow">
                     <h3 class="card-header text-white text-center"
                         style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">
                         Program Types</h3>
+                    <div class="p-2 d-flex justify-content-start">
+                        <input type="button" name="previous"
+                                       class="previous action-button-previous btn btn-primary"
+                                       value="Previous" id="previous-tab-3"/>
+                    </div>
                     <div class="card-body">
                         <div class="form-row p-2">
                             <span>* Your focus?</span>
@@ -330,9 +318,7 @@
                             </div>
                         </div>
                         <div class="form-row p-2 text-center">
-                            <input type="button" name="previous"
-                                   class="previous action-button-previous btn btn-primary"
-                                   value="Previous" id="previous-tab-3"/>
+
 
                             <input type="submit" name="submit" class="submit action-button btn btn-primary"
                                    value="Submit"/>
