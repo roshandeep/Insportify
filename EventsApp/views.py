@@ -994,7 +994,7 @@ def get_recommended_events(request):
         individual = Individual.objects.get(user=user)
         individual_gender = []
         if individual.participation_interest and individual.participation_interest != "":
-            print(individual.participation_interest)
+            # print(individual.participation_interest)
             individual_gender = individual.participation_interest.split(",")
         # print(individual_gender)
         for event in recommended_events[:]:
@@ -1198,6 +1198,7 @@ def event_details(request, event_id):
                 cart.no_of_position = needed_pos
                 cart.position_cost = pos_cost
                 cart.total_cost = int(pos_cost) * int(needed_pos)
+                cart.checkout_timer = datetime.now()
                 cart.save()
 
                 # Update Inventory
