@@ -1198,7 +1198,7 @@ def event_details(request, event_id):
                 cart.no_of_position = needed_pos
                 cart.position_cost = pos_cost
                 cart.total_cost = int(pos_cost) * int(needed_pos)
-                cart.checkout_timer = datetime.now()
+                cart.checkout_timer = datetime.now(timezone.utc)
                 cart.save()
 
                 # Update Inventory
@@ -1226,12 +1226,9 @@ def delete_cart_item(request):
             cart_item_id = request.POST['cart_item_id']
             # print(event_pos_id, cart_item_id)
             order_item = OrderItems.objects.get(pk=cart_item_id)
-            # print(order_item)
-            # Revert back Event Position info
             evnt_pos_info = Events_PositionInfo.objects.get(pk=event_pos_id)
             evnt_pos_info.no_of_position = evnt_pos_info.no_of_position + order_item.no_of_position
             evnt_pos_info.save()
-            # print(evnt_pos_info)
             order_item.delete()
             return JsonResponse({'status': 'Order Item deleted!'}, safe=False)
         except:
@@ -1241,6 +1238,7 @@ def delete_cart_item(request):
 def fetch_cart_items(request):
     total = 0
     order_items = []
+    remove_expired_cart_items(request)
     if request.is_ajax():
         cart = OrderItems.objects.filter(user=request.user, purchased=False)
         for item in cart:
@@ -1258,15 +1256,31 @@ def fetch_cart_items(request):
         return JsonResponse({"cart": order_items, "total": total}, safe=False)
 
 
+def remove_expired_cart_items(request):
+    cart = OrderItems.objects.filter(user=request.user, purchased=False)
+    for item in cart:
+        time_delta = (datetime.now(timezone.utc) - item.checkout_timer)
+        total_mins = (time_delta.total_seconds()) / 60
+        print(total_mins)
+        if total_mins > 30:
+            order_item = OrderItems.objects.get(pk=item.pk)
+            evnt_pos_info = Events_PositionInfo.objects.get(pk=item.position_id.pk)
+            evnt_pos_info.no_of_position = evnt_pos_info.no_of_position + order_item.no_of_position
+            evnt_pos_info.save()
+            order_item.delete()
+
+
 @login_required
 def cart_summary(request):
     context = {}
     total = 0
     user = request.user
+    remove_expired_cart_items(request)
     context['STRIPE_PUBLISHABLE_KEY'] = settings.STRIPE_PUBLISHABLE_KEY,
     cart = OrderItems.objects.filter(user=user, purchased=False)
     for item in cart:
         total = total + item.total_cost
+
     context["cart"] = cart
     context["total"] = total
     if request.method == 'POST':
