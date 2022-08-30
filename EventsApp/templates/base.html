@@ -104,6 +104,23 @@
         <ul class="navbar-nav mb-2 mb-lg-0">
             {% if request.user.is_authenticated %}
             <li class="nav-item">
+                {% if request.user.is_organization == True %}
+                <a class="btn btn-dark" href="{% url 'EventsApp:organization_profile' %}">{{request.user.email}}
+                    <div class="vr"></div>
+                    <label style="font-weight:bold">ORG</label></a>
+                {% else %}
+                {% if request.user.is_mvp == True %}
+                <a class="btn btn-warning" href="{% url 'EventsApp:user_profile' %}" >{{request.user.email}}
+                    <div class="vr"></div>
+                    <label style="font-weight:bold">MVP</label></a>
+                {% else %}
+                <a class="btn btn-primary" href="{% url 'EventsApp:user_profile' %}">{{request.user.email}}
+                    <div class="vr"></div>
+                    <label style="font-weight:bold">USER</label></a>
+                {% endif %}
+                {% endif %}
+            </li>
+            <li class="nav-item">
                 <a class="nav-link link-secondary" href="{% url 'UserRegister:logout' %}"><p>Logout</p></a>
             </li>
             {% else %}
