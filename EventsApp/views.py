@@ -230,6 +230,51 @@ def ValidateFormValues(request):
     return date_valid and event_count_valid and fields_valid
 
 
+def ValidateUserProfileForm(request, context):
+    valid = True
+    if not request.POST.get('first_name') or request.POST['first_name'].strip() == "":
+        messages.error(request, "Please enter First Name")
+        valid = False
+    if not request.POST.get('last_name') or request.POST['last_name'].strip() == "":
+        messages.error(request, "Please enter Last Name")
+        valid = False
+    if not request.POST.get('dob') or request.POST['dob'].strip() == "":
+        messages.error(request, "Please enter Date of Birth")
+        valid = False
+    if not request.POST.get('contact_email') or request.POST['contact_email'].strip() == "":
+        messages.error(request, "Please enter Contact Email")
+        valid = False
+    if not request.POST.get('mobile') or request.POST['mobile'].strip() == "":
+        messages.error(request, "Please enter Mobile")
+        valid = False
+    if not request.POST.get('interest_gender') or request.POST['interest_gender'].strip() == "":
+        messages.error(request, "Please select Event gender preferences")
+        valid = False
+
+    # if len(context['locations']) == 0:
+    if not request.POST.get('city') or request.POST['city'].strip() == "":
+        messages.error(request, "Please enter City")
+        valid = False
+    if not request.POST.get('province') or request.POST['province'].strip() == "":
+        messages.error(request, "Please enter Province")
+        valid = False
+    if not request.POST.get('country') or request.POST['country'].strip() == "":
+        messages.error(request, "Please enter Country")
+        valid = False
+
+    # if not request.POST.get('sport_type') or request.POST['sport_type'].strip() == "":
+    #     messages.error(request, "Please select Sports you facilitate")
+    #     valid = False
+    # if not request.POST.get('position') or request.POST['position'].strip() == "":
+    #     messages.error(request, "Please select Position")
+    #     valid = False
+    # if not request.POST.get('skill') or request.POST['skill'].strip() == "":
+    #     messages.error(request, "Please select Skill")
+    #     valid = False
+
+    return valid
+
+
 def ValidateOrgProfileForm(request, context):
     valid = True
     if not request.POST.get('company_name') or request.POST['company_name'].strip() == "":
@@ -347,6 +392,10 @@ def user_profile(request):
     elif request.method == "POST":
         individual = Individual.objects.filter(user=request.user)
         response = request.POST.dict()
+        if not ValidateUserProfileForm(request, context):
+            individual = Individual.objects.get(user=request.user)
+            context['individual'] = individual
+            return render(request, 'registration/individual_view.html', context)
         if individual.exists():
             individual = Individual.objects.get(user=request.user)
             individual.user = request.user
