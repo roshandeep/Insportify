@@ -22,7 +22,7 @@
             {% endif %}
 
 
-            <ul id="progressbar" class="mx-auto text-center" style="padding-left: 0px;">
+            <ul id="progressbar" class="d-flex justify-content-around mx-auto text-center" style="padding-left: 0px;">
                 <li class="active" id="step1">Personal Details</li>
                 <li id="step2">Location Details</li>
                 <li id="step3">Sports Choices</li>
@@ -35,6 +35,10 @@
                         style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">
                         Tell us little
                         about you</h4>
+                        <div class="p-2 d-flex justify-content-end">
+                            <input type="button" name="next" class="next action-button btn btn-primary"
+                                   value="Next" id="next-tab-1" style="width: 90px;"/>
+                        </div>
                     <div class="card-body">
                         <div class="form-row p-2">
                             <input type="text" class="form-control" name="first_name" placeholder="* First Name"
@@ -59,6 +63,7 @@
                         </div>
                         <div class="form-row p-2">
                             <label>* I am interest in participating in ?</label>
+                            <br>
                             <input type="checkbox" id="Male" name="interest_gender" value="Male"
                                    {% if "Male" in individual.participation_interest %} checked {% endif %}> Male
                             Only</input>
@@ -71,6 +76,7 @@
                         </div>
                         <div class="form-row p-2">
                             <label>Are you a Student?</label>
+                            <br>
                             <input type="radio" id="Yes" name="is_student" value="Yes"
                                    {% if individual.is_student == "Yes" %} checked {% endif %}>Yes</input>
                             <input type="radio" id="No" name="is_student" value="No"
@@ -78,15 +84,11 @@
                         </div>
                         <div class="form-row p-2">
                             <label>Have you ever suffered concussion?</label>
+                            <br>
                             <input type="radio" id="Yes" name="is_concussion" value="Yes"
                                    {% if individual.concussion == "Yes" %} checked {% endif %}>Yes</input>
                             <input type="radio" id="No" name="is_concussion" value="No"
                                    {% if individual.concussion == "No" %} checked {% endif %}> No</input>
-                        </div>
-
-                        <div class="form-row p-2 text-center">
-                            <input type="button" name="next" class="next action-button btn btn-primary"
-                                   value="Next" id="next-tab-1"/>
                         </div>
                     </div>
                 </div>
@@ -98,6 +100,13 @@
                     <h4 class="card-header text-white text-center"
                         style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">
                         Hey {{ user.first_name }} list your locations where you can participate in </h4>
+                        <div class="d-flex justify-content-between p-2">
+                            <input type="button" name="previous"
+                                   class="previous action-button-previous btn btn-primary"
+                                   value="Previous" id="previous-tab-2" style="width: 90px;"/>
+                            <input type="button" name="next" class="next action-button btn btn-primary"
+                                   value="Next" id="next-tab-2" style="width: 90px;"/>
+                        </div>
                     <label></label>
                     <div class="card-body">
                         <div id="location_status">
@@ -141,13 +150,7 @@
                             </table>
                             </div>
                         </div>
-                        <div class="form-row p-2 text-center">
-                            <input type="button" name="previous"
-                                   class="previous action-button-previous btn btn-primary"
-                                   value="Previous" id="previous-tab-2"/>
-                            <input type="button" name="next" class="next action-button btn btn-primary"
-                                   value="Next" id="next-tab-2"/>
-                        </div>
+
                     </div>
                 </div>
             </fieldset>
@@ -158,6 +161,13 @@
                         style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">
                         {{user.first_name }} ,
                         add sports you play and the ones you would love to play</h4>
+                        <div class="d-flex justify-content-between p-2">
+                            <input type="button" name="previous"
+                                   class="previous action-button-previous btn btn-primary"
+                                   value="Previous" id="previous-tab-3" style="width: 90px;"/>
+                            <input type="button" name="next" class="next action-button btn btn-primary"
+                                   value="Next" id="next-tab-3" style="width: 90px;"/>
+                        </div>
                     <div class="card-body">
                         <div id="position_status">
 
@@ -212,13 +222,6 @@
                             </table>
                             </div>
                         </div>
-                        <div class="form-row p-2 text-center">
-                            <input type="button" name="previous"
-                                   class="previous action-button-previous btn btn-primary"
-                                   value="Previous" id="previous-tab-3"/>
-                            <input type="button" name="next" class="next action-button btn btn-primary"
-                                   value="Next" id="next-tab-3"/>
-                        </div>
                     </div>
                 </div>
             </fieldset>
@@ -229,6 +232,11 @@
                         style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">
                         {{user.first_name }} ,
                         add your availability</h4>
+                        <div class="p-2 d-flex justify-content-start">
+                            <input type="button" name="previous"
+                                   class="previous action-button-previous btn btn-primary"
+                                   value="Previous" id="previous-tab-4" style="width: 90px;"/>
+                        </div>
                     <div class="card-body">
                         <div id="availability_status">
 
@@ -281,12 +289,9 @@
                             </div>
                         </div>
                         <div class="form-row p-2 text-center">
-                            <input type="button" name="previous"
-                                   class="previous action-button-previous btn btn-primary"
-                                   value="Previous" id="previous-tab-4"/>
 
                             <input type="submit" name="submit" class="submit action-button btn btn-primary"
-                                   value="Submit"/>
+                                   value="Submit" style="width: 90px;"/>
                         </div>
                     </div>
                 </div>
@@ -341,6 +346,21 @@
 }
 
 #progressbar li:before {
+    width: 40px;
+    height: 40px;
+    line-height: 35px;
+    display: block;
+    font-size: 20px;
+    color: #ffffff;
+    background: lightgray;
+    border-radius: 50%;
+    margin: 0 auto 10px auto;
+    padding: 2px
+}
+
+@media only screen and (min-width: 768px) {
+  /* For desktop: */
+  #progressbar li:before {
     width: 50px;
     height: 50px;
     line-height: 45px;
@@ -351,6 +371,7 @@
     border-radius: 50%;
     margin: 0 auto 10px auto;
     padding: 2px
+}
 }
 
 #progressbar li.active:before,
@@ -369,24 +390,30 @@
 
     function callWidthChange(myWidth, myHeight) {
         if (myWidth >= 768) {
-            document.getElementById("user-profile").classList.remove("col-12");
-            document.getElementById("user-profile").classList.add("col-6");
+            if(document.getElementById("user-profile")){
+                document.getElementById("user-profile").classList.remove("col-12");
+                document.getElementById("user-profile").classList.add("col-6");
+            }
         } else {
-            document.getElementById("user-profile").classList.remove("col-6");
-            document.getElementById("user-profile").classList.add("col-12");
+            if(document.getElementById("user-profile")){
+                document.getElementById("user-profile").classList.remove("col-6");
+                document.getElementById("user-profile").classList.add("col-12");
+            }
         }
     }
 
     $(document).ready(function () {
-
         let myWidth = window.innerWidth;
         let myHeight = window.innerHeight;
-        // your size calculation code here
-        callWidthChange(myWidth, myHeight);
+        callWidthChange(myWidth, myHeight);   
+        $(window).resize(function () {
+        var nw = $(window).width();
+        let myHeight = window.innerHeight;
+        myWidth = nw;
+        callWidthChange(myWidth, myHeight);   
     });
-
-
-$("#add_locations").click(function (e) {
+    });
+    $("#add_locations").click(function (e) {
         e.preventDefault();
         var selected_city_text = document.getElementById("city").value;
         var selected_province_text = document.getElementById("province").value;

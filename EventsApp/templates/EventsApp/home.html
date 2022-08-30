@@ -126,12 +126,12 @@
     <h5>All Events</h5>
     <hr class="my-2">
     <div id="carouselExampleControls" class="carousel slide" data-ride="carousel" data-interval="false">
-        <div class="carousel-inner" role="listbox">
+        <div id="event-cards" class="carousel-inner" role="listbox">
             {% for sublist in events %}
-            <div class="carousel-item {% if forloop.counter0 == 0 %}active{% endif %}">
+            <div  class="carousel-item {% if forloop.counter0 == 0 %}active{% endif %}">
                 <div class="cards-wrapper">
                     {% for event in sublist %}
-                    <div id="event-card" class="card {% if forloop.counter0 != 0 %}d-none d-md-block{% endif %} col-4"
+                    <div id="event-card" class="event-card card {% if forloop.counter0 != 0 %}d-none d-md-block{% endif %} col-4"
                          onclick="location.href='event_details/{{event.pk}}/';" style="cursor:pointer">
                         <img src="{{event.sport_logo}}" class="card-img-top" alt="...">
                         <div class="card-body" >
@@ -202,11 +202,9 @@
             placeholder: "Select Event Type",
             allowClear: true
         });
-
         let para = document.getElementsByClassName("eventdatetime");
         for (let i = 0; i < para.length; i++) {
             let pval = para[i].innerHTML.split("from");
-            console.log(pval);
             para[i].innerHTML = "";
             para[i].innerHTML = pval[0] + "<br>" + pval[1];
         }
@@ -226,13 +224,17 @@
             document.getElementById("event-page").classList.remove('col-12');
             document.getElementById("event-page").classList.add('col-9');
             }
-            if(document.getElementById('events-show')){
-            document.getElementById("events-show").classList.remove('col-11');
-            document.getElementById("events-show").classList.add('col-11');
-            }
-            if(document.getElementById('event-card')){
-                document.getElementById("event-card").classList.remove('col-12');
-                document.getElementById("event-card").classList.add('col-4');
+            // if(document.getElementById('events-show')){
+            // document.getElementById("events-show").classList.remove('col-11');
+            // document.getElementById("events-show").classList.add('col-11');
+            // }
+            if(document.querySelector("#event-cards")){
+                const container = document.querySelector("#event-cards");
+                const corCard = container.querySelectorAll(".event-card");
+                for (i of corCard){
+                    i.classList.remove('col-12');
+                    i.classList.add('col-4')
+                }
             }
 
         } else {
@@ -248,13 +250,17 @@
             document.getElementById("event-page").classList.remove('col-9');
             document.getElementById("event-page").classList.add('col-12');
             }
-            if(document.getElementById('events-show')){
-            document.getElementById("events-show").classList.remove('col-9');
-            document.getElementById("events-show").classList.add('col-12');
-            }
-            if(document.getElementById('event-card')){
-                document.getElementById("event-card").classList.remove('col-4');
-                document.getElementById("event-card").classList.add('col-12');
+            // if(document.getElementById('events-show')){
+            // document.getElementById("events-show").classList.remove('col-9');
+            // document.getElementById("events-show").classList.add('col-12');
+            // }
+            if(document.querySelector("#event-cards")){
+                const container = document.querySelector("#event-cards");
+                const corCard = container.querySelectorAll(".event-card");
+                for (i of corCard){
+                    i.classList.remove('col-4');
+                    i.classList.add('col-12')
+                }
             }
         }
     }

@@ -948,7 +948,7 @@ def home(request):
             else:
                 event.sport_logo = "/media/images/Multisport.jpg"
 
-        recommended_events = [recommended_events[i:i + 3] for i in range(0, len(recommended_events), 3)]
+    recommended_events = [recommended_events[i:i + 3] for i in range(0, len(recommended_events), 3)]
 
     for event in events:
         sport_img = SportsImage.objects.filter(sport=event.sport_type).values("img")
@@ -1341,8 +1341,11 @@ def charge(request):
     key = settings.STRIPE_PUBLISHABLE_KEY
     context['key'] = key
     order = Order.objects.get(customer=request.user, payment=False)
+    print(order.order_amount)
     totalCents = order.order_amount * 100
     context['totalCents'] = totalCents
+
+    print(order, totalCents)
 
     if request.method == 'POST':
         try:
@@ -1350,7 +1353,7 @@ def charge(request):
                                           currency='cad',
                                           description=order,
                                           source=request.POST['stripeToken'])
-            # print(charge)
+            print(charge)
             if charge.status == "succeeded":
                 print('payment success')
                 orderId = get_random_string(length=16, allowed_chars=char_set)
