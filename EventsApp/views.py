@@ -1263,7 +1263,6 @@ def remove_expired_cart_items(request):
     for item in cart:
         time_delta = (datetime.now(timezone.utc) - item.checkout_timer)
         total_mins = (time_delta.total_seconds()) / 60
-        print(total_mins)
         if total_mins > 30:
             order_item = OrderItems.objects.get(pk=item.pk)
             evnt_pos_info = Events_PositionInfo.objects.get(pk=item.position_id.pk)
