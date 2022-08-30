@@ -1214,6 +1214,8 @@ def event_details(request, event_id):
                 # if event.created_by:
                 #     util.email(event_subject, event_message, [event.created_by.email])
 
+                messages.info(request, "Order Items will be present in your cart for only 30 mins!")
+
         return redirect('EventsApp:cart_summary')
 
     return render(request, "EventsApp/detail_dashboard.html", context)
