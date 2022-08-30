@@ -68,7 +68,7 @@
                         </div>
                         <div class="form-row p-2">
                             <label>* Is this a recurring event? &nbsp &nbsp</label>
-                            <input type="radio" value="Yes" id="chkYes" name="recurring_event">Yes</input>
+                            <input type="radio" value="Yes" id="chkYes" name="recurring_event"> Yes</input>
                             <input type="radio" value="No" id="chkNo" name="recurring_event"> No </input>
                         </div>
                         <div class="form-row p-2" id="fields_recurring" style="display:None">
@@ -108,7 +108,7 @@
 <!--                            </div>-->
                         </div>
                         <div class="form-row p-2" id="Tuesday_dates" style="display:None">
-                            <label>Tuesday: Select Start and End Date &nbsp &nbsp</label>
+                            <label style="font-style:italic">Tuesday: Select Start and End Date &nbsp &nbsp</label>
                             <div class="form-group row p-2">
                                 <div class="col-md-6">
                                     <input type="text" name="datetimes_tuesday_date" id="datetimes_tuesday_date"
@@ -131,7 +131,7 @@
 <!--                            </div>-->
                         </div>
                         <div class="form-row p-2" id="Wednesday_dates" style="display:None">
-                            <label>Wednesday: Select Start and End Date &nbsp &nbsp</label>
+                            <label style="font-style:italic">Wednesday: Select Start and End Date &nbsp &nbsp</label>
                             <div class="form-group row p-2">
                                 <div class="col-md-6">
                                     <input type="text" name="datetimes_wednesday_date" id="datetimes_wednesday_date"
@@ -154,7 +154,7 @@
 <!--                            </div>-->
                         </div>
                         <div class="form-row p-2" id="Thursday_dates" style="display:None">
-                            <label>Thursday: Select Start and End Date &nbsp &nbsp</label>
+                            <label style="font-style:italic">Thursday: Select Start and End Date &nbsp &nbsp</label>
                             <div class="form-group row p-2">
                                 <div class="col-md-6">
                                     <input type="text" name="datetimes_thursday_date" id="datetimes_thursday_date"
@@ -177,7 +177,7 @@
 <!--                            </div>-->
                         </div>
                         <div class="form-row p-2" id="Friday_dates" style="display:None">
-                            <label>Friday: Select Start and End Date &nbsp &nbsp</label>
+                            <label style="font-style:italic">Friday: Select Start and End Date &nbsp &nbsp</label>
                             <div class="form-group row p-2">
                                 <div class="col-md-6">
                                     <input type="text" name="datetimes_friday_date" id="datetimes_friday_date"
@@ -200,7 +200,7 @@
 <!--                            </div>-->
                         </div>
                         <div class="form-row p-2" id="Saturday_dates" style="display:None">
-                            <label>Saturday: Select Start and End Date &nbsp &nbsp</label>
+                            <label style="font-style:italic">Saturday: Select Start and End Date &nbsp &nbsp</label>
                             <div class="form-group row p-2">
                                 <div class="col-md-6">
                                     <input type="text" name="datetimes_saturday_date" id="datetimes_saturday_date"
@@ -223,7 +223,7 @@
 <!--                            </div>-->
                         </div>
                         <div class="form-row p-2" id="Sunday_dates" style="display:None">
-                            <label>Sunday: Select Start and End Date &nbsp &nbsp</label>
+                            <label style="font-style:italic">Sunday: Select Start and End Date &nbsp &nbsp</label>
                             <div class="form-group row p-2">
                                 <div class="col-md-6">
                                     <input type="text" name="datetimes_sunday_date" id="datetimes_sunday_date"
@@ -246,9 +246,9 @@
 <!--                            </div>-->
                         </div>
                         <div class="form-row p-2" id="Exception_dates" style="display:None">
-                            <label>Enter Exceptions &nbsp &nbsp</label>
+                            <label style="font-style:italic">Enter Exceptions &nbsp &nbsp</label>
                             <div class="form-row p-2">
-                                <input type="text" class="form-control date" name="datetimes_exceptions" id="datetimes_exceptions"/>
+                                <input type="text" class="form-control date-except"  name="datetimes_exceptions" id="datetimes_exceptions"/>
                             </div>
                         </div>
                         <div class="form-row p-2" id="single_dates" style="display:None">
@@ -285,7 +285,7 @@
                                    class="previous action-button-previous btn btn-primary"
                                    value="Previous" id="previous-tab-2" style="width: 90px;"/>
                             <input type="button" name="next" class="next action-button btn btn-primary"
-                                   value="Next" id="next-tab-2 " style="width: 90px;"/>
+                                   value="Next" id="next-tab-2" style="width: 90px;"/>
                         </div>
                     <div class="card-body">
                         <div class="form-row p-2" id="sport_type_container">
@@ -318,7 +318,7 @@
                         <div class="p-2 d-flex justify-content-start">
                             <input type="button" name="previous"
                                    class="previous action-button-previous btn btn-primary"
-                                   value="Previous" id="previous-tab-4" style="width: 90px;"/>
+                                   value="Previous" id="previous-tab-3" style="width: 90px;"/>
                         </div>
                     <div class="card-body">
                         <div class="form-row p-2">
@@ -423,7 +423,10 @@
 #progressbar li.active:after {
     background: #ff6f3d
 }
-
+.daterangepicker td.in-range {
+    background: #357ebd;
+    color: #ffffff
+}
 
 
 </style>
@@ -484,7 +487,6 @@ $("#venue").change(function () {
             },
             success: function (data) {
                 let html_data = data[0];
-                console.log(html_data["vm_venue_street"]);
                 $("#street").val(html_data["vm_venue_street"]);
                 $("#city").val(html_data["vm_venuecity"]);
                 $("#province").val(html_data["vm_venue_province"]);
@@ -502,7 +504,6 @@ $("#venue").change(function () {
 
 $("#datetimes_start_time").change(function () {
         var endtime = $("#datetimes_end_time")[0].value;
-        console.log(endtime);
         if(!endtime){
             $("#datetimes_end_time")[0].value = getTime( $("#datetimes_start_time")[0].value, 1 );
         }
@@ -878,7 +879,6 @@ $(function() {
   });
 });
 
-
 $(function () {
         $("input[name='recurring_event']").click(function () {
             if ($("#chkYes").is(":checked")) {
@@ -953,7 +953,8 @@ function addInputLabel(evt) {
 }
 // Fix daterangepicker position to given element
 function updateDateRangePickerPosition(evt) {
-    $('.daterangepicker').css('margin-top',$('#' + evt.currentTarget.id).offset().top);
+if(evt.currentTarget.id && $('#' + evt.currentTarget.id) && $('#' + evt.currentTarget.id).offset()){
+    $('.daterangepicker').css('margin-top',$('#' + evt.currentTarget.id).offset().top);}
 }
 
 

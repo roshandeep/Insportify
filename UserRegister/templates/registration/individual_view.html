@@ -41,28 +41,28 @@
                         </div>
                     <div class="card-body">
                         <div class="form-row p-2">
-                            <input type="text" class="form-control" name="first_name" placeholder="First Name"
+                            <input type="text" class="form-control" name="first_name" placeholder="* First Name"
                                    value="{% if individual.first_name %} {{individual.first_name}} {% else %} None {% endif %}"/>
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" class="form-control" name="last_name" placeholder="Last Name"
+                            <input type="text" class="form-control" name="last_name" placeholder="* Last Name"
                                    value="{% if individual.last_name %} {{individual.last_name}} {% endif %}"/>
                         </div>
                         <div class="form-row p-2">
-                            <input placeholder="DOB" class="textbox-n form-control" type="text"
+                            <input placeholder="* Birthday" class="textbox-n form-control" type="text"
                                    onfocus="(this.type='date')" onblur="(this.type='text')" name="dob"
                                    value="{% if individual.dob %} {{individual.dob}} {% endif %}"/>
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" class="form-control" name="contact_email" placeholder="Contact Email"
+                            <input type="text" class="form-control" name="contact_email" placeholder="* Contact Email"
                                    value="{% if individual.email %} {{individual.email}} {% endif %}"/>
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" class="form-control" name="mobile" placeholder="xxx-xxx-xxxx"
+                            <input type="text" class="form-control" name="mobile" placeholder="* Mobile"
                                    value="{% if individual.phone %} {{individual.phone}} {% endif %}"/>
                         </div>
                         <div class="form-row p-2">
-                            <label>I am interest in participating in ?</label>
+                            <label>* I am interest in participating in ?</label>
                             <br>
                             <input type="checkbox" id="Male" name="interest_gender" value="Male"
                                    {% if "Male" in individual.participation_interest %} checked {% endif %}> Male
@@ -113,15 +113,15 @@
 
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" class="form-control" name="city" id="city" placeholder="City"
+                            <input type="text" class="form-control" name="city" id="city" placeholder="* City"
                                    value="{% if individual.city %} {{individual.city}} {% endif %}"/>
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" class="form-control" name="province" id="province" placeholder="Province"
+                            <input type="text" class="form-control" name="province" id="province" placeholder="* Province"
                                    value="{% if individual.province %} {{individual.province}} {% endif %}"/>
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" class="form-control" name="country" id="country" placeholder="Country"
+                            <input type="text" class="form-control" name="country" id="country" placeholder="* Country"
                                    value="{% if individual.country %} {{individual.country}} {% endif %}"/>
                         </div>
                         <div class="form-row p-2 text-center">
@@ -175,7 +175,7 @@
                         <div class="form-row p-2">
                             <select name='sport_type' id="sports" class="form-select"
                                     aria-label=".form-select-lg example">
-                                <option value="" selected>Choose Sport</option>
+                                <option value="" selected>* Choose Sport</option>
                                 {% for st in sports_type %}
                                 <option value="{{st}}">{{st}}</option>
                                 {% endfor %}
@@ -186,13 +186,13 @@
                                     aria-label=".form-select-lg example">
                                 <option value=""
                                         {% if individual.sports_position == "" %} selected {% endif %}>
-                                Choose Position</option>
+                                * Choose Position</option>
                             </select>
                         </div>
                         <div class="form-row p-2" id="skill_div">
                             <select name='skill' class="form-select" id='skill'
                                     aria-label=".form-select-lg example">
-                                <option value="" selected>Choose Skill</option>
+                                <option value="" selected>* Choose Skill</option>
 
                             </select>
                         </div>
@@ -243,6 +243,7 @@
                         </div>
                         <div class="form-group row p-2">
                             <div class="col-md-4">
+                                <label class="my-label">Day of Week</label>
                                 <select class="form-select" name="day_of_week" id="day_of_week">
                                     <option value="" selected="selected">Select Day Of The Week</option>
                                     <option value="1">Monday</option>
@@ -256,11 +257,11 @@
                             </div>
                             <div class="col-md-4">
                                 <input type="time" class="form-control" id="start_time" name="start_time"
-                                       placeholder="HH:MM 24 hr format"/>
+                                       placeholder="Start Time" value="00:00"/>
                             </div>
                             <div class="col-md-4">
                                 <input type="time" class="form-control" id="end_time" name="end_time"
-                                       placeholder="HH:MM 24 hr format"/>
+                                       placeholder="End Time" value="23:59"/>
                             </div>
                         </div>
                         <div class="form-row p-2 text-center">
@@ -706,7 +707,7 @@ $("#position").change(function () {
                 'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
             },
             success: function (data) {
-                let html_data = '<option value="" selected disabled>Choose Skill</option>';
+                let html_data = '<option value="" selected disabled>* Choose Skill</option>';
                 data.forEach(function (data) {
                     html_data += `<option value="${data.skill_type}">${data.skill_type}</option>`
                 });
@@ -818,6 +819,29 @@ $(function () {
         });
     };
 });
+
+// Make Placeholders title when user types something
+function addInputLabel(evt) {
+    var myLabel = document.createElement('div');
+    myLabel.textContent = evt.currentTarget.placeholder;
+    myLabel.classList.add('my-label');
+    var parentDiv = document.getElementsByName(evt.currentTarget.name)[0].parentElement;
+    if(parentDiv.getElementsByClassName('my-label').length < 1) {
+        parentDiv.insertBefore(myLabel, evt.currentTarget);
+    }
+    else{
+        if(evt.currentTarget.value.length == 0){
+            parentDiv.removeChild(parentDiv.getElementsByClassName('my-label')[0]);
+        }
+    }
+}
+
+var inputs = document.getElementsByTagName('input');
+for (let i of inputs){
+    i.addEventListener('input', addInputLabel, false);
+    let event = new Event("input");
+    i.dispatchEvent(event);
+}
 
 $(document).ready(function() {
   $(window).keydown(function(event){
