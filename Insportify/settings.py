@@ -82,7 +82,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'insportifyinfo@gmail.com'
-EMAIL_HOST_PASSWORD = 'ywfveonmuyxadyao'
+EMAIL_HOST_PASSWORD = 'rqhjanxgepfilmrb'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
