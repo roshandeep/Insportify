@@ -292,8 +292,8 @@
                         </div>
                     <div class="card-body">
                         <div class="form-row p-2" id="sport_type_container">
-                            <select name='sport_type' id="sport_type" class="form-select select2 row-11"
-                                    aria-label=".form-select-lg example">
+                            <select name='sport_type' id="sport_type" class="form-select select2"
+                                    aria-label=".form-select-lg example" style="width:100%;">
                                 <option selected disabled>* Choose Sport</option>
                                 {% for type in sports_type %}
                                 <option value="{{type.sports_type_text}}">{{type.sports_type_text}}</option>
@@ -433,7 +433,20 @@
 </style>
 
 <script>
-
+    
+function callWidthChange(myWidth, myHeight) {
+        if (myWidth >= 768) {
+            if(document.getElementById("create-event-card")){
+                document.getElementById("create-event-card").classList.remove("col-12");
+                document.getElementById("create-event-card").classList.add("col-6");
+            }
+        } else {
+            if(document.getElementById("create-event-card")){
+                document.getElementById("create-event-card").classList.remove("col-6");
+                document.getElementById("create-event-card").classList.add("col-12");
+            }
+        }
+    }
 
     $(document).ready(function () {
         let myWidth = window.innerWidth;

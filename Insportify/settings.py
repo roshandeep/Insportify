@@ -94,7 +94,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'insportify',
         'USER': 'postgres',
-        'PASSWORD': 'admin',
+        'PASSWORD': 'Luhar@5991',
         'HOST': 'localhost',
         'PORT': '5432',
     }
