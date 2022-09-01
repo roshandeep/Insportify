@@ -105,7 +105,7 @@
                                class="previous action-button-previous btn btn-primary"
                                value="Previous" id="previous-tab-2" style="width: 90px;"/>
                         <input type="button" name="next" class="next action-button btn btn-primary"
-                               value="Next" id="next-tab-2 " style="width: 90px;"/>
+                               value="Next" id="next-tab-2" style="width: 90px;"/>
                     </div>
                     <div class="card-body">
                         <div id="location_status">
@@ -735,17 +735,17 @@
             $("#step2").addClass("active");
         });
 
-  $("#next-tab-2").click(function(){
-    var tab1 = $("#tab-1");
-    var tab2 = $("#tab-2");
-    var tab3 = $("#tab-3");
-    var tab4 = $("#tab-4");
-    tab1.hide();
-    tab2.hide();
-    tab3.show();
-    tab4.hide();
-    $("#step3").addClass("active");
-  });
+        $("#next-tab-2").click(function(){
+            var tab1 = $("#tab-1");
+            var tab2 = $("#tab-2");
+            var tab3 = $("#tab-3");
+            var tab4 = $("#tab-4");
+            tab1.hide();
+            tab2.hide();
+            tab3.show();
+            tab4.hide();
+            $("#step3").addClass("active");
+        });
 
         $("#next-tab-3").click(function () {
             var tab1 = $("#tab-1");
