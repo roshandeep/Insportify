@@ -5,17 +5,23 @@
 {% block content %}
 <div class="container">
     {% if cart %}
-    <div class="col pt-2">
+    <div class="Col pt-2">
         <div class="col-12">
             <div>
-                <h3 class="mx-auto text-center fw-light">Summary</h3>
+                <h3 class="mx-auto text-center fw-light">Cart</h3>
                 <hr>
             </div>
             <div id="item_status">
 
             </div>
+            <div>
+                {% if messages %}
+                {% for message in messages %}
+                <div class="alert {{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-        <div id="cart_items_table" class="table-responsive-sm">
+        <div id="cart_items_table">
             <table class="table table-striped">
                 <thead>
                 <th>Event</th>
@@ -96,7 +102,7 @@ function fetchOrderItems(){
         url: '{% url "EventsApp:fetch_cart_items" %}',
         success: function (data) {
             let html_data = '';
-            html_data += `<table class="table table-striped">`
+            html_data += `<table id="cart_items_table" class="table table-striped">`
             html_data += `<thead>`;
             html_data += `<th>Event</th>`;
             html_data += `<th>Position Type</th>`;

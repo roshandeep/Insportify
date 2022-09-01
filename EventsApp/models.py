@@ -298,6 +298,7 @@ class OrderItems(models.Model):
     position_cost = models.IntegerField(blank=True, null=True)
     total_cost = models.IntegerField(blank=True, null=True)
     purchased = models.BooleanField(blank=True, null=True, default=False)
+    checkout_timer = models.DateTimeField(blank=True, null=True)
 
 
 class Order(models.Model):

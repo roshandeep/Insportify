@@ -239,6 +239,94 @@ def ValidateFormValues(request):
     return date_valid and event_count_valid and fields_valid
 
 
+def ValidateUserProfileForm(request, context):
+    valid = True
+    if not request.POST.get('first_name') or request.POST['first_name'].strip() == "":
+        messages.error(request, "Please enter First Name")
+        valid = False
+    if not request.POST.get('last_name') or request.POST['last_name'].strip() == "":
+        messages.error(request, "Please enter Last Name")
+        valid = False
+    if not request.POST.get('dob') or request.POST['dob'].strip() == "":
+        messages.error(request, "Please enter Date of Birth")
+        valid = False
+    if not request.POST.get('contact_email') or request.POST['contact_email'].strip() == "":
+        messages.error(request, "Please enter Contact Email")
+        valid = False
+    if not request.POST.get('mobile') or request.POST['mobile'].strip() == "":
+        messages.error(request, "Please enter Mobile")
+        valid = False
+    if not request.POST.get('interest_gender') or request.POST['interest_gender'].strip() == "":
+        messages.error(request, "Please select Event gender preferences")
+        valid = False
+
+    # if len(context['locations']) == 0:
+    if not request.POST.get('city') or request.POST['city'].strip() == "":
+        messages.error(request, "Please enter City")
+        valid = False
+    if not request.POST.get('province') or request.POST['province'].strip() == "":
+        messages.error(request, "Please enter Province")
+        valid = False
+    if not request.POST.get('country') or request.POST['country'].strip() == "":
+        messages.error(request, "Please enter Country")
+        valid = False
+
+    # if not request.POST.get('sport_type') or request.POST['sport_type'].strip() == "":
+    #     messages.error(request, "Please select Sports you facilitate")
+    #     valid = False
+    # if not request.POST.get('position') or request.POST['position'].strip() == "":
+    #     messages.error(request, "Please select Position")
+    #     valid = False
+    # if not request.POST.get('skill') or request.POST['skill'].strip() == "":
+    #     messages.error(request, "Please select Skill")
+    #     valid = False
+
+    return valid
+
+
+def ValidateOrgProfileForm(request, context):
+    valid = True
+    if not request.POST.get('company_name') or request.POST['company_name'].strip() == "":
+        messages.error(request, "Please enter Organization Name")
+        valid = False
+    if not request.POST.get('registration') or request.POST['registration'].strip() == "":
+        messages.error(request, "Please enter Registration Number")
+        valid = False
+    if not request.POST.get('email') or request.POST['email'].strip() == "":
+        messages.error(request, "Please enter Contact Email")
+        valid = False
+    if not request.POST.get('phone') or request.POST['phone'].strip() == "":
+        messages.error(request, "Please enter Contact Phone Number")
+        valid = False
+    # if len(context['locations']) == 0:
+    if not request.POST.get('street_name') or request.POST['street_name'].strip() == "":
+        messages.error(request, "Please enter Street Name")
+        valid = False
+    if not request.POST.get('city') or request.POST['city'].strip() == "":
+        messages.error(request, "Please enter City")
+        valid = False
+    if not request.POST.get('province') or request.POST['province'].strip() == "":
+        messages.error(request, "Please enter Province")
+        valid = False
+    if not request.POST.get('country') or request.POST['country'].strip() == "":
+        messages.error(request, "Please enter Country")
+        valid = False
+    if not request.POST.get('postal_code') or request.POST['postal_code'].strip() == "":
+        messages.error(request, "Please enter Postal Code")
+        valid = False
+    if not request.POST.get('gender') or request.POST['gender'].strip() == "":
+        messages.error(request, "Please select Focus")
+        valid = False
+    if not request.POST.get('age_group') or request.POST['age_group'].strip() == "":
+        messages.error(request, "Please select Age Group")
+        valid = False
+    if not request.POST.get('sport_type') or request.POST['sport_type'].strip() == "":
+        messages.error(request, "Please select Sports you facilitate")
+        valid = False
+
+    return valid
+
+
 def get_venue_details(request):
     data = {}
     if request.method == "POST":
@@ -313,6 +401,10 @@ def user_profile(request):
     elif request.method == "POST":
         individual = Individual.objects.filter(user=request.user)
         response = request.POST.dict()
+        if not ValidateUserProfileForm(request, context):
+            individual = Individual.objects.get(user=request.user)
+            context['individual'] = individual
+            return render(request, 'registration/individual_view.html', context)
         if individual.exists():
             individual = Individual.objects.get(user=request.user)
             individual.user = request.user
@@ -571,6 +663,10 @@ def organization_profile(request):
         context['locations'] = locations
         context['sports_type'] = sports_type
         response = request.POST.dict()
+        if not ValidateOrgProfileForm(request, context):
+            organization = Organization.objects.get(user=request.user)
+            context['organization'] = organization
+            return render(request, 'registration/organization_view.html', context)
         if organization.exists():
             organization = Organization.objects.get(user=request.user)
             organization.user = request.user
@@ -861,7 +957,7 @@ def home(request):
             else:
                 event.sport_logo = "/media/images/Multisport.jpg"
 
-        # recommended_events = [recommended_events[i:i + 3] for i in range(0, len(recommended_events), 3)]
+        recommended_events = [recommended_events[i:i + 3] for i in range(0, len(recommended_events), 3)]
 
     for event in events:
         sport_img = SportsImage.objects.filter(sport=event.sport_type).values("img")
@@ -948,7 +1044,7 @@ def get_recommended_events(request):
         individual = Individual.objects.get(user=user)
         individual_gender = []
         if individual.participation_interest and individual.participation_interest != "":
-            print(individual.participation_interest)
+            # print(individual.participation_interest)
             individual_gender = individual.participation_interest.split(",")
         # print(individual_gender)
         for event in recommended_events[:]:
@@ -1152,6 +1248,7 @@ def event_details(request, event_id):
                 cart.no_of_position = needed_pos
                 cart.position_cost = pos_cost
                 cart.total_cost = int(pos_cost) * int(needed_pos)
+                cart.checkout_timer = datetime.now(timezone.utc)
                 cart.save()
 
                 # Update Inventory
@@ -1167,6 +1264,8 @@ def event_details(request, event_id):
                 # if event.created_by:
                 #     util.email(event_subject, event_message, [event.created_by.email])
 
+                messages.info(request, "Order Items will be present in your cart for only 30 mins!")
+
         return redirect('EventsApp:cart_summary')
 
     return render(request, "EventsApp/detail_dashboard.html", context)
@@ -1179,12 +1278,9 @@ def delete_cart_item(request):
             cart_item_id = request.POST['cart_item_id']
             # print(event_pos_id, cart_item_id)
             order_item = OrderItems.objects.get(pk=cart_item_id)
-            # print(order_item)
-            # Revert back Event Position info
             evnt_pos_info = Events_PositionInfo.objects.get(pk=event_pos_id)
             evnt_pos_info.no_of_position = evnt_pos_info.no_of_position + order_item.no_of_position
             evnt_pos_info.save()
-            # print(evnt_pos_info)
             order_item.delete()
             return JsonResponse({'status': 'Order Item deleted!'}, safe=False)
         except:
@@ -1194,6 +1290,7 @@ def delete_cart_item(request):
 def fetch_cart_items(request):
     total = 0
     order_items = []
+    remove_expired_cart_items(request)
     if request.is_ajax():
         cart = OrderItems.objects.filter(user=request.user, purchased=False)
         for item in cart:
@@ -1211,15 +1308,30 @@ def fetch_cart_items(request):
         return JsonResponse({"cart": order_items, "total": total}, safe=False)
 
 
+def remove_expired_cart_items(request):
+    cart = OrderItems.objects.filter(user=request.user, purchased=False)
+    for item in cart:
+        time_delta = (datetime.now(timezone.utc) - item.checkout_timer)
+        total_mins = (time_delta.total_seconds()) / 60
+        if total_mins > 30:
+            order_item = OrderItems.objects.get(pk=item.pk)
+            evnt_pos_info = Events_PositionInfo.objects.get(pk=item.position_id.pk)
+            evnt_pos_info.no_of_position = evnt_pos_info.no_of_position + order_item.no_of_position
+            evnt_pos_info.save()
+            order_item.delete()
+
+
 @login_required
 def cart_summary(request):
     context = {}
     total = 0
     user = request.user
+    remove_expired_cart_items(request)
     context['STRIPE_PUBLISHABLE_KEY'] = settings.STRIPE_PUBLISHABLE_KEY,
     cart = OrderItems.objects.filter(user=user, purchased=False)
     for item in cart:
         total = total + item.total_cost
+
     context["cart"] = cart
     context["total"] = total
     if request.method == 'POST':
@@ -1254,8 +1366,11 @@ def charge(request):
     key = settings.STRIPE_PUBLISHABLE_KEY
     context['key'] = key
     order = Order.objects.get(customer=request.user, payment=False)
+    print(order.order_amount)
     totalCents = order.order_amount * 100
     context['totalCents'] = totalCents
+
+    print(order, totalCents)
 
     if request.method == 'POST':
         try:
@@ -1263,7 +1378,7 @@ def charge(request):
                                           currency='cad',
                                           description=order,
                                           source=request.POST['stripeToken'])
-            # print(charge)
+            print(charge)
             if charge.status == "succeeded":
                 print('payment success')
                 orderId = get_random_string(length=16, allowed_chars=char_set)

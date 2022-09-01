@@ -37,11 +37,14 @@
                         style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">
                         Type of Organization
                     </h3>
+                    <div class="d-flex justify-content-end p-2">
+                        <input type="button" name="next" class="next action-button btn btn-primary"
+                                       value="Next" id="next-tab-1"/>
+                    </div>
                     <div class="card-body">
-
                         <div class="form-row p-2 text-center">
                             <input type="radio" name="type_of_organization" value='Charity'
-                                   {% if organization.type_of_organization == "Charity" %} checked {% endif %}>Charity
+                                   {% if organization.type_of_organization == "Charity" %} checked {% endif %}> Charity
                             </input>
                             <br/>
                             <input type="radio" name="type_of_organization" value='Facility'
@@ -64,10 +67,6 @@
                             {% if organization.type_of_organization == "Developer/Trainer" %} checked {% endif %}>
                             Developer/Trainer</input>
                             <br/>
-                            <div class="form-row p-2 text-center">
-                                <input type="button" name="next" class="next action-button btn btn-primary"
-                                       value="Next" id="next-tab-1"/>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -79,13 +78,20 @@
                         style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">
                         Organization
                         Information</h3>
+                    <div class="d-flex justify-content-between p-2">
+                        <input type="button" name="previous"
+                               class="previous action-button-previous btn btn-primary"
+                               value="Previous" id="previous-tab-2"/>
+                        <input type="button" name="next" class="next action-button btn btn-primary"
+                               value="Next" id="next-tab-2"/>
+                    </div>
                     <div class="card-body">
                         <div id="location_status">
 
                         </div>
                         <div class="form-row p-2">
                             <input type="text" name="company_name" class="form-control"
-                                   placeholder="Organization Name"
+                                   placeholder="* Organization Name"
                             value="{% if organization.organization_name %} {{organization.organization_name}} {% endif %}"/>
                         </div>
                         <div class="form-row p-2">
@@ -94,22 +100,22 @@
                             value="{% if organization.parent_organization_name %} {{organization.parent_organization_name}} {% endif %}"/>
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" name="registration" class="form-control" placeholder="Registration No."
+                            <input type="text" name="registration" class="form-control" placeholder="* Registration No."
                             value="{% if organization.registration_no %} {{organization.registration_no}} {% endif %}">
                         </div>
                         <div class="form-row p-2">
-                            <span>Which year were you eastablished?</span>
+                            <span>Which year were you established?</span>
                             <select id="year" class="form-select mb-3" name="year_established" aria-label=".form-select-lg example">
                                 <option selected>Select Year</option>
                             </select>
                         </div>
                         <div class="form-row p-2">
                             <span>What is the most appropriate contact info for the athletes and the organizer to contact you?</span>
-                            <input type="text" name="email" class="form-control" placeholder="Email"
+                            <input type="text" name="email" class="form-control" placeholder="* Email"
                             value="{% if organization.email %} {{organization.email}} {% endif %}">
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" name="phone" class="form-control" placeholder="Enter 10 digit phone number"
+                            <input type="text" name="phone" class="form-control" placeholder="* Phone number"
                             value="{% if organization.phone %} {{organization.phone}} {% endif %}">
                         </div>
                         <div class="form-row p-2">
@@ -118,23 +124,23 @@
                         </div>
                         <div class="form-row p-2">
                             <span>Office location</span>
-                            <input type="text" name="street_name" id="street_name" class="form-control" placeholder="Street"
+                            <input type="text" name="street_name" id="street_name" class="form-control" placeholder="* Street"
                             value="{% if organization.street %} {{organization.street}} {% endif %}">
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" name="city" id="city" class="form-control" placeholder="City"
+                            <input type="text" name="city" id="city" class="form-control" placeholder="* City"
                             value="{% if organization.city %} {{organization.city}} {% endif %}">
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" name="province" id="province" class="form-control" placeholder="Province"
+                            <input type="text" name="province" id="province" class="form-control" placeholder="* Province"
                             value="{% if organization.province %} {{organization.province}} {% endif %}">
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" name="country" id="country" class="form-control" placeholder="Country"
+                            <input type="text" name="country" id="country" class="form-control" placeholder="* Country"
                             value="{% if organization.country %} {{organization.country}} {% endif %}">
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" name="postal_code" id="postal_code" class="form-control" placeholder="Postal Code"
+                            <input type="text" name="postal_code" id="postal_code" class="form-control" placeholder="* Postal Code"
                             value="{% if organization.postal_code %} {{organization.postal_code}} {% endif %}">
                         </div>
                         <div class="form-row p-2 text-center">
@@ -165,42 +171,24 @@
                             </table>
                             </div>
                         </div>
-                        <div class="form-row p-2 text-center">
-                            <input type="button" name="previous"
-                                   class="previous action-button-previous btn btn-primary"
-                                   value="Previous" id="previous-tab-2"/>
-                            <input type="button" name="next" class="next action-button btn btn-primary"
-                                   value="Next" id="next-tab-2"/>
-                        </div>
+
                     </div>
                 </div>
             </fieldset>
-
-<!--            <fieldset id="tab-3" class="p-2">-->
-<!--                <div class="card shadow">-->
-<!--                    <h3 class="card-header text-white text-center"-->
-<!--                        style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">-->
-<!--                        Sports</h3>-->
-<!--                    <div class="card-body">-->
-<!--                        <div class="form-row p-2 text-center">-->
-<!--                            <input type="button" name="previous"-->
-<!--                                   class="previous action-button-previous btn btn-primary"-->
-<!--                                   value="Previous" id="previous-tab-3"/>-->
-<!--                            <input type="button" name="next" class="next action-button btn btn-primary"-->
-<!--                                   value="Next" id="next-tab-3"/>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </fieldset>-->
 
             <fieldset id="tab-3" class="p-2">
                 <div class="card shadow">
                     <h3 class="card-header text-white text-center"
                         style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">
                         Program Types</h3>
+                    <div class="p-2 d-flex justify-content-start">
+                        <input type="button" name="previous"
+                                       class="previous action-button-previous btn btn-primary"
+                                       value="Previous" id="previous-tab-3"/>
+                    </div>
                     <div class="card-body">
                         <div class="form-row p-2">
-                            <span>Your focus?</span>
+                            <span>* Your focus?</span>
                            <input type="checkbox" id="Male" name="gender" value="Male"
                             {% if "Male" in organization.gender_focus  %} checked {% endif %}> Male Only </input>
                             <input type="checkbox" id="Female" name="gender" value="Female"
@@ -209,7 +197,7 @@
                             {% if "Coed" in organization.gender_focus %} checked {% endif %}> Coed </input>
                         </div>
                         <div class="form-row p-2">
-                            <label>Pick a Age Group?</label>
+                            <label>* Pick a Age Group?</label>
                             <input type="checkbox" id="Youth" name='age_group' value="Youth"
                                    {% if "Youth" in organization.age_group %} checked {% endif %}> Youth </input>
                             <input type="checkbox" id="Adult" name='age_group' value="Adult"
@@ -229,7 +217,7 @@
                             {% if "500+" in organization.participants %} checked {% endif %}> 500+ </input>
                         </div>
                         <div class="form-row p-2">
-                            <label>List of sports that you facilitate are: </label>
+                            <label>* List of sports that you facilitate are: </label>
                             <select class="form-select select2" multiple name="sport_type"
                                     id="sport_type" style="width:100%">
                                 {% for st in sports_type %}
@@ -330,9 +318,7 @@
                             </div>
                         </div>
                         <div class="form-row p-2 text-center">
-                            <input type="button" name="previous"
-                                   class="previous action-button-previous btn btn-primary"
-                                   value="Previous" id="previous-tab-3"/>
+
 
                             <input type="submit" name="submit" class="submit action-button btn btn-primary"
                                    value="Submit"/>
@@ -495,7 +481,7 @@ $(document).ready(function(){
   });
 
  $('.select2').select2({
-    placeholder: "Select Event Type",
+    placeholder: "Select Sport",
     allowClear: true,
     closeOnSelect: false,
   });
@@ -593,16 +579,18 @@ $(function() {
 
 // Make Placeholders title when user types something
 function addInputLabel(evt) {
-    var myLabel = document.createElement('div');
-    myLabel.textContent = evt.currentTarget.placeholder;
-    myLabel.classList.add('my-label');
-    var parentDiv = document.getElementsByName(evt.currentTarget.name)[0].parentElement;
-    if(parentDiv.getElementsByClassName('my-label').length < 1) {
-        parentDiv.insertBefore(myLabel, evt.currentTarget);
-    }
-    else{
-        if(evt.currentTarget.value.length == 0){
-            parentDiv.removeChild(parentDiv.getElementsByClassName('my-label')[0]);
+    if (document.getElementsByName(evt.currentTarget.name)[0] && document.getElementsByName(evt.currentTarget.name)[0].type !== 'button'){
+        var myLabel = document.createElement('div');
+        myLabel.textContent = evt.currentTarget.placeholder;
+        myLabel.classList.add('my-label');
+        var parentDiv = document.getElementsByName(evt.currentTarget.name)[0].parentElement;
+        if(parentDiv.getElementsByClassName('my-label').length < 1) {
+            parentDiv.insertBefore(myLabel, evt.currentTarget);
+        }
+        else{
+            if(evt.currentTarget.value.length == 0){
+                parentDiv.removeChild(parentDiv.getElementsByClassName('my-label')[0]);
+            }
         }
     }
 }
