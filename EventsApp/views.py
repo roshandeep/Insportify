@@ -1362,16 +1362,18 @@ def cart_summary(request):
 @login_required
 def charge(request):
     context={}
+    user = request.user
     char_set = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
     key = settings.STRIPE_PUBLISHABLE_KEY
     context['key'] = key
     order = Order.objects.get(customer=request.user, payment=False)
-    print(order.order_amount)
+    cart = order.items.all()
+    context["order"] = order
+    context["cart"] = cart
+    context['orderAmount'] = order.order_amount
     totalCents = order.order_amount * 100
     context['totalCents'] = totalCents
-
-    print(order, totalCents)
-
+    print(cart)
     if request.method == 'POST':
         try:
             charge = stripe.Charge.create(amount=totalCents,
@@ -1386,6 +1388,7 @@ def charge(request):
                 order.orderId = f'#{request.user}{orderId}'
                 order.paymentId = paymentId
                 order.payment = True
+                order.payment_method = "Card"
                 for order_item in order.items.all():
                     item = OrderItems.objects.get(pk=order_item.pk)
                     item.purchased = True
@@ -1417,6 +1420,36 @@ def paymentCancel(request):
     context = {
         "payment_status": "fail"
     }
+    return render(request, "EventsApp/confirmation.html", context)
+
+
+def pay_at_venue(request):
+    context = {
+        "payment_status": "VenuePay"
+    }
+    char_set = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+    order = Order.objects.get(customer=request.user, payment=False)
+    print(order.order_amount)
+    orderId = get_random_string(length=16, allowed_chars=char_set)
+    paymentId = get_random_string(length=16, allowed_chars=char_set)
+    order.orderId = f'#{request.user}{orderId}'
+    order.paymentId = paymentId
+    order.payment = True
+    order.payment_method = "Cash Pickup"
+    for order_item in order.items.all():
+        item = OrderItems.objects.get(pk=order_item.pk)
+        item.purchased = True
+        item.save()
+
+    order.save()
+
+    order_subject = "Order Confirmed: " + f'#{request.user}{orderId}'
+    order_message = "Your seat has been reserved. Payment would be made on the day of the event. " + \
+                    "Customer Name: " + request.user.first_name + " " + request.user.last_name + "\n" + \
+                    "Customer Email: " + request.user.email + "\n"
+
+    util.email(order_subject, order_message, [request.user.email])
+
     return render(request, "EventsApp/confirmation.html", context)
 
 

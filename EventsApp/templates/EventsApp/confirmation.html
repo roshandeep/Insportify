@@ -15,12 +15,22 @@
                 <a href="{% url 'EventsApp:home' %}">Home</a>
             </p>
         </div>
-        {% else %}
+        {% elif payment_status == "failed" %}
         <div class="jumbotron text-justify mt-5">
             <h1 class="text-danger">Payment Failed</h1>
             <hr class="my-4">
             <p class="lead">We didn't receive your order. You can now close this window or use the
                 link below to try again.
+                <a href="{% url 'EventsApp:home' %}">Home</a>
+            </p>
+        </div>
+        {% elif payment_status == "VenuePay" %}
+        <div class="jumbotron text-justify mt-5">
+            <h1 class="text-success">Order Pickup Confirmed</h1>
+            <hr class="my-4">
+            <p class="lead">Your Ticket Pick up Order has been booked. Payment would be made at the Venue.
+                Please follow the instructions sent to you in your registered email Id.
+                You can now close this window or use the link below to try again.
                 <a href="{% url 'EventsApp:home' %}">Home</a>
             </p>
         </div>

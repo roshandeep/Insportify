@@ -65,5 +65,5 @@ urlpatterns = [
     path('payment-success/', views.paymentSuccess, name='payment-success'),
     path('payment-cancel/', views.paymentCancel, name='payment-cancel'),
     path('charge/', views.charge, name='charge'),
-    # path('checkout/', views.checkout, name='checkout'),
+    path('pay_at_venue/', views.pay_at_venue, name='pay_at_venue'),
 ]

@@ -302,11 +302,22 @@ class OrderItems(models.Model):
 
 
 class Order(models.Model):
+    PAYMENT_CHOICES = (
+        ("--Select--", "--Select--"),
+        ("Cash Pickup", "Cash Pickup"),
+        ("Card", "Card"),
+    )
+
     customer = models.ForeignKey(User, on_delete=models.CASCADE)
     items = models.ManyToManyField(OrderItems)
     order_date = models.DateTimeField()
     order_amount = models.IntegerField()
     payment = models.BooleanField(blank=True, null=True)
+    payment_method = models.CharField(
+        max_length=20,
+        choices=PAYMENT_CHOICES,
+        default='--Select--'
+    )
     created = models.DateTimeField(auto_now_add=True)
     paymentId = models.CharField(max_length=200, blank=True, null=True)
     orderId = models.CharField(max_length=200, blank=True, null=True)

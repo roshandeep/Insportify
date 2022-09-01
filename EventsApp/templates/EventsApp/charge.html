@@ -4,20 +4,39 @@
 {% load static %}
 {% block content %}
 
-<script src="https://js.stripe.com/v3/"></script>
 <div class="row">
-    <div class="col">
-        <form action="{% url 'EventsApp:charge' %}" method="post">
-            {% csrf_token %}
-            <script
-                    src="https://checkout.stripe.com/checkout.js"
-                    class="stripe-button"
-                    data-key="{{ key }}"
-                    data-description="Complete your order"
-                    data-amount="{{ totalCents }}"
-                    data-locale="auto"
-            ></script>
-        </form>
+    <div class="col-md">
+        <p>
+            Customer Name : </em>{{order.customer.first_name}}</em> <br>
+            Registered Email : {{order.customer.email}} <br>
+            Total Cost : {{orderAmount}} <br>
+            {% for order_items in cart %}
+                Event Name : {{order_items.event}} <br>
+                Position : {{order_items.position_type}} <br>
+            {% endfor %}
+        </p>
+    </div>
+    <div class="col-md">
+        <script src="https://js.stripe.com/v3/"></script>
+        <div class="row">
+            <div class="col mx-auto">
+                <form action="{% url 'EventsApp:charge' %}" method="post">
+                    {% csrf_token %}
+                    <script
+                            src="https://checkout.stripe.com/checkout.js"
+                            class="stripe-button"
+                            data-key="{{ key }}"
+                            data-description="Complete your order"
+                            data-amount="{{ totalCents }}"
+                            data-locale="auto"
+                    ></script>
+                </form>
+                    <hr>
+                <a href="{% url 'EventsApp:pay_at_venue' %}" class="btn btn-primary"
+                   style="width: max-content;">Pay At Venue</a>
+            </div>
+        </div>
+
     </div>
 </div>
 
