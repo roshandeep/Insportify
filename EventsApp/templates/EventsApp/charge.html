@@ -14,7 +14,7 @@
             {% for order_items in cart %}
             <hr>
             Event Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {{order_items.event}} <br>
-            Event Location&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : {{order_items.event.city}}, {{order_items.event.province}} <br>
+            Event Location&nbsp;&nbsp;&nbsp; : {{order_items.event.city}}, {{order_items.event.province}} <br>
             Position &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {{order_items.position_type}} <br>
             {% endfor %}
         </p>
