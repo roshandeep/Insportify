@@ -18,8 +18,8 @@
             <h3 class="mx-auto text-center fw-light">My Events</h3>
             <hr>
         </div>
-        <div class="card">
-            <div class="card-body">
+        <div id="event-table" class="card">
+            <div style="overflow-x:auto;">
                 <table class="table table-striped">
                     <thead>
                     <th>EVENT</th>
@@ -54,6 +54,27 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function () {
+        let myWidth = window.innerWidth;
+        let myHeight = window.innerHeight;
+            // document.getElementById("event-table").classList.add('card-event-table')
+            // console.log(document.getElementById("event-table").style);
+            $(window).resize(function () {
+                var nw = $(window).width();
+                let myHeight = window.innerHeight;
+                myWidth = nw;
+                console.log(document.getElementById("event-table").style.width)
+                if(myWidth < 768){
+                document.getElementById("event-table").style.setProperty('width', myWidth + "px", 'important');
+                } else {
+                    document.getElementById("event-table").style.setProperty('width', "100&", 'important');
+                }
+            });
+    });
+</script>
+
 <style>
 
 td .id {
@@ -87,5 +108,9 @@ a.disabled {
   cursor: default;
 }
 
+.card-event-table {
+    overflow: hidden;
+    width: 758px !important;
+}
 </style>
 {% endblock %}

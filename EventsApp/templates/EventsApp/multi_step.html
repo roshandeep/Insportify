@@ -62,14 +62,17 @@
                         </div>
                         <div class="form-row p-2">
                             <label>Gender</label>
-                            <input type="checkbox" id="Male" name="gender" value="Male"> Male Only</input>
-                            <input type="checkbox" id="Female" name="gender" value="Female"> Female Only </input>
-                            <input type="checkbox" id="Coed" name="gender" value="Coed"> Coed </input>
+                            <div>
+                            <label for="Male"><input type="checkbox" id="Male" name="gender" value="Male"> Male Only </input></label>
+                            <label for="Female"><input type="checkbox" id="Female" name="gender" value="Female"> Female Only </input></label>
+                            <label for="Coed"><input type="checkbox" id="Coed" name="gender" value="Coed"> Coed </input></label>
+                            </div>
                         </div>
                         <div class="form-row p-2">
                             <label>* Is this a recurring event? &nbsp &nbsp</label>
-                            <input type="radio" value="Yes" id="chkYes" name="recurring_event"> Yes</input>
-                            <input type="radio" value="No" id="chkNo" name="recurring_event"> No </input>
+                            <br>
+                            <label for="chkYes"><input type="radio" value="Yes" id="chkYes" name="recurring_event">Yes</input></label>
+                            <label for="chkNo"><input type="radio" value="No" id="chkNo" name="recurring_event"> No </input></label>
                         </div>
                         <div class="form-row p-2" id="fields_recurring" style="display:None">
                             <label>* Which days does the event occur &nbsp &nbsp</label>
@@ -289,8 +292,8 @@
                         </div>
                     <div class="card-body">
                         <div class="form-row p-2" id="sport_type_container">
-                            <select name='sport_type' id="sport_type" class="form-select select2 row-11"
-                                    aria-label=".form-select-lg example">
+                            <select name='sport_type' id="sport_type" class="form-select select2"
+                                    aria-label=".form-select-lg example" style="width:100%;">
                                 <option selected disabled>* Choose Sport</option>
                                 {% for type in sports_type %}
                                 <option value="{{type.sports_type_text}}">{{type.sports_type_text}}</option>
@@ -496,9 +499,11 @@ $("#venue").change(function () {
         });
         var inputs = document.getElementsByTagName('input');
         for (let i of inputs){
+            if(i.getAttribute('id') != 'previous-tab-2' || i.getAttribute('id') != 'next-tab-2'){
             i.addEventListener('input', addInputLabel, false);
             let event = new Event("input");
             i.dispatchEvent(event);
+            }
         }
     });
 
@@ -963,10 +968,12 @@ if(evt.currentTarget.id && $('#' + evt.currentTarget.id) && $('#' + evt.currentT
 var inputs = document.getElementsByTagName('input');
 var inputs = document.getElementsByTagName('input');
 for (let i of inputs){
+    if(i.getAttribute('id') != 'previous-tab-2' && i.getAttribute('id') != 'next-tab-2' && i.type == 'text'){
     i.addEventListener('input', addInputLabel, false);
     i.addEventListener('focus', updateDateRangePickerPosition, false);
     let event = new Event("input");
     i.dispatchEvent(event);
+    }
 }
 
 //$('.datepicker').css('top',$("#datetimes_exceptions").offset().top);

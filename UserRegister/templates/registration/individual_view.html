@@ -64,31 +64,31 @@
                         <div class="form-row p-2">
                             <label>* I am interest in participating in ?</label>
                             <br>
-                            <input type="checkbox" id="Male" name="interest_gender" value="Male"
-                                   {% if "Male" in individual.participation_interest %} checked {% endif %}> Male
-                            Only</input>
-                            <input type="checkbox" id="Female" name="interest_gender" value="Female"
-                                   {% if "Female" in individual.participation_interest %} checked {% endif %}> Female
-                            Only</input>
-                            <input type="checkbox" id="Coed" name="interest_gender" value="Coed"
-                                   {% if "Coed" in individual.participation_interest %} checked {% endif %}>
-                            Coed </input>
+                            <label for="Male"></label><input type="checkbox" id="Male" name="interest_gender" value="Male"
+                            {% if "Male" in individual.participation_interest %} checked {% endif %}> Male
+                     Only</input></label>
+                     <label for="Female"></label><input type="checkbox" id="Female" name="interest_gender" value="Female"
+                            {% if "Female" in individual.participation_interest %} checked {% endif %}> Female
+                     Only</input></label>
+                     <label for="Coed"></label><input type="checkbox" id="Coed" name="interest_gender" value="Coed"
+                            {% if "Coed" in individual.participation_interest %} checked {% endif %}>
+                     Coed </input></label>
                         </div>
                         <div class="form-row p-2">
                             <label>Are you a Student?</label>
                             <br>
-                            <input type="radio" id="Yes" name="is_student" value="Yes"
-                                   {% if individual.is_student == "Yes" %} checked {% endif %}>Yes</input>
-                            <input type="radio" id="No" name="is_student" value="No"
-                                   {% if individual.is_student == "No" %} checked {% endif %}> No</input>
+                            <label for="Yes"></label><input type="radio" id="Yes" name="is_student" value="Yes"
+                                   {% if individual.is_student == "Yes" %} checked {% endif %}>Yes</input></label>
+                            <label for="No"><input type="radio" id="No" name="is_student" value="No"
+                                   {% if individual.is_student == "No" %} checked {% endif %}> No</input></label>
                         </div>
                         <div class="form-row p-2">
                             <label>Have you ever suffered concussion?</label>
                             <br>
-                            <input type="radio" id="Yes" name="is_concussion" value="Yes"
-                                   {% if individual.concussion == "Yes" %} checked {% endif %}>Yes</input>
-                            <input type="radio" id="No" name="is_concussion" value="No"
-                                   {% if individual.concussion == "No" %} checked {% endif %}> No</input>
+                            <label for="Yes"></label><input type="radio" id="Yes" name="is_concussion" value="Yes"
+                                   {% if individual.concussion == "Yes" %} checked {% endif %}>Yes</input></label>
+                                   <label for="No"><input type="radio" id="No" name="is_concussion" value="No"
+                                   {% if individual.concussion == "No" %} checked {% endif %}> No</input></label>
                         </div>
                     </div>
                 </div>
@@ -164,7 +164,7 @@
                             <input type="button" name="previous"
                                    class="previous action-button-previous btn btn-primary"
                                    value="Previous" id="previous-tab-3" style="width: 90px;"/>
-                            <input type="button" name="next" class="action-button btn btn-primary"
+                            <input type="button" name="next" class="next action-button btn btn-primary"
                                    value="Next" id="next-tab-3" style="width: 90px;"/>
                         </div>
                     <div class="card-body">
