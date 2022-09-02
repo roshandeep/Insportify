@@ -89,22 +89,6 @@ EMAIL_HOST_PASSWORD = 'rqhjanxgepfilmrb'
 
 ## Dev DB Configurations
 
-<<<<<<< HEAD
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'insportify',
-        'USER': 'postgres',
-        'PASSWORD': 'Luhar@5991',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
-}
-
-## Prod DB Configurations
-
-=======
->>>>>>> upstream/master
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
