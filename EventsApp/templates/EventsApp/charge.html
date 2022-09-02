@@ -5,22 +5,24 @@
 {% block content %}
 
 <div class="row">
-    <div class="col-md">
+
+    <div class="col-md" style="margin-top:1rem;">
         <p>
             Customer Name : </em>{{order.customer.first_name}}</em> <br>
             Registered Email : {{order.customer.email}} <br>
-            Total Cost : {{orderAmount}} <br>
+            Total Cost &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {{orderAmount}} <br>
             {% for order_items in cart %}
-                Event Name : {{order_items.event}} <br>
-                Position : {{order_items.position_type}} <br>
+            <hr>
+            Event Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {{order_items.event}} <br>
+            Position &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {{order_items.position_type}} <br>
             {% endfor %}
         </p>
     </div>
     <div class="col-md">
         <script src="https://js.stripe.com/v3/"></script>
-        <div class="row">
-            <div class="col mx-auto">
-                <form action="{% url 'EventsApp:charge' %}" method="post">
+        <div class="row justify-content-center">
+            <div class="col-8 v-center">
+                <form class="align-self-center" action="{% url 'EventsApp:charge' %}" method="post" style="margin-top:2rem;">
                     {% csrf_token %}
                     <script
                             src="https://checkout.stripe.com/checkout.js"
@@ -31,14 +33,22 @@
                             data-locale="auto"
                     ></script>
                 </form>
-                    <hr>
+                <hr style="width: 100% !important;">
                 <a href="{% url 'EventsApp:pay_at_venue' %}" class="btn btn-primary"
-                   style="width: max-content;">Pay At Venue</a>
+                   style="width: max-content;"> Pay At Venue </a>
             </div>
         </div>
 
     </div>
 </div>
+
+<style>
+    .v-center {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+</style>
 
 
 {% endblock %}
