@@ -62,15 +62,16 @@
                                    value="{% if individual.phone %} {{individual.phone}} {% endif %}"/>
                         </div>
                         <div class="form-row p-2">
-                            <label>I am interest in participating in ?</label>
+                            <label>* I am interest in participating in ?</label>
+                            <br>
                             <div>
-                            <label class="label-inline" for="Male"><input type="checkbox" id="Male" name="interest_gender" value="Male"
-                            {% if "Male" in individual.participation_interest %} checked {% endif %}>Male Only</input></label>
-                            <label class="label-inline" for="Female"><input type="checkbox" id="Female" name="interest_gender" value="Female"
-                            {% if "Female" in individual.participation_interest %} checked {% endif %}>Female Only</input></label>
-                            <label class="label-inline" for="Coed"><input type="checkbox" id="Coed" name="interest_gender" value="Coed"
-                            {% if "Coed" in individual.participation_interest %} checked {% endif %}>Coed</input></label>
-                            </div>
+                                <label class="label-inline" for="Male"><input type="checkbox" id="Male" name="interest_gender" value="Male"
+                                {% if "Male" in individual.participation_interest %} checked {% endif %}>Male Only</input></label>
+                                <label class="label-inline" for="Female"><input type="checkbox" id="Female" name="interest_gender" value="Female"
+                                {% if "Female" in individual.participation_interest %} checked {% endif %}>Female Only</input></label>
+                                <label class="label-inline" for="Coed"><input type="checkbox" id="Coed" name="interest_gender" value="Coed"
+                                {% if "Coed" in individual.participation_interest %} checked {% endif %}>Coed</input></label>
+                                </div>
                         </div>
                         <div class="form-row p-2">
                             <label>Are you a Student?</label>

@@ -54,28 +54,8 @@
         </div>
     </div>
 </div>
-
-<script>
-    $(document).ready(function () {
-        let myWidth = window.innerWidth;
-        let myHeight = window.innerHeight;
-            // document.getElementById("event-table").classList.add('card-event-table')
-            // console.log(document.getElementById("event-table").style);
-            $(window).resize(function () {
-                var nw = $(window).width();
-                let myHeight = window.innerHeight;
-                myWidth = nw;
-                console.log(document.getElementById("event-table").style.width)
-                if(myWidth < 768){
-                document.getElementById("event-table").style.setProperty('width', myWidth + "px", 'important');
-                } else {
-                    document.getElementById("event-table").style.setProperty('width', "100&", 'important');
-                }
-            });
-    });
-</script>
-
 <style>
+
 td .id {
   position: relative;
   color: #000;
