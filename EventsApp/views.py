@@ -1443,12 +1443,12 @@ def pay_at_venue(request):
 
     order.save()
 
-    order_subject = "Order Confirmed: " + f'#{request.user}{orderId}'
-    order_message = "Your seat has been reserved. Payment would be made on the day of the event. " + \
-                    "Customer Name: " + request.user.first_name + " " + request.user.last_name + "\n" + \
-                    "Customer Email: " + request.user.email + "\n"
-
-    util.email(order_subject, order_message, [request.user.email])
+    # order_subject = "Order Confirmed: " + f'#{request.user}{orderId}'
+    # order_message = "Your seat has been reserved. Payment would be made on the day of the event. " + \
+    #                 "Customer Name: " + request.user.first_name + " " + request.user.last_name + "\n" + \
+    #                 "Customer Email: " + request.user.email + "\n"
+    #
+    # util.email(order_subject, order_message, [request.user.email])
 
     return render(request, "EventsApp/confirmation.html", context)
 

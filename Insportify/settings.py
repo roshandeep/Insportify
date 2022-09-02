@@ -82,13 +82,14 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'insportifyinfo@gmail.com'
-EMAIL_HOST_PASSWORD = 'ywfveonmuyxadyao'
+EMAIL_HOST_PASSWORD = 'rqhjanxgepfilmrb'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 ## Dev DB Configurations
 
+<<<<<<< HEAD
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -102,16 +103,31 @@ DATABASES = {
 
 ## Prod DB Configurations
 
+=======
+>>>>>>> upstream/master
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'postgres',
+#         'NAME': 'insportify',
 #         'USER': 'postgres',
-#         'PASSWORD': 'Admin2022',
-#         'HOST': 'insportify3.cz5lufvg1olp.ca-central-1.rds.amazonaws.com',
+#         'PASSWORD': 'admin',
+#         'HOST': 'localhost',
 #         'PORT': '5432',
 #     }
 # }
+
+## Prod DB Configurations
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'PASSWORD': 'Admin2022',
+        'HOST': 'insportify3.cz5lufvg1olp.ca-central-1.rds.amazonaws.com',
+        'PORT': '5432',
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
