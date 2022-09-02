@@ -12,6 +12,7 @@
             Total Cost : {{orderAmount}} <br>
             {% for order_items in cart %}
                 Event Name : {{order_items.event}} <br>
+                Event Location : {{order_items.event.city}}, {{order_items.event.province}} <br>
                 Position : {{order_items.position_type}} <br>
             {% endfor %}
         </p>
