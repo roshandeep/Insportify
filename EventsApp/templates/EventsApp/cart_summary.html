@@ -59,6 +59,9 @@
                 </tbody>
             </table>
         </div>
+        <div class="mx-auto text-center py-2">
+            <a href="{% url 'EventsApp:home' %}" class="btn btn-primary">Continue Shopping</a>
+        </div>
         <form action="{% url 'EventsApp:cart_summary' %}" method="post">
             {% csrf_token %}
             <div class="mx-auto text-center">
