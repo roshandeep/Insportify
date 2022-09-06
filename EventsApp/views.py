@@ -346,10 +346,10 @@ def save_event_position_info(request, event):
             position_name = request.POST['position_name' + str(i)].strip()
             position_type = request.POST['type_of_skill' + str(i)].strip()
             no_of_position = request.POST['no_of_position' + str(i)].strip()
-            position_cost = request.POST['position_cost' + str(i)].strip()
+            position_cost = request.POST['position_cost' + str(i)]
             min_age = request.POST['min_age' + str(i)].strip()
             max_age = request.POST['max_age' + str(i)].strip() if request.POST['max_age' + str(i)] else "999"
-            print(request.POST['min_age' + str(i)].strip(), request.POST['max_age' + str(i)].strip())
+            # print(request.POST['min_age' + str(i)].strip(), request.POST['max_age' + str(i)].strip())
             obj = Events_PositionInfo(event=event, position_name=position_name, max_age=max_age, min_age=min_age,
                                       no_of_position=no_of_position,
                                       position_cost=position_cost, position_number=i, position_type=position_type)
