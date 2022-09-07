@@ -4,11 +4,11 @@
 {% load static %}
 {% block content %}
 
-<div id="event-page" class="col-9 mx-auto">
+<div id="event-page" class="col-lg-9 col-md-12 mx-auto">
 <form id="form-events" class="row p-3" action="{% url 'EventsApp:home' %}" method="get">
     <!-- <div id="events-wrap" class="row"> -->
-    <div class="col" id="events_types_select" style="flex-grow: 1;">
-        <p style="margin-bottom:0">Event Type</p>
+    <div class="col mb-2" id="events_types_select" style="flex-grow: 1;">
+        <!-- <p style="margin-bottom:0">Event Type</p> -->
         <select id="events_types" class="form-select select2" multiple name="events_types" style="height:26px; flex-grow: 1;">
             <option value="Camp">Camp</option>
             <option value="Charity">Charity</option>
@@ -21,8 +21,8 @@
             <option value="Tournament">Tournament</option>
         </select>
     </div>
-    <div class="col">
-        <p style="margin-bottom:0">Sport</p>
+    <div class="col mb-2">
+        <!-- <p style="margin-bottom:0">Sport</p> -->
         <select class="form-select" name="sports">
             <option value="" selected="selected">Select Sport</option>
             {% for sports in sports_list %}
@@ -30,12 +30,12 @@
             {% endfor %}
         </select>
     </div>
-    <div class="col">
-        <p style="margin-bottom:0">Event Date</p>
+    <div class="col mb-2">
+        <!-- <p style="margin-bottom:0">Event Date</p> -->
         <input class="form-control" onfocus="(this.type='date')" onblur="(this.type='text')" placeholder="Select Date" name="date_range"/>
     </div>
-    <div class="col">
-        <p style="margin-bottom:0">Event Venue</p>
+    <div class="col mb-2">
+        <!-- <p style="margin-bottom:0">Event Venue</p> -->
         <select class="form-select" name="venues">
             <option value="" selected="selected">Select Venue</option>
             {% for venues in venues_list %}
@@ -57,7 +57,7 @@
 
 {% if user.is_authenticated %}
 
-<div id="events-show" class="col-11 mx-auto">
+<div class="col-11 mx-auto">
     <div class="row p-3">
         <h5>Recommended Events For You</h5>
         <hr class="my-2">
@@ -121,7 +121,7 @@
 
 {% else %}
 
-<div id="events-show" class="col-11 mx-auto">
+<div class="col-11 mx-auto">
 <div class="row p-3">
     <h5>All Events</h5>
     <hr class="my-2">
@@ -224,10 +224,6 @@
             document.getElementById("event-page").classList.remove('col-12');
             document.getElementById("event-page").classList.add('col-9');
             }
-            // if(document.getElementById('events-show')){
-            // document.getElementById("events-show").classList.remove('col-11');
-            // document.getElementById("events-show").classList.add('col-11');
-            // }
             if(document.querySelector("#event-cards")){
                 const container = document.querySelector("#event-cards");
                 const corCard = container.querySelectorAll(".event-card");
@@ -250,10 +246,6 @@
             document.getElementById("event-page").classList.remove('col-9');
             document.getElementById("event-page").classList.add('col-12');
             }
-            // if(document.getElementById('events-show')){
-            // document.getElementById("events-show").classList.remove('col-9');
-            // document.getElementById("events-show").classList.add('col-12');
-            // }
             if(document.querySelector("#event-cards")){
                 const container = document.querySelector("#event-cards");
                 const corCard = container.querySelectorAll(".event-card");

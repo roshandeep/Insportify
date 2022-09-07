@@ -76,7 +76,7 @@
                         <div class="form-row p-2">
                             <label>Are you a Student?</label>
                             <br>
-                            <label for="Yes"></label><input type="radio" id="Yes" name="is_student" value="Yes"
+                            <label for="Yes"><input type="radio" id="Yes" name="is_student" value="Yes"
                                    {% if individual.is_student == "Yes" %} checked {% endif %}>Yes</input></label>
                             <label for="No"><input type="radio" id="No" name="is_student" value="No"
                                    {% if individual.is_student == "No" %} checked {% endif %}> No</input></label>
@@ -822,7 +822,7 @@
 
     // Make Placeholders title when user types something
 function addInputLabel(evt) {
-    if (document.getElementsByName(evt.currentTarget.name)[0] && document.getElementsByName(evt.currentTarget.name)[0].type !== 'button'){
+    if (document.getElementsByName(evt.currentTarget.name)[0] && document.getElementsByName(evt.currentTarget.name)[0].type !== 'button' && document.getElementsByName(evt.currentTarget.name)[0].type !== 'text'){
         // console.log(document.getElementsByName(evt.currentTarget.name)[0]);
         var myLabel = document.createElement('div');
         myLabel.textContent = evt.currentTarget.placeholder;

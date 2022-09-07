@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<div class="container">
+<div>
     <div class="row pt-2">
         <div class="col">
             <h3>Event Dashboard</h3>
@@ -37,8 +37,8 @@
             {% endif %}
         </div>
     </div>
-    <div class="row pt-2">
-        <form class="col" method="post">
+    <div>
+        <form id="event-details" method="post" style="overflow-x: auto;">
             {% csrf_token %}
             <table class="table table-striped">
                 <thead>
@@ -83,12 +83,13 @@
                 {% endfor %}
                 </tbody>
             </table>
-            <div>
-                <button type="submit" class="btn btn-primary" id="submit">
-                    Add to Cart
-                </button>
-            </div>
         </form>
+        <p class="mx-auto text-center fw-light horizontal-scroll-text">Please use horizontal scrolling for more details.</p>
+    </div>
+    <div>
+        <button type="submit" class="btn btn-primary" id="submit">
+            Add to Cart
+        </button>
     </div>
 </div>
 
@@ -124,7 +125,60 @@ $("input[type=number]").change(function(){
     }
 });
 
+function callWidthChange(myWidth, myHeight) {
+        console.log(myWidth)
+        if (myWidth >= 768) {
+            if(document.getElementById("event-details")){
+                myWidth = myWidth-40;
+                document.getElementById("event-details").style.width = myWidth+'px';
+            }
+        } else {
+            if(document.getElementById("event-details")){
+                myWidth = myWidth-40;
+                document.getElementById("event-details").style.width = myWidth+'px';
+            }
+        }
+    }
+
+    $(document).ready(function () {
+        let myWidth = window.innerWidth;
+        let myHeight = window.innerHeight;
+        callWidthChange(myWidth, myHeight);   
+        $(window).resize(function () {
+        var nw = $(window).width();
+        let myHeight = window.innerHeight;
+        myWidth = nw;
+        callWidthChange(myWidth, myHeight);   
+    });
+    });
+
 
 </script>
+
+<style>
+    table {
+  border-collapse: collapse !important;
+  width: 100% !important;
+}
+
+th, td {
+  text-align: left !important;
+  padding: 8px !important;
+}   
+
+@media only screen and (max-width: 768px) {
+  table {width: 768px !important;}
+  .horizontal-scroll-text{
+    display: block;
+  }
+}
+
+@media only screen and (min-width: 769px) {
+  table {width: 100% !important;}
+  .horizontal-scroll-text{
+    display: none;
+  }
+}
+</style>
 
 {% endblock %}
