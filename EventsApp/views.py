@@ -346,10 +346,10 @@ def save_event_position_info(request, event):
             position_name = request.POST['position_name' + str(i)].strip()
             position_type = request.POST['type_of_skill' + str(i)].strip()
             no_of_position = request.POST['no_of_position' + str(i)].strip()
-            position_cost = request.POST['position_cost' + str(i)].strip()
+            position_cost = round(request.POST['position_cost' + str(i)], 2)
             min_age = request.POST['min_age' + str(i)].strip()
             max_age = request.POST['max_age' + str(i)].strip() if request.POST['max_age' + str(i)] else "999"
-            print(request.POST['min_age' + str(i)].strip(), request.POST['max_age' + str(i)].strip())
+            # print(request.POST['min_age' + str(i)].strip(), request.POST['max_age' + str(i)].strip())
             obj = Events_PositionInfo(event=event, position_name=position_name, max_age=max_age, min_age=min_age,
                                       no_of_position=no_of_position,
                                       position_cost=position_cost, position_number=i, position_type=position_type)
@@ -1220,6 +1220,7 @@ def get_events_by_date(events, selected_date):
 def event_details(request, event_id):
     context = {}
     event = master_table.objects.get(pk=event_id)
+    user = request.user
     event_postions = Events_PositionInfo.objects.filter(event=event_id)
     context['event'] = event
     context['event_postions'] = event_postions
@@ -1237,6 +1238,12 @@ def event_details(request, event_id):
                 needed_pos = response['needed_' + idx]
                 no_of_pos = response['noOfPos_' + idx]
                 pos_cost = response['cost_' + idx]
+                ## Fetch previous unpurchased orderitems to set checkout timer to current
+                remove_expired_cart_items(request)
+                current_cart = OrderItems.objects.filter(user=user, purchased=False)
+                for current_item in current_cart:
+                    current_item.checkout_timer = datetime.now(timezone.utc)
+                    current_item.save()
                 ## Add to cart
                 cart = OrderItems()
                 cart.event = master_table.objects.get(pk=event_id)
@@ -1247,7 +1254,7 @@ def event_details(request, event_id):
                 cart.skill = skill
                 cart.no_of_position = needed_pos
                 cart.position_cost = pos_cost
-                cart.total_cost = int(pos_cost) * int(needed_pos)
+                cart.total_cost = float(pos_cost) * int(needed_pos)
                 cart.checkout_timer = datetime.now(timezone.utc)
                 cart.save()
 

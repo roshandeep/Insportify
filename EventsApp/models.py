@@ -251,7 +251,7 @@ class Events_PositionInfo(models.Model):
     max_age = models.IntegerField(blank=True, null=True)
     min_age = models.IntegerField(blank=True, null=True)
     no_of_position = models.IntegerField(blank=True, null=True)
-    position_cost = models.IntegerField(blank=True, null=True)
+    position_cost = models.FloatField(blank=True, null=True)
 
     def __str__(self):
         return self.event.event_title + " Position_" + str(self.position_number)
@@ -295,7 +295,7 @@ class OrderItems(models.Model):
     position_type = models.CharField(max_length=100, blank=True, null=True)
     skill = models.CharField(max_length=100, blank=True, null=True)
     no_of_position = models.IntegerField(blank=True, null=True)
-    position_cost = models.IntegerField(blank=True, null=True)
+    position_cost = models.FloatField(blank=True, null=True)
     total_cost = models.IntegerField(blank=True, null=True)
     purchased = models.BooleanField(blank=True, null=True, default=False)
     checkout_timer = models.DateTimeField(blank=True, null=True)

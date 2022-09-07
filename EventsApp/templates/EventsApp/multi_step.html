@@ -433,7 +433,7 @@
 </style>
 
 <script>
-    
+
 function callWidthChange(myWidth, myHeight) {
         if (myWidth >= 768) {
             if(document.getElementById("create-event-card")){
@@ -557,15 +557,15 @@ $("#sport_type").change(function () {
                             skills_dropdown += '</select>';
                         }
                     });
-                    html2 += `<div class="row g-2"><label class="col-md-2 align-middle my-4"  style="font-weight: bold;">${data.position_type}</label>`
-                    html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2" name="no_of_position' + index + '" placeholder = "#" min=0></div>'
-                    html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2" name ="position_cost' + index + '" placeholder="$"></div>'
-                    html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2" name="min_age' + index + '" min=0></div>'
-                    html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2" name="max_age' + index + '" min=0 ></div>'
-                    html2 += `<div class="col-md-2 py-2">${skills_dropdown}</div>`
-                    html2 += `<div style="display:none"><input value="${data.position_type}" name="position_name${index}" value=></div>`
-                    html2 += '</div>'
-                    html_data += `<option value="${data.position_type}">${data.position_type}</option>`
+                    html2 += `<div class="row g-2"><label class="col-md-2 align-middle my-4"  style="font-weight: bold;">${data.position_type}</label>`;
+                    html2 += `<div class="col-md-2"><input type="number" class="form-control mt-2" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" name="no_of_position' + index + '" placeholder = "#" min=0></div>`;
+                    html2 += `<div class="col-md-2"><input type="number" class="form-control mt-2" name ="position_cost' + index + '" placeholder="$" step="any"></div>`;
+                    html2 += `<div class="col-md-2"><input type="number" class="form-control mt-2" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" name="min_age' + index + '" min=0></div>`;
+                    html2 += `<div class="col-md-2"><input type="number" class="form-control mt-2" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" name="max_age' + index + '" min=0 ></div>`;
+                    html2 += `<div class="col-md-2 py-2">${skills_dropdown}</div>`;
+                    html2 += `<div style="display:none"><input value="${data.position_type}" name="position_name${index}" value=></div>`;
+                    html2 += `</div>`;
+                    html_data += `<option value="${data.position_type}">${data.position_type}</option>`;
                     index++;
                 });
                 html2 += '</div>'
