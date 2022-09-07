@@ -296,7 +296,7 @@ class OrderItems(models.Model):
     skill = models.CharField(max_length=100, blank=True, null=True)
     no_of_position = models.IntegerField(blank=True, null=True)
     position_cost = models.FloatField(blank=True, null=True)
-    total_cost = models.IntegerField(blank=True, null=True)
+    total_cost = models.FloatField(blank=True, null=True)
     purchased = models.BooleanField(blank=True, null=True, default=False)
     checkout_timer = models.DateTimeField(blank=True, null=True)
 
@@ -311,7 +311,7 @@ class Order(models.Model):
     customer = models.ForeignKey(User, on_delete=models.CASCADE)
     items = models.ManyToManyField(OrderItems)
     order_date = models.DateTimeField()
-    order_amount = models.IntegerField()
+    order_amount = models.FloatField()
     payment = models.BooleanField(blank=True, null=True)
     payment_method = models.CharField(
         max_length=20,

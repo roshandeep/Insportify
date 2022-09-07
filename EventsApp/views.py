@@ -30,6 +30,7 @@ def multistep(request):
         form = MultiStepForm(request.POST)
         # Validation
         values_valid = ValidateFormValues(request)
+        # print(form.is_valid(), values_valid)
         # Handle Form Post
         if form.is_valid() and values_valid:
             print(list(request.POST.items()))
@@ -111,6 +112,7 @@ def multistep(request):
                 ts = datetime.strptime(request.POST.get('datetimes_start_time'), "%H:%M").strftime("%I:%M %p")
                 te = datetime.strptime(request.POST.get('datetimes_end_time'), "%H:%M").strftime("%I:%M %p")
                 obj.datetimes = date + " " + ts + " - " + date + " " + te
+
             obj.save()
             save_event_position_info(request, obj)
 
@@ -346,10 +348,10 @@ def save_event_position_info(request, event):
             position_name = request.POST['position_name' + str(i)].strip()
             position_type = request.POST['type_of_skill' + str(i)].strip()
             no_of_position = request.POST['no_of_position' + str(i)].strip()
-            position_cost = round(request.POST['position_cost' + str(i)], 2)
+            position_cost = round(float(request.POST['position_cost' + str(i)]), 2)
             min_age = request.POST['min_age' + str(i)].strip()
             max_age = request.POST['max_age' + str(i)].strip() if request.POST['max_age' + str(i)] else "999"
-            # print(request.POST['min_age' + str(i)].strip(), request.POST['max_age' + str(i)].strip())
+            print(position_name, position_type, position_cost, min_age, max_age)
             obj = Events_PositionInfo(event=event, position_name=position_name, max_age=max_age, min_age=min_age,
                                       no_of_position=no_of_position,
                                       position_cost=position_cost, position_number=i, position_type=position_type)
@@ -1345,10 +1347,12 @@ def cart_summary(request):
         if order_obj.exists():
             order_obj = Order.objects.get(customer=request.user, payment=False)
             order_obj.items.clear()
-            order_obj.order_amount = total
             order_obj.order_date = timezone.now()
             for order_items in cart:
                 order_obj.items.add(order_items)
+                total = total + order_items.total_cost
+
+            order_obj.order_amount = total
         else:
             order = Order()
             order.customer = User.objects.get(email=request.user.email)
