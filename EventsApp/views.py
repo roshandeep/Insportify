@@ -346,7 +346,7 @@ def save_event_position_info(request, event):
             position_name = request.POST['position_name' + str(i)].strip()
             position_type = request.POST['type_of_skill' + str(i)].strip()
             no_of_position = request.POST['no_of_position' + str(i)].strip()
-            position_cost = request.POST['position_cost' + str(i)]
+            position_cost = round(request.POST['position_cost' + str(i)], 2)
             min_age = request.POST['min_age' + str(i)].strip()
             max_age = request.POST['max_age' + str(i)].strip() if request.POST['max_age' + str(i)] else "999"
             # print(request.POST['min_age' + str(i)].strip(), request.POST['max_age' + str(i)].strip())
@@ -1238,6 +1238,7 @@ def event_details(request, event_id):
                 no_of_pos = response['noOfPos_' + idx]
                 pos_cost = response['cost_' + idx]
                 ## Fetch previous unpurchased orderitems to set checkout timer to current
+                remove_expired_cart_items(request)
                 current_cart = OrderItems.objects.filter(user=user, purchased=False)
                 for current_item in current_cart:
                     current_item.checkout_timer = datetime.now(timezone.utc)
