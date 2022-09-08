@@ -51,33 +51,33 @@
 <!--            </li>-->
             {% if request.user.is_organization == True %}
             <li class="nav-item">
-                <a class="nav-link link-secondary text-white mx-auto mb-0" href="{% url 'EventsApp:organization_profile' %}"
+                <a class="mt-3 nav-link link-secondary text-white mx-auto mb-0" href="{% url 'EventsApp:organization_profile' %}"
                    {% if request.path == '/organization/profile/' %} style="display:none" {% endif %}>
                 <p class="mb-0 mx-auto">User Profile</p>
                 </a>
             </li>
             {% else %}
             <li class="nav-item">
-                <a class="nav-link link-secondary text-white" href="{% url 'EventsApp:user_profile' %}"
+                <a class="mt-3 nav-link link-secondary text-white" href="{% url 'EventsApp:user_profile' %}"
                    {% if request.path == '/individual/profile/' %} style="display:none" {% endif %}>
                 <p>User Profile</p>
                 </a>
             </li>
             {% endif %}
             <li class="nav-item">
-                <a class="nav-link link-secondary text-white" href="{% url 'EventsApp:multistep' %}"
+                <a class="mt-3 nav-link link-secondary text-white" href="{% url 'EventsApp:multistep' %}"
                    {% if request.path == '/create/' %} style="display:none" {% endif %}>
                 <p>Create Events</p>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link link-secondary text-white" href="{% url 'EventsApp:list-events' %}"
+                <a class="mt-3 nav-link link-secondary text-white" href="{% url 'EventsApp:list-events' %}"
                    {% if request.path == '/show/' %} style="display:none" {% endif %}>
                 <p>My Events</p>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link link-secondary text-white" href="{% url 'EventsApp:committed_events' %}"
+                <a class="mt-3 nav-link link-secondary text-white" href="{% url 'EventsApp:committed_events' %}"
                    {% if request.path == '/committed/' %} style="display:none" {% endif %}>
                 <p>Committed Events</p>
                 </a>
@@ -95,7 +95,7 @@
 <!--                </a>-->
 <!--            </li>-->
             <li class="nav-item">
-                <a class="nav-link link-secondary text-white" href="{% url 'EventsApp:cart_summary' %}"
+                <a class="mt-3 nav-link link-secondary text-white" href="{% url 'EventsApp:cart_summary' %}"
                    {% if request.path == '/cart_summary/' %} style="display:none" {% endif %}>
                 <p>Cart</p>
                 </a>
@@ -106,33 +106,35 @@
             {% if request.user.is_authenticated %}
             <li class="nav-item">
                 {% if request.user.is_organization == True %}
-                <a class="btn btn-dark label-inline" href="{% url 'EventsApp:organization_profile' %}">{{request.user.first_name}}
+                <a class="btn btn-dark rounded-pill label-inline" href="{% url 'EventsApp:organization_profile' %}">{{request.user.first_name}}
                     <div class="vr"></div>
                     <i class="fas fa-building"></i></a>
                 {% else %}
                 {% if request.user.is_mvp == True %}
-                <a class="btn btn-warning label-inline" href="{% url 'EventsApp:user_profile' %}" >{{request.user.first_name}}
+                <a class="btn btn-warning rounded-pill label-inline" href="{% url 'EventsApp:user_profile' %}" >{{request.user.first_name}}
                     <div class="vr"></div>
                     <i class='fas fa-user-secret'></i></a>
                 {% else %}
-                <a class="btn btn-primary label-inline" href="{% url 'EventsApp:user_profile' %}">{{request.user.first_name}}
+                <a class="btn btn-primary rounded-pill label-inline" href="{% url 'EventsApp:user_profile' %}">{{request.user.first_name}}
                     <div class="vr"></div>
                     <i class='fas fa-user-alt'></i></a>
                 {% endif %}
                 {% endif %}
             </li>
+        </ul>
+            <ul class="navbar-nav mb-lg-0">
             <li class="nav-item">
-                <a class="nav-link link-primary" href="{% url 'UserRegister:logout' %}"><p>Logout</p></a>
+                <a class="mt-3 nav-link link-primary" href="{% url 'UserRegister:logout' %}"><p>Logout</p></a>
             </li>
             {% else %}
             {% if request.path != '/users/register/' and request.path != '/users/organization_register/' and request.path != '/users/individual_register/' and request.path != '/users/login/' %}
 
             <li class="nav-item">
-                <a class="nav-link link-secondary" href="{% url 'UserRegister:register' %}">
+                <a class="mt-3 nav-link link-secondary" href="{% url 'UserRegister:register' %}">
                     Register</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link link-secondary" href="{% url 'UserRegister:login' %}">Login</a>
+                <a class="mt-3 nav-link link-secondary" href="{% url 'UserRegister:login' %}">Login</a>
             </li>
             {% endif %}
             {% endif %}

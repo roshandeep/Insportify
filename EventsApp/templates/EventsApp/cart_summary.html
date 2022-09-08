@@ -3,17 +3,16 @@
 {% load widget_tweaks %}
 
 {% block content %}
-
-<div class="container">
+<div>
     {% if cart %}
-    <div class="row pt-2">
-        <div class="col">
+    <div class="col">
+        <div class="col-12">
             <div>
                 <h3 class="mx-auto text-center fw-light">Cart</h3>
                 <hr>
             </div>
             <div id="item_status">
-
+        
             </div>
             <div>
                 {% if messages %}
@@ -26,7 +25,8 @@
                 {% endif %}
             </div>
         </div>
-        <div id="cart_items_table">
+    </div>
+        <div id="cart_items_table" style="overflow-x: auto;">
             <table class="table table-striped">
                 <thead>
                 <th>Event</th>
@@ -59,6 +59,8 @@
                 </tbody>
             </table>
         </div>
+    <div class="col">
+        <div class="col-12">
         <div class="mx-auto text-center py-2">
             <a href="{% url 'EventsApp:home' %}" class="btn btn-primary">Continue Shopping</a>
         </div>
@@ -149,8 +151,55 @@ function fetchOrderItems(){
     });
 }
 
+function callWidthChange(myWidth, myHeight) {
+        console.log(myWidth)
+        if (myWidth >= 768) {
+            if(document.getElementById("cart_items_table")){
+                myWidth = myWidth-40;
+                document.getElementById("cart_items_table").style.width = myWidth+'px';
+            }
+        } else {
+            if(document.getElementById("cart_items_table")){
+                myWidth = myWidth-40;
+                document.getElementById("cart_items_table").style.width = myWidth+'px';
+            }
+        }
+    }
+
+    $(document).ready(function () {
+        let myWidth = window.innerWidth;
+        let myHeight = window.innerHeight;
+        callWidthChange(myWidth, myHeight);   
+        $(window).resize(function () {
+        var nw = $(window).width();
+        let myHeight = window.innerHeight;
+        myWidth = nw;
+        callWidthChange(myWidth, myHeight);   
+    });
+    });
+
 
 </script>
+
+<style>
+    table {
+  border-collapse: collapse !important;
+  width: 100% !important;
+}
+
+th, td {
+  text-align: left !important;
+  padding: 8px !important;
+}   
+
+@media only screen and (max-width: 768px) {
+  table {width: 768px !important;}
+}
+
+@media only screen and (min-width: 769px) {
+  table {width: 100% !important;}
+}
+</style>
 
 {% endblock %}
 

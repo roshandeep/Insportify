@@ -10,8 +10,10 @@
             <h3 class="mx-auto text-center fw-light">Committed Events</h3>
             <hr>
         </div>
-        <div class="card">
-            <div class="card-body">
+        </div>
+      </div>
+        <div>
+            <div id="event-list" style="overflow-x:auto;">
                 <table class="table table-striped">
                     <thead>
                     <th>EVENT</th>
@@ -35,10 +37,64 @@
                     </tbody>
                 </table>
             </div>
+            <p class="mx-auto text-center fw-light horizontal-scroll-text">Please use horizontal scrolling for more details.</p>
         </div>
-    </div>
-</div>
+
+
+        <script>
+    
+          function callWidthChange(myWidth, myHeight) {
+              if (myWidth >= 768) {
+                  if(document.getElementById("event-list")){
+                      myWidth = myWidth-40;
+                      document.getElementById("event-list").style.width = myWidth+'px';
+                  }
+              } else {
+                  if(document.getElementById("event-list")){
+                      myWidth = myWidth-40;
+                      document.getElementById("event-list").style.width = myWidth+'px';
+                  }
+              }
+          }
+      
+          $(document).ready(function () {
+              let myWidth = window.innerWidth;
+              let myHeight = window.innerHeight;
+              callWidthChange(myWidth, myHeight);   
+              $(window).resize(function () {
+              var nw = $(window).width();
+              let myHeight = window.innerHeight;
+              myWidth = nw;
+              callWidthChange(myWidth, myHeight);   
+          });
+          });
+      </script>
+
 <style>
+
+table {
+  border-collapse: collapse !important;
+  width: 100% !important;
+}
+
+th, td {
+  text-align: left !important;
+  padding: 8px !important;
+}   
+
+@media only screen and (max-width: 768px) {
+  table {width: 768px !important;}
+  .horizontal-scroll-text{
+    display: block;
+  }
+}
+
+@media only screen and (min-width: 769px) {
+  table {width: 100% !important;}
+  .horizontal-scroll-text{
+    display: none;
+  }
+}
 
 td .id {
   position: relative;

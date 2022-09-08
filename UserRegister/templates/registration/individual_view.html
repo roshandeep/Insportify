@@ -64,20 +64,19 @@
                         <div class="form-row p-2">
                             <label>* I am interest in participating in ?</label>
                             <br>
-                            <label for="Male"></label><input type="checkbox" id="Male" name="interest_gender" value="Male"
-                            {% if "Male" in individual.participation_interest %} checked {% endif %}> Male
-                     Only</input></label>
-                     <label for="Female"></label><input type="checkbox" id="Female" name="interest_gender" value="Female"
-                            {% if "Female" in individual.participation_interest %} checked {% endif %}> Female
-                     Only</input></label>
-                     <label for="Coed"></label><input type="checkbox" id="Coed" name="interest_gender" value="Coed"
-                            {% if "Coed" in individual.participation_interest %} checked {% endif %}>
-                     Coed </input></label>
+                            <div>
+                                <label class="label-inline" for="Male"><input type="checkbox" id="Male" name="interest_gender" value="Male"
+                                {% if "Male" in individual.participation_interest %} checked {% endif %}>Male Only</input></label>
+                                <label class="label-inline" for="Female"><input type="checkbox" id="Female" name="interest_gender" value="Female"
+                                {% if "Female" in individual.participation_interest %} checked {% endif %}>Female Only</input></label>
+                                <label class="label-inline" for="Coed"><input type="checkbox" id="Coed" name="interest_gender" value="Coed"
+                                {% if "Coed" in individual.participation_interest %} checked {% endif %}>Coed</input></label>
+                                </div>
                         </div>
                         <div class="form-row p-2">
                             <label>Are you a Student?</label>
                             <br>
-                            <label for="Yes"></label><input type="radio" id="Yes" name="is_student" value="Yes"
+                            <label for="Yes"><input type="radio" id="Yes" name="is_student" value="Yes"
                                    {% if individual.is_student == "Yes" %} checked {% endif %}>Yes</input></label>
                             <label for="No"><input type="radio" id="No" name="is_student" value="No"
                                    {% if individual.is_student == "No" %} checked {% endif %}> No</input></label>
@@ -100,13 +99,14 @@
                     <h4 class="card-header text-white text-center"
                         style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">
                         Hey {{ user.first_name }} list your locations where you can participate in </h4>
-                        <div class="d-flex justify-content-between p-2">
-                            <input type="button" name="previous"
-                                   class="previous action-button-previous btn btn-primary"
-                                   value="Previous" id="previous-tab-2" style="width: 90px;"/>
-                            <input type="button" name="next" class="next action-button btn btn-primary"
-                                   value="Next" id="next-tab-2" style="width: 90px;"/>
-                        </div>
+                    <label></label>
+                    <div class="d-flex justify-content-between p-2">
+                        <input type="button" name="previous"
+                               class="previous action-button-previous btn btn-primary"
+                               value="Previous" id="previous-tab-2" style="width: 90px;"/>
+                        <input type="button" name="next" class="next action-button btn btn-primary"
+                               value="Next" id="next-tab-2" style="width: 90px;"/>
+                    </div>
                     <div class="card-body">
                         <div id="location_status">
 
@@ -378,7 +378,9 @@
     background: #ff6f3d
 }
 
-
+.label-inline {
+  display: inline-block;
+}
 
 
 
@@ -821,7 +823,7 @@ $(function () {
 
 // Make Placeholders title when user types something
 function addInputLabel(evt) {
-    if (document.getElementsByName(evt.currentTarget.name)[0] && document.getElementsByName(evt.currentTarget.name)[0].type !== 'button'){
+    if (document.getElementsByName(evt.currentTarget.name)[0] && document.getElementsByName(evt.currentTarget.name)[0].type !== 'button' && document.getElementsByName(evt.currentTarget.name)[0].type !== 'text'){
         // console.log(document.getElementsByName(evt.currentTarget.name)[0]);
         var myLabel = document.createElement('div');
         myLabel.textContent = evt.currentTarget.placeholder;
@@ -838,13 +840,6 @@ function addInputLabel(evt) {
             }
         }
     }
-}
-
-var inputs = document.getElementsByTagName('input');
-for (let i of inputs){
-    i.addEventListener('input', addInputLabel, false);
-    let event = new Event("input");
-    i.dispatchEvent(event);
 }
 
 $(document).ready(function() {

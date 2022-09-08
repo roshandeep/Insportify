@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-5 mx-auto">
+    <div class="col-xl-4 col-lg-5 col-md-8 col-sm-11 mx-auto">
         <div class="card shadow">
             <h3 class="card-header text-center text-white"
                 style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">Organization
@@ -39,5 +39,32 @@
     </div>
 </div>
 
+<script>
+        function callWidthChange(myWidth, myHeight) {
+        if (myWidth >= 768) {
+            if(document.getElementById("card-resize")){
+                document.getElementById("card-resize").classList.remove("col-11");
+                document.getElementById("card-resize").classList.add("col-5");
+            }
+        } else {
+            if(document.getElementById("card-resize")){
+                document.getElementById("card-resize").classList.remove("col-5");
+                document.getElementById("card-resize").classList.add("col-11");
+            }
+        }
+    }
+    
+    $(document).ready(function () {
+        let myWidth = window.innerWidth;
+        let myHeight = window.innerHeight;
+        callWidthChange(myWidth, myHeight);   
+        $(window).resize(function () {
+        var nw = $(window).width();
+        let myHeight = window.innerHeight;
+        myWidth = nw;
+        callWidthChange(myWidth, myHeight);   
+    });
+    });
+</script>
 
 {% endblock %}
