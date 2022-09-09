@@ -73,7 +73,7 @@
     }
 
     $(document).ready(function () {
-        let myWidth = window.innerWidth;
+        let myWidth = $(window).width();
         let myHeight = window.innerHeight;
         callWidthChange(myWidth, myHeight);   
         $(window).resize(function () {
@@ -103,7 +103,7 @@ th, td {
   }
 }
 
-@media only screen and (min-width: 769px) {
+@media only screen and (min-width: 770px) {
   table {width: 100% !important;}
   .horizontal-scroll-text{
     display: none;

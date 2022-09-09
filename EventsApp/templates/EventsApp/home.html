@@ -9,7 +9,7 @@
     <!-- <div id="events-wrap" class="row"> -->
     <div class="col mb-2" id="events_types_select" style="flex-grow: 1;">
         <!-- <p style="margin-bottom:0">Event Type</p> -->
-        <select id="events_types" class="form-select select2" multiple name="events_types" style="height:26px; flex-grow: 1;">
+        <select id="events_types" class="form-select select2 form-select-sm" multiple name="events_types" style="height:26px; flex-grow: 1;">
             <option value="Camp">Camp</option>
             <option value="Charity">Charity</option>
             <option value="Conditioning">Conditioning</option>
@@ -23,7 +23,7 @@
     </div>
     <div class="col mb-2">
         <!-- <p style="margin-bottom:0">Sport</p> -->
-        <select class="form-select" name="sports">
+        <select class="form-select form-select-sm" name="sports">
             <option value="" selected="selected">Select Sport</option>
             {% for sports in sports_list %}
             <option value="{{sports.sports_type_text}}">{{sports.sports_type_text}}</option>
@@ -187,7 +187,7 @@
 
 <script>
     $(document).ready(function () {
-        let myWidth = window.innerWidth;
+        let myWidth = $(window).width();
         let myHeight = window.innerHeight;
         callFormSizeChange(myWidth, myHeight);   
         $(window).resize(function () {
