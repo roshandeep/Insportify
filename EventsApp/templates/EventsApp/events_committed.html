@@ -19,6 +19,8 @@
                     <th>EVENT</th>
                     <th>DESCRIPTION</th>
                     <th>DATETIME</th>
+                    <th>SPORT</th>
+                    <th>EVENT TYPE</th>
                     <th>VENUE</th>
                     </thead>
                     <tbody>
@@ -31,6 +33,8 @@
                         </td>
                         <td>{{event.description}}</td>
                         <td>{{event.datetimes }}</td>
+                        <td>{{event.sport_type }}</td>
+                        <td>{{event.event_type }}</td>
                         <td>{{event.venue}}</td>
                     </tr>
                     {% endfor %}
