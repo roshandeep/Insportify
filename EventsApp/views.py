@@ -983,7 +983,6 @@ def get_recommended_events(request):
     user = User.objects.get(email=request.user.email)
     user_avaiability = Availability.objects.filter(user=user)
     events = master_table.objects.all()
-    week_days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
     locations_saved = Extra_Loctaions.objects.filter(user=user)
     loc_list = [item.city.lower() for item in locations_saved]
     recommended_events = set()
@@ -1145,9 +1144,10 @@ def extract_event_datetime(event):
         event_date = event_start_datetime.date()
         event_start_time = event_start_datetime.time()
         event_end_time = event_end_datetime.time()
-
+        print(event.event_title, event_date, event_start_time, event_end_time)
         return event_date, event_start_time, event_end_time
 
+    print(event.event_title, event_date, event_start_time, event_end_time)
     return event_date, event_start_time, event_end_time
 
 
