@@ -1381,7 +1381,7 @@ def charge(request):
     context["order"] = order
     context["cart"] = cart
     context['orderAmount'] = order.order_amount
-    totalCents = order.order_amount * 100
+    totalCents = int(order.order_amount * 100)
     context['totalCents'] = totalCents
     print(cart)
     if request.method == 'POST':

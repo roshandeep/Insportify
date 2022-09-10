@@ -76,21 +76,24 @@
                                value="{{pos.no_of_position}}" readonly="readonly" style="width: 80px;display: none;"/>
                     </td>
                     <td>
-                        <input type="text" class="form-control" name="posId_{{pos.pk}}" style="width: 80px;display: none;"
+                        <input type="text" class="form-control" name="posId_{{pos.pk}}"
+                               style="width: 80px;display: none;"
                                value="{{pos.pk}}" readonly="readonly"/>
                     </td>
                 </tr>
                 {% endfor %}
                 </tbody>
             </table>
+            <div>
+                <button type="submit" class="btn btn-primary" id="submit">
+                    Add to Cart
+                </button>
+            </div>
         </form>
-        <p class="mx-auto text-center fw-light horizontal-scroll-text">Please use horizontal scrolling for more details.</p>
+        <p class="mx-auto text-center fw-light horizontal-scroll-text">Please use horizontal scrolling for more
+            details.</p>
     </div>
-    <div>
-        <button type="submit" class="btn btn-primary" id="submit">
-            Add to Cart
-        </button>
-    </div>
+
 </div>
 
 <script>
@@ -153,6 +156,7 @@ function callWidthChange(myWidth, myHeight) {
     });
 
 
+
 </script>
 
 <style>
@@ -179,6 +183,7 @@ th, td {
     display: none;
   }
 }
+
 </style>
 
 {% endblock %}
