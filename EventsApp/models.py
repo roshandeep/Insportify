@@ -223,16 +223,17 @@ class Availability(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     day_of_week = models.IntegerField(choices=Day.choices)
-    start_time = models.TimeField()
-    end_time = models.TimeField()
+    start_time = models.TimeField(blank=True, null=True)
+    end_time = models.TimeField(blank=True, null=True)
+    all_day = models.BooleanField(default=False)
 
 
 class Organization_Availability(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     day_of_week = models.CharField(max_length=100)
-    start_time = models.TimeField()
-    end_time = models.TimeField()
-
+    start_time = models.TimeField(blank=True, null=True)
+    end_time = models.TimeField(blank=True, null=True)
+    all_day = models.BooleanField(default=False)
 
 class Logo(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

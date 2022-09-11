@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.shortcuts import render,redirect
+from django.shortcuts import render, redirect
 from django.views import generic
 from django.contrib.auth.forms import PasswordResetForm, PasswordChangeForm, AuthenticationForm
 from django.urls import reverse_lazy
@@ -8,7 +8,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.views import PasswordChangeView
 from django.views.generic import DetailView, CreateView
 from django.db.models.query_utils import Q
-from EventsApp.models import User
+from EventsApp.models import User, Availability
 from UserRegister.forms import IndividualSignUpForm, OrganizationSignUpForm, PasswordResetAuthForm, MVPSignUpForm
 from django.contrib.auth import login, logout, authenticate
 from django.utils.encoding import force_bytes, force_text
@@ -55,7 +55,7 @@ class individual_register(CreateView):
         if form.is_valid():
             user = form.save()
             user.is_active = False
-            user.is_mvp = False #self.request.POST.get('is_mvp') == "on"
+            user.is_mvp = False  # self.request.POST.get('is_mvp') == "on"
             user.save()
             email = EmailMessage(
                 'Welcome to Insportify!',
@@ -68,9 +68,48 @@ class individual_register(CreateView):
                 to=[form.cleaned_data.get('email')]
             )
             email.send()
+            self.availability_default(user)
             messages.success(self.request, 'Account created! Please confirm your email address to complete the '
                                            'registration')
         return redirect('/users/individual_register')
+
+    def availability_default(self, user):
+        obj = Availability(user=user, day_of_week="1",
+                           start_time="00:00",
+                           end_time="00:00",
+                           all_day=True)
+        obj.save()
+        obj = Availability(user=user, day_of_week="2",
+                           start_time="00:00",
+                           end_time="00:00",
+                           all_day=True)
+        obj.save()
+        obj = Availability(user=user, day_of_week="3",
+                           start_time="00:00",
+                           end_time="00:00",
+                           all_day=True)
+        obj.save()
+        obj = Availability(user=user, day_of_week="4",
+                           start_time="00:00",
+                           end_time="00:00",
+                           all_day=True)
+        obj.save()
+        obj = Availability(user=user, day_of_week="5",
+                           start_time="00:00",
+                           end_time="00:00",
+                           all_day=True)
+        obj.save()
+        obj = Availability(user=user, day_of_week="6",
+                           start_time="00:00",
+                           end_time="00:00",
+                           all_day=True)
+        obj.save()
+        obj = Availability(user=user, day_of_week="7",
+                           start_time="00:00",
+                           end_time="00:00",
+                           all_day=True)
+        obj.save()
+
 
 class mvp_register(CreateView):
     model = User
@@ -214,6 +253,3 @@ class UserRegisterView(generic.CreateView):
     form_class = SignUpForm
     template_name = 'registration/register.html'
     success_url = reverse_lazy('login')
-
-
-

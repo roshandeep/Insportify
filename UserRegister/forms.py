@@ -12,7 +12,6 @@ User = get_user_model()
 class IndividualSignUpForm(UserCreationForm):
     first_name = forms.CharField(required=True)
     last_name = forms.CharField(required=True)
-    phone = forms.CharField(required=True)
     email = forms.CharField(required=True)
     password1 = forms.CharField(widget=forms.PasswordInput(
         attrs={'class': 'form-control', 'type': 'password', 'name': 'password1'}),
@@ -29,7 +28,6 @@ class IndividualSignUpForm(UserCreationForm):
             'password2',
             "first_name",
             "last_name",
-            "phone",
         )
 
     @transaction.atomic
