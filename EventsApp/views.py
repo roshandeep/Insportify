@@ -993,7 +993,7 @@ def get_recommended_events(request):
         # print(user_avaiability)
         for event in events:
             event_date, event_start_time, event_end_time = extract_event_datetime(event)
-            if len(event_date) is not 0 and len(event_start_time) is not 0 and len(event_end_time) is not 0:
+            if len(event_date) != 0 and len(event_start_time) != 0 and len(event_end_time) != 0:
                 for idx in range(0, len(event_date)):
                     for avail in user_avaiability:
                         if avail.day_of_week == (event_date[idx].weekday() + 1):
