@@ -58,7 +58,7 @@
                                    value="{% if individual.email %} {{individual.email}} {% endif %}"/>
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" class="form-control" name="mobile" placeholder="* Mobile"
+                            <input type="text" class="form-control" name="mobile" placeholder="Mobile"
                                    value="{% if individual.phone %} {{individual.phone}} {% endif %}"/>
                         </div>
                         <div class="form-row p-2">
@@ -240,50 +240,90 @@
                         <div id="availability_status">
 
                         </div>
-                        <div class="form-group row p-2">
-                            <div class="col-md-4">
-                                <label class="my-label">Day of Week</label>
-                                <select class="form-select" name="day_of_week" id="day_of_week">
-                                    <option value="" selected="selected">Select Day Of The Week</option>
-                                    <option value="1">Monday</option>
-                                    <option value="2">Tuesday</option>
-                                    <option value="3">Wednesday</option>
-                                    <option value="4">Thursday</option>
-                                    <option value="5">Friday</option>
-                                    <option value="6">Saturday</option>
-                                    <option value="7">Sunday</option>
-                                </select>
+                        <div id="add_avail_div" style="display:none">
+                            <div class="form-group row p-2">
+                                <div class="col-md-4">
+                                    <label class="my-label">Day of Week</label>
+                                    <select class="form-select" name="day_of_week" id="day_of_week">
+                                        <option value="" selected="selected">Select Day Of The Week</option>
+                                        <option value="1">Monday</option>
+                                        <option value="2">Tuesday</option>
+                                        <option value="3">Wednesday</option>
+                                        <option value="4">Thursday</option>
+                                        <option value="5">Friday</option>
+                                        <option value="6">Saturday</option>
+                                        <option value="7">Sunday</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="time" class="form-control" id="start_time" name="start_time"
+                                           placeholder="Start Time" value="00:00"/>
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="time" class="form-control" id="end_time" name="end_time"
+                                           placeholder="End Time" value="23:59"/>
+                                </div>
                             </div>
-                            <div class="col-md-4">
-                                <input type="time" class="form-control" id="start_time" name="start_time"
-                                       placeholder="Start Time" value="00:00"/>
+                            <div class="form-row p-2 text-center">
+                                <label>I'm available all day</label>
+                                <input type="checkbox" id="all_day" name="all_day" onchange="all_day_checked()"></input>
+
                             </div>
-                            <div class="col-md-4">
-                                <input type="time" class="form-control" id="end_time" name="end_time"
-                                       placeholder="End Time" value="23:59"/>
+                            <div class="form-row p-2 text-center">
+                                <input type="button" class="action-button btn btn-primary" id="add_availability"
+                                       value="Add Availability"/>
                             </div>
-                        </div>
-                        <div class="form-row p-2 text-center">
-                            <input type="button" class="action-button btn btn-primary" id="add_availability"
-                                   value="Add Availability"/>
                         </div>
                         <div class="form-row p-2 text-center">
                             <h5>Your Saved Availability Preferences</h5>
                             <div id="availability_table">
                                 <table class="table table-striped">
-                                {% for item in user_avaiability %}
-                                <tr>
-                                    <td>{{item.day_of_week}}</td>
-                                    <td>{{item.start_time}}</td>
-                                    <td>{{item.end_time}}</td>
-                                    <td>
-                                        <a href="#"
-                                           onclick="delete_availability({{item.pk}})">
-                                            <i class="bi bi-trash" style="color:red"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                                {% endfor %}
+                                    <thead style="font-weight:bold">
+                                        <tr>
+                                            <td>Day</td>
+                                            <td>Start Time</td>
+                                            <td>End Time</td>
+                                            <td>All Day</td>
+                                            <td>Delete</td>
+                                            <td>Add</td>
+                                            <td>Edit</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for item in user_avaiability %}
+                                        <tr>
+                                            <td>{{item.day_of_week}}</td>
+                                            <td>{% if not item.all_day %} {{item.start_time}}
+                                                {% else %} All Day
+                                                {% endif %}</td>
+                                            <td>{% if not item.all_day %} {{item.end_time}}
+                                                {% else %} All Day
+                                                {% endif %}</td>
+                                            <td>
+                                                <input type="checkbox"
+                                                {% if item.all_day %} checked {% endif %} disabled></input>
+                                            </td>
+                                            <td>
+                                                <a href="#"
+                                                   onclick="delete_availability({{item.pk}})">
+                                                    <i class="bi bi-trash" style="color:red"></i>
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <a href="#"
+                                                   onclick="show_availability('{{item.day_of_week}}', '{{item.start_time}}' , '{{item.end_time}}', 'Add', {{item.pk}})">
+                                                    <i class="bi bi-plus-circle" style="color:green"></i>
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <a href="#"
+                                                   onclick="show_availability('{{item.day_of_week}}', '{{item.start_time}}' , '{{item.end_time}}', 'Edit', {{item.pk}})">
+                                                    <i class="bi bi-pencil-square" style="color:blue"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
                             </table>
                             </div>
                         </div>
@@ -611,6 +651,7 @@ $("#add_availability").click(function(e) {
     var day_of_week_text = day_of_week_value.val();
     var start_time_val = $("#start_time").val();
     var end_time_val = $("#end_time").val();
+    var all_day_val = $("#all_day")[0].checked;
 
     if(start_time_val === "" || end_time_val === "" || day_of_week_text === ""){
         let msg = "Please fill in he empty fields!";
@@ -622,7 +663,6 @@ $("#add_availability").click(function(e) {
         status.innerHTML = html_data;
     }
     else{
-
         $.ajax({
             type: "POST",
             url: '{% url "EventsApp:add_user_availability" %}',
@@ -630,6 +670,7 @@ $("#add_availability").click(function(e) {
                 'day_of_week': day_of_week_text,
                 'start_time': start_time_val,
                 'end_time': end_time_val,
+                'all_day': all_day_val,
                 'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
             },
             success: function (data) {
@@ -651,20 +692,33 @@ function getUserAvailability(){
         async:false,
         url: '{% url "EventsApp:get_user_availability" %}',
         success: function (data) {
-            let html_data = `<table class="table table-striped">`;
+            let html_data = `<table class="table table-striped"><thead style="font-weight:bold"><tr><td>Day</td><td>Start Time</td><td>End Time</td><td>All Day</td><td>Delete</td><td>Add</td><td>Edit</td></tr></thead><tbody>`;
             data.forEach(function (data) {
                 html_data += `<tr>`;
                 html_data += `<td>${data.day_of_week}</td>`;
-                html_data += `<td>${data.start_time}</td>`;
-                html_data += `<td>${data.end_time}</td>`;
+                html_data += "<td>" + (!data.all_day ? data.start_time : "All Day") + "</td>";
+                html_data += "<td>" + (!data.all_day ? data.end_time : "All Day") + "</td>";
                 html_data += `<td>`;
-                html_data += `<a href="#" onclick="delete_availability(${data.pk})">`;
+                html_data += "<input type='checkbox' style='background-color:white' " + (data.all_day ? "checked" : "") + " disabled></input>";
+                html_data += `</td>`;
+                html_data += `<td>`;
+                html_data += `<a href='#' onclick='delete_availability(${data.pk})'>`;
                 html_data += `<i class="bi bi-trash" style="color:red"></i>`;
+                html_data += `</a>`;
+                html_data += `</td>`;
+                html_data += `<td>`;
+                html_data += `<a href='#' onclick="show_availability('${data.day_of_week}', '${data.start_time}', '${data.end_time}', 'Add', ${data.pk})">`;
+                html_data += `<i class="bi bi-plus-circle" style="color:green"></i>`;
+                html_data += `</a>`;
+                html_data += `</td>`;
+                html_data += `<td>`;
+                html_data += `<a href='#' onclick="show_availability('${data.day_of_week}', '${data.start_time}' , '${data.end_time}', 'Edit', ${data.pk})">`;
+                html_data += `<i class="bi bi-pencil-square" style="color:blue"></i>`;
                 html_data += `</a>`;
                 html_data += `</td>`;
                 html_data += `</tr>`;
             });
-            html_data += `</table>`;
+            html_data += `</tbody></table>`;
             let tableData = document.getElementById("availability_table");
             tableData.innerHTML = html_data;
         }
@@ -690,6 +744,34 @@ function delete_availability(availability_id){
             getUserAvailability();
         }
     });
+}
+
+function show_availability(day_of_week, start_time, end_time, add_or_edit, pk){
+
+    if(start_time == "midnight" || start_time == "All Day") start_time = "00:00";
+    if(end_time == "midnight" || end_time == "All Day") end_time = "00:00";
+    let week_days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    $('#day_of_week')[0].value =  week_days.indexOf(day_of_week) + 1;
+    if (add_or_edit == "Edit"){
+        delete_availability(pk);
+        $("#add_availability")[0].value = "Save Changes";
+        $('#start_time')[0].value = moment(start_time,['h:m a', 'H:m']).format("HH:mm").toString();
+        $('#end_time')[0].value = moment(end_time,['h:m a', 'H:m']).format("HH:mm");
+    }
+    $("#add_avail_div").show();
+}
+
+function all_day_checked(){
+    if($('#all_day')[0].checked){
+        $('#start_time')[0].value = '00:00';
+        $('#end_time')[0].value = '23:59';
+        $('#start_time')[0].disabled = true;
+        $('#end_time')[0].disabled = true;
+    }
+    else{
+        $('#start_time')[0].disabled = false;
+        $('#end_time')[0].disabled = false;
+    }
 }
 
 

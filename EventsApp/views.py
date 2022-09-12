@@ -255,9 +255,9 @@ def ValidateUserProfileForm(request, context):
     if not request.POST.get('contact_email') or request.POST['contact_email'].strip() == "":
         messages.error(request, "Please enter Contact Email")
         valid = False
-    if not request.POST.get('mobile') or request.POST['mobile'].strip() == "":
-        messages.error(request, "Please enter Mobile")
-        valid = False
+    # if not request.POST.get('mobile') or request.POST['mobile'].strip() == "":
+    #     messages.error(request, "Please enter Mobile")
+    #     valid = False
     if not request.POST.get('interest_gender') or request.POST['interest_gender'].strip() == "":
         messages.error(request, "Please select Event gender preferences")
         valid = False
@@ -1483,13 +1483,13 @@ def add_availability(request):
     get_day_of_week(user_avaiability)
 
     context["user_availability"] = user_avaiability
-
     if request.POST:
         if form.is_valid():
             obj = Availability(user=user,
                                day_of_week=form.cleaned_data['day_of_week'],
                                start_time=form.cleaned_data['start_time'],
-                               end_time=form.cleaned_data['end_time'])
+                               end_time=form.cleaned_data['end_time'],
+                               all_day=form.cleaned_data['all_day'])
             is_duplicate = check_duplicate_availability(user_avaiability, obj)
             if is_duplicate:
                 messages.error(request, "Duplicate Availability!")
@@ -1512,7 +1512,7 @@ def get_user_availability(request):
     if request.is_ajax():
         user = User.objects.get(email=request.user.email)
         user_availability = Availability.objects.filter(user=user)
-        user_availability = list(user_availability.values("day_of_week", "start_time", "end_time", "pk"))
+        user_availability = list(user_availability.values("day_of_week", "start_time", "end_time", "pk", "all_day"))
         for avail in user_availability:
             if avail["day_of_week"] == 1:
                 avail["day_of_week"] = "Monday"
@@ -1538,12 +1538,12 @@ def get_user_availability(request):
 def add_user_availability(request):
     user = User.objects.get(email=request.user.email)
     user_avaiability = Availability.objects.filter(user=user)
-    print(request.POST['start_time'])
     if request.method == "POST":
         obj = Availability(user=user,
                            day_of_week=request.POST['day_of_week'],
                            start_time=request.POST['start_time'],
-                           end_time=request.POST['end_time'])
+                           end_time=request.POST['end_time'],
+                           all_day=request.POST['all_day'] == "true")
         is_duplicate = check_duplicate_availability(user_avaiability, obj)
         if is_duplicate:
             return JsonResponse({'status': 'Duplicate Availability!'}, safe=False)
