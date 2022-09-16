@@ -9,7 +9,7 @@
     <!-- <div id="events-wrap" class="row"> -->
     <div class="col mb-2" id="events_types_select" style="flex-grow: 1;">
         <!-- <p style="margin-bottom:0">Event Type</p> -->
-        <select id="events_types" class="form-select select2 form-select-sm" multiple name="events_types" style="height:26px; flex-grow: 1;">
+        <select id="events_types" class="form-select select2 form-select" multiple name="events_types" style="height:26px; flex-grow: 1;">
             <option value="Camp">Camp</option>
             <option value="Charity">Charity</option>
             <option value="Conditioning">Conditioning</option>
@@ -23,7 +23,7 @@
     </div>
     <div class="col mb-2">
         <!-- <p style="margin-bottom:0">Sport</p> -->
-        <select class="form-select form-select-sm" name="sports">
+        <select class="form-select select-style" name="sports">
             <option value="" selected="selected">Select Sport</option>
             {% for sports in sports_list %}
             <option value="{{sports.sports_type_text}}">{{sports.sports_type_text}}</option>
@@ -32,11 +32,11 @@
     </div>
     <div class="col mb-2 mb-2">
         <!-- <p style="margin-bottom:0">Event Date</p> -->
-        <input class="form-control" onfocus="(this.type='date')" onblur="(this.type='text')" placeholder="Select Date" name="date_range"/>
+        <input class="form-control select-style" onfocus="(this.type='date')" onblur="this.type='text'" value="Select Date" placeholder="Select Date" name="date_range"/>
     </div>
     <div class="col mb-2 mb-2">
         <!-- <p style="margin-bottom:0">Event Venue</p> -->
-        <select class="form-select" name="venues">
+        <select class="form-select select-style" name="venues">
             <option value="" selected="selected">Select Venue</option>
             {% for venues in venues_list %}
             <option value="{{venues.vm_name}}">{{venues.vm_name}}</option>
@@ -194,14 +194,16 @@
         var nw = $(window).width();
         let myHeight = window.innerHeight;
         myWidth = nw;
-        callFormSizeChange(myWidth, myHeight);   
+        callFormSizeChange(myWidth, myHeight);
     });
-
 
         $('.select2').select2({
             placeholder: "Select Event Type",
             allowClear: true
         });
+        var parent = document.getElementById('events_types_select')
+        console.log(parent);
+        parent.querySelectorAll('span')[3].classList.add('ps-2')
         let para = document.getElementsByClassName("eventdatetime");
         for (let i = 0; i < para.length; i++) {
             let pval = para[i].innerHTML.split("from");
@@ -302,8 +304,24 @@
     box-shadow: 5px 6px 6px 2px #e9ecef;
     transform: scale(1.05);
     transition: all .4s ease;
--webkit-transition: all .4s ease;
+    -webkit-transition: all .4s ease;
 }
+
+.select-style {
+    border: 1px solid #aaa !important;
+    border-radius: 4px !important;
+    font-family: sans-serif !important;
+    font-size: 100% !important;
+}
+
+input[type=text]::placeholder {
+    color: #000;
+}
+
+textarea::placeholder{
+  color: #000;  
+}
+
 </style>
 
 {% endblock %}

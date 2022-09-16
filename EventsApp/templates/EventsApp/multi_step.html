@@ -522,7 +522,7 @@ $("#sport_type").change(function () {
                             'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
                         },
                         success: function (data) {
-                            skills_dropdown = '<select class="select2 form-control" name="type_of_skill'+index+'" multiple="multiple">';
+                            skills_dropdown = '<select class="skills_dropdown select2 form-control" name="type_of_skill'+index+'" multiple="multiple">';
                             data.forEach(function (data) {
                                 skills_dropdown += `<option value="${data.skill_type}">${data.skill_type}</option>`;
                             });
@@ -530,10 +530,10 @@ $("#sport_type").change(function () {
                         }
                     });
                     html2 += `<div class="row g-2"><label class="col-md-2 align-middle my-4"  style="font-weight: bold;">${data.position_type}</label>`
-                    html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2" name="no_of_position' + index + '" placeholder = "#" min=0 onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"></div>'
-                    html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2" name ="position_cost' + index + '" placeholder="$" step="any"></div>'
-                    html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2" name="min_age' + index + '" min=0 onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"></div>'
-                    html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2" name="max_age' + index + '" min=0 onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"></div>'
+                    html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2 select-style" name="no_of_position' + index + '" placeholder = "#" min=0 onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"></div>'
+                    html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2 select-style" name ="position_cost' + index + '" placeholder="$" step="any"></div>'
+                    html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2 select-style" name="min_age' + index + '" min=0 onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"></div>'
+                    html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2 select-style" name="max_age' + index + '" min=0 onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"></div>'
                     html2 += `<div class="col-md-2 py-2">${skills_dropdown}</div>`
                     html2 += `<div style="display:none"><input value="${data.position_type}" name="position_name${index}" value=></div>`
                     html2 += '</div>'
@@ -543,6 +543,10 @@ $("#sport_type").change(function () {
                 html2 += '</div>'
                 $(html2).insertAfter($("#sport_type_container"));
                 $('.select2').select2();
+                $('.skills_dropdown').select2({
+                    placeholder: "Select",
+                    allowClear: true
+                });
             }
         });
     });
@@ -593,7 +597,7 @@ $(document).ready(function(){
     tab3.hide();
     $("#step3").removeClass("active");
   });
-
+  
 });
 
 function sports_skill_dropdown(skill_field_id){
@@ -636,14 +640,14 @@ function sports_skill_dropdown(skill_field_id){
         if(x < max_fields){
             var html= '';
             html += '<div class="mt-2">'
-            html += '<select class="form-select mt-2" name="type_of_skill' + x + '" id="type_of_skill' + x + '">'
+            html += '<select class="form-select mt-2 select-style" name="type_of_skill' + x + '" id="type_of_skill' + x + '">'
             html += '<option selected disabled>* Choose Skill</option>'
             html += '</select>'
             html += '<div class="row g-2">'
-            html += '<div class="col-md-3"><input type="number" class="form-control mt-2" name="no_of_position' + x + '" placeholder = "* # Positions" min=0></div>'
-            html += '<div class="col-md-2"><input type="number" class="form-control mt-2" name ="position_cost' + x + '" placeholder="* Cost"></div>'
-            html += '<div class="col-md-3"><input type="number" class="form-control mt-2" name="min_age' + x + '" placeholder= "* Min Age" min=0></div>'
-            html += '<div class="col-md-3"><input type="number" class="form-control mt-2" name="max_age' + x + '" placeholder= "* Max Age" min=0 ></div>'
+            html += '<div class="col-md-3"><input type="number" class="form-control mt-2 select-style" name="no_of_position' + x + '" placeholder = "* # Positions" min=0></div>'
+            html += '<div class="col-md-2"><input type="number" class="form-control mt-2 select-style" name ="position_cost' + x + '" placeholder="* Cost"></div>'
+            html += '<div class="col-md-3"><input type="number" class="form-control mt-2 select-style" name="min_age' + x + '" placeholder= "* Min Age" min=0></div>'
+            html += '<div class="col-md-3"><input type="number" class="form-control mt-2 select-style" name="max_age' + x + '" placeholder= "* Max Age" min=0 ></div>'
             html += '<div class="col-md-1"><a href="#" class="remove_field btn btn-danger mt-2">🗑</a></div>'
             html += '</div>'
             html += '</div>'
@@ -958,5 +962,19 @@ $(document).ready(function() {
 });
 
 </script>
+
+<style>
+    .select-style {
+    border: 1px solid #aaa !important;
+    border-radius: 4px !important;
+    font-family: sans-serif !important;
+    font-size: 100% !important;
+    /* padding-top: 0px !important; */
+}
+
+.select2-search__field{
+    height:26px !important;
+}
+</style>
 
 {% endblock %}
