@@ -30,12 +30,12 @@
             {% endfor %}
         </select>
     </div>
-    <div class="col mb-2">
-        <!-- <p style="margin-bottom:0">Event Date</p> -->
+    <div class="col mb-2 mb-2">
+        <!-- <!-- <p style="margin-bottom:0">Event Date</p> --> -->
         <input class="form-control" onfocus="(this.type='date')" onblur="(this.type='text')" placeholder="Select Date" name="date_range"/>
     </div>
-    <div class="col mb-2">
-        <!-- <p style="margin-bottom:0">Event Venue</p> -->
+    <div class="col mb-2 mb-2">
+        <!-- <!-- <p style="margin-bottom:0">Event Venue</p> --> -->
         <select class="form-select" name="venues">
             <option value="" selected="selected">Select Venue</option>
             {% for venues in venues_list %}

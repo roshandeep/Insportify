@@ -19,6 +19,8 @@
                     <th>EVENT</th>
                     <th>DESCRIPTION</th>
                     <th>DATETIME</th>
+                    <th>SPORT</th>
+                    <th>EVENT TYPE</th>
                     <th>VENUE</th>
                     </thead>
                     <tbody>
@@ -30,7 +32,33 @@
                             </a>
                         </td>
                         <td>{{event.description}}</td>
-                        <td>{{event.datetimes }}</td>
+                        <td>{% if event.datetimes %}
+                                {{event.datetimes}} <br>
+                            {% endif %}
+                            {% if event.datetimes_monday %}
+                                {{event.datetimes_monday}} <br>
+                            {% endif %}
+                            {% if event.datetimes_tuesday %}
+                                {{event.datetimes_tuesday}} <br>
+                            {% endif %}
+                            {% if event.datetimes_wednesday %}
+                                {{event.datetimes_wednesday}} <br>
+                            {% endif %}
+                            {% if event.datetimes_thursday %}
+                                {{event.datetimes_thursday}} <br>
+                            {% endif %}
+                            {% if event.datetimes_friday %}
+                                {{event.datetimes_friday}} <br>
+                            {% endif %}
+                            {% if event.datetimes_saturday %}
+                                {{event.datetimes_saturday}} <br>
+                            {% endif %}
+                            {% if event.datetimes_sunday %}
+                                {{event.datetimes_sunday}} <br>
+                            {% endif %}
+                        </td>
+                        <td>{{event.sport_type }}</td>
+                        <td>{{event.event_type }}</td>
                         <td>{{event.venue}}</td>
                     </tr>
                     {% endfor %}

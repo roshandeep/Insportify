@@ -13,9 +13,35 @@
                 {{event.created_by.first_name}} {{event.created_by.last_name}}.<br><br>
 
                 It will be hosted at {{event.venue}}, {{event.city}} {{event.province}}. This event is on
-                <i class="bi bi-calendar-check-fill"
-                   style="padding-right: 5px;"></i><em>{{event.datetimes}}</em>.<br><br>
-
+                <i class="bi bi-calendar-check-fill" style="padding-right: 5px;"></i>
+                <em>
+                    {% if event.datetimes %}
+                        , {{event.datetimes}}
+                    {% endif %}
+                    {% if event.datetimes_monday %}
+                        , {{event.datetimes_monday}}
+                    {% endif %}
+                    {% if event.datetimes_tuesday %}
+                        , {{event.datetimes_tuesday}}
+                    {% endif %}
+                    {% if event.datetimes_wednesday %}
+                        , {{event.datetimes_wednesday}}
+                    {% endif %}
+                    {% if event.datetimes_thursday %}
+                        , {{event.datetimes_thursday}}
+                    {% endif %}
+                    {% if event.datetimes_friday %}
+                        , {{event.datetimes_friday}}
+                    {% endif %}
+                    {% if event.datetimes_saturday %}
+                        , {{event.datetimes_saturday}}
+                    {% endif %}
+                    {% if event.datetimes_sunday %}
+                        , {{event.datetimes_sunday}}
+                    {% endif %}
+                </em>.
+                <br>
+                <br>
                 {{event.description}}
             </p>
 
@@ -76,7 +102,8 @@
                                value="{{pos.no_of_position}}" readonly="readonly" style="width: 80px;display: none;"/>
                     </td>
                     <td>
-                        <input type="text" class="form-control" name="posId_{{pos.pk}}" style="width: 80px;display: none;"
+                        <input type="text" class="form-control" name="posId_{{pos.pk}}"
+                               style="width: 80px;display: none;"
                                value="{{pos.pk}}" readonly="readonly"/>
                     </td>
                 </tr>
@@ -91,6 +118,10 @@
             </button>
         </div>
         </form>
+        <p class="mx-auto text-center fw-light horizontal-scroll-text">Please use horizontal scrolling for more
+            details.</p>
+    </div>
+
 </div>
 
 <script>

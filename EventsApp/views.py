@@ -255,9 +255,9 @@ def ValidateUserProfileForm(request, context):
     if not request.POST.get('contact_email') or request.POST['contact_email'].strip() == "":
         messages.error(request, "Please enter Contact Email")
         valid = False
-    if not request.POST.get('mobile') or request.POST['mobile'].strip() == "":
-        messages.error(request, "Please enter Mobile")
-        valid = False
+    # if not request.POST.get('mobile') or request.POST['mobile'].strip() == "":
+    #     messages.error(request, "Please enter Mobile")
+    #     valid = False
     if not request.POST.get('interest_gender') or request.POST['interest_gender'].strip() == "":
         messages.error(request, "Please select Event gender preferences")
         valid = False
@@ -984,7 +984,6 @@ def get_recommended_events(request):
     user = User.objects.get(email=request.user.email)
     user_avaiability = Availability.objects.filter(user=user)
     events = master_table.objects.all()
-    week_days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
     locations_saved = Extra_Loctaions.objects.filter(user=user)
     loc_list = [item.city.lower() for item in locations_saved]
     recommended_events = set()
@@ -995,13 +994,13 @@ def get_recommended_events(request):
         # print(user_avaiability)
         for event in events:
             event_date, event_start_time, event_end_time = extract_event_datetime(event)
-            if event_date is not None and event_start_time is not None and event_end_time is not None:
-
-                for avail in user_avaiability:
-                    if avail.day_of_week == (event_date.weekday() + 1):
-                        # print(event.event_title, avail.start_time, avail.end_time, event_start_time, event_end_time, event_start_time >= avail.start_time, event_end_time <= avail.end_time)
-                        if event_start_time >= avail.start_time and event_end_time <= avail.end_time:
-                            recommended_events.add(event)
+            if len(event_date) != 0 and len(event_start_time) != 0 and len(event_end_time) != 0:
+                for idx in range(0, len(event_date)):
+                    for avail in user_avaiability:
+                        if avail.day_of_week == (event_date[idx].weekday() + 1):
+                            # print(event.event_title, avail.start_time, avail.end_time, event_start_time, event_end_time, event_start_time >= avail.start_time, event_end_time <= avail.end_time)
+                            if event_start_time[idx] >= avail.start_time and event_end_time[idx] <= avail.end_time:
+                                recommended_events.add(event)
 
             else:
                 recommended_events.add(event)
@@ -1118,93 +1117,101 @@ def get_recommended_events(request):
 
 
 def extract_event_datetime(event):
-    event_date = None
-    event_start_time = None
-    event_end_time = None
+    event_date = []
+    event_start_time = []
+    event_end_time = []
+
+    times_list=[]
 
     if event.datetimes:
-        time = event.datetimes.split("-")
-    elif event.datetimes_monday:
-        time = event.datetimes_monday.split("-")
-    elif event.datetimes_tuesday:
-        time = event.datetimes_tuesday.split("-")
-    elif event.datetimes_wednesday:
-        time = event.datetimes_wednesday.split("-")
-    elif event.datetimes_thursday:
-        time = event.datetimes_thursday.split("-")
-    elif event.datetimes_friday:
-        time = event.datetimes_friday.split("-")
-    elif event.datetimes_saturday:
-        time = event.datetimes_saturday.split("-")
-    elif event.datetimes_sunday:
-        time = event.datetimes_sunday.split("-")
+        times_list.append(event.datetimes.split("-"))
+    if event.datetimes_monday:
+        times_list.append(event.datetimes_monday.split("-"))
+    if event.datetimes_tuesday:
+        times_list.append(event.datetimes_tuesday.split("-"))
+    if event.datetimes_wednesday:
+        times_list.append(event.datetimes_wednesday.split("-"))
+    if event.datetimes_thursday:
+        times_list.append(event.datetimes_thursday.split("-"))
+    if event.datetimes_friday:
+        times_list.append(event.datetimes_friday.split("-"))
+    if event.datetimes_saturday:
+        times_list.append(event.datetimes_saturday.split("-"))
+    if event.datetimes_sunday:
+        times_list.append(event.datetimes_sunday.split("-"))
 
     # print(event.event_title, time, type(time))
-    if time is not None and time != "":
-        event_start_datetime = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
-        event_end_datetime = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p')
-        event_date = event_start_datetime.date()
-        event_start_time = event_start_datetime.time()
-        event_end_time = event_end_datetime.time()
+    if len(times_list) > 0:
+        for time in times_list:
+            event_start_datetime = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
+            event_end_datetime = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p')
+            event_date.append(event_start_datetime.date())
+            event_start_time.append(event_start_datetime.time())
+            event_end_time.append(event_end_datetime.time())
 
+        # print(event.event_title, event_date, event_start_time, event_end_time)
         return event_date, event_start_time, event_end_time
 
+    # print(event.event_title, event_date, event_start_time, event_end_time)
     return event_date, event_start_time, event_end_time
 
 
 def format_time(events):
+
     for event in events:
         if event.datetimes:
             time = event.datetimes.split("-")
-        elif event.datetimes_monday:
+            str_datetime = format_time_helper(time)
+            event.datetimes = str_datetime
+        if event.datetimes_monday:
             time = event.datetimes_monday.split("-")
-        elif event.datetimes_tuesday:
+            str_datetime = format_time_helper(time)
+            event.datetimes_monday = str_datetime
+        if event.datetimes_tuesday:
             time = event.datetimes_tuesday.split("-")
-        elif event.datetimes_wednesday:
+            str_datetime = format_time_helper(time)
+            event.datetimes_tuesday = str_datetime
+        if event.datetimes_wednesday:
             time = event.datetimes_wednesday.split("-")
-        elif event.datetimes_thursday:
+            str_datetime = format_time_helper(time)
+            event.datetimes_wednesday = str_datetime
+        if event.datetimes_thursday:
             time = event.datetimes_thursday.split("-")
-        elif event.datetimes_friday:
+            str_datetime = format_time_helper(time)
+            event.datetimes_thursday = str_datetime
+        if event.datetimes_friday:
             time = event.datetimes_friday.split("-")
-        elif event.datetimes_saturday:
+            str_datetime = format_time_helper(time)
+            event.datetimes_friday = str_datetime
+        if event.datetimes_saturday:
             time = event.datetimes_saturday.split("-")
-        elif event.datetimes_sunday:
+            str_datetime = format_time_helper(time)
+            event.datetimes_saturday = str_datetime
+        if event.datetimes_sunday:
             time = event.datetimes_sunday.split("-")
-
-        # print(event.event_title, time, type(time))
-        if time is not None and time != "":
-            start_time = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p').time()
-            end_time = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p').time()
-            start_time = start_time.strftime("%I:%M %p")
-            end_time = end_time.strftime('%I:%M %p')
-
-            start_date = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p').date()
-            end_date = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p').date()
-            start_date = start_date.strftime("%B %d")
-            end_date = end_date.strftime("%B %d")
-            if start_date == end_date:
-                str_datetime = start_date + " from " + start_time + " - " + end_time
-            else:
-                str_datetime = start_date + " - " + end_date + " from " + start_time + " - " + end_time
-
-            if event.datetimes:
-                event.datetimes = str_datetime
-            elif event.datetimes_monday:
-                event.datetimes_monday = str_datetime
-            elif event.datetimes_tuesday:
-                event.datetimes_tuesday = str_datetime
-            elif event.datetimes_wednesday:
-                event.datetimes_wednesday = str_datetime
-            elif event.datetimes_thursday:
-                event.datetimes_thursday = str_datetime
-            elif event.datetimes_friday:
-                event.datetimes_friday = str_datetime
-            elif event.datetimes_saturday:
-                event.datetimes_saturday = str_datetime
-            elif event.datetimes_sunday:
-                event.datetimes_sunday = str_datetime
+            str_datetime = format_time_helper(time)
+            event.datetimes_sunday = str_datetime
 
     return events
+
+
+def format_time_helper(time):
+    if time is not None and time != "":
+        start_time = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p').time()
+        end_time = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p').time()
+        start_time = start_time.strftime("%I:%M %p")
+        end_time = end_time.strftime('%I:%M %p')
+
+        start_date = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p').date()
+        end_date = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p').date()
+        start_date = start_date.strftime("%B %d")
+        end_date = end_date.strftime("%B %d")
+        if start_date == end_date:
+            str_datetime = start_date + " from " + start_time + " - " + end_time
+        else:
+            str_datetime = start_date + " - " + end_date + " from " + start_time + " - " + end_time
+
+    return str_datetime
 
 
 def get_events_by_date(events, selected_date):
@@ -1382,7 +1389,7 @@ def charge(request):
     context["order"] = order
     context["cart"] = cart
     context['orderAmount'] = order.order_amount
-    totalCents = order.order_amount * 100
+    totalCents = int(order.order_amount * 100)
     context['totalCents'] = totalCents
     print(cart)
     if request.method == 'POST':
@@ -1477,13 +1484,13 @@ def add_availability(request):
     get_day_of_week(user_avaiability)
 
     context["user_availability"] = user_avaiability
-
     if request.POST:
         if form.is_valid():
             obj = Availability(user=user,
                                day_of_week=form.cleaned_data['day_of_week'],
                                start_time=form.cleaned_data['start_time'],
-                               end_time=form.cleaned_data['end_time'])
+                               end_time=form.cleaned_data['end_time'],
+                               all_day=form.cleaned_data['all_day'])
             is_duplicate = check_duplicate_availability(user_avaiability, obj)
             if is_duplicate:
                 messages.error(request, "Duplicate Availability!")
@@ -1506,7 +1513,7 @@ def get_user_availability(request):
     if request.is_ajax():
         user = User.objects.get(email=request.user.email)
         user_availability = Availability.objects.filter(user=user)
-        user_availability = list(user_availability.values("day_of_week", "start_time", "end_time", "pk"))
+        user_availability = list(user_availability.values("day_of_week", "start_time", "end_time", "pk", "all_day"))
         for avail in user_availability:
             if avail["day_of_week"] == 1:
                 avail["day_of_week"] = "Monday"
@@ -1532,12 +1539,12 @@ def get_user_availability(request):
 def add_user_availability(request):
     user = User.objects.get(email=request.user.email)
     user_avaiability = Availability.objects.filter(user=user)
-    print(request.POST['start_time'])
     if request.method == "POST":
         obj = Availability(user=user,
                            day_of_week=request.POST['day_of_week'],
                            start_time=request.POST['start_time'],
-                           end_time=request.POST['end_time'])
+                           end_time=request.POST['end_time'],
+                           all_day=request.POST['all_day'] == "true")
         is_duplicate = check_duplicate_availability(user_avaiability, obj)
         if is_duplicate:
             return JsonResponse({'status': 'Duplicate Availability!'}, safe=False)

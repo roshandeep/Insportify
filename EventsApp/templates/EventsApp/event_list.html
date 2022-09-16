@@ -27,6 +27,8 @@
                     <th>EVENT</th>
                     <th>DESCRIPTION</th>
                     <th>DATETIME</th>
+                    <th>SPORT</th>
+                    <th>EVENT TYPE</th>
                     <th>VENUE</th>
                     <th>ACTION</th>
                     </thead>
@@ -35,7 +37,33 @@
                     <tr>
                         <td><a class="id" href="{% url 'EventsApp:event_details' event.pk %}">{{event.event_title}}</a></td>
                         <td>{{event.description}}</td>
-                        <td>{{event.datetimes }}</td>
+                        <td>{% if event.datetimes %}
+                                {{event.datetimes}} <br>
+                            {% endif %}
+                            {% if event.datetimes_monday %}
+                                {{event.datetimes_monday}} <br>
+                            {% endif %}
+                            {% if event.datetimes_tuesday %}
+                                {{event.datetimes_tuesday}} <br>
+                            {% endif %}
+                            {% if event.datetimes_wednesday %}
+                                {{event.datetimes_wednesday}} <br>
+                            {% endif %}
+                            {% if event.datetimes_thursday %}
+                                {{event.datetimes_thursday}} <br>
+                            {% endif %}
+                            {% if event.datetimes_friday %}
+                                {{event.datetimes_friday}} <br>
+                            {% endif %}
+                            {% if event.datetimes_saturday %}
+                                {{event.datetimes_saturday}} <br>
+                            {% endif %}
+                            {% if event.datetimes_sunday %}
+                                {{event.datetimes_sunday}} <br>
+                            {% endif %}
+                        </td>
+                        <td>{{event.sport_type }}</td>
+                        <td>{{event.event_type }}</td>
                         <td>{{event.venue}}</td>
                         <td class="text-center">
                             {% if request.user == event.created_by %}
@@ -57,6 +85,21 @@
         </div>
 
 <script>
+    
+    function callWidthChange(myWidth, myHeight) {
+        if (myWidth >= 768) {
+            if(document.getElementById("event-list")){
+                myWidth = myWidth-40;
+                document.getElementById("event-list").style.width = myWidth+'px';
+            }
+        } else {
+            if(document.getElementById("event-list")){
+                myWidth = myWidth-40;
+                document.getElementById("event-list").style.width = myWidth+'px';
+            }
+        }
+    }
+
     
     function callWidthChange(myWidth, myHeight) {
         if (myWidth >= 768) {
@@ -102,8 +145,26 @@ th, td {
     display: block;
   }
 }
+<style>
 
-@media only screen and (min-width: 770px) {
+table {
+  border-collapse: collapse !important;
+  width: 100% !important;
+}
+
+th, td {
+  text-align: left !important;
+  padding: 8px !important;
+}   
+
+@media only screen and (max-width: 768px) {
+  table {width: 768px !important;}
+  .horizontal-scroll-text{
+    display: block;
+  }
+}
+
+@media only screen and (min-width: 769px) {
   table {width: 100% !important;}
   .horizontal-scroll-text{
     display: none;
