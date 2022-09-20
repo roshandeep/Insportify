@@ -100,8 +100,23 @@
         }
     }
 
+    
+    function callWidthChange(myWidth, myHeight) {
+        if (myWidth >= 768) {
+            if(document.getElementById("event-list")){
+                myWidth = myWidth-40;
+                document.getElementById("event-list").style.width = myWidth+'px';
+            }
+        } else {
+            if(document.getElementById("event-list")){
+                myWidth = myWidth-40;
+                document.getElementById("event-list").style.width = myWidth+'px';
+            }
+        }
+    }
+
     $(document).ready(function () {
-        let myWidth = window.innerWidth;
+        let myWidth = $(window).width();
         let myHeight = window.innerHeight;
         callWidthChange(myWidth, myHeight);   
         $(window).resize(function () {
@@ -112,6 +127,24 @@
     });
     });
 </script>
+<style>
+
+table {
+  border-collapse: collapse !important;
+  width: 100% !important;
+}
+
+th, td {
+  text-align: left !important;
+  padding: 8px !important;
+}   
+
+@media only screen and (max-width: 768px) {
+  table {width: 768px !important;}
+  .horizontal-scroll-text{
+    display: block;
+  }
+}
 <style>
 
 table {

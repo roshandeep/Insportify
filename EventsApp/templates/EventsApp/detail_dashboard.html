@@ -110,11 +110,13 @@
                 {% endfor %}
                 </tbody>
             </table>
-            <div>
-                <button type="submit" class="btn btn-primary" id="submit">
-                    Add to Cart
-                </button>
-            </div>
+            <p class="mx-auto text-center fw-light horizontal-scroll-text">Please use horizontal scrolling for more details.</p>
+        </div>
+        <div>
+            <button type="submit" class="btn btn-primary" id="submit">
+                Add to Cart
+            </button>
+        </div>
         </form>
         <p class="mx-auto text-center fw-light horizontal-scroll-text">Please use horizontal scrolling for more
             details.</p>
@@ -156,21 +158,14 @@ $("input[type=number]").change(function(){
 
 function callWidthChange(myWidth, myHeight) {
         console.log(myWidth)
-        if (myWidth >= 768) {
             if(document.getElementById("event-details")){
                 myWidth = myWidth-40;
                 document.getElementById("event-details").style.width = myWidth+'px';
-            }
-        } else {
-            if(document.getElementById("event-details")){
-                myWidth = myWidth-40;
-                document.getElementById("event-details").style.width = myWidth+'px';
-            }
         }
     }
 
     $(document).ready(function () {
-        let myWidth = window.innerWidth;
+        let myWidth = $(window).width();
         let myHeight = window.innerHeight;
         callWidthChange(myWidth, myHeight);   
         $(window).resize(function () {
@@ -180,8 +175,6 @@ function callWidthChange(myWidth, myHeight) {
         callWidthChange(myWidth, myHeight);   
     });
     });
-
-
 
 
 </script>
@@ -210,8 +203,6 @@ th, td {
     display: none;
   }
 }
-
-
 </style>
 
 {% endblock %}

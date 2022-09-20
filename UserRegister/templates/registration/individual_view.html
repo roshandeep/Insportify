@@ -149,7 +149,6 @@
                             </table>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </fieldset>
@@ -444,7 +443,7 @@
     }
 
     $(document).ready(function () {
-        let myWidth = window.innerWidth;
+        let myWidth = $(window).width();
         let myHeight = window.innerHeight;
         callWidthChange(myWidth, myHeight);   
         $(window).resize(function () {
@@ -467,7 +466,7 @@
                 'selected_city_text': selected_city_text,
                 'selected_province_text': selected_province_text,
                 'selected_country_text': selected_country_text,
-                'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
+                'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
             },
             success: function (data) {
                 let html_data = `<div class="alert alert-warning alert-dismissible fade show" role="alert">`;
@@ -481,54 +480,54 @@
         });
     });
 
-function fetchUserLocations(){
-    $.ajax({
-        type: "GET",
-        async:false,
-        url: '{% url "EventsApp:fetch_user_locations" %}',
-        success: function (data) {
-            let html_data = `<table class="table table-striped">`;
-            data.forEach(function (data) {
-                html_data += `<tr>`;
-                html_data += `<td>${data.city}</td>`;
-                html_data += `<td>${data.province}</td>`;
-                html_data += `<td>${data.country}</td>`;
-                html_data += `<td>`;
-                html_data += `<a href="#" onclick="delete_user_location(${data.pk})">`;
-                html_data += `<i class="bi bi-trash" style="color:red"></i>`;
-                html_data += `</a>`;
-                html_data += `</td>`;
-                html_data += `</tr>`;
-            });
-            html_data += `</table>`;
-            let tableData = document.getElementById("user_location_table");
-            tableData.innerHTML = html_data;
-        }
-    });
-}
+    function fetchUserLocations() {
+        $.ajax({
+            type: "GET",
+            async: false,
+            url: '{% url "EventsApp:fetch_user_locations" %}',
+            success: function (data) {
+                let html_data = `<table class="table table-striped">`;
+                data.forEach(function (data) {
+                    html_data += `<tr>`;
+                    html_data += `<td>${data.city}</td>`;
+                    html_data += `<td>${data.province}</td>`;
+                    html_data += `<td>${data.country}</td>`;
+                    html_data += `<td>`;
+                    html_data += `<a href="#" onclick="delete_user_location(${data.pk})">`;
+                    html_data += `<i class="bi bi-trash" style="color:red"></i>`;
+                    html_data += `</a>`;
+                    html_data += `</td>`;
+                    html_data += `</tr>`;
+                });
+                html_data += `</table>`;
+                let tableData = document.getElementById("user_location_table");
+                tableData.innerHTML = html_data;
+            }
+        });
+    }
 
-function delete_user_location(user_location_id){
-    $.ajax({
-        type: "POST",
-        url: '{% url "EventsApp:delete_user_location" %}',
-        data: {
-            'id': user_location_id,
-            'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
-        },
-        success: function (data) {
-            let html_data = `<div class="alert alert-warning alert-dismissible fade show" role="alert">`;
-            html_data += `${data["status"]}`;
-            html_data += `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
-            html_data += `</div>`;
-            let status = document.getElementById("location_status");
-            status.innerHTML = html_data;
-            fetchUserLocations();
-        }
-    });
-}
+    function delete_user_location(user_location_id) {
+        $.ajax({
+            type: "POST",
+            url: '{% url "EventsApp:delete_user_location" %}',
+            data: {
+                'id': user_location_id,
+                'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+            },
+            success: function (data) {
+                let html_data = `<div class="alert alert-warning alert-dismissible fade show" role="alert">`;
+                html_data += `${data["status"]}`;
+                html_data += `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+                html_data += `</div>`;
+                let status = document.getElementById("location_status");
+                status.innerHTML = html_data;
+                fetchUserLocations();
+            }
+        });
+    }
 
 
-$("#sports").change(function () {
+    $("#sports").change(function () {
         var selected_type_value = $("#sports option:selected");
         var selected_type_text = selected_type_value.text();
         $.ajax({
@@ -536,7 +535,7 @@ $("#sports").change(function () {
             url: '{% url "EventsApp:get_selected_sports_positions" %}',
             data: {
                 'selected_type_text': selected_type_text,
-                'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
+                'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
             },
             success: function (data) {
                 let html_data = '<option value="" selected disabled>Choose Position</option>';
@@ -549,7 +548,7 @@ $("#sports").change(function () {
     });
 
 
-$("#add_positions").click(function (e) {
+    $("#add_positions").click(function (e) {
         e.preventDefault();
         var selected_skill_value = $("#skill option:selected");
         var selected_skill_text = selected_skill_value.text();
@@ -559,7 +558,7 @@ $("#add_positions").click(function (e) {
         var selected_sport_text = selected_sport_value.text();
 
         console.log(selected_skill_value.val(), selected_position_value.val(), selected_sport_value.val());
-        if(selected_skill_value.val() === "" || selected_position_value.val() === "" || selected_sport_value.val() === ""){
+        if (selected_skill_value.val() === "" || selected_position_value.val() === "" || selected_sport_value.val() === "") {
             let msg = "Please fill in he empty fields!";
             let html_data = `<div class="alert alert-warning alert-dismissible fade show" role="alert">`;
             html_data += `${msg}`;
@@ -576,7 +575,7 @@ $("#add_positions").click(function (e) {
                     'selected_sport_text': selected_sport_text,
                     'selected_position_text': selected_position_text,
                     'selected_skill_text': selected_skill_text,
-                    'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
+                    'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
                 },
                 success: function (data) {
                     let html_data = `<div class="alert alert-warning alert-dismissible fade show" role="alert">`;
@@ -599,51 +598,51 @@ $("#add_positions").click(function (e) {
         }
     });
 
-function fetchUserSportChoices(){
-    $.ajax({
-        type: "GET",
-        async:false,
-        url: '{% url "EventsApp:fetch_user_sports_positions" %}',
-        success: function (data) {
-            let html_data = `<table class="table table-striped">`;
-            data.forEach(function (data) {
-                html_data += `<tr>`;
-                html_data += `<td>${data.sport_type}</td>`;
-                html_data += `<td>${data.position}</td>`;
-                html_data += `<td>${data.skill}</td>`;
-                html_data += `<td>`;
-                html_data += `<a href="#" onclick="delete_sports_choice(${data.pk})">`;
-                html_data += `<i class="bi bi-trash" style="color:red"></i>`;
-                html_data += `</a>`;
-                html_data += `</td>`;
-                html_data += `</tr>`;
-            });
-            html_data += `</table>`;
-            let tableData = document.getElementById("sports_position_table");
-            tableData.innerHTML = html_data;
-        }
-    });
-}
+    function fetchUserSportChoices() {
+        $.ajax({
+            type: "GET",
+            async: false,
+            url: '{% url "EventsApp:fetch_user_sports_positions" %}',
+            success: function (data) {
+                let html_data = `<table class="table table-striped">`;
+                data.forEach(function (data) {
+                    html_data += `<tr>`;
+                    html_data += `<td>${data.sport_type}</td>`;
+                    html_data += `<td>${data.position}</td>`;
+                    html_data += `<td>${data.skill}</td>`;
+                    html_data += `<td>`;
+                    html_data += `<a href="#" onclick="delete_sports_choice(${data.pk})">`;
+                    html_data += `<i class="bi bi-trash" style="color:red"></i>`;
+                    html_data += `</a>`;
+                    html_data += `</td>`;
+                    html_data += `</tr>`;
+                });
+                html_data += `</table>`;
+                let tableData = document.getElementById("sports_position_table");
+                tableData.innerHTML = html_data;
+            }
+        });
+    }
 
-function delete_sports_choice(sport_choice_id){
-    $.ajax({
-        type: "POST",
-        url: '{% url "EventsApp:delete_sports_choice" %}',
-        data: {
-            'id': sport_choice_id,
-            'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
-        },
-        success: function (data) {
-            let html_data = `<div class="alert alert-warning alert-dismissible fade show" role="alert">`;
-            html_data += `${data["status"]}`;
-            html_data += `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
-            html_data += `</div>`;
-            let status = document.getElementById("position_status");
-            status.innerHTML = html_data;
-            fetchUserSportChoices();
-        }
-    });
-}
+    function delete_sports_choice(sport_choice_id) {
+        $.ajax({
+            type: "POST",
+            url: '{% url "EventsApp:delete_sports_choice" %}',
+            data: {
+                'id': sport_choice_id,
+                'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+            },
+            success: function (data) {
+                let html_data = `<div class="alert alert-warning alert-dismissible fade show" role="alert">`;
+                html_data += `${data["status"]}`;
+                html_data += `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+                html_data += `</div>`;
+                let status = document.getElementById("position_status");
+                status.innerHTML = html_data;
+                fetchUserSportChoices();
+            }
+        });
+    }
 
 $("#add_availability").click(function(e) {
     e.preventDefault();
@@ -787,7 +786,7 @@ $("#position").change(function () {
             data: {
                 'selected_position_text': selected_position_text,
                 'selected_type_text': selected_type_text,
-                'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
+                'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
             },
             success: function (data) {
                 let html_data = '<option value="" selected disabled>* Choose Skill</option>';
@@ -800,110 +799,110 @@ $("#position").change(function () {
         });
     });
 
-$(document).ready(function(){
-  var tab2 = $("#tab-2");
-  var tab3 = $("#tab-3");
-  var tab4 = $("#tab-4");
-  tab2.hide();
-  tab3.hide();
-  tab4.hide();
+    $(document).ready(function () {
+        var tab2 = $("#tab-2");
+        var tab3 = $("#tab-3");
+        var tab4 = $("#tab-4");
+        tab2.hide();
+        tab3.hide();
+        tab4.hide();
 
-  $("#next-tab-1").click(function(){
-    var tab1 = $("#tab-1");
-    var tab2 = $("#tab-2");
-    var tab3 = $("#tab-3");
-    var tab4 = $("#tab-4");
-    tab1.hide();
-    tab2.show();
-    tab3.hide();
-    tab4.hide();
-    $("#step2").addClass("active");
-  });
-
-  $("#next-tab-2").click(function(){
-    var tab1 = $("#tab-1");
-    var tab2 = $("#tab-2");
-    var tab3 = $("#tab-3");
-    var tab4 = $("#tab-4");
-    tab1.hide();
-    tab2.hide();
-    tab3.show();
-    tab4.hide();
-    $("#step3").addClass("active");
-  });
-
-  $("#next-tab-3").click(function(){
-    var tab1 = $("#tab-1");
-    var tab2 = $("#tab-2");
-    var tab3 = $("#tab-3");
-    var tab4 = $("#tab-4");
-    tab1.hide();
-    tab2.hide();
-    tab3.hide();
-    tab4.show();
-    $("#step4").addClass("active");
-  });
-
-  $("#previous-tab-2").click(function(){
-    var tab1 = $("#tab-1");
-    var tab2 = $("#tab-2");
-    var tab3 = $("#tab-3");
-    var tab4 = $("#tab-4");
-    tab1.show();
-    tab2.hide();
-    tab3.hide();
-    tab4.hide();
-    $("#step2").removeClass("active");
-  });
-
-  $("#previous-tab-3").click(function(){
-    var tab1 = $("#tab-1");
-    var tab2 = $("#tab-2");
-    var tab3 = $("#tab-3");
-    var tab4 = $("#tab-4");
-    tab1.hide();
-    tab2.show();
-    tab3.hide();
-    tab4.hide();
-    $("#step3").removeClass("active");
-  });
-
-  $("#previous-tab-4").click(function(){
-    var tab1 = $("#tab-1");
-    var tab2 = $("#tab-2");
-    var tab3 = $("#tab-3");
-    var tab4 = $("#tab-4");
-    tab1.hide();
-    tab2.hide();
-    tab3.show();
-    tab4.hide();
-    $("#step4").removeClass("active");
-  });
-
-});
-
-
-// Logic to show alert when user leaving page without saving
-$(function () {
-    var formSubmitting = false;
-    $("#msform").on('submit', function(){
-        formSubmitting = true;
-    });
-    window.onload = function() {
-        window.addEventListener("beforeunload", function (e) {
-            if (formSubmitting) {
-                return undefined;
-            }
-
-            var confirmationMessage = 'It appears you have unsaved changes, if you leave now, your changes will be lost.';
-
-            (e || window.event).returnValue = confirmationMessage; //Gecko + IE
-            return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
+        $("#next-tab-1").click(function () {
+            var tab1 = $("#tab-1");
+            var tab2 = $("#tab-2");
+            var tab3 = $("#tab-3");
+            var tab4 = $("#tab-4");
+            tab1.hide();
+            tab2.show();
+            tab3.hide();
+            tab4.hide();
+            $("#step2").addClass("active");
         });
-    };
-});
 
-// Make Placeholders title when user types something
+        $("#next-tab-2").click(function(){
+            var tab1 = $("#tab-1");
+            var tab2 = $("#tab-2");
+            var tab3 = $("#tab-3");
+            var tab4 = $("#tab-4");
+            tab1.hide();
+            tab2.hide();
+            tab3.show();
+            tab4.hide();
+            $("#step3").addClass("active");
+        });
+
+        $("#next-tab-3").click(function () {
+            var tab1 = $("#tab-1");
+            var tab2 = $("#tab-2");
+            var tab3 = $("#tab-3");
+            var tab4 = $("#tab-4");
+            tab1.hide();
+            tab2.hide();
+            tab3.hide();
+            tab4.show();
+            $("#step4").addClass("active");
+        });
+
+        $("#previous-tab-2").click(function () {
+            var tab1 = $("#tab-1");
+            var tab2 = $("#tab-2");
+            var tab3 = $("#tab-3");
+            var tab4 = $("#tab-4");
+            tab1.show();
+            tab2.hide();
+            tab3.hide();
+            tab4.hide();
+            $("#step2").removeClass("active");
+        });
+
+        $("#previous-tab-3").click(function () {
+            var tab1 = $("#tab-1");
+            var tab2 = $("#tab-2");
+            var tab3 = $("#tab-3");
+            var tab4 = $("#tab-4");
+            tab1.hide();
+            tab2.show();
+            tab3.hide();
+            tab4.hide();
+            $("#step3").removeClass("active");
+        });
+
+        $("#previous-tab-4").click(function () {
+            var tab1 = $("#tab-1");
+            var tab2 = $("#tab-2");
+            var tab3 = $("#tab-3");
+            var tab4 = $("#tab-4");
+            tab1.hide();
+            tab2.hide();
+            tab3.show();
+            tab4.hide();
+            $("#step4").removeClass("active");
+        });
+
+    });
+
+
+    // Logic to show alert when user leaving page without saving
+    $(function () {
+        var formSubmitting = false;
+        $("#msform").on('submit', function () {
+            formSubmitting = true;
+        });
+        window.onload = function () {
+            window.addEventListener("beforeunload", function (e) {
+                if (formSubmitting) {
+                    return undefined;
+                }
+
+                var confirmationMessage = 'It appears you have unsaved changes, if you leave now, your changes will be lost.';
+
+                (e || window.event).returnValue = confirmationMessage; //Gecko + IE
+                return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
+            });
+        };
+    });
+
+    // Make Placeholders title when user types something
 function addInputLabel(evt) {
     if (document.getElementsByName(evt.currentTarget.name)[0] && document.getElementsByName(evt.currentTarget.name)[0].type !== 'button' && document.getElementsByName(evt.currentTarget.name)[0].type !== 'text'){
         // console.log(document.getElementsByName(evt.currentTarget.name)[0]);
