@@ -922,7 +922,9 @@ def home(request):
                 sports = sports.exclude(sports_type_text=item['sports_type_text'])
 
     venues = Venues.objects.values('pk', 'vm_name').order_by('vm_name')
-    events = master_table.objects.all()
+    events = master_table.objects.all().order_by('-datetimes', '-datetimes_monday', '-datetimes_tuesday',
+                                                 '-datetimes_wednesday', '-datetimes_thursday', '-datetimes_friday',
+                                                 '-datetimes_saturday', '-datetimes_sunday')
 
     events = format_time(events)
 
@@ -983,7 +985,9 @@ def home(request):
 def get_recommended_events(request):
     user = User.objects.get(email=request.user.email)
     user_avaiability = Availability.objects.filter(user=user)
-    events = master_table.objects.all()
+    events = master_table.objects.all().order_by('datetimes', 'datetimes_monday', 'datetimes_tuesday', 'datetimes_wednesday',
+                                                 'datetimes_thursday', 'datetimes_friday', 'datetimes_saturday',
+                                                 'datetimes_sunday')
     locations_saved = Extra_Loctaions.objects.filter(user=user)
     loc_list = [item.city.lower() for item in locations_saved]
     recommended_events = set()
