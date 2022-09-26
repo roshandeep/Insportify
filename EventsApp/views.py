@@ -1280,11 +1280,14 @@ def event_details(request, event_id):
                 event_pos.no_of_position = int(event_pos.no_of_position) - int(needed_pos)
                 event_pos.save()
 
+                # print(request.user)
+
                 # Email Creator - New Subscriber
                 event_subject = "New subscriber for Event: " + event.event_title
                 event_message = "A new user has subscribed to event: " + event.event_title + "\n" + \
-                                "Subscriber Name: " + request.user.first_name + " " + request.user.last_name + "\n" + \
-                                "Subscriber Email: " + request.user.email + "\n"
+                                "Subscriber Name: " + user.first_name + " " + \
+                                user.last_name if user.last_name else "" + "\n" + \
+                                "Subscriber Email: " + user.email + "\n"
                 # if event.created_by:
                 #     util.email(event_subject, event_message, [event.created_by.email])
 
