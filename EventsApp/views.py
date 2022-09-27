@@ -5,6 +5,8 @@ import openpyxl
 import stripe
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db.models import F
+from django.db.models.functions import Coalesce
 from django.http import HttpResponse, JsonResponse
 from django.template import loader
 from django.shortcuts import render, redirect
@@ -922,9 +924,10 @@ def home(request):
                 sports = sports.exclude(sports_type_text=item['sports_type_text'])
 
     venues = Venues.objects.values('pk', 'vm_name').order_by('vm_name')
-    events = master_table.objects.all().order_by('-datetimes', '-datetimes_monday', '-datetimes_tuesday',
-                                                 '-datetimes_wednesday', '-datetimes_thursday', '-datetimes_friday',
-                                                 '-datetimes_saturday', '-datetimes_sunday')
+    events = master_table.objects.all().order_by(Coalesce(F('datetimes'), F('datetimes_monday'),
+                                                          F('datetimes_tuesday'), F('datetimes_wednesday'),
+                                                          F('datetimes_thursday'), F('datetimes_friday'),
+                                                          F('datetimes_saturday'), F('datetimes_sunday')).desc())
 
     events = format_time(events)
 
@@ -985,9 +988,10 @@ def home(request):
 def get_recommended_events(request):
     user = User.objects.get(email=request.user.email)
     user_avaiability = Availability.objects.filter(user=user)
-    events = master_table.objects.all().order_by('datetimes', 'datetimes_monday', 'datetimes_tuesday', 'datetimes_wednesday',
-                                                 'datetimes_thursday', 'datetimes_friday', 'datetimes_saturday',
-                                                 'datetimes_sunday')
+    events = master_table.objects.all().order_by(Coalesce(F('datetimes'), F('datetimes_monday'),
+                                                          F('datetimes_tuesday'), F('datetimes_wednesday'),
+                                                          F('datetimes_thursday'), F('datetimes_friday'),
+                                                          F('datetimes_saturday'), F('datetimes_sunday')).desc())
     locations_saved = Extra_Loctaions.objects.filter(user=user)
     loc_list = [item.city.lower() for item in locations_saved]
     recommended_events = set()
@@ -1276,11 +1280,14 @@ def event_details(request, event_id):
                 event_pos.no_of_position = int(event_pos.no_of_position) - int(needed_pos)
                 event_pos.save()
 
+                # print(request.user)
+
                 # Email Creator - New Subscriber
                 event_subject = "New subscriber for Event: " + event.event_title
                 event_message = "A new user has subscribed to event: " + event.event_title + "\n" + \
-                                "Subscriber Name: " + request.user.first_name + " " + request.user.last_name + "\n" + \
-                                "Subscriber Email: " + request.user.email + "\n"
+                                "Subscriber Name: " + user.first_name + " " + \
+                                user.last_name if user.last_name else "" + "\n" + \
+                                "Subscriber Email: " + user.email + "\n"
                 # if event.created_by:
                 #     util.email(event_subject, event_message, [event.created_by.email])
 
