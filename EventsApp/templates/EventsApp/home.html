@@ -203,7 +203,9 @@
         });
         var parent = document.getElementById('events_types_select')
         console.log(parent);
-        parent.querySelectorAll('span')[3].classList.add('ps-2')
+        parent.querySelectorAll('span')[3].classList.add('ps-2');
+        parent.querySelectorAll('span')[2].style.paddingBottom = '2px';
+        parent.querySelectorAll('span')[2].style.borderColor = '#000000';
         let para = document.getElementsByClassName("eventdatetime");
         for (let i = 0; i < para.length; i++) {
             let pval = para[i].innerHTML.split("from");
@@ -308,7 +310,7 @@
 }
 
 .select-style {
-    border: 1px solid #aaa !important;
+    border: 1px solid #000 !important;
     border-radius: 4px !important;
     font-family: sans-serif !important;
     font-size: 100% !important;

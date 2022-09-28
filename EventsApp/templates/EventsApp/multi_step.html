@@ -534,7 +534,7 @@ $("#sport_type").change(function () {
                     html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2 select-style" name ="position_cost' + index + '" placeholder="$" step="any"></div>'
                     html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2 select-style" name="min_age' + index + '" min=0 onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"></div>'
                     html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2 select-style" name="max_age' + index + '" min=0 onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"></div>'
-                    html2 += `<div class="col-md-2 py-2">${skills_dropdown}</div>`
+                    html2 += `<div id='select-type-event' class="col-md-2 py-2">${skills_dropdown}</div>`
                     html2 += `<div style="display:none"><input value="${data.position_type}" name="position_name${index}" value=></div>`
                     html2 += '</div>'
                     html_data += `<option value="${data.position_type}">${data.position_type}</option>`
@@ -1153,11 +1153,12 @@ $(document).ready(function() {
     border-radius: 4px !important;
     font-family: sans-serif !important;
     font-size: 100% !important;
+    padding-bottom: 5px !important;
     /* padding-top: 0px !important; */
 }
 
 .select2-search__field{
-    height:26px !important;
+    height:21px !important;
 }
 </style>
 

@@ -981,10 +981,15 @@ def home(request):
                 sports = sports.exclude(sports_type_text=item['sports_type_text'])
 
     venues = Venues.objects.values('pk', 'vm_name').order_by('vm_name')
-    events = master_table.objects.all().order_by(Coalesce(F('datetimes'), F('datetimes_monday'),
+    events = list(master_table.objects.all().order_by(Coalesce(F('datetimes'), F('datetimes_monday'),
                                                           F('datetimes_tuesday'), F('datetimes_wednesday'),
                                                           F('datetimes_thursday'), F('datetimes_friday'),
-                                                          F('datetimes_saturday'), F('datetimes_sunday')).desc())
+                                                          F('datetimes_saturday'), F('datetimes_sunday')).desc()))
+    # Removing Old Expired Events
+    # for event in events[:]:
+    #     flag = select_respective_datetime(event)
+    #     if not flag:
+    #         events.remove(event)
 
     events = format_time(events)
 
