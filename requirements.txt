@@ -28,3 +28,5 @@ tzlocal==1.5.1
 wincertstore==0.2
 openpyxl
 six
+# ngnix
+gunicorn
