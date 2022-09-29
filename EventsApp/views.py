@@ -981,10 +981,15 @@ def home(request):
                 sports = sports.exclude(sports_type_text=item['sports_type_text'])
 
     venues = Venues.objects.values('pk', 'vm_name').order_by('vm_name')
-    events = list(master_table.objects.all().order_by(Coalesce(F('datetimes'), F('datetimes_monday'),
-                                                          F('datetimes_tuesday'), F('datetimes_wednesday'),
-                                                          F('datetimes_thursday'), F('datetimes_friday'),
-                                                          F('datetimes_saturday'), F('datetimes_sunday')).desc()))
+    # default_events = list(master_table.objects.all().order_by(Coalesce(F('datetimes'), F('datetimes_monday'),
+    #                                                       F('datetimes_tuesday'), F('datetimes_wednesday'),
+    #                                                       F('datetimes_thursday'), F('datetimes_friday'),
+    #                                                       F('datetimes_saturday'), F('datetimes_sunday')).desc()))
+
+    default_events = master_table.objects.all()
+
+    events = sort_by_date(default_events)
+    print(events)
     # Removing Old Expired Events
     # for event in events[:]:
     #     flag = select_respective_datetime(event)
@@ -1042,9 +1047,48 @@ def home(request):
         'events': events,
         'recommended_events': recommended_events
     }
-    print(events)
+    # print(events)
     html_template = loader.get_template('EventsApp/home.html')
     return HttpResponse(html_template.render(context, request))
+
+
+def sort_by_date(events):
+    events_date_dict={}
+    for event in events:
+        if event.datetimes:
+            time = event.datetimes.split("-")
+            start_date, end_date = select_respective_datetime_helper(time)
+        if event.datetimes_monday:
+            time = event.datetimes_monday.split("-")
+            start_date, end_date = select_respective_datetime_helper(time)
+        if event.datetimes_tuesday:
+            time = event.datetimes_tuesday.split("-")
+            start_date, end_date = select_respective_datetime_helper(time)
+        if event.datetimes_wednesday:
+            time = event.datetimes_wednesday.split("-")
+            start_date, end_date = select_respective_datetime_helper(time)
+        if event.datetimes_thursday:
+            time = event.datetimes_thursday.split("-")
+            start_date, end_date = select_respective_datetime_helper(time)
+        if event.datetimes_friday:
+            time = event.datetimes_friday.split("-")
+            start_date, end_date = select_respective_datetime_helper(time)
+        if event.datetimes_saturday:
+            time = event.datetimes_saturday.split("-")
+            start_date, end_date = select_respective_datetime_helper(time)
+        if event.datetimes_sunday:
+            time = event.datetimes_sunday.split("-")
+            start_date, end_date = select_respective_datetime_helper(time)
+
+        events_date_dict[event.pk] = start_date
+
+    sorted_events = {k: v for k, v in sorted(events_date_dict.items(), key=lambda item: item[1], reverse=True)}
+    sorted_Ids = sorted_events.keys()
+    new_events = master_table.objects.filter(pk__in=sorted_Ids)
+
+    print(new_events)
+    return new_events
+
 
 
 def get_recommended_events(request):
