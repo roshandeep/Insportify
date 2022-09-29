@@ -11,12 +11,34 @@ services:
             POSTGRES_HOST: insportify-db1.cz5lufvg1olp.ca-central-1.rds.amazonaws.com
             POSTGRES_PORT: 5432 
 
-    app:
+    insportify-app:
+        container_name: insportify-app
         build: .
-        
         volumes:
             - .:/app
+        networks:
+            - db_network
+            - web_network
+        # ports:
+        #     - "80:8000"
+        # command: >
+        #     sh -c "python manage.py runserver --insecure 0.0.0.0:8080"
+
+    nginx:
+        container_name: nginx
+        restart: always
+        image: "nginx:latest"
         ports:
-            - "8080:80"
-        command: >
-            sh -c "python manage.py runserver --insecure 0.0.0.0:8080"
+            - "80:8000"
+        volumes:
+            - ./nginx:/etc/nginx/conf.d
+        networks:
+            - web_network
+        depends_on: 
+            - insportify-app
+
+networks:
+    db_network:
+        driver: bridge
+    web_network:
+        driver: bridge
