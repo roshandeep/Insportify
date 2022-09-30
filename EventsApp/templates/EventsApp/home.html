@@ -6,9 +6,7 @@
 
 <div id="event-page" class="col-lg-9 col-md-12 mx-auto">
 <form id="form-events" class="row p-3" action="{% url 'EventsApp:home' %}" method="get">
-    <!-- <div id="events-wrap" class="row"> -->
     <div class="col mb-2" id="events_types_select" style="flex-grow: 1;">
-        <!-- <p style="margin-bottom:0">Event Type</p> -->
         <select id="events_types" class="form-select select2 form-select" multiple name="events_types" style="height:26px; flex-grow: 1;">
             <option value="Camp">Camp</option>
             <option value="Charity">Charity</option>
@@ -22,7 +20,6 @@
         </select>
     </div>
     <div class="col mb-2">
-        <!-- <p style="margin-bottom:0">Sport</p> -->
         <select class="form-select select-style" name="sports">
             <option value="" selected="selected">Select Sport</option>
             {% for sports in sports_list %}
@@ -31,11 +28,10 @@
         </select>
     </div>
     <div class="col mb-2 mb-2">
-        <!-- <p style="margin-bottom:0">Event Date</p> -->
-        <input class="form-control select-style" onfocus="(this.type='date')" onblur="this.type='text'" value="Select Date" placeholder="Select Date" name="date_range"/>
+        <input class="form-control select-style" onfocus="(this.type='date')"
+               onblur="this.type='text'" value="Select Date" placeholder="Select Date" name="date_range"/>
     </div>
     <div class="col mb-2 mb-2">
-        <!-- <p style="margin-bottom:0">Event Venue</p> -->
         <select class="form-select select-style" name="venues">
             <option value="" selected="selected">Select Venue</option>
             {% for venues in venues_list %}
@@ -43,7 +39,6 @@
             {% endfor %}
         </select>
     </div>
-    <!-- </div> -->
     <div class="row-12 text-center">
         <button type="submit" class="btn btn-primary mr-2 m-2" style="width: 90px;">
             Search

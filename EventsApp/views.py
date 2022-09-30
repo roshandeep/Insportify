@@ -981,47 +981,59 @@ def home(request):
                 sports = sports.exclude(sports_type_text=item['sports_type_text'])
 
     venues = Venues.objects.values('pk', 'vm_name').order_by('vm_name')
-    # default_events = list(master_table.objects.all().order_by(Coalesce(F('datetimes'), F('datetimes_monday'),
-    #                                                       F('datetimes_tuesday'), F('datetimes_wednesday'),
-    #                                                       F('datetimes_thursday'), F('datetimes_friday'),
-    #                                                       F('datetimes_saturday'), F('datetimes_sunday')).desc()))
+    events = master_table.objects.all().order_by(Coalesce(F('datetimes'), F('datetimes_monday'),
+                                                          F('datetimes_tuesday'), F('datetimes_wednesday'),
+                                                          F('datetimes_thursday'), F('datetimes_friday'),
+                                                          F('datetimes_saturday'), F('datetimes_sunday')).desc())
 
-    default_events = master_table.objects.all()
+    # default_events = master_table.objects.all()
 
-    events = sort_by_date(default_events)
-    print(events)
+    # events = sort_by_date(default_events)
+    # print(events)
     # Removing Old Expired Events
     # for event in events[:]:
     #     flag = select_respective_datetime(event)
     #     if not flag:
     #         events.remove(event)
 
-    events = format_time(events)
-
     recommended_events = []
     if request.user.is_authenticated:
         recommended_events = get_recommended_events(request)
-
-    recommended_events = format_time(recommended_events)
-    # print(request.GET.getlist('events_types'))
+        recommended_events = master_table.objects.filter(pk__in=[event.pk for event in recommended_events])
 
     if request.GET.get('events_types'):
-        selected_events_types = request.GET.get('events_types')
-        # events = events.filter(Q(event_type__icontains=selected_events_types))
-        events = events.filter(event_type=selected_events_types)
+        selected_events_types = request.GET.getlist('events_types')
+        print(selected_events_types)
+        if request.user.is_authenticated:
+            recommended_events = recommended_events.filter(event_type__in=selected_events_types)
+        else:
+            events = events.filter(event_type__in=selected_events_types)
 
     if request.GET.get('sports'):
         selected_sports = request.GET.get('sports')
-        events = events.filter(sport_type=selected_sports)
+        if request.user.is_authenticated:
+            recommended_events = recommended_events.filter(sport_type=selected_sports)
+        else:
+            events = events.filter(sport_type=selected_sports)
 
     if request.GET.get('venues'):
         selected_venues = request.GET.get('venues')
-        events = events.filter(venue=selected_venues)
+        if request.user.is_authenticated:
+            recommended_events = recommended_events.filter(venue=selected_venues)
+        else:
+            events = events.filter(venue=selected_venues)
 
     if request.GET.get('date_range'):
         selected_date = request.GET.get('date_range')
-        selected_date = datetime.strptime(selected_date.strip(), '%Y-%m-%d').date()
-        events = get_events_by_date(events, selected_date)
+        if selected_date != 'Select Date':
+            selected_date = datetime.strptime(selected_date.strip(), '%Y-%m-%d').date()
+            if request.user.is_authenticated:
+                recommended_events = get_events_by_date(recommended_events, selected_date)
+            else:
+                events = get_events_by_date(events, selected_date)
+
+    events = format_time(events)
+    recommended_events = format_time(recommended_events)
 
     if request.user.is_authenticated:
         for event in recommended_events:
@@ -1086,7 +1098,7 @@ def sort_by_date(events):
     sorted_Ids = sorted_events.keys()
     new_events = master_table.objects.filter(pk__in=sorted_Ids)
 
-    print(new_events)
+    # print(new_events)
     return new_events
 
 
@@ -1330,7 +1342,24 @@ def format_time_helper(time):
 
 def get_events_by_date(events, selected_date):
     for event in events:
-        time = event.datetimes.split("-")
+        selected_event = master_table.objects.get(pk=event.pk)
+        if selected_event.datetimes:
+            time = selected_event.datetimes.split("-")
+        if selected_event.datetimes_monday:
+            time = selected_event.datetimes_monday.split("-")
+        if selected_event.datetimes_tuesday:
+            time = selected_event.datetimes_tuesday.split("-")
+        if selected_event.datetimes_wednesday:
+            time = selected_event.datetimes_wednesday.split("-")
+        if selected_event.datetimes_thursday:
+            time = selected_event.datetimes_thursday.split("-")
+        if selected_event.datetimes_friday:
+            time = selected_event.datetimes_friday.split("-")
+        if selected_event.datetimes_saturday:
+            time = selected_event.datetimes_saturday.split("-")
+        if selected_event.datetimes_sunday:
+            time = selected_event.datetimes_sunday.split("-")
+
         start_date = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p').date()
         end_date = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p').date()
         if selected_date < start_date or selected_date > end_date:
