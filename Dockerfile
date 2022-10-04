@@ -9,6 +9,10 @@ ADD . /app
 
 COPY ./requirements.txt /app/requirements.txt
 
+
+# COPY /app/nginx/insportify.com.crt
+# ADD you_certificate.crt:/container/cert/path
+RUN update-ca-certificates
 RUN pip install -r requirements.txt
 
 EXPOSE 8000
