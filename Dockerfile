@@ -16,6 +16,8 @@ RUN update-ca-certificates
 RUN pip install -r requirements.txt
 
 EXPOSE 8000
+# EXPOSE 443
+
 RUN python manage.py collectstatic --noinput
 # CMD [ "python", "manage.py",  "runserver", "0.0.0.0:8000"]
 CMD ["gunicorn", "--config", "gunicorn-cfg.py", "Insportify.wsgi"]
