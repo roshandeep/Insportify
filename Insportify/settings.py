@@ -84,6 +84,12 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'insportifyinfo@gmail.com'
 EMAIL_HOST_PASSWORD = 'rqhjanxgepfilmrb'
 
+
+# Added to confirm the csrf token does not fail for Safari on iPhone
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
+# CSRF_COOKIE_HTTPONLY = True
+
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
