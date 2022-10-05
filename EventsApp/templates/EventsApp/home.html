@@ -28,7 +28,7 @@
         </select>
     </div>
     <div class="col mb-2 mb-2">
-        <input class="form-control select-style" onfocus="(this.type='date')"
+        <input class="form-control select-style datesingle" onfocus="(this.type='date')"
                onblur="this.type='text'" value="Select Date" placeholder="Select Date" name="date_range"/>
     </div>
     <div class="col mb-2 mb-2">
@@ -179,18 +179,20 @@
 </div>
 
 {% endif %}
-
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"/>
 <script>
     $(document).ready(function () {
         let myWidth = $(window).width();
         let myHeight = window.innerHeight;
         callFormSizeChange(myWidth, myHeight);   
-        $(window).resize(function () {
-        var nw = $(window).width();
-        let myHeight = window.innerHeight;
-        myWidth = nw;
-        callFormSizeChange(myWidth, myHeight);
-    });
+        $(window).resize(function ()
+        {
+            var nw = $(window).width();
+            let myHeight = window.innerHeight;
+            myWidth = nw;
+            callFormSizeChange(myWidth, myHeight);
+        });
 
         $('.select2').select2({
             placeholder: "Select Event Type",
@@ -207,6 +209,13 @@
             para[i].innerHTML = "";
             para[i].innerHTML = pval[0] + "<br>" + pval[1];
         }
+
+        $('.datesingle').daterangepicker({
+            singleDatePicker: true,
+            locale: {
+              format: 'MM/DD/YYYY'
+            }
+          });
     });
 
     function callFormSizeChange(myWidth, myHeight) {
