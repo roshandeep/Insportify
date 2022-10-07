@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-ck(g2(+&@t-o2-mssd@xbx4@+offxrv1o-c&2u-lvts2&1%g+w
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['35.182.44.234', '127.0.0.1', 'localhost', 'insportify.com:8000', 'insportify.com']
+ALLOWED_HOSTS = ['35.182.44.234', '127.0.0.1', 'localhost', 'insportify.com:8000', 'www.insportify.com', '*.insportify.*', 'insportify.com', 'https://localhost']
 
 # Application definition
 
@@ -83,6 +83,12 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'insportifyinfo@gmail.com'
 EMAIL_HOST_PASSWORD = 'rqhjanxgepfilmrb'
+
+
+# Added to confirm the csrf token does not fail for Safari on iPhone
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
+# CSRF_COOKIE_HTTPONLY = True
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
@@ -148,6 +154,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
