@@ -24,12 +24,12 @@
             {% render_field form.day_of_week|add_required_class:"is-required" class="form-control" %}
         </div>
         <div class="form-group col-md-4">
-            {{ form.start_time.label }}
-            {% render_field form.start_time|add_required_class:"is-required" class="form-control" %}
+            <label>{{ form.start_time.label }}</label>
+            {% render_field form.start_time|add_required_class:"is-required" class="form-control mt-4" %}
         </div>
         <div class="form-group col-md-4">
-            {{ form.end_time.label }}
-            {% render_field form.end_time|add_required_class:"is-required" class="form-control" %}
+            <label>{{ form.end_time.label }}</label>
+            {% render_field form.end_time|add_required_class:"is-required" class="form-control mt-4" %}
         </div>
         <div class="form-group mb-3">
             <button class="btn my-3 shadow rounded text-white" style="background: #ff6f3d;" type="submit">
