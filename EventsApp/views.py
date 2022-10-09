@@ -25,7 +25,12 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 @login_required
 def multistep(request):
     sports_type = SportsType.objects.all().order_by('sports_type_text')
-    venues = Venues.objects.all().order_by('vm_name')
+    if request.user.is_individual:
+        user_loc = Extra_Loctaions.objects.filter(user=request.user).values_list('city', flat=True)
+        venues = Venues.objects.values('pk', 'vm_name', 'vm_venuecity').filter(
+            vm_venuecity__in=list(user_loc)).order_by('vm_name')
+    else:
+        venues = Venues.objects.values('pk', 'vm_name').order_by('vm_name')
     if request.method == "POST":
         # Had to remove required since some fieldsets are hidden due to pagination causing client side console errors
         # Checking validity here
@@ -980,7 +985,12 @@ def home(request):
             if not flag:
                 sports = sports.exclude(sports_type_text=item['sports_type_text'])
 
-    venues = Venues.objects.values('pk', 'vm_name').order_by('vm_name')
+    if request.user.is_authenticated and request.user.is_individual:
+        user_loc = Extra_Loctaions.objects.filter(user=request.user).values_list('city', flat=True)
+        venues = Venues.objects.values('pk', 'vm_name', 'vm_venuecity').filter(vm_venuecity__in=list(user_loc)).order_by('vm_name')
+    else:
+        venues = Venues.objects.values('pk', 'vm_name').order_by('vm_name')
+    cities = Venues.objects.values('vm_venuecity').distinct().order_by('vm_venuecity')
     events = master_table.objects.all().order_by(Coalesce(F('datetimes'), F('datetimes_monday'),
                                                           F('datetimes_tuesday'), F('datetimes_wednesday'),
                                                           F('datetimes_thursday'), F('datetimes_friday'),
@@ -1015,6 +1025,13 @@ def home(request):
             recommended_events = recommended_events.filter(sport_type=selected_sports)
         else:
             events = events.filter(sport_type=selected_sports)
+
+    if request.GET.get('cities'):
+        selected_cities = request.GET.get('cities')
+        if request.user.is_authenticated:
+            recommended_events = recommended_events.filter(city=selected_cities)
+        else:
+            events = events.filter(city=selected_cities)
 
     if request.GET.get('venues'):
         selected_venues = request.GET.get('venues')
@@ -1056,6 +1073,7 @@ def home(request):
     context = {
         'sports_list': sports,
         'venues_list': venues,
+        'cities_list': cities,
         'events': events,
         'recommended_events': recommended_events
     }
