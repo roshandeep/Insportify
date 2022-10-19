@@ -50,3 +50,6 @@ networks:
         driver: bridge
     web_network:
         driver: bridge
+
+volumes:
+  static_volume:
