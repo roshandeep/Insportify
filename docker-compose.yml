@@ -16,6 +16,7 @@ services:
         build: .
         volumes:
             - .:/app
+            - static_volume:/home/bitnami/Insportify/static
         networks:
             - db_network
             - web_network
