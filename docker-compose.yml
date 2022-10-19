@@ -36,6 +36,7 @@ services:
             # - ./nginx/insportify-app.conf:/etc/nginx/conf.d/default.conf
             - ./nginx/insportify.com.crt:/etc/nginx/certs/insportify.com.crt
             - ./nginx/insportify.com.key:/etc/nginx/certs/insportify.com.key
+            - static_volume:/home/bitnami/Insportify/static
         environment:
             - NGINX_PORT=443
         networks:
