@@ -297,11 +297,11 @@
                         </div>
                     <div class="card-body">
                         <div class="form-row p-2">
-                            <select name='venue' id="venue" class="form-select select2"
-                                    aria-label=".form-select-lg example">
+                            <select name='venue' id="venue" class="form-control select2"
+                                    aria-label=".form-select-lg example" style="width:100%">
                                 <option selected disabled>* Choose Venue</option>
                                 {% for venue in venues %}
-                                <option value="{{venue}}">{{venue.vm_name}}</option>
+                                <option value="{{venue.vm_name}}">{{venue.vm_name}}</option>
                                 {% endfor %}
                             </select>
                         </div>

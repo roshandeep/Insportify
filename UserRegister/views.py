@@ -1,5 +1,6 @@
 from django.contrib import messages
-from django.shortcuts import render,redirect
+from django.contrib.sites.shortcuts import get_current_site
+from django.shortcuts import render, redirect
 from django.views import generic
 from django.contrib.auth.forms import PasswordResetForm, PasswordChangeForm, AuthenticationForm
 from django.urls import reverse_lazy
@@ -52,24 +53,32 @@ class individual_register(CreateView):
     template_name = 'registration/individual_register.html'
 
     def form_valid(self, form):
+        localhost = '127.0.0.1:8000'
         if form.is_valid():
             user = form.save()
             user.is_active = False
-            user.is_mvp = False #self.request.POST.get('is_mvp') == "on"
+            user.is_mvp = False  # self.request.POST.get('is_mvp') == "on"
             user.save()
+            if get_current_site(self.request).domain == localhost:
+                ssl = 'http://'
+            else:
+                ssl = 'https://'
+            domain = ''.join([ssl, get_current_site(self.request).domain])
             email = EmailMessage(
                 'Welcome to Insportify!',
                 render_to_string('acc_active_email.html', {
                     'user': user,
-                    'domain': self.request.get_host(),
+                    'domain': domain,
                     'uid': force_text(urlsafe_base64_encode(force_bytes(user.email))),
                     'token': account_activation_token.make_token(user),
                 }),
                 to=[form.cleaned_data.get('email')]
             )
             email.send()
-            messages.success(self.request, 'Account created! A verification email has been sent to your email address. Please confirm your email address to complete the registration.')
+            messages.success(self.request,
+                             'Account created! A verification email has been sent to your email address. Please confirm your email address to complete the registration.')
         return redirect('/users/individual_register')
+
 
 class mvp_register(CreateView):
     model = User
@@ -77,23 +86,30 @@ class mvp_register(CreateView):
     template_name = 'registration/mvp_register.html'
 
     def form_valid(self, form):
+        localhost = '127.0.0.1:8000'
         if form.is_valid():
             user = form.save()
             user.is_active = False
             user.is_mvp = True
             user.save()
+            if get_current_site(self.request).domain == localhost:
+                ssl = 'http://'
+            else:
+                ssl = 'https://'
+            domain = ''.join([ssl, get_current_site(self.request).domain])
             email = EmailMessage(
                 'Welcome to Insportify!',
                 render_to_string('acc_active_email.html', {
                     'user': user,
-                    'domain': self.request.get_host(),
+                    'domain': domain,
                     'uid': force_text(urlsafe_base64_encode(force_bytes(user.email))),
                     'token': account_activation_token.make_token(user),
                 }),
                 to=[form.cleaned_data.get('email')]
             )
             email.send()
-            messages.success(self.request, 'Account created! A verification email has been sent to your email address. Please confirm your email address to complete the registration.')
+            messages.success(self.request,
+                             'Account created! A verification email has been sent to your email address. Please confirm your email address to complete the registration.')
         return redirect('/users/mvp_register')
 
 
@@ -103,22 +119,29 @@ class organization_register(CreateView):
     template_name = 'registration/organization_register.html'
 
     def form_valid(self, form):
+        localhost = '127.0.0.1:8000'
         if form.is_valid():
             user = form.save()
             user.is_active = False
             user.save()
+            if get_current_site(self.request).domain == localhost:
+                ssl = 'http://'
+            else:
+                ssl = 'https://'
+            domain = ''.join([ssl, get_current_site(self.request).domain])
             email = EmailMessage(
                 'Welcome to Insportify!',
                 render_to_string('acc_active_email.html', {
                     'user': user,
-                    'domain': self.request.get_host(),
+                    'domain': domain,
                     'uid': force_text(urlsafe_base64_encode(force_bytes(user.email))),
                     'token': account_activation_token.make_token(user),
                 }),
                 to=[form.cleaned_data.get('email')]
             )
             email.send()
-            messages.success(self.request, 'Account created! A verification email has been sent to your email address. Please confirm your email address to complete the registration.')
+            messages.success(self.request,
+                             'Account created! A verification email has been sent to your email address. Please confirm your email address to complete the registration.')
         return redirect('/users/organization_register')
 
 
@@ -154,15 +177,21 @@ class password_reset(generic.CreateView):
     template_name = 'registration/password_reset.html'
 
     def form_valid(self, form):
+        localhost = '127.0.0.1:8000'
         if form.is_valid():
             user = form.save()
             user.is_active = False
             user.save()
+            if get_current_site(self.request).domain == localhost:
+                ssl = 'http://'
+            else:
+                ssl = 'https://'
+            domain = ''.join([ssl, get_current_site(self.request).domain])
             email = EmailMessage(
                 'Password Reset Request from Insportify',
                 render_to_string('acc_pass_reset_email.html', {
                     'user': user,
-                    'domain': self.request.get_host(),
+                    'domain': domain,
                     'uid': force_text(urlsafe_base64_encode(force_bytes(user.email))),
                     'token': pass_reset_code.make_token(user),
                 }),
@@ -174,6 +203,7 @@ class password_reset(generic.CreateView):
 
 
 def password_reset_request(request):
+    localhost = '127.0.0.1:8000'
     if request.method == "POST":
         password_reset_form = PasswordResetForm(request.POST)
         if password_reset_form.is_valid():
@@ -181,11 +211,16 @@ def password_reset_request(request):
             associated_users = User.objects.filter(Q(email=data))
             if associated_users.exists():
                 for user in associated_users:
+                    if get_current_site(request).domain == localhost:
+                        ssl = 'http://'
+                    else:
+                        ssl = 'https://'
+                    domain = ''.join([ssl, get_current_site(request).domain])
                     email = EmailMessage(
                         'Password Reset Request from Insportify',
                         render_to_string('acc_pass_reset_email.html', {
                             'user': user,
-                            'domain': request.get_host(),
+                            'domain': domain,
                             'uid': force_text(urlsafe_base64_encode(force_bytes(user.pk))),
                             'token': default_token_generator.make_token(user),
                         }),
@@ -211,6 +246,3 @@ class UserRegisterView(generic.CreateView):
     form_class = SignUpForm
     template_name = 'registration/register.html'
     success_url = reverse_lazy('login')
-
-
-

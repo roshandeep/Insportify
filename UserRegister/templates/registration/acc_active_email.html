@@ -6,5 +6,5 @@ Hi {{ user.first_name }},
 Welcome to Insportify!
 
 Please click on the link to confirm your registration,
-http://{{ domain }}{% url 'UserRegister:activate' uidb64=uid token=token %}
+{{ domain }}{% url 'UserRegister:activate' uidb64=uid token=token %}
 {% endautoescape %}

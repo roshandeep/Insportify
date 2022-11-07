@@ -1069,6 +1069,9 @@ def home(request):
         else:
             event.sport_logo = "/media/images/Multisport.jpg"
 
+    # for event in events:
+    #     print(event.venue, event.city, event.province)
+
     events = [events[i:i + 3] for i in range(0, len(events), 3)]
     context = {
         'sports_list': sports,
