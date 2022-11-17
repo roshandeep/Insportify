@@ -496,13 +496,14 @@ $("#sport_type").change(function () {
             },
             success: function (data) {
                 let html_data = '<option selected disabled>Choose Position</option>';
-                let html2 = '<div class="form-row p-2 text-center positions-container">';
-                html2 += '<div class="row g-2"><div class="col-md-2" style="font-style: italic;">Position</div>';
-                html2 += '<div class="col-md-2" style="font-style: italic;">* # of Positions</div>';
-                html2 += '<div class="col-md-2" style="font-style: italic;">* Cost</div>';
-                html2 += '<div class="col-md-2" style="font-style: italic;">* Min Age</div>';
-                html2 += '<div class="col-md-2" style="font-style: italic;">* Max Age</div>';
-                html2 += '<div class="col-md-2" style="font-style: italic;">* Skills</div></div>';
+                let html2 = '';
+                // '<div class="form-row p-2 text-center positions-container">';
+                // html2 += '<div class="row g-2"><div class="col-md-2" style="font-style: italic;">Position</div>';
+                // html2 += '<div class="col-md-2" style="font-style: italic;">* # of Positions</div>';
+                // html2 += '<div class="col-md-2" style="font-style: italic;">* Cost</div>';
+                // html2 += '<div class="col-md-2" style="font-style: italic;">* Min Age</div>';
+                // html2 += '<div class="col-md-2" style="font-style: italic;">* Max Age</div>';
+                // html2 += '<div class="col-md-2" style="font-style: italic;">* Skills</div></div>';
 
                 data.forEach(function (data) {
                     var selected_position_value = data.position_type;
@@ -527,10 +528,10 @@ $("#sport_type").change(function () {
                         }
                     });
                     html2 += `<div class="row g-2"><label class="col-md-2 align-middle my-4"  style="font-weight: bold;">${data.position_type}</label>`
-                    html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2 select-style" name="no_of_position' + index + '" placeholder = "#" min=0 onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"></div>'
-                    html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2 select-style" name ="position_cost' + index + '" placeholder="$" step="any"></div>'
-                    html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2 select-style" name="min_age' + index + '" min=0 onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"></div>'
-                    html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2 select-style" name="max_age' + index + '" min=0 onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"></div>'
+                    html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2 select-style" name="no_of_position' + index + '" placeholder = "# of positions" min=0 onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"></div>'
+                    html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2 select-style" name ="position_cost' + index + '" placeholder="Cost" step="any"></div>'
+                    html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2 select-style" name="min_age' + index + '" min=0 onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" placeholder="Min. Age"></div>'
+                    html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2 select-style" name="max_age' + index + '" min=0 onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" placeholder="Max. Age"></div>'
                     html2 += `<div id='select-type-event' class="col-md-2 py-2">${skills_dropdown}</div>`
                     html2 += `<div style="display:none"><input value="${data.position_type}" name="position_name${index}" value=></div>`
                     html2 += '</div>'
@@ -542,7 +543,8 @@ $("#sport_type").change(function () {
                 $('.select2').select2();
                 $('.skills_dropdown').select2({
                     placeholder: "Select",
-                    allowClear: true
+                    allowClear: true,
+                    width: "100%",
                 });
             }
         });
