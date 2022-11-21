@@ -75,6 +75,7 @@ class master_table(models.Model):
     datetimes_friday = models.CharField(max_length=100, blank=True, null=True)
     datetimes_saturday = models.CharField(max_length=100, blank=True, null=True)
     datetimes_sunday = models.CharField(max_length=100, blank=True, null=True)
+    datetimes_all = models.TextField(blank=True, null=True)
     datetimes_exceptions = models.CharField(max_length=500, blank=True, null=True)
     gender = models.CharField(max_length=300, blank=True, null=True)
     sport_type = models.CharField(max_length=300, blank=True, null=True)
@@ -235,6 +236,7 @@ class Organization_Availability(models.Model):
     end_time = models.TimeField(blank=True, null=True)
     all_day = models.BooleanField(default=False)
 
+
 class Logo(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='images')
@@ -326,3 +328,16 @@ class Order(models.Model):
     def __str__(self):
         return self.customer.first_name
 
+
+class Advertisement(models.Model):
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    creation_time = models.DateTimeField()
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
+    header = models.TextField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    scope = models.CharField(max_length=100, blank=True, null=True)  # scope can be national/local
+    image = models.TextField(blank=True, null=True)
+    url = models.TextField(blank=True, null=True)
+    hit_count = models.IntegerField(blank=True, null=True)  # per ip address
+    max_hits = models.IntegerField(blank=True, null=True)

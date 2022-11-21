@@ -38,12 +38,12 @@ class IndividualSignUpForm(UserCreationForm):
         user.is_individual = True
         user.first_name = self.cleaned_data.get('first_name')
         user.last_name = self.cleaned_data.get('last_name')
-        user.email = self.cleaned_data.get('email')
+        user.email = self.cleaned_data.get('email').lower()
         user.set_password(self.cleaned_data["password1"])
         user.save()
         individual = Individual.objects.create(user=user)
         individual.phone = self.cleaned_data.get('phone')
-        individual.email = self.cleaned_data.get('email')
+        individual.email = self.cleaned_data.get('email').lower()
         individual.first_name = self.cleaned_data.get('first_name')
         individual.last_name = self.cleaned_data.get('last_name')
         individual.save()
@@ -81,12 +81,12 @@ class MVPSignUpForm(forms.ModelForm):
         user.is_individual = True
         user.first_name = self.cleaned_data.get('first_name')
         user.last_name = self.cleaned_data.get('last_name')
-        user.email = self.cleaned_data.get('email')
+        user.email = self.cleaned_data.get('email').lower()
         user.set_password(self.cleaned_data["password1"])
         user.save()
         individual = Individual.objects.create(user=user)
         individual.phone = self.cleaned_data.get('phone')
-        individual.email = self.cleaned_data.get('email')
+        individual.email = self.cleaned_data.get('email').lower()
         individual.first_name = self.cleaned_data.get('first_name')
         individual.last_name = self.cleaned_data.get('last_name')
         individual.website = self.cleaned_data.get('website')
@@ -130,14 +130,14 @@ class OrganizationSignUpForm(forms.ModelForm):
         user.is_organization = True
         user.is_staff = True
         user.first_name = self.cleaned_data.get('organization_name')
-        user.email = self.cleaned_data.get('email')
+        user.email = self.cleaned_data.get('email').lower()
         user.set_password(self.cleaned_data["password1"])
         # print(self.cleaned_data["password1"])
         user.save()
         organization = Organization.objects.create(user=user)
         organization.organization_name = self.cleaned_data.get('organization_name')
         organization.phone = self.cleaned_data.get('phone')
-        organization.email = self.cleaned_data.get('email')
+        organization.email = self.cleaned_data.get('email').lower()
         organization.save()
         return user
 
