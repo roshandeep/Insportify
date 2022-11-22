@@ -1995,15 +1995,15 @@ def days_between(start, end, week_day, start_time, end_time):
 def remove_exceptions_from_recurring_days(all_dates, exception_dates):
     all_dates_arr = all_dates.strip(',').split(',')
     exception_dates_arr = exception_dates.split(',')
-    print(all_dates_arr)
-    print(exception_dates_arr)
+    # print(all_dates_arr)
+    # print(exception_dates_arr)
     filtered_dates = all_dates.strip(',').split(',')
     for ex_date in exception_dates_arr:
         for date in all_dates_arr:
-            if ex_date in date:
+            if ex_date == date:
                 filtered_dates.remove(date)
     filtered_dates.sort()
-    print(filtered_dates)
+    # print(filtered_dates)
     return ','.join(filtered_dates)
 
 
