@@ -72,7 +72,7 @@ class individual_register(CreateView):
                     'uid': force_text(urlsafe_base64_encode(force_bytes(user.email))),
                     'token': account_activation_token.make_token(user),
                 }),
-                to=[form.cleaned_data.get('email')]
+                to=[form.cleaned_data.get('email').lower()]
             )
             email.send()
             messages.success(self.request,
@@ -147,9 +147,11 @@ class organization_register(CreateView):
 
 def login_request(request):
     if request.method == 'POST':
-        form = AuthenticationForm(data=request.POST)
+        post = request.POST.copy()
+        post['username'] = post['username'].lower()
+        form = AuthenticationForm(data=post)
         if form.is_valid():
-            username = form.cleaned_data.get('username')
+            username = form.cleaned_data.get('username').lower()
             password = form.cleaned_data.get('password')
             # print(username, password)
             user = authenticate(username=username, password=password)
@@ -195,7 +197,7 @@ class password_reset(generic.CreateView):
                     'uid': force_text(urlsafe_base64_encode(force_bytes(user.email))),
                     'token': pass_reset_code.make_token(user),
                 }),
-                to=[form.cleaned_data.get('email')]
+                to=[form.cleaned_data.get('email').lower()]
             )
             email.send()
         # login(self.request, user)
@@ -205,9 +207,11 @@ class password_reset(generic.CreateView):
 def password_reset_request(request):
     localhost = '127.0.0.1:8000'
     if request.method == "POST":
-        password_reset_form = PasswordResetForm(request.POST)
+        post = request.POST.copy()
+        post['username'] = post['username'].lower()
+        password_reset_form = PasswordResetForm(post)
         if password_reset_form.is_valid():
-            data = password_reset_form.cleaned_data['email']
+            data = password_reset_form.cleaned_data['email'].lower()
             associated_users = User.objects.filter(Q(email=data))
             if associated_users.exists():
                 for user in associated_users:
@@ -224,7 +228,7 @@ def password_reset_request(request):
                             'uid': force_text(urlsafe_base64_encode(force_bytes(user.pk))),
                             'token': default_token_generator.make_token(user),
                         }),
-                        to=[password_reset_form.cleaned_data.get('email')]
+                        to=[password_reset_form.cleaned_data.get('email').lower()]
                     )
                     email.send()
                     return redirect("/users/password_reset/done/")

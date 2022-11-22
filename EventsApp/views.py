@@ -1,6 +1,6 @@
 import calendar
 from datetime import datetime, timedelta, date
-
+import time
 import openpyxl
 import stripe
 from django.contrib import messages
@@ -62,6 +62,7 @@ def multistep(request):
             obj.datetimes_friday = ""
             obj.datetimes_saturday = ""
             obj.datetimes_sunday = ""
+            obj.datetimes_all = ""
             if obj.is_recurring and 'Monday' in selected_days:
                 date = request.POST.get('datetimes_monday_date').split("-")
                 start_date = date[0].strip()
@@ -70,6 +71,7 @@ def multistep(request):
                 ts = datetime.strptime(request.POST.get('datetimes_monday_start_time'), "%H:%M").strftime("%I:%M %p")
                 te = datetime.strptime(request.POST.get('datetimes_monday_end_time'), "%H:%M").strftime("%I:%M %p")
                 obj.datetimes_monday = start_date + " " + ts + " - " + end_date + " " + te
+                obj.datetimes_all += ','.join(days_between(start_date, end_date, "Monday", ts, te)) + ','
             if obj.is_recurring and 'Tuesday' in selected_days:
                 date = request.POST.get('datetimes_tuesday_date').split("-")
                 start_date = date[0].strip()
@@ -77,6 +79,7 @@ def multistep(request):
                 ts = datetime.strptime(request.POST.get('datetimes_tuesday_start_time'), "%H:%M").strftime("%I:%M %p")
                 te = datetime.strptime(request.POST.get('datetimes_tuesday_end_time'), "%H:%M").strftime("%I:%M %p")
                 obj.datetimes_tuesday = start_date + " " + ts + " - " + end_date + " " + te
+                obj.datetimes_all += ','.join(days_between(start_date, end_date, "Tuesday", ts, te)) + ','
             if obj.is_recurring and 'Wednesday' in selected_days:
                 date = request.POST.get('datetimes_wednesday_date').split("-")
                 start_date = date[0].strip()
@@ -84,6 +87,7 @@ def multistep(request):
                 ts = datetime.strptime(request.POST.get('datetimes_wednesday_start_time'), "%H:%M").strftime("%I:%M %p")
                 te = datetime.strptime(request.POST.get('datetimes_wednesday_end_time'), "%H:%M").strftime("%I:%M %p")
                 obj.datetimes_wednesday = start_date + " " + ts + " - " + end_date + " " + te
+                obj.datetimes_all += ','.join(days_between(start_date, end_date, "Wednesday", ts, te)) + ','
             if obj.is_recurring and 'Thursday' in selected_days:
                 date = request.POST.get('datetimes_thursday_date').split("-")
                 start_date = date[0].strip()
@@ -91,6 +95,7 @@ def multistep(request):
                 ts = datetime.strptime(request.POST.get('datetimes_thursday_start_time'), "%H:%M").strftime("%I:%M %p")
                 te = datetime.strptime(request.POST.get('datetimes_thursday_end_time'), "%H:%M").strftime("%I:%M %p")
                 obj.datetimes_thursday = start_date + " " + ts + " - " + end_date + " " + te
+                obj.datetimes_all += ','.join(days_between(start_date, end_date, "Thursday", ts, te)) + ','
             if obj.is_recurring and 'Friday' in selected_days:
                 date = request.POST.get('datetimes_friday_date').split("-")
                 start_date = date[0].strip()
@@ -98,6 +103,7 @@ def multistep(request):
                 ts = datetime.strptime(request.POST.get('datetimes_friday_start_time'), "%H:%M").strftime("%I:%M %p")
                 te = datetime.strptime(request.POST.get('datetimes_friday_end_time'), "%H:%M").strftime("%I:%M %p")
                 obj.datetimes_friday = start_date + " " + ts + " - " + end_date + " " + te
+                obj.datetimes_all += ','.join(days_between(start_date, end_date, "Friday", ts, te)) + ','
             if obj.is_recurring and 'Saturday' in selected_days:
                 date = request.POST.get('datetimes_saturday_date').split("-")
                 start_date = date[0].strip()
@@ -105,6 +111,7 @@ def multistep(request):
                 ts = datetime.strptime(request.POST.get('datetimes_saturday_start_time'), "%H:%M").strftime("%I:%M %p")
                 te = datetime.strptime(request.POST.get('datetimes_saturday_end_time'), "%H:%M").strftime("%I:%M %p")
                 obj.datetimes_saturday = start_date + " " + ts + " - " + end_date + " " + te
+                obj.datetimes_all += ','.join(days_between(start_date, end_date, "Saturday", ts, te)) + ','
             if obj.is_recurring and 'Sunday' in selected_days:
                 date = request.POST.get('datetimes_sunday_date').split("-")
                 start_date = date[0].strip()
@@ -112,13 +119,16 @@ def multistep(request):
                 ts = datetime.strptime(request.POST.get('datetimes_sunday_start_time'), "%H:%M").strftime("%I:%M %p")
                 te = datetime.strptime(request.POST.get('datetimes_sunday_end_time'), "%H:%M").strftime("%I:%M %p")
                 obj.datetimes_sunday = start_date + " " + ts + " - " + end_date + " " + te
+                obj.datetimes_all += ','.join(days_between(start_date, end_date, "Sunday", ts, te)) + ','
             obj.datetimes_exceptions = request.POST.get('datetimes_exceptions') if obj.is_recurring else ""
+            obj.datetimes_all = remove_exceptions_from_recurring_days(obj.datetimes_all, obj.datetimes_exceptions)
             obj.datetimes = ""
             if not obj.is_recurring:
                 date = request.POST.get('datetimes_date')
                 ts = datetime.strptime(request.POST.get('datetimes_start_time'), "%H:%M").strftime("%I:%M %p")
                 te = datetime.strptime(request.POST.get('datetimes_end_time'), "%H:%M").strftime("%I:%M %p")
                 obj.datetimes = date + " " + ts + " - " + date + " " + te
+                obj.datetimes_all = date + " " + ts + " - " + date + " " + te
 
             obj.save()
             save_event_position_info(request, obj)
@@ -987,7 +997,8 @@ def home(request):
 
     if request.user.is_authenticated and request.user.is_individual:
         user_loc = Extra_Loctaions.objects.filter(user=request.user).values_list('city', flat=True)
-        venues = Venues.objects.values('pk', 'vm_name', 'vm_venuecity').filter(vm_venuecity__in=list(user_loc)).order_by('vm_name')
+        venues = Venues.objects.values('pk', 'vm_name', 'vm_venuecity').filter(
+            vm_venuecity__in=list(user_loc)).order_by('vm_name')
     else:
         venues = Venues.objects.values('pk', 'vm_name').order_by('vm_name')
     cities = Venues.objects.values('vm_venuecity').distinct().order_by('vm_venuecity')
@@ -1443,7 +1454,7 @@ def event_details(request, event_id):
                 event_message = "A new user has subscribed to event: " + event.event_title + "\n" + \
                                 "Subscriber Name: " + user.first_name + " " + \
                                 user.last_name if user.last_name else "" + "\n" + \
-                                "Subscriber Email: " + user.email + "\n"
+                                                                      "Subscriber Email: " + user.email + "\n"
                 # if event.created_by:
                 #     util.email(event_subject, event_message, [event.created_by.email])
 
@@ -1971,3 +1982,28 @@ def logo_upload_view(request):
             img_obj = Logo.objects.get(user=request.user)
 
     return render(request, 'EventsApp/add_logo.html', {'form': form, 'img_obj': img_obj})
+
+
+def days_between(start, end, week_day, start_time, end_time):
+    first_day = datetime.strptime(start, '%m/%d/%Y')
+    last_day = datetime.strptime(end, '%m/%d/%Y')
+    dates = [first_day + timedelta(days=x) for x in range((last_day - first_day).days + 1) if
+             (first_day + timedelta(days=x)).weekday() == time.strptime(week_day, '%A').tm_wday]
+    return [date_obj.strftime('%m/%d/%Y') + ' ' + start_time + ' - ' + end_time for date_obj in dates]
+
+
+def remove_exceptions_from_recurring_days(all_dates, exception_dates):
+    all_dates_arr = all_dates.strip(',').split(',')
+    exception_dates_arr = exception_dates.split(',')
+    print(all_dates_arr)
+    print(exception_dates_arr)
+    filtered_dates = all_dates.strip(',').split(',')
+    for ex_date in exception_dates_arr:
+        for date in all_dates_arr:
+            if ex_date in date:
+                filtered_dates.remove(date)
+    filtered_dates.sort()
+    print(filtered_dates)
+    return ','.join(filtered_dates)
+
+
