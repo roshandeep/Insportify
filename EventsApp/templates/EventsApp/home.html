@@ -87,20 +87,8 @@
                                 <p class="card-text">{{event.venue}}, {{event.city}}, {{event.province}}</p>
                                 {% if event.datetimes %}
                                 <p class="text-dark text-start eventdatetime">{{event.datetimes}}</p>
-                                {% elif event.datetimes_monday %}
-                                <p class="text-dark text-start eventdatetime">{{event.datetimes_monday}}</p>
-                                {% elif event.datetimes_tuesday %}
-                                <p class="text-dark text-start eventdatetime">{{event.datetimes_tuesday}}</p>
-                                {% elif event.datetimes_wednesday %}
-                                <p class="text-dark text-start eventdatetime">{{event.datetimes_wednesday}}</p>
-                                {% elif event.datetimes_thursday %}
-                                <p class="text-dark text-start eventdatetime">{{event.datetimes_thursday}}</p>
-                                {% elif event.datetimes_friday %}
-                                <p class="text-dark text-start eventdatetime">{{event.datetimes_friday}}</p>
-                                {% elif event.datetimes_saturday %}
-                                <p class="text-dark text-start eventdatetime">{{event.datetimes_saturday}}</p>
-                                {% elif event.datetimes_sunday %}
-                                <p class="text-dark text-start eventdatetime">{{event.datetimes_sunday}}</p>
+                                {% elif event.current_datetimes %}
+                                <p class="text-dark text-start eventdatetime">{{event.current_datetimes}}</p>
                                 {% endif %}
                             </div>
                         </div>
@@ -151,20 +139,8 @@
                             <p class="card-text">{{event.venue}}, {{event.city}}, {{event.province}}</p>
                             {% if event.datetimes %}
                             <p class="text-dark text-start eventdatetime">{{event.datetimes}}</p>
-                            {% elif event.datetimes_monday %}
-                            <p class="text-dark text-start eventdatetime">{{event.datetimes_monday}}</p>
-                            {% elif event.datetimes_tuesday %}
-                            <p class="text-dark text-start eventdatetime">{{event.datetimes_tuesday}}</p>
-                            {% elif event.datetimes_wednesday %}
-                            <p class="text-dark text-start eventdatetime">{{event.datetimes_wednesday}}</p>
-                            {% elif event.datetimes_thursday %}
-                            <p class="text-dark text-start eventdatetime">{{event.datetimes_thursday}}</p>
-                            {% elif event.datetimes_friday %}
-                            <p class="text-dark text-start eventdatetime">{{event.datetimes_friday}}</p>
-                            {% elif event.datetimes_saturday %}
-                            <p class="text-dark text-start eventdatetime">{{event.datetimes_saturday}}</p>
-                            {% elif event.datetimes_sunday %}
-                            <p class="text-dark text-start eventdatetime">{{event.datetimes_sunday}}</p>
+                            {% elif event.current_datetimes %}
+                            <p class="text-dark text-start eventdatetime">{{event.current_datetimes}}</p>
                             {% endif %}
                         </div>
                     </div>
@@ -232,6 +208,7 @@
         parent.querySelectorAll('span')[3].classList.add('ps-2');
         parent.querySelectorAll('span')[2].style.paddingBottom = '4px';
         parent.querySelectorAll('span')[2].style.borderColor = '#000000';
+
         let para = document.getElementsByClassName("eventdatetime");
         for (let i = 0; i < para.length; i++) {
             let pval = para[i].innerHTML.split("from");

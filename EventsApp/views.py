@@ -1,4 +1,5 @@
 import calendar
+import copy
 from datetime import datetime, timedelta, date
 import time
 import openpyxl
@@ -288,16 +289,6 @@ def ValidateUserProfileForm(request, context):
     if not request.POST.get('country') or request.POST['country'].strip() == "":
         messages.error(request, "Please enter Country")
         valid = False
-
-    # if not request.POST.get('sport_type') or request.POST['sport_type'].strip() == "":
-    #     messages.error(request, "Please select Sports you facilitate")
-    #     valid = False
-    # if not request.POST.get('position') or request.POST['position'].strip() == "":
-    #     messages.error(request, "Please select Position")
-    #     valid = False
-    # if not request.POST.get('skill') or request.POST['skill'].strip() == "":
-    #     messages.error(request, "Please select Skill")
-    #     valid = False
 
     return valid
 
@@ -1001,13 +992,12 @@ def home(request):
     else:
         venues = Venues.objects.values('pk', 'vm_name').order_by('vm_name')
     cities = Venues.objects.values('vm_venuecity').distinct().order_by('vm_venuecity')
-    # events = master_table.objects.all().order_by(Coalesce(F('datetimes'), F('datetimes_monday'),
-    #                                                       F('datetimes_tuesday'), F('datetimes_wednesday'),
-    #                                                       F('datetimes_thursday'), F('datetimes_friday'),
-    #                                                       F('datetimes_saturday'), F('datetimes_sunday')).desc())
 
     events = master_table.objects.all()
-    get_sorted_events(events)
+    events = get_sorted_events(events)
+
+    for event in events:
+        print(event.current_datetimes)
 
     recommended_events = []
     if request.user.is_authenticated:
@@ -1054,7 +1044,7 @@ def home(request):
                 events = get_events_by_date(events, selected_date)
 
     events = format_time(events)
-    recommended_events = format_time(recommended_events)
+    # recommended_events = format_time(recommended_events)
 
     if request.user.is_authenticated:
         for event in recommended_events:
@@ -1090,50 +1080,34 @@ def home(request):
 
 
 def get_sorted_events(events):
-    events_date_dict={}
+    events = list(events)
+    full_events_list = []
     for event in events:
         if event.datetimes:
-            time = event.datetimes.split("-")
-            start_date, end_date = select_respective_datetime_helper(time)
-        if event.datetimes_monday:
-            time = event.datetimes_monday.split("-")
-            start_date, end_date = select_respective_datetime_helper(time)
-        if event.datetimes_tuesday:
-            time = event.datetimes_tuesday.split("-")
-            start_date, end_date = select_respective_datetime_helper(time)
-        if event.datetimes_wednesday:
-            time = event.datetimes_wednesday.split("-")
-            start_date, end_date = select_respective_datetime_helper(time)
-        if event.datetimes_thursday:
-            time = event.datetimes_thursday.split("-")
-            start_date, end_date = select_respective_datetime_helper(time)
-        if event.datetimes_friday:
-            time = event.datetimes_friday.split("-")
-            start_date, end_date = select_respective_datetime_helper(time)
-        if event.datetimes_saturday:
-            time = event.datetimes_saturday.split("-")
-            start_date, end_date = select_respective_datetime_helper(time)
-        if event.datetimes_sunday:
-            time = event.datetimes_sunday.split("-")
-            start_date, end_date = select_respective_datetime_helper(time)
+            full_events_list.append(event)
+        elif event.datetimes_all:
+            all_dates_arr = event.datetimes_all.strip(',').split(',')
+            for single_date in all_dates_arr:
+                # print(single_date)
+                event_copy = copy.deepcopy(event)
+                event_copy.current_datetimes = single_date
+                full_events_list.append(event_copy)
 
-        events_date_dict[event.pk] = start_date
+    full_events_list.sort(key=lambda event: (event.datetimes if event.datetimes else event.current_datetimes))
 
-    sorted_events = {k: v for k, v in sorted(events_date_dict.items(), key=lambda item: item[1], reverse=True)}
-    sorted_Ids = sorted_events.keys()
-    new_events = master_table.objects.filter(pk__in=sorted_Ids)
+    # for event in full_events_list:
+    #     print(event.current_datetimes)
 
-    # print(new_events)
-    return new_events
+    return full_events_list
 
 
 def get_recommended_events(request):
     user = User.objects.get(email=request.user.email)
     user_avaiability = Availability.objects.filter(user=user)
-    events = master_table.objects.all().order_by(Coalesce(F('datetimes'), F('datetimes_monday'),
-                                                          F('datetimes_tuesday'), F('datetimes_wednesday'),
-                                                          F('datetimes_thursday'), F('datetimes_friday'),
-                                                          F('datetimes_saturday'), F('datetimes_sunday')).desc())
+
+    events = master_table.objects.all()
+    events = get_sorted_events(events)
+
     locations_saved = Extra_Loctaions.objects.filter(user=user)
     loc_list = [item.city.lower() for item in locations_saved]
     recommended_events = set()
@@ -1307,40 +1281,16 @@ def extract_event_datetime(event):
 
 
 def format_time(events):
-
     for event in events:
         if event.datetimes:
             time = event.datetimes.split("-")
+            print(time)
             str_datetime = format_time_helper(time)
             event.datetimes = str_datetime
-        if event.datetimes_monday:
-            time = event.datetimes_monday.split("-")
-            str_datetime = format_time_helper(time)
-            event.datetimes_monday = str_datetime
-        if event.datetimes_tuesday:
-            time = event.datetimes_tuesday.split("-")
-            str_datetime = format_time_helper(time)
-            event.datetimes_tuesday = str_datetime
-        if event.datetimes_wednesday:
-            time = event.datetimes_wednesday.split("-")
-            str_datetime = format_time_helper(time)
-            event.datetimes_wednesday = str_datetime
-        if event.datetimes_thursday:
-            time = event.datetimes_thursday.split("-")
-            str_datetime = format_time_helper(time)
-            event.datetimes_thursday = str_datetime
-        if event.datetimes_friday:
-            time = event.datetimes_friday.split("-")
-            str_datetime = format_time_helper(time)
-            event.datetimes_friday = str_datetime
-        if event.datetimes_saturday:
-            time = event.datetimes_saturday.split("-")
-            str_datetime = format_time_helper(time)
-            event.datetimes_saturday = str_datetime
-        if event.datetimes_sunday:
-            time = event.datetimes_sunday.split("-")
-            str_datetime = format_time_helper(time)
-            event.datetimes_sunday = str_datetime
+        elif event.current_datetimes:
+            string_date = datetime.strptime(event.current_datetimes[0:10], '%m/%d/%Y').date()
+            str_datetime = string_date.strftime("%B %d") + " from " + event.current_datetimes[10:len(event.current_datetimes)]
+            event.current_datetimes = str_datetime
 
     return events
 
@@ -1361,6 +1311,7 @@ def format_time_helper(time):
         else:
             str_datetime = start_date + " - " + end_date + " from " + start_time + " - " + end_time
 
+    # print(str_datetime)
     return str_datetime
 
 
