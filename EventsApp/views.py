@@ -67,7 +67,6 @@ def multistep(request):
                 date = request.POST.get('datetimes_monday_date').split("-")
                 start_date = date[0].strip()
                 end_date = date[1].strip()
-                # print(start_date, end_date)
                 ts = datetime.strptime(request.POST.get('datetimes_monday_start_time'), "%H:%M").strftime("%I:%M %p")
                 te = datetime.strptime(request.POST.get('datetimes_monday_end_time'), "%H:%M").strftime("%I:%M %p")
                 obj.datetimes_monday = start_date + " " + ts + " - " + end_date + " " + te
@@ -1134,7 +1133,6 @@ def sort_by_date(events):
     return new_events
 
 
-
 def get_recommended_events(request):
     user = User.objects.get(email=request.user.email)
     user_avaiability = Availability.objects.filter(user=user)
@@ -1995,15 +1993,16 @@ def days_between(start, end, week_day, start_time, end_time):
 def remove_exceptions_from_recurring_days(all_dates, exception_dates):
     all_dates_arr = all_dates.strip(',').split(',')
     exception_dates_arr = exception_dates.split(',')
-    print(all_dates_arr)
-    print(exception_dates_arr)
+    # print(all_dates_arr)
+    # print(exception_dates_arr)
     filtered_dates = all_dates.strip(',').split(',')
+    # print(filtered_dates)
     for ex_date in exception_dates_arr:
         for date in all_dates_arr:
-            if ex_date in date:
+            if ex_date == date:
                 filtered_dates.remove(date)
     filtered_dates.sort()
-    print(filtered_dates)
+    # print(filtered_dates)
     return ','.join(filtered_dates)
 
 
