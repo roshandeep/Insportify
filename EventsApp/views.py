@@ -1001,20 +1001,13 @@ def home(request):
     else:
         venues = Venues.objects.values('pk', 'vm_name').order_by('vm_name')
     cities = Venues.objects.values('vm_venuecity').distinct().order_by('vm_venuecity')
-    events = master_table.objects.all().order_by(Coalesce(F('datetimes'), F('datetimes_monday'),
-                                                          F('datetimes_tuesday'), F('datetimes_wednesday'),
-                                                          F('datetimes_thursday'), F('datetimes_friday'),
-                                                          F('datetimes_saturday'), F('datetimes_sunday')).desc())
+    # events = master_table.objects.all().order_by(Coalesce(F('datetimes'), F('datetimes_monday'),
+    #                                                       F('datetimes_tuesday'), F('datetimes_wednesday'),
+    #                                                       F('datetimes_thursday'), F('datetimes_friday'),
+    #                                                       F('datetimes_saturday'), F('datetimes_sunday')).desc())
 
-    # default_events = master_table.objects.all()
-
-    # events = sort_by_date(default_events)
-    # print(events)
-    # Removing Old Expired Events
-    # for event in events[:]:
-    #     flag = select_respective_datetime(event)
-    #     if not flag:
-    #         events.remove(event)
+    events = master_table.objects.all()
+    get_sorted_events(events)
 
     recommended_events = []
     if request.user.is_authenticated:
@@ -1054,6 +1047,7 @@ def home(request):
         selected_date = request.GET.get('date_range')
         if selected_date != 'Select Date':
             selected_date = datetime.strptime(selected_date.strip(), '%Y-%m-%d').date()
+            print(selected_date)
             if request.user.is_authenticated:
                 recommended_events = get_events_by_date(recommended_events, selected_date)
             else:
@@ -1095,7 +1089,7 @@ def home(request):
     return HttpResponse(html_template.render(context, request))
 
 
-def sort_by_date(events):
+def get_sorted_events(events):
     events_date_dict={}
     for event in events:
         if event.datetimes:
@@ -1371,29 +1365,27 @@ def format_time_helper(time):
 
 
 def get_events_by_date(events, selected_date):
-    for event in events:
+    for event in events[:]:
         selected_event = master_table.objects.get(pk=event.pk)
+
         if selected_event.datetimes:
             time = selected_event.datetimes.split("-")
-        if selected_event.datetimes_monday:
-            time = selected_event.datetimes_monday.split("-")
-        if selected_event.datetimes_tuesday:
-            time = selected_event.datetimes_tuesday.split("-")
-        if selected_event.datetimes_wednesday:
-            time = selected_event.datetimes_wednesday.split("-")
-        if selected_event.datetimes_thursday:
-            time = selected_event.datetimes_thursday.split("-")
-        if selected_event.datetimes_friday:
-            time = selected_event.datetimes_friday.split("-")
-        if selected_event.datetimes_saturday:
-            time = selected_event.datetimes_saturday.split("-")
-        if selected_event.datetimes_sunday:
-            time = selected_event.datetimes_sunday.split("-")
+            start_date = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p').date()
+            end_date = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p').date()
+            if selected_date < start_date or selected_date > end_date:
+                events = events.exclude(pk=event.id)
 
-        start_date = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p').date()
-        end_date = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p').date()
-        if selected_date < start_date or selected_date > end_date:
-            events = events.exclude(pk=event.id)
+        elif selected_event.datetimes_all:
+            all_dates_arr = selected_event.datetimes_all.strip(',').split(',')
+            flag = 0
+            for all_dates in all_dates_arr:
+                time = all_dates.split(" ")
+                start_date = datetime.strptime(time[0].strip(), '%m/%d/%Y').date()
+                if start_date != selected_date:
+                    flag = flag + 1
+
+            if flag == len(all_dates_arr):
+                events = events.exclude(pk=event.id)
 
     return events
 
