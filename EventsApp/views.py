@@ -994,7 +994,7 @@ def home(request):
     cities = Venues.objects.values('vm_venuecity').distinct().order_by('vm_venuecity')
 
     events = master_table.objects.all()
-    events = get_sorted_events(events)
+    events = get_events_by_time(events)
 
     recommended_events = []
     if request.user.is_authenticated:
@@ -1043,6 +1043,8 @@ def home(request):
     events = format_time(events)
     recommended_events = format_time(recommended_events)
 
+    sort_events_by_date(events)
+
     if request.user.is_authenticated:
         for event in recommended_events:
             sport_img = SportsImage.objects.filter(sport=event.sport_type).values("img")
@@ -1051,6 +1053,7 @@ def home(request):
             else:
                 event.sport_logo = "/media/images/Multisport.jpg"
 
+        sort_events_by_date(recommended_events)
         recommended_events = [recommended_events[i:i + 3] for i in range(0, len(recommended_events), 3)]
 
     for event in events:
@@ -1073,7 +1076,14 @@ def home(request):
     return HttpResponse(html_template.render(context, request))
 
 
-def get_sorted_events(events):
+def sort_events_by_date(events):
+
+    # for event in events
+    #
+    return
+
+
+def get_events_by_time(events):
     events = list(events)
     full_events_list = []
     for event in events:
@@ -1100,7 +1110,7 @@ def get_recommended_events(request):
     user_avaiability = Availability.objects.filter(user=user)
 
     events = master_table.objects.all()
-    events = get_sorted_events(events)
+    events = get_events_by_time(events)
 
     locations_saved = Extra_Loctaions.objects.filter(user=user)
     loc_list = [item.city.lower() for item in locations_saved]
@@ -1111,8 +1121,6 @@ def get_recommended_events(request):
     if len(user_avaiability):
         for event in events:
             event_date, event_start_time, event_end_time = extract_event_datetime(event)
-            # print("Considered", event.event_title, event_date.weekday() + 1, event_start_time, event_end_time)
-            # print(event.event_title, event_date, event_start_time, event_end_time)
             for avail in user_avaiability:
                 if avail.day_of_week == (event_date.weekday() + 1):
                     if event_start_time >= avail.start_time and event_end_time <= avail.end_time:
