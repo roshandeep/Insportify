@@ -1040,10 +1040,13 @@ def home(request):
             else:
                 events = get_events_by_date(events, selected_date)
 
+    sort_events_by_date(events)
+
+    if request.user.is_authenticated:
+        sort_events_by_date(recommended_events)
+
     events = format_time(events)
     recommended_events = format_time(recommended_events)
-
-    sort_events_by_date(events)
 
     if request.user.is_authenticated:
         for event in recommended_events:
@@ -1053,7 +1056,6 @@ def home(request):
             else:
                 event.sport_logo = "/media/images/Multisport.jpg"
 
-        sort_events_by_date(recommended_events)
         recommended_events = [recommended_events[i:i + 3] for i in range(0, len(recommended_events), 3)]
 
     for event in events:
@@ -1078,8 +1080,20 @@ def home(request):
 
 def sort_events_by_date(events):
 
-    # for event in events
-    #
+    def getDate(event):
+        datetimes = event.datetimes if event.datetimes else event.current_datetimes
+        time = datetimes.split("-")
+        datetime_obj = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
+        return datetime_obj
+
+    events.sort(key=lambda x: getDate(x), reverse=True)
+
+    # for event in events:
+    #     datetimes = event.datetimes if event.datetimes else event.current_datetimes
+    #     time = datetimes.split("-")
+    #     datetime_obj = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
+    #     print(event.event_title, datetime_obj)
+
     return
 
 
@@ -1396,6 +1410,7 @@ def event_details(request, event_id):
         return redirect('EventsApp:cart_summary')
 
     return render(request, "EventsApp/detail_dashboard.html", context)
+
 
 @csrf_exempt
 def delete_cart_item(request):
