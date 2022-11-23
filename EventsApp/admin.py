@@ -1,7 +1,8 @@
 from django.contrib import admin
 from EventsApp.models import master_table, User, \
     Individual, Organization, SportsCategory, SportsType, Venues, Availability, Order, Logo, Extra_Loctaions, \
-    Events_PositionInfo, Secondary_SportsChoice, OrderItems, PositionAndSkillType, SportsImage, Organization_Availability
+    Events_PositionInfo, Secondary_SportsChoice, OrderItems, PositionAndSkillType, SportsImage, \
+    Organization_Availability, Advertisement
 
 admin.site.register(master_table)
 admin.site.register(User)
@@ -69,4 +70,11 @@ class Organization_AvailabilityAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Organization_Availability, Organization_AvailabilityAdmin)
+
+
+class AdvertisementAdmin(admin.ModelAdmin):
+    list_display = ('created_by', 'creation_time', 'start_time', 'end_time',)
+
+
+admin.site.register(Advertisement, AdvertisementAdmin)
 
