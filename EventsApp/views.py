@@ -1291,13 +1291,14 @@ def get_events_by_date(events, selected_date):
 
 
 @login_required
-def event_details(request, event_id):
+def event_details(request, event_id, event_date):
     context = {}
     event = master_table.objects.get(pk=event_id)
     user = request.user
     event_postions = Events_PositionInfo.objects.filter(event=event_id)
     context['event'] = event
     context['event_postions'] = event_postions
+    context['event_date'] = event_date
 
     if request.method == 'POST':
         print(request.POST.dict())

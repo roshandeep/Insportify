@@ -72,7 +72,8 @@
                     <div class="cards-wrapper">
                         {% for event in sublist %}
                         <div id="event-card" class="event-card card {% if forloop.counter0 != 0 %}d-none d-md-block{% endif %} col-4"
-                             onclick="location.href='event_details/{{event.pk}}/';" style="cursor:pointer">
+                             onclick="location.href='event_details/{{event.pk}}/{% if event.datetimes %}{{event.datetimes}}{% elif event.current_datetimes %}{{event.current_datetimes}}{% endif %}/'"
+                             style="cursor:pointer">
                             <img src="{{event.sport_logo}}" class="card-img-top" alt="...">
                             <div class="card-body">
                                 <h5 class="card-title">{{event.sport_type}}</h5>
@@ -124,7 +125,8 @@
                 <div class="cards-wrapper">
                     {% for event in sublist %}
                     <div id="event-card" class="event-card card {% if forloop.counter0 != 0 %}d-none d-md-block{% endif %} col-4"
-                         onclick="location.href='event_details/{{event.pk}}/';" style="cursor:pointer">
+                         onclick="location.href='event_details/{{event.pk}}/{% if event.datetimes %}{{event.datetimes}}{% elif event.current_datetimes %}{{event.current_datetimes}}{% endif %}/'"
+                         style="cursor:pointer">
                         <img src="{{event.sport_logo}}" class="card-img-top" alt="...">
                         <div class="card-body" >
                             <h5 class="card-title">{{event.sport_type}}</h5>
