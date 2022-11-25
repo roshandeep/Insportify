@@ -336,8 +336,8 @@ class Advertisement(models.Model):
     end_time = models.DateTimeField()
     header = models.TextField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
-    scope = models.CharField(max_length=100, blank=True, null=True)  # scope can be national/local
+    scope = models.CharField(max_length=100, blank=True, null=True)
     image = models.TextField(blank=True, null=True)
     url = models.TextField(blank=True, null=True)
-    hit_count = models.IntegerField(blank=True, null=True)  # per ip address
+    hit_count = models.IntegerField(blank=True, null=True)
     max_hits = models.IntegerField(blank=True, null=True)
