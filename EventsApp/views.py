@@ -368,66 +368,9 @@ def save_event_position_info(request, event):
 @login_required
 def all_events(request):
     event_list = list(master_table.objects.filter(created_by=request.user))
-    for event in event_list[:]:
-        flag = select_respective_datetime(event)
-        if not flag:
-            event_list.remove(event)
-
+    event_list = get_events_by_time(event_list)
     event_list = format_time(event_list)
-
     return render(request, 'EventsApp/event_list.html', {'event_list': event_list})
-
-
-def select_respective_datetime(event):
-    today = datetime.now().date()
-    if event.datetimes:
-        time = event.datetimes.split("-")
-        start_date, end_date = select_respective_datetime_helper(time)
-    if event.datetimes_monday:
-        time = event.datetimes_monday.split("-")
-        start_date, end_date = select_respective_datetime_helper(time)
-    if event.datetimes_tuesday:
-        time = event.datetimes_tuesday.split("-")
-        start_date, end_date = select_respective_datetime_helper(time)
-    if event.datetimes_wednesday:
-        time = event.datetimes_wednesday.split("-")
-        start_date, end_date = select_respective_datetime_helper(time)
-    if event.datetimes_thursday:
-        time = event.datetimes_thursday.split("-")
-        start_date, end_date = select_respective_datetime_helper(time)
-    if event.datetimes_friday:
-        time = event.datetimes_friday.split("-")
-        start_date, end_date = select_respective_datetime_helper(time)
-    if event.datetimes_saturday:
-        time = event.datetimes_saturday.split("-")
-        start_date, end_date = select_respective_datetime_helper(time)
-    if event.datetimes_sunday:
-        time = event.datetimes_sunday.split("-")
-        start_date, end_date = select_respective_datetime_helper(time)
-
-    if start_date == end_date:
-        if today <= start_date:
-            print(start_date, end_date, type(today), "check1")
-            return True
-        else:
-            print(start_date, end_date, type(today), "check2")
-            return False
-    elif end_date > start_date:
-        if today <= end_date:
-            print(start_date, end_date, type(today), "check3")
-            return True
-        else:
-            print(start_date, end_date, type(today), "check4")
-            return False
-
-
-
-def select_respective_datetime_helper(time):
-    if time is not None and time != "":
-        start_date = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p').date()
-        end_date = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p').date()
-
-    return start_date, end_date
 
 
 @login_required
