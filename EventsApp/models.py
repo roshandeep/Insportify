@@ -92,6 +92,7 @@ class master_table(models.Model):
     position_cost = models.IntegerField(blank=True, null=True)
     sport_logo = models.CharField(max_length=300, blank=True, null=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    current_datetimes = models.CharField(max_length=500, blank=True, null=True)
 
     def __str__(self):
         return self.event_title

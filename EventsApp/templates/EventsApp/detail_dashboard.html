@@ -14,32 +14,9 @@
 
                 It will be hosted at {{event.venue}}, {{event.city}} {{event.province}}. This event is on
                 <i class="bi bi-calendar-check-fill" style="padding-right: 5px;"></i>
-                <em>
-                    {% if event.datetimes %}
-                        , {{event.datetimes}}
-                    {% endif %}
-                    {% if event.datetimes_monday %}
-                        , {{event.datetimes_monday}}
-                    {% endif %}
-                    {% if event.datetimes_tuesday %}
-                        , {{event.datetimes_tuesday}}
-                    {% endif %}
-                    {% if event.datetimes_wednesday %}
-                        , {{event.datetimes_wednesday}}
-                    {% endif %}
-                    {% if event.datetimes_thursday %}
-                        , {{event.datetimes_thursday}}
-                    {% endif %}
-                    {% if event.datetimes_friday %}
-                        , {{event.datetimes_friday}}
-                    {% endif %}
-                    {% if event.datetimes_saturday %}
-                        , {{event.datetimes_saturday}}
-                    {% endif %}
-                    {% if event.datetimes_sunday %}
-                        , {{event.datetimes_sunday}}
-                    {% endif %}
-                </em>.
+                <b>
+                    {{event_date}}
+                </b>.
                 <br>
                 <br>
                 {{event.description}}

@@ -1,4 +1,5 @@
 import calendar
+import copy
 from datetime import datetime, timedelta, date
 import time
 import openpyxl
@@ -290,16 +291,6 @@ def ValidateUserProfileForm(request, context):
         messages.error(request, "Please enter Country")
         valid = False
 
-    # if not request.POST.get('sport_type') or request.POST['sport_type'].strip() == "":
-    #     messages.error(request, "Please select Sports you facilitate")
-    #     valid = False
-    # if not request.POST.get('position') or request.POST['position'].strip() == "":
-    #     messages.error(request, "Please select Position")
-    #     valid = False
-    # if not request.POST.get('skill') or request.POST['skill'].strip() == "":
-    #     messages.error(request, "Please select Skill")
-    #     valid = False
-
     return valid
 
 
@@ -378,66 +369,10 @@ def save_event_position_info(request, event):
 @login_required
 def all_events(request):
     event_list = list(master_table.objects.filter(created_by=request.user))
-    for event in event_list[:]:
-        flag = select_respective_datetime(event)
-        if not flag:
-            event_list.remove(event)
-
+    event_list = get_events_by_time(event_list)
     event_list = format_time(event_list)
 
     return render(request, 'EventsApp/event_list.html', {'event_list': event_list})
-
-
-def select_respective_datetime(event):
-    today = datetime.now().date()
-    if event.datetimes:
-        time = event.datetimes.split("-")
-        start_date, end_date = select_respective_datetime_helper(time)
-    if event.datetimes_monday:
-        time = event.datetimes_monday.split("-")
-        start_date, end_date = select_respective_datetime_helper(time)
-    if event.datetimes_tuesday:
-        time = event.datetimes_tuesday.split("-")
-        start_date, end_date = select_respective_datetime_helper(time)
-    if event.datetimes_wednesday:
-        time = event.datetimes_wednesday.split("-")
-        start_date, end_date = select_respective_datetime_helper(time)
-    if event.datetimes_thursday:
-        time = event.datetimes_thursday.split("-")
-        start_date, end_date = select_respective_datetime_helper(time)
-    if event.datetimes_friday:
-        time = event.datetimes_friday.split("-")
-        start_date, end_date = select_respective_datetime_helper(time)
-    if event.datetimes_saturday:
-        time = event.datetimes_saturday.split("-")
-        start_date, end_date = select_respective_datetime_helper(time)
-    if event.datetimes_sunday:
-        time = event.datetimes_sunday.split("-")
-        start_date, end_date = select_respective_datetime_helper(time)
-
-    if start_date == end_date:
-        if today <= start_date:
-            print(start_date, end_date, type(today), "check1")
-            return True
-        else:
-            print(start_date, end_date, type(today), "check2")
-            return False
-    elif end_date > start_date:
-        if today <= end_date:
-            print(start_date, end_date, type(today), "check3")
-            return True
-        else:
-            print(start_date, end_date, type(today), "check4")
-            return False
-
-
-
-def select_respective_datetime_helper(time):
-    if time is not None and time != "":
-        start_date = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p').date()
-        end_date = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p').date()
-
-    return start_date, end_date
 
 
 @login_required
@@ -1002,25 +937,14 @@ def home(request):
     else:
         venues = Venues.objects.values('pk', 'vm_name').order_by('vm_name')
     cities = Venues.objects.values('vm_venuecity').distinct().order_by('vm_venuecity')
-    events = master_table.objects.all().order_by(Coalesce(F('datetimes'), F('datetimes_monday'),
-                                                          F('datetimes_tuesday'), F('datetimes_wednesday'),
-                                                          F('datetimes_thursday'), F('datetimes_friday'),
-                                                          F('datetimes_saturday'), F('datetimes_sunday')).desc())
 
-    # default_events = master_table.objects.all()
-
-    # events = sort_by_date(default_events)
-    # print(events)
-    # Removing Old Expired Events
-    # for event in events[:]:
-    #     flag = select_respective_datetime(event)
-    #     if not flag:
-    #         events.remove(event)
+    events = master_table.objects.all()
+    events = get_events_by_time(events)
 
     recommended_events = []
     if request.user.is_authenticated:
         recommended_events = get_recommended_events(request)
-        recommended_events = master_table.objects.filter(pk__in=[event.pk for event in recommended_events])
+        # recommended_events = master_table.objects.filter(pk__in=[event.pk for event in recommended_events])
 
     if request.GET.get('events_types'):
         selected_events_types = request.GET.getlist('events_types')
@@ -1055,10 +979,16 @@ def home(request):
         selected_date = request.GET.get('date_range')
         if selected_date != 'Select Date':
             selected_date = datetime.strptime(selected_date.strip(), '%Y-%m-%d').date()
+            print(selected_date)
             if request.user.is_authenticated:
                 recommended_events = get_events_by_date(recommended_events, selected_date)
             else:
                 events = get_events_by_date(events, selected_date)
+
+    sort_events_by_date(events)
+
+    if request.user.is_authenticated:
+        sort_events_by_date(recommended_events)
 
     events = format_time(events)
     recommended_events = format_time(recommended_events)
@@ -1080,9 +1010,6 @@ def home(request):
         else:
             event.sport_logo = "/media/images/Multisport.jpg"
 
-    # for event in events:
-    #     print(event.venue, event.city, event.province)
-
     events = [events[i:i + 3] for i in range(0, len(events), 3)]
     context = {
         'sports_list': sports,
@@ -1096,76 +1023,72 @@ def home(request):
     return HttpResponse(html_template.render(context, request))
 
 
-def sort_by_date(events):
-    events_date_dict={}
+def sort_events_by_date(events):
+
+    def getDate(event):
+        datetimes = event.datetimes if event.datetimes else event.current_datetimes
+        time = datetimes.split("-")
+        datetime_obj = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
+        return datetime_obj
+
+    events.sort(key=lambda x: getDate(x), reverse=True)
+
+    # for event in events:
+    #     datetimes = event.datetimes if event.datetimes else event.current_datetimes
+    #     time = datetimes.split("-")
+    #     datetime_obj = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
+    #     print(event.event_title, datetime_obj)
+
+    return
+
+
+def get_events_by_time(events):
+    events = list(events)
+    full_events_list = []
     for event in events:
         if event.datetimes:
-            time = event.datetimes.split("-")
-            start_date, end_date = select_respective_datetime_helper(time)
-        if event.datetimes_monday:
-            time = event.datetimes_monday.split("-")
-            start_date, end_date = select_respective_datetime_helper(time)
-        if event.datetimes_tuesday:
-            time = event.datetimes_tuesday.split("-")
-            start_date, end_date = select_respective_datetime_helper(time)
-        if event.datetimes_wednesday:
-            time = event.datetimes_wednesday.split("-")
-            start_date, end_date = select_respective_datetime_helper(time)
-        if event.datetimes_thursday:
-            time = event.datetimes_thursday.split("-")
-            start_date, end_date = select_respective_datetime_helper(time)
-        if event.datetimes_friday:
-            time = event.datetimes_friday.split("-")
-            start_date, end_date = select_respective_datetime_helper(time)
-        if event.datetimes_saturday:
-            time = event.datetimes_saturday.split("-")
-            start_date, end_date = select_respective_datetime_helper(time)
-        if event.datetimes_sunday:
-            time = event.datetimes_sunday.split("-")
-            start_date, end_date = select_respective_datetime_helper(time)
+            full_events_list.append(event)
+        elif event.datetimes_all:
+            all_dates_arr = event.datetimes_all.strip(',').split(',')
+            for single_date in all_dates_arr:
+                # print(single_date)
+                event_copy = copy.deepcopy(event)
+                event_copy.current_datetimes = single_date
+                full_events_list.append(event_copy)
 
-        events_date_dict[event.pk] = start_date
+    full_events_list.sort(key=lambda event: (event.datetimes if event.datetimes else event.current_datetimes))
 
-    sorted_events = {k: v for k, v in sorted(events_date_dict.items(), key=lambda item: item[1], reverse=True)}
-    sorted_Ids = sorted_events.keys()
-    new_events = master_table.objects.filter(pk__in=sorted_Ids)
+    # for event in full_events_list:
+    #     print(event.current_datetimes)
 
-    # print(new_events)
-    return new_events
-
+    return full_events_list
 
 
 def get_recommended_events(request):
     user = User.objects.get(email=request.user.email)
     user_avaiability = Availability.objects.filter(user=user)
-    events = master_table.objects.all().order_by(Coalesce(F('datetimes'), F('datetimes_monday'),
-                                                          F('datetimes_tuesday'), F('datetimes_wednesday'),
-                                                          F('datetimes_thursday'), F('datetimes_friday'),
-                                                          F('datetimes_saturday'), F('datetimes_sunday')).desc())
+
+    events = master_table.objects.all()
+    events = get_events_by_time(events)
+
     locations_saved = Extra_Loctaions.objects.filter(user=user)
     loc_list = [item.city.lower() for item in locations_saved]
-    recommended_events = set()
+    recommended_events = []
 
     # FILTER by DateTime
     # If there is no user availability then add all events to recommended events
     if len(user_avaiability):
-        # print(user_avaiability)
         for event in events:
             event_date, event_start_time, event_end_time = extract_event_datetime(event)
-            if len(event_date) != 0 and len(event_start_time) != 0 and len(event_end_time) != 0:
-                for idx in range(0, len(event_date)):
-                    for avail in user_avaiability:
-                        if avail.day_of_week == (event_date[idx].weekday() + 1):
-                            # print(event.event_title, avail.start_time, avail.end_time, event_start_time, event_end_time, event_start_time >= avail.start_time, event_end_time <= avail.end_time)
-                            if event_start_time[idx] >= avail.start_time and event_end_time[idx] <= avail.end_time:
-                                recommended_events.add(event)
-
-            else:
-                recommended_events.add(event)
+            for avail in user_avaiability:
+                if avail.day_of_week == (event_date.weekday() + 1):
+                    if event_start_time >= avail.start_time and event_end_time <= avail.end_time:
+                        recommended_events.append(event)
+                        print("Added", event.event_title, event_date, event_start_time, event_end_time)
+                        break
     else:
         recommended_events = [event for event in events]
 
-    recommended_events = list(recommended_events)
     print("Availability Filter", recommended_events)
 
     # FILTER BY Location
@@ -1271,84 +1194,54 @@ def get_recommended_events(request):
 
     print("Skills Filter", recommended_events)
 
-    return list(recommended_events)
+    return recommended_events
 
 
 def extract_event_datetime(event):
-    event_date = []
-    event_start_time = []
-    event_end_time = []
+    event_date = ""
+    event_start_time = ""
+    event_end_time = ""
 
     times_list=[]
 
     if event.datetimes:
-        times_list.append(event.datetimes.split("-"))
-    if event.datetimes_monday:
-        times_list.append(event.datetimes_monday.split("-"))
-    if event.datetimes_tuesday:
-        times_list.append(event.datetimes_tuesday.split("-"))
-    if event.datetimes_wednesday:
-        times_list.append(event.datetimes_wednesday.split("-"))
-    if event.datetimes_thursday:
-        times_list.append(event.datetimes_thursday.split("-"))
-    if event.datetimes_friday:
-        times_list.append(event.datetimes_friday.split("-"))
-    if event.datetimes_saturday:
-        times_list.append(event.datetimes_saturday.split("-"))
-    if event.datetimes_sunday:
-        times_list.append(event.datetimes_sunday.split("-"))
+        split_list = event.datetimes.split("-")
+        date1 = split_list[0]
+        date2 = split_list[-1]
+        times_list.append(date1)
+        times_list.append(date2)
+    elif event.current_datetimes:
+        split_list = event.current_datetimes.split("-")
+        date1 = split_list[0]
+        date2 = event.current_datetimes[0:10] + split_list[1]
+        times_list.append(date1)
+        times_list.append(date2)
 
-    # print(event.event_title, time, type(time))
     if len(times_list) > 0:
-        for time in times_list:
-            event_start_datetime = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
-            event_end_datetime = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p')
-            event_date.append(event_start_datetime.date())
-            event_start_time.append(event_start_datetime.time())
-            event_end_time.append(event_end_datetime.time())
+        event_start_datetime = datetime.strptime(times_list[0].strip(), '%m/%d/%Y %I:%M %p')
+        event_end_datetime = datetime.strptime(times_list[-1].strip(), '%m/%d/%Y %I:%M %p')
+        event_date = event_start_datetime.date()
+        event_start_time = event_start_datetime.time()
+        event_end_time = event_end_datetime.time()
 
-        # print(event.event_title, event_date, event_start_time, event_end_time)
+        # print(event_date, event_start_time, event_end_time)
+
         return event_date, event_start_time, event_end_time
 
-    # print(event.event_title, event_date, event_start_time, event_end_time)
     return event_date, event_start_time, event_end_time
 
 
 def format_time(events):
-
     for event in events:
         if event.datetimes:
             time = event.datetimes.split("-")
+            # print(time)
             str_datetime = format_time_helper(time)
             event.datetimes = str_datetime
-        if event.datetimes_monday:
-            time = event.datetimes_monday.split("-")
-            str_datetime = format_time_helper(time)
-            event.datetimes_monday = str_datetime
-        if event.datetimes_tuesday:
-            time = event.datetimes_tuesday.split("-")
-            str_datetime = format_time_helper(time)
-            event.datetimes_tuesday = str_datetime
-        if event.datetimes_wednesday:
-            time = event.datetimes_wednesday.split("-")
-            str_datetime = format_time_helper(time)
-            event.datetimes_wednesday = str_datetime
-        if event.datetimes_thursday:
-            time = event.datetimes_thursday.split("-")
-            str_datetime = format_time_helper(time)
-            event.datetimes_thursday = str_datetime
-        if event.datetimes_friday:
-            time = event.datetimes_friday.split("-")
-            str_datetime = format_time_helper(time)
-            event.datetimes_friday = str_datetime
-        if event.datetimes_saturday:
-            time = event.datetimes_saturday.split("-")
-            str_datetime = format_time_helper(time)
-            event.datetimes_saturday = str_datetime
-        if event.datetimes_sunday:
-            time = event.datetimes_sunday.split("-")
-            str_datetime = format_time_helper(time)
-            event.datetimes_sunday = str_datetime
+        elif event.current_datetimes:
+            string_date = datetime.strptime(event.current_datetimes[0:10], '%m/%d/%Y').date()
+            str_datetime = string_date.strftime("%B %d") + " from " + event.current_datetimes[10:len(event.current_datetimes)]
+            event.current_datetimes = str_datetime
 
     return events
 
@@ -1373,41 +1266,40 @@ def format_time_helper(time):
 
 
 def get_events_by_date(events, selected_date):
-    for event in events:
+    for event in events[:]:
         selected_event = master_table.objects.get(pk=event.pk)
+
         if selected_event.datetimes:
             time = selected_event.datetimes.split("-")
-        if selected_event.datetimes_monday:
-            time = selected_event.datetimes_monday.split("-")
-        if selected_event.datetimes_tuesday:
-            time = selected_event.datetimes_tuesday.split("-")
-        if selected_event.datetimes_wednesday:
-            time = selected_event.datetimes_wednesday.split("-")
-        if selected_event.datetimes_thursday:
-            time = selected_event.datetimes_thursday.split("-")
-        if selected_event.datetimes_friday:
-            time = selected_event.datetimes_friday.split("-")
-        if selected_event.datetimes_saturday:
-            time = selected_event.datetimes_saturday.split("-")
-        if selected_event.datetimes_sunday:
-            time = selected_event.datetimes_sunday.split("-")
+            start_date = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p').date()
+            end_date = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p').date()
+            if selected_date < start_date or selected_date > end_date:
+                events = events.exclude(pk=event.id)
 
-        start_date = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p').date()
-        end_date = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p').date()
-        if selected_date < start_date or selected_date > end_date:
-            events = events.exclude(pk=event.id)
+        elif selected_event.datetimes_all:
+            all_dates_arr = selected_event.datetimes_all.strip(',').split(',')
+            flag = 0
+            for all_dates in all_dates_arr:
+                time = all_dates.split(" ")
+                start_date = datetime.strptime(time[0].strip(), '%m/%d/%Y').date()
+                if start_date != selected_date:
+                    flag = flag + 1
+
+            if flag == len(all_dates_arr):
+                events = events.exclude(pk=event.id)
 
     return events
 
 
 @login_required
-def event_details(request, event_id):
+def event_details(request, event_id, event_date):
     context = {}
     event = master_table.objects.get(pk=event_id)
     user = request.user
     event_postions = Events_PositionInfo.objects.filter(event=event_id)
     context['event'] = event
     context['event_postions'] = event_postions
+    context['event_date'] = event_date
 
     if request.method == 'POST':
         print(request.POST.dict())
