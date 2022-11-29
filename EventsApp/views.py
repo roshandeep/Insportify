@@ -1356,6 +1356,7 @@ def event_details(request, event_id, event_date):
 
     return render(request, "EventsApp/detail_dashboard.html", context)
 
+
 @csrf_exempt
 def delete_cart_item(request):
     if request.POST:
