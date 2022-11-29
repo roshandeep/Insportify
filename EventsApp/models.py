@@ -247,6 +247,7 @@ class Logo(models.Model):
 
 class Events_PositionInfo(models.Model):
     event = models.ForeignKey(master_table, on_delete=models.CASCADE)
+    datetimes = models.CharField(max_length=100, blank=True, null=True)
     position_number = models.IntegerField(blank=True, null=True)
     position_name = models.CharField(max_length=100, blank=True, null=True)
     # Position Type refers to Skill relevant to the position

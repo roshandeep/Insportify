@@ -351,19 +351,42 @@ def get_venue_details(request):
 
 
 def save_event_position_info(request, event):
-    for i in range(1, 10):
-        if 'no_of_position' + str(i) in request.POST and request.POST['no_of_position' + str(i)].strip() != "":
-            position_name = request.POST['position_name' + str(i)].strip()
-            position_type = request.POST['type_of_skill' + str(i)].strip()
-            no_of_position = request.POST['no_of_position' + str(i)].strip()
-            position_cost = round(float(request.POST['position_cost' + str(i)]), 2)
-            min_age = request.POST['min_age' + str(i)].strip()
-            max_age = request.POST['max_age' + str(i)].strip() if request.POST['max_age' + str(i)] else "999"
-            print(position_name, position_type, position_cost, min_age, max_age)
-            obj = Events_PositionInfo(event=event, position_name=position_name, max_age=max_age, min_age=min_age,
-                                      no_of_position=no_of_position,
-                                      position_cost=position_cost, position_number=i, position_type=position_type)
-            obj.save()
+    if event.datetimes:
+        for i in range(1, 10):
+            if 'no_of_position' + str(i) in request.POST and request.POST['no_of_position' + str(i)].strip() != "":
+                position_name = request.POST['position_name' + str(i)].strip()
+                position_type = request.POST['type_of_skill' + str(i)].strip()
+                no_of_position = request.POST['no_of_position' + str(i)].strip()
+                position_cost = round(float(request.POST['position_cost' + str(i)]), 2)
+                min_age = request.POST['min_age' + str(i)].strip()
+                max_age = request.POST['max_age' + str(i)].strip() if request.POST['max_age' + str(i)] else "999"
+                datetimes = event.datetimes
+                # print(position_name, position_type, position_cost, min_age, max_age)
+                obj = Events_PositionInfo(event=event, position_name=position_name, max_age=max_age, min_age=min_age,
+                                          no_of_position=no_of_position,
+                                          position_cost=position_cost, position_number=i,
+                                          position_type=position_type, datetimes=datetimes)
+                obj.save()
+    elif event.datetimes_all:
+        all_dates_arr = event.datetimes_all.strip(',').split(',')
+        for date in all_dates_arr:
+            for i in range(1, 10):
+                if 'no_of_position' + str(i) in request.POST and request.POST['no_of_position' + str(i)].strip() != "":
+                    position_name = request.POST['position_name' + str(i)].strip()
+                    position_type = request.POST['type_of_skill' + str(i)].strip()
+                    no_of_position = request.POST['no_of_position' + str(i)].strip()
+                    position_cost = round(float(request.POST['position_cost' + str(i)]), 2)
+                    min_age = request.POST['min_age' + str(i)].strip()
+                    max_age = request.POST['max_age' + str(i)].strip() if request.POST['max_age' + str(i)] else "999"
+                    # print(position_name, position_type, position_cost, min_age, max_age)
+                    obj = Events_PositionInfo(event=event, position_name=position_name, max_age=max_age,
+                                              min_age=min_age,
+                                              no_of_position=no_of_position,
+                                              position_cost=position_cost, position_number=i,
+                                              position_type=position_type, datetimes=date)
+                    obj.save()
+
+
 
 
 @login_required
