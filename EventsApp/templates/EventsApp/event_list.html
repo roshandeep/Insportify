@@ -67,6 +67,27 @@
                         </td>
                     </tr>
                     {% endfor %}
+                    {% for event in expired_events %}
+                    <tr style="color: grey">
+                        <td>{{event.event_title}}</td>
+                        <td>{{event.description}}</td>
+                        <td>
+                            {% if event.datetimes %}
+                            {{event.datetimes}}
+                            {% elif event.current_datetimes %}
+                            {{event.current_datetimes}}
+                            {% endif %}
+                        </td>
+                        <td>{{event.sport_type }}</td>
+                        <td>{{event.event_type }}</td>
+                        <td>{{event.venue}}</td>
+                        <td class="text-center">
+                            <a href="" class="disabled">
+                                <i class="bi bi-trash" style="color:grey"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
                     </tbody>
                 </table>
             </div>

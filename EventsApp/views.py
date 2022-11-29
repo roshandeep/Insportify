@@ -391,11 +391,27 @@ def save_event_position_info(request, event):
 
 @login_required
 def all_events(request):
+    expired_events=[]
     event_list = list(master_table.objects.filter(created_by=request.user))
     event_list = get_events_by_time(event_list)
-    event_list = format_time(event_list)
+    today = date.today()
 
-    return render(request, 'EventsApp/event_list.html', {'event_list': event_list})
+    for event in event_list[:]:
+        datetimes = event.datetimes if event.datetimes else event.current_datetimes
+        date_split = datetimes.split(" ")
+        datetime_obj = datetime.strptime(date_split[0].strip(), '%m/%d/%Y').date()
+        if datetime_obj < today:
+            expired_events.append(event)
+            event_list.remove(event)
+            # print(event.event_title, datetime_obj)
+
+    sort_events_by_date(event_list)
+    sort_events_by_date(expired_events)
+
+    event_list = format_time(event_list)
+    expired_events = format_time(expired_events)
+
+    return render(request, 'EventsApp/event_list.html', {'event_list': event_list, 'expired_events': expired_events})
 
 
 @login_required
