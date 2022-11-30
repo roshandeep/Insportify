@@ -23,7 +23,8 @@ admin.site.register(Venues, VenuesAdmin)
 
 
 class Events_PositionInfoAdmin(admin.ModelAdmin):
-    list_display = ('position_number', 'event', 'position_name', 'position_type', 'max_age', 'min_age', 'no_of_position', 'position_cost',)
+    list_display = ('position_number', 'datetimes', 'event', 'position_name', 'position_type', 'max_age',
+                    'min_age', 'no_of_position', 'position_cost',)
 
 
 admin.site.register(Events_PositionInfo, Events_PositionInfoAdmin)

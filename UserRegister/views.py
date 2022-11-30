@@ -208,7 +208,7 @@ def password_reset_request(request):
     localhost = '127.0.0.1:8000'
     if request.method == "POST":
         post = request.POST.copy()
-        post['username'] = post['username'].lower()
+        post['email'] = post['email'].lower()
         password_reset_form = PasswordResetForm(post)
         if password_reset_form.is_valid():
             data = password_reset_form.cleaned_data['email'].lower()

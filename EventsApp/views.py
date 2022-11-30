@@ -352,28 +352,69 @@ def get_venue_details(request):
 
 
 def save_event_position_info(request, event):
-    for i in range(1, 10):
-        if 'no_of_position' + str(i) in request.POST and request.POST['no_of_position' + str(i)].strip() != "":
-            position_name = request.POST['position_name' + str(i)].strip()
-            position_type = request.POST['type_of_skill' + str(i)].strip()
-            no_of_position = request.POST['no_of_position' + str(i)].strip()
-            position_cost = round(float(request.POST['position_cost' + str(i)]), 2)
-            min_age = request.POST['min_age' + str(i)].strip()
-            max_age = request.POST['max_age' + str(i)].strip() if request.POST['max_age' + str(i)] else "999"
-            print(position_name, position_type, position_cost, min_age, max_age)
-            obj = Events_PositionInfo(event=event, position_name=position_name, max_age=max_age, min_age=min_age,
-                                      no_of_position=no_of_position,
-                                      position_cost=position_cost, position_number=i, position_type=position_type)
-            obj.save()
+    if event.datetimes:
+        for i in range(1, 10):
+            if 'no_of_position' + str(i) in request.POST and request.POST['no_of_position' + str(i)].strip() != "":
+                position_name = request.POST['position_name' + str(i)].strip()
+                position_type = request.POST['type_of_skill' + str(i)].strip()
+                no_of_position = request.POST['no_of_position' + str(i)].strip()
+                position_cost = round(float(request.POST['position_cost' + str(i)]), 2)
+                min_age = request.POST['min_age' + str(i)].strip()
+                max_age = request.POST['max_age' + str(i)].strip() if request.POST['max_age' + str(i)] else "999"
+                datetimes = event.datetimes
+                # print(position_name, position_type, position_cost, min_age, max_age)
+                obj = Events_PositionInfo(event=event, position_name=position_name, max_age=max_age, min_age=min_age,
+                                          no_of_position=no_of_position,
+                                          position_cost=position_cost, position_number=i,
+                                          position_type=position_type, datetimes=datetimes)
+                obj.save()
+    elif event.datetimes_all:
+        all_dates_arr = event.datetimes_all.strip(',').split(',')
+        for date in all_dates_arr:
+            for i in range(1, 10):
+                if 'no_of_position' + str(i) in request.POST and request.POST['no_of_position' + str(i)].strip() != "":
+                    position_name = request.POST['position_name' + str(i)].strip()
+                    position_type = request.POST['type_of_skill' + str(i)].strip()
+                    no_of_position = request.POST['no_of_position' + str(i)].strip()
+                    position_cost = round(float(request.POST['position_cost' + str(i)]), 2)
+                    min_age = request.POST['min_age' + str(i)].strip()
+                    max_age = request.POST['max_age' + str(i)].strip() if request.POST['max_age' + str(i)] else "999"
+                    # print(position_name, position_type, position_cost, min_age, max_age)
+                    obj = Events_PositionInfo(event=event, position_name=position_name, max_age=max_age,
+                                              min_age=min_age,
+                                              no_of_position=no_of_position,
+                                              position_cost=position_cost, position_number=i,
+                                              position_type=position_type, datetimes=date)
+                    obj.save()
+
+
 
 
 @login_required
 def all_events(request):
+    expired_events=[]
     event_list = list(master_table.objects.filter(created_by=request.user))
     event_list = get_events_by_time(event_list)
-    event_list = format_time(event_list)
+    today = date.today()
 
-    return render(request, 'EventsApp/event_list.html', {'event_list': event_list})
+    for event in event_list[:]:
+        datetimes = event.datetimes if event.datetimes else event.current_datetimes
+        date_split = datetimes.split(" ")
+        datetime_obj = datetime.strptime(date_split[0].strip(), '%m/%d/%Y').date()
+        if datetime_obj < today:
+            expired_events.append(event)
+            event_list.remove(event)
+            # print(event.event_title, datetime_obj)
+
+    sort_events_by_date(event_list)
+    sort_events_by_date(expired_events)
+
+    event_list = format_time(event_list)
+    # for event in event_list:
+    #     print(event.event_title, event.datetimes if event.datetimes else event.current_datetimes)
+    expired_events = format_time(expired_events)
+
+    return render(request, 'EventsApp/event_list.html', {'event_list': event_list, 'expired_events': expired_events})
 
 
 @login_required
@@ -1297,7 +1338,15 @@ def event_details(request, event_id, event_date):
     context = {}
     event = master_table.objects.get(pk=event_id)
     user = request.user
-    event_postions = Events_PositionInfo.objects.filter(event=event_id)
+    event_postions = list(Events_PositionInfo.objects.filter(event=event_id))
+    # print(event_postions)
+    if event.is_recurring:
+        for evnt_pos in event_postions[:]:
+            string_date = datetime.strptime(evnt_pos.datetimes[0:10], '%m/%d/%Y').date()
+            str_datetime = string_date.strftime("%B %d") + " from " + evnt_pos.datetimes[10:len(evnt_pos.datetimes)]
+            if str_datetime != event_date:
+                event_postions.remove(evnt_pos)
+
     context['event'] = event
     context['event_postions'] = event_postions
     context['event_date'] = event_date
@@ -1356,6 +1405,7 @@ def event_details(request, event_id, event_date):
         return redirect('EventsApp:cart_summary')
 
     return render(request, "EventsApp/detail_dashboard.html", context)
+
 
 @csrf_exempt
 def delete_cart_item(request):
