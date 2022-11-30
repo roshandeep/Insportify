@@ -118,7 +118,7 @@
         </ul>
             <ul class="navbar-nav mb-lg-0">
             <li class="nav-item">
-                <a class="mt-3 nav-link link-primary" href="{% url 'UserRegister:logout' %}"><p>Logout</p></a>
+                <a class="mt-3 nav-link link-secondary text-white" href="{% url 'UserRegister:logout' %}"><p>Logout</p></a>
             </li>
             {% else %}
             {% if request.path != '/users/register/' and request.path != '/users/organization_register/' and request.path != '/users/individual_register/' and request.path != '/users/login/' %}
@@ -269,5 +269,8 @@
 .navbar {
     min-height: 56px;
 }
+
+.nav-link:hover { color: #d8dce3 !important; }
+
 </style>
 </html>
