@@ -409,6 +409,8 @@ def all_events(request):
     sort_events_by_date(expired_events)
 
     event_list = format_time(event_list)
+    # for event in event_list:
+    #     print(event.event_title, event.datetimes if event.datetimes else event.current_datetimes)
     expired_events = format_time(expired_events)
 
     return render(request, 'EventsApp/event_list.html', {'event_list': event_list, 'expired_events': expired_events})
@@ -1335,7 +1337,15 @@ def event_details(request, event_id, event_date):
     context = {}
     event = master_table.objects.get(pk=event_id)
     user = request.user
-    event_postions = Events_PositionInfo.objects.filter(event=event_id)
+    event_postions = list(Events_PositionInfo.objects.filter(event=event_id))
+    # print(event_postions)
+    if event.is_recurring:
+        for evnt_pos in event_postions[:]:
+            string_date = datetime.strptime(evnt_pos.datetimes[0:10], '%m/%d/%Y').date()
+            str_datetime = string_date.strftime("%B %d") + " from " + evnt_pos.datetimes[10:len(evnt_pos.datetimes)]
+            if str_datetime != event_date:
+                event_postions.remove(evnt_pos)
+
     context['event'] = event
     context['event_postions'] = event_postions
     context['event_date'] = event_date
