@@ -62,10 +62,13 @@ class master_table(models.Model):
     EVENT_TYPE_CHOICES = (('Camp', 'Camp'), ('Charity', 'Charity'), ('Conditioning', 'Conditioning'),
                           ('Development', 'Development'), ('Game/Session', 'Game/Session'), ('Online', 'Online'),
                           ('Registration', 'Registration'), ('Social', 'Social'), ('Tournament', 'Tournament'))
+    REGISTRATION_TYPE_CHOICES = (('Drop-in', 'Drop-in'), ('Registration', 'Registration'))
 
     event_title = models.CharField(max_length=300, blank=True, null=True)
     description = models.CharField(max_length=300, blank=True, null=True)
     event_type = models.CharField(max_length=300, choices=EVENT_TYPE_CHOICES, blank=True, null=True)
+    registration_type = models.CharField(max_length=300, choices=REGISTRATION_TYPE_CHOICES, default='Drop-in',
+                                         blank=True, null=True)
     datetimes = models.CharField(max_length=100, blank=True, null=True)
     is_recurring = models.BooleanField(default=False, null=True)
     datetimes_monday = models.CharField(max_length=100, blank=True, null=True)
@@ -330,14 +333,17 @@ class Order(models.Model):
 
 
 class Advertisement(models.Model):
+    GEOGRAPHICAL_SCOPE_CHOICES = (('National', 'National'), ('Local', 'Local'), ('Provincial', 'Provincial'))
+
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     creation_time = models.DateTimeField()
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
     header = models.TextField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
-    scope = models.CharField(max_length=100, blank=True, null=True)
-    image = models.TextField(blank=True, null=True)
+    geographical_scope = models.CharField(max_length=100, choices=GEOGRAPHICAL_SCOPE_CHOICES, blank=True, null=True)
+    image = models.ImageField(blank=True, null=True)
     url = models.TextField(blank=True, null=True)
+    client = models.TextField(blank=True, null=True)
     hit_count = models.IntegerField(blank=True, null=True)
     max_hits = models.IntegerField(blank=True, null=True)
