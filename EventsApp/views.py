@@ -54,7 +54,7 @@ def multistep(request):
             obj.zipcode = request.POST['zip_code']
             # obj.position = request.POST['position']
             obj.gender = ','.join(item for item in request.POST.getlist('gender'))
-            obj.registration_type = request.POST['dropin']
+            obj.registration_type = request.POST.get('dropin') if request.POST.get('dropin') is not None else "Drop-in"
             obj.is_recurring = request.POST.get('recurring_event') == "Yes"
             selected_days = request.POST.getlist('recurring_days')
             obj.datetimes_monday = ""
@@ -1780,15 +1780,19 @@ def load_pos_skill_type():
 def delete_by_id(request, event_id, date):
     try:
         updated_dates = ""
+        month = list(calendar.month_name).index(date.split(' ')[0])
+        day = date.split(' ')[1]
+        date = str(month) + '/' + day
         event = master_table.objects.get(pk=event_id)
         if event.is_recurring:
             for existing_dates in event.datetimes_all.split(','):
                 if date not in existing_dates:
-                    updated_dates += date + ","
-            if updated_dates == "":
+                    updated_dates += existing_dates + ","
+            if updated_dates.strip(',') == "":
                 event.delete()
             else:
-                event.datetimes_all = updated_dates
+                event.datetimes_all = updated_dates.strip(',')
+                event.save()
         else:
             event.delete()
         user = User.objects.get(email=request.user.email)
@@ -1938,7 +1942,7 @@ def remove_exceptions_from_recurring_days(all_dates, exception_dates):
     filtered_dates = all_dates.strip(',').split(',')
     for ex_date in exception_dates_arr:
         for date in all_dates_arr:
-            if date in ex_date:
+            if ex_date in date:
                 filtered_dates.remove(date)
     filtered_dates.sort()
     # print(filtered_dates)
