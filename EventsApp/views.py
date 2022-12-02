@@ -54,6 +54,7 @@ def multistep(request):
             obj.zipcode = request.POST['zip_code']
             # obj.position = request.POST['position']
             obj.gender = ','.join(item for item in request.POST.getlist('gender'))
+            obj.registration_type = request.POST.get('dropin') if request.POST.get('dropin') is not None else "Drop-in"
             obj.is_recurring = request.POST.get('recurring_event') == "Yes"
             selected_days = request.POST.getlist('recurring_days')
             obj.datetimes_monday = ""
@@ -1776,31 +1777,30 @@ def load_pos_skill_type():
 
 
 @login_required
-def delete_by_id(request, event_id):
+def delete_by_id(request, event_id, date):
     try:
+        updated_dates = ""
+        month = list(calendar.month_name).index(date.split(' ')[0])
+        day = date.split(' ')[1]
+        date = str(month) + '/' + day
         event = master_table.objects.get(pk=event_id)
-        event.delete()
+        if event.is_recurring:
+            for existing_dates in event.datetimes_all.split(','):
+                if date not in existing_dates:
+                    updated_dates += existing_dates + ","
+            if updated_dates.strip(',') == "":
+                event.delete()
+            else:
+                event.datetimes_all = updated_dates.strip(',')
+                event.save()
+        else:
+            event.delete()
         user = User.objects.get(email=request.user.email)
         event_subject = "Event Cancelled - " + event.event_title
         event_data = " Event Title: " + event.event_title + "\n Event Description: " \
                      + event.description + "\n Event Location: " + event.venue + ", " + event.city \
                      + "\n Event Dates: " + \
-                     (event.datetimes if not event.is_recurring else (
-                                                                         "\nMon: " + event.datetimes_monday if event.datetimes_monday is not None else "")
-                                                                     + (
-                                                                         "\nTue: " + event.datetimes_tuesday if event.datetimes_tuesday is not None else "")
-                                                                     + (
-                                                                         "\nWed: " + event.datetimes_wednesday if event.datetimes_wednesday is not None else "")
-                                                                     + (
-                                                                         "\nThu: " + event.datetimes_thursday if event.datetimes_thursday is not None else "")
-                                                                     + (
-                                                                         "\nFri: " + event.datetimes_friday if event.datetimes_friday is not None else "")
-                                                                     + (
-                                                                         "\nSat: " + event.datetimes_saturday if event.datetimes_saturday is not None else "")
-                                                                     + (
-                                                                         "\nSun: " + event.datetimes_sunday if event.datetimes_sunday is not None else "")
-                                                                     + (
-                                                                         "\nExc: " + event.datetimes_exceptions if event.datetimes_exceptions is not None else ""))
+                     (event.datetimes if not event.is_recurring else date)
 
         for cart_item in OrderItems.objects.filter(event=event):
             subs_email = cart_item.user.email

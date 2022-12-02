@@ -69,6 +69,13 @@
                             </div>
                         </div>
                         <div class="form-row p-2">
+                            <label>Is this a drop-in event?</label>
+                            <div>
+                            <label for="Dropin"><input type="radio" id="Dropin" name="dropin" value="Drop-in"> Yes, Drop In </input></label>
+                            <label for="Registration"><input type="radio" id="Registration" name="dropin" value="Registration"> No, Registration Only </input></label>
+                            </div>
+                        </div>
+                        <div class="form-row p-2">
                             <label>* Is this a recurring event? &nbsp &nbsp</label>
                             <br>
                             <label for="chkYes"><input type="radio" value="Yes" id="chkYes" name="recurring_event">Yes</input></label>
@@ -497,8 +504,50 @@ $("#venue").change(function () {
 
 $("#datetimes_start_time").change(function () {
         var endtime = $("#datetimes_end_time")[0].value;
-        if(!endtime){
+        if(!endtime || endtime == ""){
             $("#datetimes_end_time")[0].value = getTime( $("#datetimes_start_time")[0].value, 1 );
+        }
+    });
+$("#datetimes_sunday_start_time").change(function () {
+        var endtime = $("#datetimes_sunday_end_time")[0].value;
+        if(!endtime || endtime == ""){
+            $("#datetimes_sunday_end_time")[0].value = getTime( $("#datetimes_sunday_start_time")[0].value, 1 );
+        }
+    });
+$("#datetimes_monday_start_time").change(function () {
+        var endtime = $("#datetimes_monday_end_time")[0].value;
+        if(!endtime || endtime == ""){
+            $("#datetimes_monday_end_time")[0].value = getTime( $("#datetimes_monday_start_time")[0].value, 1 );
+        }
+    });
+ $("#datetimes_tuesday_start_time").change(function () {
+        var endtime = $("#datetimes_tuesday_end_time")[0].value;
+        if(!endtime || endtime == ""){
+            $("#datetimes_tuesday_end_time")[0].value = getTime( $("#datetimes_tuesday_start_time")[0].value, 1 );
+        }
+    });
+ $("#datetimes_wednesday_start_time").change(function () {
+        var endtime = $("#datetimes_wednesday_end_time")[0].value;
+        if(!endtime || endtime == ""){
+            $("#datetimes_wednesday_end_time")[0].value = getTime( $("#datetimes_wednesday_start_time")[0].value, 1 );
+        }
+    });
+$("#datetimes_thursday_start_time").change(function () {
+        var endtime = $("#datetimes_thursday_end_time")[0].value;
+        if(!endtime || endtime == ""){
+            $("#datetimes_thursday_end_time")[0].value = getTime( $("#datetimes_thursday_start_time")[0].value, 1 );
+        }
+    });
+$("#datetimes_friday_start_time").change(function () {
+        var endtime = $("#datetimes_friday_end_time")[0].value;
+        if(!endtime || endtime == ""){
+            $("#datetimes_friday_end_time")[0].value = getTime( $("#datetimes_friday_start_time")[0].value, 1 );
+        }
+    });
+$("#datetimes_saturday_start_time").change(function () {
+        var endtime = $("#datetimes_saturday_end_time")[0].value;
+        if(!endtime || endtime == ""){
+            $("#datetimes_saturday_end_time")[0].value = getTime( $("#datetimes_saturday_start_time")[0].value, 1 );
         }
     });
 
