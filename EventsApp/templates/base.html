@@ -40,58 +40,52 @@
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse " id="collapsibleNavbar">
+        <div class="collapse navbar-collapse" id="collapsibleNavbar">
         <ul class="navbar-nav me-auto">
             {% if request.user.is_authenticated %}
+            <li class="nav-item">
+                <a class="nav-link link-secondary text-white" href="{% url 'EventsApp:home' %}"
+                   {% if request.path == '/' %} style="display:none" {% endif %}>
+                Home
+                </a>
+            </li>
             {% if request.user.is_organization == True %}
-            <li class="nav-item pe-3">
-                <a class="mt-3 nav-link link-secondary text-white mx-auto mb-0" href="{% url 'EventsApp:organization_profile' %}"
+            <li class="nav-item">
+                <a class="nav-link link-secondary text-white mx-auto mb-0" href="{% url 'EventsApp:organization_profile' %}"
                    {% if request.path == '/organization/profile/' %} style="display:none" {% endif %}>
-                <p class="mb-0 mx-auto">User Profile</p>
+                User Profile
                 </a>
             </li>
             {% else %}
-            <li class="nav-item pe-3">
-                <a class="mt-3 nav-link link-secondary text-white" href="{% url 'EventsApp:user_profile' %}"
+            <li class="nav-item">
+                <a class="nav-link link-secondary text-white" href="{% url 'EventsApp:user_profile' %}"
                    {% if request.path == '/individual/profile/' %} style="display:none" {% endif %}>
-                <p>User Profile</p>
+                User Profile
                 </a>
             </li>
             {% endif %}
-            <li class="nav-item pe-3">
-                <a class="mt-3 nav-link link-secondary text-white" href="{% url 'EventsApp:multistep' %}"
+            <li class="nav-item">
+                <a class="nav-link link-secondary text-white" href="{% url 'EventsApp:multistep' %}"
                    {% if request.path == '/create/' %} style="display:none" {% endif %}>
-                <p>Create Events</p>
+                Create Events
                 </a>
             </li>
-            <li class="nav-item pe-3">
-                <a class="mt-3 nav-link link-secondary text-white" href="{% url 'EventsApp:list-events' %}"
+            <li class="nav-item">
+                <a class="nav-link link-secondary text-white" href="{% url 'EventsApp:list-events' %}"
                    {% if request.path == '/show/' %} style="display:none" {% endif %}>
-                <p>My Events</p>
+                My Events
                 </a>
             </li>
-            <li class="nav-item pe-3">
-                <a class="mt-3 nav-link link-secondary text-white" href="{% url 'EventsApp:committed_events' %}"
+            <li class="nav-item">
+                <a class="nav-link link-secondary text-white" href="{% url 'EventsApp:committed_events' %}"
                    {% if request.path == '/committed/' %} style="display:none" {% endif %}>
-                <p>Committed Events</p>
+                Committed Events
                 </a>
             </li>
-<!--            <li class="nav-item">-->
-<!--                <a class="nav-link link-secondary text-white" href="{% url 'EventsApp:logo_upload' %}"-->
-<!--                   {% if request.path == '/upload/' %} style="display:none" {% endif %}>-->
-<!--                <p>Add Logo</p>-->
-<!--                </a>-->
-<!--            </li>-->
-<!--            <li class="nav-item">-->
-<!--                <a class="nav-link link-secondary text-white" href="/invite/"-->
-<!--                   {% if request.path == '/invite/' %} style="display:none" {% endif %}>-->
-<!--                <p>Invite Friends</p>-->
-<!--                </a>-->
-<!--            </li>-->
-            <li class="nav-item pe-3">
-                <a class="mt-3 nav-link link-secondary text-white" href="{% url 'EventsApp:cart_summary' %}"
+            <li class="nav-item">
+                <a class="nav-link link-secondary text-white" href="{% url 'EventsApp:cart_summary' %}"
                    {% if request.path == '/cart_summary/' %} style="display:none" {% endif %}>
-                <p>Cart</p>
+                Cart
                 </a>
             </li>
             {% endif %}
@@ -124,11 +118,11 @@
             {% if request.path != '/users/register/' and request.path != '/users/organization_register/' and request.path != '/users/individual_register/' and request.path != '/users/login/' %}
 
             <li class="nav-item pe-3">
-                <a class="mt-3 nav-link link-secondary" href="{% url 'UserRegister:register' %}">
+                <a class="nav-link link-secondary" href="{% url 'UserRegister:register' %}">
                     Register</a>
             </li>
             <li class="nav-item pe-3">
-                <a class="mt-3 nav-link link-secondary" href="{% url 'UserRegister:login' %}">Login</a>
+                <a class="nav-link link-secondary" href="{% url 'UserRegister:login' %}">Login</a>
             </li>
             {% endif %}
             {% endif %}
@@ -271,6 +265,26 @@
 }
 
 .nav-link:hover { color: #d8dce3 !important; }
+
+
+ul {
+  list-style:none;
+}
+ul li{
+  display:inline-block;
+  padding:0 7px;
+  position:relative;
+}
+ul li:not(:last-child):not(:first-child)::after{
+  content:"";
+  border:1px solid #e2e2e2;
+  border-width: 1px 1px 0 0;
+  position:absolute;
+  right:-3px;
+  top:0;
+  height:100%;
+}
+
 
 </style>
 </html>

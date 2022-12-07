@@ -1073,7 +1073,7 @@ def sort_events_by_date(events):
         datetime_obj = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
         return datetime_obj
 
-    events.sort(key=lambda x: getDate(x), reverse=True)
+    events.sort(key=lambda x: getDate(x), reverse=False)
 
     # for event in events:
     #     datetimes = event.datetimes if event.datetimes else event.current_datetimes
