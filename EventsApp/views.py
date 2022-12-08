@@ -6,6 +6,7 @@ import openpyxl
 import stripe
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import F
 from django.db.models.functions import Coalesce
 from django.http import HttpResponse, JsonResponse
@@ -409,8 +410,18 @@ def all_events(request):
 
     event_list = format_time(event_list)
 
+    page_num = request.GET.get('page', 1)
+    paginator = Paginator(event_list, 6)
 
-    return render(request, 'EventsApp/event_list.html', {'event_list': event_list, 'expired_events': expired_events})
+    try:
+        page_obj = paginator.page(page_num)
+    except PageNotAnInteger:
+        page_obj = paginator.page(1)
+    except EmptyPage:
+        page_obj = paginator.page(paginator.num_pages)
+
+    return render(request, 'EventsApp/event_list.html', {'event_list': event_list, 'expired_events': expired_events,
+                                                         'page_obj': page_obj})
 
 
 @login_required
