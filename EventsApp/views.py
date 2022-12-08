@@ -1031,6 +1031,8 @@ def home(request):
     events = format_time(events)
     recommended_events = format_time(recommended_events)
 
+    recommended_drop_in = []
+    recommended_registrationList = []
     if request.user.is_authenticated:
         for event in recommended_events:
             sport_img = SportsImage.objects.filter(sport=event.sport_type).values("img")
@@ -1039,7 +1041,15 @@ def home(request):
             else:
                 event.sport_logo = "/media/images/Multisport.jpg"
 
-        recommended_events = [recommended_events[i:i + 3] for i in range(0, len(recommended_events), 3)]
+        for event in recommended_events:
+            if event.registration_type == "Registration":
+                recommended_registrationList.append(event)
+            elif event.registration_type == "Drop-in":
+                recommended_drop_in.append(event)
+
+        recommended_registrationList = [recommended_registrationList[i:i + 3] for i in range(0, len(recommended_registrationList), 3)]
+        recommended_drop_in = [recommended_drop_in[i:i + 3] for i in range(0, len(recommended_drop_in), 3)]
+        # recommended_events = [recommended_events[i:i + 3] for i in range(0, len(recommended_events), 3)]
 
     for event in events:
         sport_img = SportsImage.objects.filter(sport=event.sport_type).values("img")
@@ -1048,13 +1058,27 @@ def home(request):
         else:
             event.sport_logo = "/media/images/Multisport.jpg"
 
-    events = [events[i:i + 3] for i in range(0, len(events), 3)]
+    drop_in_eventList=[]
+    registrationList=[]
+    for event in events:
+        if event.registration_type == "Registration":
+            registrationList.append(event)
+        elif event.registration_type == "Drop-in":
+            drop_in_eventList.append(event)
+
+    registrationList = [registrationList[i:i + 3] for i in range(0, len(registrationList), 3)]
+    drop_in_eventList = [drop_in_eventList[i:i + 3] for i in range(0, len(drop_in_eventList), 3)]
+    # events = [events[i:i + 3] for i in range(0, len(events), 3)]
     context = {
         'sports_list': sports,
         'venues_list': venues,
         'cities_list': cities,
-        'events': events,
-        'recommended_events': recommended_events
+        # 'events': events,
+        'registrationList': registrationList,
+        'drop_in_eventList': drop_in_eventList,
+        'recommended_registrationList': recommended_registrationList,
+        'recommended_drop_in': recommended_drop_in,
+        # 'recommended_events': recommended_events,
     }
     # print(events)
     html_template = loader.get_template('EventsApp/home.html')
