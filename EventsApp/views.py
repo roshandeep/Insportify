@@ -396,7 +396,6 @@ def all_events(request):
     event_list = list(master_table.objects.filter(created_by=request.user))
     event_list = get_events_by_time(event_list)
     today = date.today()
-
     for event in event_list[:]:
         datetimes = event.datetimes if event.datetimes else event.current_datetimes
         date_split = datetimes.split(" ")
@@ -404,15 +403,12 @@ def all_events(request):
         if datetime_obj < today:
             expired_events.append(event)
             event_list.remove(event)
-            # print(event.event_title, datetime_obj)
 
     sort_events_by_date(event_list)
     sort_events_by_date(expired_events)
 
     event_list = format_time(event_list)
-    # for event in event_list:
-    #     print(event.event_title, event.datetimes if event.datetimes else event.current_datetimes)
-    expired_events = format_time(expired_events)
+
 
     return render(request, 'EventsApp/event_list.html', {'event_list': event_list, 'expired_events': expired_events})
 
@@ -1075,12 +1071,6 @@ def sort_events_by_date(events):
 
     events.sort(key=lambda x: getDate(x), reverse=False)
 
-    # for event in events:
-    #     datetimes = event.datetimes if event.datetimes else event.current_datetimes
-    #     time = datetimes.split("-")
-    #     datetime_obj = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
-    #     print(event.event_title, datetime_obj)
-
     return
 
 
@@ -1088,12 +1078,12 @@ def get_events_by_time(events):
     events = list(events)
     full_events_list = []
     for event in events:
+        # print(event.event_title)
         if event.datetimes:
             full_events_list.append(event)
         elif event.datetimes_all:
             all_dates_arr = event.datetimes_all.strip(',').split(',')
             for single_date in all_dates_arr:
-                # print(single_date)
                 event_copy = copy.deepcopy(event)
                 event_copy.current_datetimes = single_date
                 full_events_list.append(event_copy)
@@ -1101,7 +1091,10 @@ def get_events_by_time(events):
     full_events_list.sort(key=lambda event: (event.datetimes if event.datetimes else event.current_datetimes))
 
     # for event in full_events_list:
-    #     print(event.current_datetimes)
+    #     if event.datetimes:
+    #         print("event.datetimes", event.event_title, event.datetimes)
+    #     else:
+    #         print("event.current_datetimes", event.event_title, event.current_datetimes)
 
     return full_events_list
 
@@ -1274,10 +1267,15 @@ def extract_event_datetime(event):
 
 
 def format_time(events):
+    # for event in events:
+    #     if event.datetimes:
+    #         print("event.datetimes", event.event_title, event.datetimes)
+    #     else:
+    #         print("event.current_datetimes", event.event_title, event.current_datetimes)
+
     for event in events:
         if event.datetimes:
             time = event.datetimes.split("-")
-            # print(time)
             str_datetime = format_time_helper(time)
             event.datetimes = str_datetime
         elif event.current_datetimes:
