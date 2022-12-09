@@ -67,12 +67,12 @@
         <hr class="my-2">
         <div id="carouselExampleControls2" class="carousel slide" data-ride="carousel" data-interval="false"
              data-touch="true">
-            <div id="event-cards" class="carousel-inner" role="listbox">
+            <div id="event-cards2" class="carousel-inner" role="listbox">
                 {% for sublist in recommended_registrationList %}
                 <div class="carousel-item {% if forloop.counter0 == 0 %}active{% endif %}">
                     <div class="cards-wrapper">
                         {% for event in sublist %}
-                        <div id="event-card"
+                        <div id="event-card2"
                              class="event-card card {% if forloop.counter0 != 0 %}d-none d-md-block{% endif %} col-4"
                              onclick="location.href='event_details/{{event.pk}}/{% if event.datetimes %}{{event.datetimes}}{% elif event.current_datetimes %}{{event.current_datetimes}}{% endif %}/'"
                              style="cursor:pointer">
@@ -117,12 +117,12 @@
         <hr class="my-2">
         <div id="carouselExampleControls4" class="carousel slide" data-ride="carousel" data-interval="false"
              data-touch="true">
-            <div id="event-cards" class="carousel-inner" role="listbox">
+            <div id="event-cards4" class="carousel-inner" role="listbox">
                 {% for sublist in recommended_drop_in %}
                 <div class="carousel-item {% if forloop.counter0 == 0 %}active{% endif %}">
                     <div class="cards-wrapper">
                         {% for event in sublist %}
-                        <div id="event-card"
+                        <div id="event-card4"
                              class="event-card card {% if forloop.counter0 != 0 %}d-none d-md-block{% endif %} col-4"
                              onclick="location.href='event_details/{{event.pk}}/{% if event.datetimes %}{{event.datetimes}}{% elif event.current_datetimes %}{{event.current_datetimes}}{% endif %}/'"
                              style="cursor:pointer">
@@ -172,12 +172,12 @@
         <hr class="my-2">
         <div id="carouselExampleControls" class="carousel slide" data-ride="carousel" data-interval="false"
              data-touch="true">
-            <div id="event-cards" class="carousel-inner" role="listbox">
+            <div id="event-cards1" class="carousel-inner" role="listbox">
                 {% for sublist in registrationList %}
                 <div class="carousel-item {% if forloop.counter0 == 0 %}active{% endif %}">
                     <div class="cards-wrapper">
                         {% for event in sublist %}
-                        <div id="event-card"
+                        <div id="event-card1"
                              class="event-card card {% if forloop.counter0 != 0 %}d-none d-md-block{% endif %} col-4"
                              onclick="location.href='event_details/{{event.pk}}/{% if event.datetimes %}{{event.datetimes}}{% elif event.current_datetimes %}{{event.current_datetimes}}{% endif %}/'"
                              style="cursor:pointer">
@@ -222,12 +222,12 @@
         <hr class="my-2">
         <div id="carouselExampleControls3" class="carousel slide" data-ride="carousel" data-interval="false"
              data-touch="true">
-            <div id="event-cards" class="carousel-inner" role="listbox">
+            <div id="event-cards3" class="carousel-inner" role="listbox">
                 {% for sublist in drop_in_eventList %}
                 <div class="carousel-item {% if forloop.counter0 == 0 %}active{% endif %}">
                     <div class="cards-wrapper">
                         {% for event in sublist %}
-                        <div id="event-card"
+                        <div id="event-card3"
                              class="event-card card {% if forloop.counter0 != 0 %}d-none d-md-block{% endif %} col-4"
                              onclick="location.href='event_details/{{event.pk}}/{% if event.datetimes %}{{event.datetimes}}{% elif event.current_datetimes %}{{event.current_datetimes}}{% endif %}/'"
                              style="cursor:pointer">
@@ -360,8 +360,32 @@
             document.getElementById("event-page").classList.remove('col-12');
             document.getElementById("event-page").classList.add('col-9');
             }
-            if(document.querySelector("#event-cards")){
-                const container = document.querySelector("#event-cards");
+            if(document.querySelector("#event-cards1")){
+                const container = document.querySelector("#event-cards1");
+                const corCard = container.querySelectorAll(".event-card");
+                for (i of corCard){
+                    i.classList.remove('col-12');
+                    i.classList.add('col-4')
+                }
+            }
+            if(document.querySelector("#event-cards2")){
+                const container = document.querySelector("#event-cards2");
+                const corCard = container.querySelectorAll(".event-card");
+                for (i of corCard){
+                    i.classList.remove('col-12');
+                    i.classList.add('col-4')
+                }
+            }
+            if(document.querySelector("#event-cards3")){
+                const container = document.querySelector("#event-cards3");
+                const corCard = container.querySelectorAll(".event-card");
+                for (i of corCard){
+                    i.classList.remove('col-12');
+                    i.classList.add('col-4')
+                }
+            }
+            if(document.querySelector("#event-cards4")){
+                const container = document.querySelector("#event-cards4");
                 const corCard = container.querySelectorAll(".event-card");
                 for (i of corCard){
                     i.classList.remove('col-12');
@@ -391,8 +415,32 @@
             document.getElementById("event-page").classList.remove('col-9');
             document.getElementById("event-page").classList.add('col-12');
             }
-            if(document.querySelector("#event-cards")){
-                const container = document.querySelector("#event-cards");
+            if(document.querySelector("#event-cards1")){
+                const container = document.querySelector("#event-cards1");
+                const corCard = container.querySelectorAll(".event-card");
+                for (i of corCard){
+                    i.classList.remove('col-4');
+                    i.classList.add('col-12')
+                }
+            }
+            if(document.querySelector("#event-cards2")){
+                const container = document.querySelector("#event-cards2");
+                const corCard = container.querySelectorAll(".event-card");
+                for (i of corCard){
+                    i.classList.remove('col-4');
+                    i.classList.add('col-12')
+                }
+            }
+            if(document.querySelector("#event-cards3")){
+                const container = document.querySelector("#event-cards3");
+                const corCard = container.querySelectorAll(".event-card");
+                for (i of corCard){
+                    i.classList.remove('col-4');
+                    i.classList.add('col-12')
+                }
+            }
+            if(document.querySelector("#event-cards4")){
+                const container = document.querySelector("#event-cards4");
                 const corCard = container.querySelectorAll(".event-card");
                 for (i of corCard){
                     i.classList.remove('col-4');
