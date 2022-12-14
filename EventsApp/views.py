@@ -6,6 +6,7 @@ import openpyxl
 import stripe
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import F
 from django.db.models.functions import Coalesce
 from django.http import HttpResponse, JsonResponse
@@ -400,7 +401,6 @@ def all_events(request):
     event_list = list(master_table.objects.filter(created_by=request.user))
     event_list = get_events_by_time(event_list)
     today = date.today()
-
     for event in event_list[:]:
         datetimes = event.datetimes if event.datetimes else event.current_datetimes
         date_split = datetimes.split(" ")
@@ -408,17 +408,24 @@ def all_events(request):
         if datetime_obj < today:
             expired_events.append(event)
             event_list.remove(event)
-            # print(event.event_title, datetime_obj)
 
     sort_events_by_date(event_list)
     sort_events_by_date(expired_events)
 
     event_list = format_time(event_list)
-    # for event in event_list:
-    #     print(event.event_title, event.datetimes if event.datetimes else event.current_datetimes)
-    expired_events = format_time(expired_events)
 
-    return render(request, 'EventsApp/event_list.html', {'event_list': event_list, 'expired_events': expired_events})
+    page_num = request.GET.get('page', 1)
+    paginator = Paginator(event_list, 6)
+
+    try:
+        page_obj = paginator.page(page_num)
+    except PageNotAnInteger:
+        page_obj = paginator.page(1)
+    except EmptyPage:
+        page_obj = paginator.page(paginator.num_pages)
+
+    return render(request, 'EventsApp/event_list.html', {'event_list': event_list, 'expired_events': expired_events,
+                                                         'page_obj': page_obj})
 
 
 @login_required
@@ -1038,6 +1045,8 @@ def home(request):
     events = format_time(events)
     recommended_events = format_time(recommended_events)
 
+    recommended_drop_in = []
+    recommended_registrationList = []
     if request.user.is_authenticated:
         for event in recommended_events:
             sport_img = SportsImage.objects.filter(sport=event.sport_type).values("img")
@@ -1046,7 +1055,15 @@ def home(request):
             else:
                 event.sport_logo = "/media/images/Multisport.jpg"
 
-        recommended_events = [recommended_events[i:i + 3] for i in range(0, len(recommended_events), 3)]
+        for event in recommended_events:
+            if event.registration_type == "Registration":
+                recommended_registrationList.append(event)
+            elif event.registration_type == "Drop-in":
+                recommended_drop_in.append(event)
+
+        recommended_registrationList = [recommended_registrationList[i:i + 3] for i in range(0, len(recommended_registrationList), 3)]
+        recommended_drop_in = [recommended_drop_in[i:i + 3] for i in range(0, len(recommended_drop_in), 3)]
+        # recommended_events = [recommended_events[i:i + 3] for i in range(0, len(recommended_events), 3)]
 
     for event in events:
         sport_img = SportsImage.objects.filter(sport=event.sport_type).values("img")
@@ -1055,13 +1072,27 @@ def home(request):
         else:
             event.sport_logo = "/media/images/Multisport.jpg"
 
-    events = [events[i:i + 3] for i in range(0, len(events), 3)]
+    drop_in_eventList=[]
+    registrationList=[]
+    for event in events:
+        if event.registration_type == "Registration":
+            registrationList.append(event)
+        elif event.registration_type == "Drop-in":
+            drop_in_eventList.append(event)
+
+    registrationList = [registrationList[i:i + 3] for i in range(0, len(registrationList), 3)]
+    drop_in_eventList = [drop_in_eventList[i:i + 3] for i in range(0, len(drop_in_eventList), 3)]
+    # events = [events[i:i + 3] for i in range(0, len(events), 3)]
     context = {
         'sports_list': sports,
         'venues_list': venues,
         'cities_list': cities,
-        'events': events,
-        'recommended_events': recommended_events
+        # 'events': events,
+        'registrationList': registrationList,
+        'drop_in_eventList': drop_in_eventList,
+        'recommended_registrationList': recommended_registrationList,
+        'recommended_drop_in': recommended_drop_in,
+        # 'recommended_events': recommended_events,
     }
     # print(events)
     html_template = loader.get_template('EventsApp/home.html')
@@ -1075,13 +1106,7 @@ def sort_events_by_date(events):
         datetime_obj = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
         return datetime_obj
 
-    events.sort(key=lambda x: getDate(x), reverse=True)
-
-    # for event in events:
-    #     datetimes = event.datetimes if event.datetimes else event.current_datetimes
-    #     time = datetimes.split("-")
-    #     datetime_obj = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
-    #     print(event.event_title, datetime_obj)
+    events.sort(key=lambda x: getDate(x), reverse=False)
 
     return
 
@@ -1090,12 +1115,12 @@ def get_events_by_time(events):
     events = list(events)
     full_events_list = []
     for event in events:
+        # print(event.event_title)
         if event.datetimes:
             full_events_list.append(event)
         elif event.datetimes_all:
             all_dates_arr = event.datetimes_all.strip(',').split(',')
             for single_date in all_dates_arr:
-                # print(single_date)
                 event_copy = copy.deepcopy(event)
                 event_copy.current_datetimes = single_date
                 full_events_list.append(event_copy)
@@ -1103,7 +1128,10 @@ def get_events_by_time(events):
     full_events_list.sort(key=lambda event: (event.datetimes if event.datetimes else event.current_datetimes))
 
     # for event in full_events_list:
-    #     print(event.current_datetimes)
+    #     if event.datetimes:
+    #         print("event.datetimes", event.event_title, event.datetimes)
+    #     else:
+    #         print("event.current_datetimes", event.event_title, event.current_datetimes)
 
     return full_events_list
 
@@ -1276,10 +1304,15 @@ def extract_event_datetime(event):
 
 
 def format_time(events):
+    # for event in events:
+    #     if event.datetimes:
+    #         print("event.datetimes", event.event_title, event.datetimes)
+    #     else:
+    #         print("event.current_datetimes", event.event_title, event.current_datetimes)
+
     for event in events:
         if event.datetimes:
             time = event.datetimes.split("-")
-            # print(time)
             str_datetime = format_time_helper(time)
             event.datetimes = str_datetime
         elif event.current_datetimes:
