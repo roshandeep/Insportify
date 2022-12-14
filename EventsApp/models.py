@@ -343,6 +343,7 @@ class Advertisement(models.Model):
     header = models.TextField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     geographical_scope = models.CharField(max_length=100, choices=GEOGRAPHICAL_SCOPE_CHOICES, blank=True, null=True)
+    location = models.TextField(blank=True, null=True)
     image = models.ImageField(blank=True, null=True)
     url = models.TextField(blank=True, null=True)
     client = models.TextField(blank=True, null=True)
