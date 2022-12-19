@@ -19,7 +19,7 @@ from Insportify import settings
 from .forms import MultiStepForm, AvailabilityForm, LogoForm, InviteForm
 from .models import master_table, Individual, Organization, Venues, SportsCategory, SportsType, Order, User, \
     Availability, Logo, Extra_Loctaions, Events_PositionInfo, Secondary_SportsChoice, Invite, \
-    PositionAndSkillType, SportsImage, Organization_Availability, OrderItems
+    PositionAndSkillType, SportsImage, Organization_Availability, OrderItems, Advertisement
 import util
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -968,6 +968,11 @@ def home(request):
     # Individual.objects.filter(pk=16).delete()
     sports = SportsType.objects.values('pk', 'sports_type_text').order_by('sports_type_text')
 
+    advertisements = Advertisement.objects.all()
+    for item in advertisements:
+        print(item.image)
+    advertisements = [advertisements[i:i + 3] for i in range(0, len(advertisements), 3)]
+
     if request.user.is_authenticated and request.user.is_individual:
         user_sports = Secondary_SportsChoice.objects.filter(user=request.user).values('sport_type')
         for item in sports:
@@ -1084,12 +1089,11 @@ def home(request):
         'sports_list': sports,
         'venues_list': venues,
         'cities_list': cities,
-        # 'events': events,
         'registrationList': registrationList,
         'drop_in_eventList': drop_in_eventList,
         'recommended_registrationList': recommended_registrationList,
         'recommended_drop_in': recommended_drop_in,
-        # 'recommended_events': recommended_events,
+        'advertisements': advertisements,
     }
     # print(events)
     html_template = loader.get_template('EventsApp/home.html')
@@ -1154,7 +1158,7 @@ def get_recommended_events(request):
                 if avail.day_of_week == (event_date.weekday() + 1):
                     if event_start_time >= avail.start_time and event_end_time <= avail.end_time:
                         recommended_events.append(event)
-                        print("Added", event.event_title, event_date, event_start_time, event_end_time)
+                        # print("Added", event.event_title, event_date, event_start_time, event_end_time)
                         break
     else:
         recommended_events = [event for event in events]

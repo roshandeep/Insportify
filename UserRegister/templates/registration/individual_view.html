@@ -479,6 +479,9 @@
                 html_data += `</div>`;
                 let status = document.getElementById("location_status");
                 status.innerHTML = html_data;
+
+                document.getElementById("city").value = "";
+
                 fetchUserLocations();
             }
         });
