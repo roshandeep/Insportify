@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import F
 from django.db.models.functions import Coalesce
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.template import loader
 from django.shortcuts import render, redirect
 from django.utils import timezone
@@ -19,8 +19,9 @@ from Insportify import settings
 from .forms import MultiStepForm, AvailabilityForm, LogoForm, InviteForm
 from .models import master_table, Individual, Organization, Venues, SportsCategory, SportsType, Order, User, \
     Availability, Logo, Extra_Loctaions, Events_PositionInfo, Secondary_SportsChoice, Invite, \
-    PositionAndSkillType, SportsImage, Organization_Availability, OrderItems
+    PositionAndSkillType, SportsImage, Organization_Availability, OrderItems, Advertisement
 import util
+from django.db.models import Q
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -163,9 +164,8 @@ def ValidateFormValues(request):
     if not request.user.is_mvp and event_count >= 2:
         messages.error(request, "Cannot create event, maximum events possible by non-MVP member is 2")
         event_count_valid = False
-    if not request.POST.get('event_title') or not request.POST.get('description') \
-            or not request.POST.get('event_type') or not request.POST.get('sport_type') \
-            or not request.POST.get('venue'):
+    if not request.POST.get('event_title') or not request.POST.get('venue')\
+            or not request.POST.get('event_type') or not request.POST.get('sport_type'):
         messages.error(request, "All fields are required, please enter valid information")
         fields_valid = False
     if not request.POST.get('recurring_event'):
@@ -970,6 +970,7 @@ def fetch_organization_locations(request):
 def home(request):
     # Individual.objects.filter(pk=16).delete()
     sports = SportsType.objects.values('pk', 'sports_type_text').order_by('sports_type_text')
+    ad_list = get_advertisements(request)
 
     if request.user.is_authenticated and request.user.is_individual:
         user_sports = Secondary_SportsChoice.objects.filter(user=request.user).values('sport_type')
@@ -1092,6 +1093,7 @@ def home(request):
         'drop_in_eventList': drop_in_eventList,
         'recommended_registrationList': recommended_registrationList,
         'recommended_drop_in': recommended_drop_in,
+        'adList' : ad_list,
         # 'recommended_events': recommended_events,
     }
     # print(events)
@@ -1983,4 +1985,33 @@ def remove_exceptions_from_recurring_days(all_dates, exception_dates):
     print(filtered_dates)
     return ','.join(filtered_dates)
 
+def get_advertisements(request):
+    ads = []
+    if not request.user.is_authenticated:
+        ads = Advertisement.objects.all().filter(Q(end_time__gte=date.today()) & Q(geographical_scope="National"))
+    else:
+        locs = Extra_Loctaions.objects.all().filter(user=request.user)
+        city_str = ''
+        prov_str = ''
+        for loc in locs:
+            city_str += loc.city
+            prov_str += loc.province
+        ads = Advertisement.objects.all().filter(Q(end_time__gte=date.today()) & Q(geographical_scope="National") |
+                                                 (Q(geographical_scope = "Provincial") & Q(province__icontains=prov_str)) |
+                                                 (Q(geographical_scope = "Local") & Q(city__icontains=city_str)))
+    return ads
 
+def show_advertisement(request, header):
+    try:
+        advert = Advertisement.objects.get(header=header)
+        if advert is not None:
+            if advert.hit_count is None:
+                advert.hit_count = 1
+            else:
+                advert.hit_count += 1
+            advert.save()
+            print(advert.url)
+            return redirect("https://" + advert.url)
+    except:
+        return home(request)
+    return home(request)

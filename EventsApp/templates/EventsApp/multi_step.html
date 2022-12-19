@@ -44,7 +44,7 @@
                             <input type="text" class="form-control" name="event_title" placeholder="* Event Title" value="{{values.event_title}}" />
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" class="form-control" name="description" placeholder="* Description" value="{{values.description}}"/>
+                            <input type="text" class="form-control" name="description" placeholder="Description" value="{{values.description}}"/>
                         </div>
                         <div class="form-row p-2" id="event_type">
                             <select class="form-select select2" name="event_type" style="width:100%">
@@ -69,17 +69,10 @@
                             </div>
                         </div>
                         <div class="form-row p-2">
-                            <label>Is this a Drop-in event, or a Registration event?</label>
+                            <label>* Is this a Drop-in event, or a Registration program?</label>
                             <div>
-                            <label for="Dropin"><input type="radio" {% if not values.dropin == 'Registration' %}checked="checked"{% endif %} id="Dropin" name="dropin" value="Drop-in"> Drop In </input></label>
+                            <label for="Dropin"><input type="radio" {% if values.dropin == 'Drop-in' %}checked="checked"{% endif %} id="Dropin" name="dropin" value="Drop-in"> Drop In </input></label>
                             <label for="Registration"><input type="radio" {% if values.dropin == 'Registration' %}checked="checked"{% endif %} id="Registration" name="dropin" value="Registration"> Registration </input></label>
-                            </div>
-                        </div>
-                        <div class="form-row p-2">
-                            <label>Is this a drop-in event?</label>
-                            <div>
-                            <label for="Dropin"><input type="radio" id="Dropin" name="dropin" value="Drop-in"> Yes, Drop In </input></label>
-                            <label for="Registration"><input type="radio" id="Registration" name="dropin" value="Registration"> No, Registration Only </input></label>
                             </div>
                         </div>
                         <div class="form-row p-2">
@@ -109,11 +102,13 @@
                                            placeholder="Event Date" class="form-control daterange-mon" value="{{values.datetimes_monday_date}}" />
                                 </div>
                                  <div class="col-md-3">
+                                     <div class="my-label">Start Time</div>
                                      <input type="time"
                                             id="datetimes_monday_start_time"
                                             name="datetimes_monday_start_time" class="form-control timepicker" value="{{values.datetimes_monday_start_time}}" placeholder="Start Time"/>
                                  </div>
                                  <div class="col-md-3">
+                                     <div class="my-label">End Time</div>
                                      <input type="time"
                                             id="datetimes_monday_end_time"
                                             name="datetimes_monday_end_time" class="form-control timepicker" value="{{values.datetimes_monday_end_time}}" placeholder="End Time"/>
@@ -128,11 +123,13 @@
                                            placeholder="Event Date" class="form-control daterange-tue" value="{{values.datetimes_tuesday_date}}" />
                                 </div>
                                  <div class="col-md-3">
+                                     <div class="my-label">Start Time</div>
                                      <input type="time"
                                             id="datetimes_tuesday_start_time"
                                             name="datetimes_tuesday_start_time" class="form-control timepicker" value="{{values.datetimes_tuesday_start_time}}" placeholder="Start Time"/>
                                  </div>
                                  <div class="col-md-3">
+                                     <div class="my-label">End Time</div>
                                      <input type="time"
                                             id="datetimes_tuesday_end_time"
                                             name="datetimes_tuesday_end_time" class="form-control timepicker" value="{{values.datetimes_tuesday_end_time}}" placeholder="End Time"/>
@@ -147,11 +144,13 @@
                                            placeholder="Event Date" class="form-control daterange-wed" value="{{values.datetimes_wednesday_date}}"/>
                                 </div>
                                  <div class="col-md-3">
+                                     <div class="my-label">Start Time</div>
                                      <input type="time"
                                             id="datetimes_wednesday_start_time"
                                             name="datetimes_wednesday_start_time" class="form-control timepicker" value="{{values.datetimes_wednesday_start_time}}" placeholder="Start Time"/>
                                  </div>
                                  <div class="col-md-3">
+                                     <div class="my-label">End Time</div>
                                      <input type="time"
                                             id="datetimes_wednesday_end_time"
                                             name="datetimes_wednesday_end_time" class="form-control timepicker" value="{{values.datetimes_wednesday_end_time}}" placeholder="End Time"/>
@@ -166,11 +165,13 @@
                                            placeholder="Event Date" class="form-control daterange-thu" value="{{values.datetimes_thursday_date}}" />
                                 </div>
                                  <div class="col-md-3">
+                                     <div class="my-label">Start Time</div>
                                      <input type="time"
                                             id="datetimes_thursday_start_time"
                                             name="datetimes_thursday_start_time" class="form-control timepicker" placeholder="Start Time" value="{{values.datetimes_thursday_start_time}}"/>
                                  </div>
                                  <div class="col-md-3">
+                                     <div class="my-label">End Time</div>
                                      <input type="time"
                                             id="datetimes_thursday_end_time"
                                             name="datetimes_thursday_end_time" class="form-control timepicker" placeholder="End Time" value="{{values.datetimes_thursday_end_time}}"/>
@@ -185,11 +186,13 @@
                                            placeholder="Event Date" class="form-control daterange-fri" value="{{values.datetimes_friday_date}}"/>
                                 </div>
                                  <div class="col-md-3">
+                                     <div class="my-label">Start Time</div>
                                      <input type="time"
                                             id="datetimes_friday_start_time"
                                             name="datetimes_friday_start_time" class="form-control timepicker" placeholder="Start Time" value="{{values.datetimes_friday_start_time}}"/>
                                  </div>
                                  <div class="col-md-3">
+                                     <div class="my-label">End Time</div>
                                      <input type="time"
                                             id="datetimes_friday_end_time"
                                             name="datetimes_friday_end_time" class="form-control timepicker" placeholder="End Time" value="{{values.datetimes_friday_end_time}}"/>
@@ -204,11 +207,13 @@
                                            placeholder="Event Date" class="form-control daterange-sat" value="{{values.datetimes_saturday_date}}"/>
                                 </div>
                                  <div class="col-md-3">
+                                     <div class="my-label">Start Time</div>
                                      <input type="time"
                                             id="datetimes_saturday_start_time"
                                             name="datetimes_saturday_start_time" class="form-control timepicker" placeholder="Start Time" value="{{values.datetimes_saturday_start_time}}"/>
                                  </div>
                                  <div class="col-md-3">
+                                     <div class="my-label">End Time</div>
                                      <input type="time"
                                             id="datetimes_saturday_end_time"
                                             name="datetimes_saturday_end_time" class="form-control timepicker" placeholder="End Time" value="{{values.datetimes_saturday_end_time}}"/>
@@ -223,11 +228,13 @@
                                            placeholder="Event Date" class="form-control daterange-sun" value="{{values.datetimes_sunday_date}}"/>
                                 </div>
                                  <div class="col-md-3">
+                                     <div class="my-label">Start Time</div>
                                      <input type="time"
                                             id="datetimes_sunday_start_time"
                                             name="datetimes_sunday_start_time" class="form-control timepicker" placeholder="Start Time" value="{{values.datetimes_sunday_start_time}}"/>
                                  </div>
                                  <div class="col-md-3">
+                                     <div class="my-label">End Time</div>
                                      <input type="time"
                                             id="datetimes_sunday_end_time"
                                             name="datetimes_sunday_end_time" class="form-control timepicker" placeholder="End Time" value="{{values.datetimes_sunday_end_time}}"/>
@@ -248,11 +255,13 @@
                                            placeholder="Event Date" class="form-control datesingle" value="{{values.datetimes_date}}"/>
                                 </div>
                                  <div class="col-md-4">
+                                     <div class="my-label">Start Time</div>
                                      <input type="time"
                                             id="datetimes_start_time"
                                             name="datetimes_start_time" class="form-control timepicker" placeholder="Start Time" value="{{values.datetimes_start_time}}"/>
                                  </div>
                                  <div class="col-md-4">
+                                     <div class="my-label">End Time</div>
                                      <input type="time"
                                             id="datetimes_end_time"
                                             name="datetimes_end_time" class="form-control timepicker" placeholder="End Time" value="{{values.datetimes_end_time}}"/>

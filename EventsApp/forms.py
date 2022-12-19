@@ -15,7 +15,7 @@ class MultiStepForm(ModelForm):
             'event_title', 'description', 'event_type', 'sport_type', 'position',
             'venue', 'province', 'country', 'city', 'datetimes', 'created_by')
         required = (
-            'event_title', 'description', 'event_type', 'sport_type', 'position', 'venue', 'created_by')
+            'event_title', 'event_type', 'sport_type', 'position', 'venue', 'created_by')
 
 
 class RegisterForm(forms.ModelForm):
