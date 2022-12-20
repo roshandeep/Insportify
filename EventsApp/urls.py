@@ -29,6 +29,7 @@ urlpatterns = [
     path('individual/profile/', views.user_profile, name='user_profile'),
     path('organization/profile/', views.organization_profile, name='organization_profile'),
     path('create/', views.multistep, name='multistep'),
+    path('delete_profile/', views.delete_profile, name='delete_profile'),
     # path('<int:event_id>/', views.event_by_id, name='event_by_id'),
     path('invite/<int:event_id>/', views.invite_by_id, name='invite_by_id'),
     path('invite/<int:event_id>/<str:email>/', views.invite_by_id, name='invite_by_id'),

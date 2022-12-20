@@ -318,8 +318,6 @@
                             </div>
                         </div>
                         <div class="form-row p-2 text-center">
-
-
                             <input type="submit" name="submit" class="submit action-button btn btn-primary"
                                    value="Submit"/>
                         </div>
@@ -328,7 +326,33 @@
             </fieldset>
 
         </form>
-
+        <div class="p-2 text-center">
+            <input type="button" class="btn btn-danger" id="btn_delete_account"
+                   value="Delete Account" data-bs-toggle="modal" data-bs-target="#delete_modal"/>
+        </div>
+        <div class="modal fade" id="delete_modal" data-bs-backdrop="static" data-keyboard="false" tabindex="-1"
+             aria-labelledby="deleteModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteModalLabel">Delete Account</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to delete your account. Deleting your account will permanently delete your
+                        profile. You will be logged out and redirected to the home page. To Log-In again you will need
+                        to create a new account.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <a type="button" class="btn btn-primary" href="{% url 'EventsApp:delete_profile' %}">
+                            Confirm Delete</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 

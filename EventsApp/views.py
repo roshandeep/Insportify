@@ -5,6 +5,7 @@ import time
 import openpyxl
 import stripe
 from django.contrib import messages
+from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import F
@@ -436,6 +437,12 @@ def committed_events(request):
         event_list = format_time(event_list)
     return render(request, 'EventsApp/events_committed.html', {'event_list': list(event_list)})
 
+
+@login_required
+def delete_profile(request):
+    User.objects.filter(pk=request.user.pk).delete()
+    logout(request)
+    return redirect('EventsApp:home')
 
 
 @login_required
@@ -969,8 +976,6 @@ def home(request):
     sports = SportsType.objects.values('pk', 'sports_type_text').order_by('sports_type_text')
 
     advertisements = Advertisement.objects.all()
-    for item in advertisements:
-        print(item.image)
     advertisements = [advertisements[i:i + 3] for i in range(0, len(advertisements), 3)]
 
     if request.user.is_authenticated and request.user.is_individual:
