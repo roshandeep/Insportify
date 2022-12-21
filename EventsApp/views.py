@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import F
 from django.db.models.functions import Coalesce
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.template import loader
 from django.shortcuts import render, redirect
 from django.utils import timezone
@@ -22,11 +22,13 @@ from .models import master_table, Individual, Organization, Venues, SportsCatego
     Availability, Logo, Extra_Loctaions, Events_PositionInfo, Secondary_SportsChoice, Invite, \
     PositionAndSkillType, SportsImage, Organization_Availability, OrderItems, Advertisement
 import util
+from django.db.models import Q
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 @login_required
 def multistep(request):
+    entered_values = {}
     sports_type = SportsType.objects.all().order_by('sports_type_text')
     if request.user.is_individual:
         user_loc = Extra_Loctaions.objects.filter(user=request.user).values_list('city', flat=True)
@@ -38,12 +40,15 @@ def multistep(request):
         # Had to remove required since some fieldsets are hidden due to pagination causing client side console errors
         # Checking validity here
         form = MultiStepForm(request.POST)
+        # Set entered values
+        entered_values = request.POST.dict()
+        print(entered_values)
         # Validation
         values_valid = ValidateFormValues(request)
         # print(form.is_valid(), values_valid)
         # Handle Form Post
         if form.is_valid() and values_valid:
-            # print(list(request.POST.items()))
+            print(list(request.POST.items()))
             # Save data
             obj = form.save(commit=False)
             obj.created_by = request.user
@@ -147,7 +152,8 @@ def multistep(request):
     else:
         form = MultiStepForm()
 
-    return render(request, 'EventsApp/multi_step.html', {'form': form, 'sports_type': sports_type, 'venues': venues})
+    return render(request, 'EventsApp/multi_step.html',
+                  {'form': form, 'sports_type': sports_type, 'venues': venues, "values": entered_values})
 
 
 def ValidateFormValues(request):
@@ -158,9 +164,8 @@ def ValidateFormValues(request):
     if not request.user.is_mvp and event_count >= 2:
         messages.error(request, "Cannot create event, maximum events possible by non-MVP member is 2")
         event_count_valid = False
-    if not request.POST.get('event_title') or not request.POST.get('description') \
-            or not request.POST.get('event_type') or not request.POST.get('sport_type') \
-            or not request.POST.get('venue'):
+    if not request.POST.get('event_title') or not request.POST.get('venue')\
+            or not request.POST.get('event_type') or not request.POST.get('sport_type'):
         messages.error(request, "All fields are required, please enter valid information")
         fields_valid = False
     if not request.POST.get('recurring_event'):
@@ -390,11 +395,9 @@ def save_event_position_info(request, event):
                     obj.save()
 
 
-
-
 @login_required
 def all_events(request):
-    expired_events=[]
+    expired_events = []
     event_list = list(master_table.objects.filter(created_by=request.user))
     event_list = get_events_by_time(event_list)
     today = date.today()
@@ -975,7 +978,9 @@ def home(request):
     # Individual.objects.filter(pk=16).delete()
     sports = SportsType.objects.values('pk', 'sports_type_text').order_by('sports_type_text')
 
-    advertisements = Advertisement.objects.all()
+    advertisements = get_advertisements(request)
+    for item in advertisements:
+        print(item.image)
     advertisements = [advertisements[i:i + 3] for i in range(0, len(advertisements), 3)]
 
     if request.user.is_authenticated and request.user.is_individual:
@@ -1979,8 +1984,8 @@ def days_between(start, end, week_day, start_time, end_time):
 def remove_exceptions_from_recurring_days(all_dates, exception_dates):
     all_dates_arr = all_dates.strip(',').split(',')
     exception_dates_arr = exception_dates.split(',')
-    # print(all_dates_arr)
-    # print(exception_dates_arr)
+    print(all_dates_arr)
+    print(exception_dates_arr)
     filtered_dates = all_dates.strip(',').split(',')
     for ex_date in exception_dates_arr:
         for date in all_dates_arr:
@@ -1990,4 +1995,33 @@ def remove_exceptions_from_recurring_days(all_dates, exception_dates):
     # print(filtered_dates)
     return ','.join(filtered_dates)
 
+def get_advertisements(request):
+    ads = []
+    if not request.user.is_authenticated:
+        ads = Advertisement.objects.all().filter(Q(end_time__gte=date.today()) & Q(geographical_scope="National"))
+    else:
+        locs = Extra_Loctaions.objects.all().filter(user=request.user)
+        city_str = ''
+        prov_str = ''
+        for loc in locs:
+            city_str += loc.city
+            prov_str += loc.province
+        ads = Advertisement.objects.all().filter(Q(end_time__gte=date.today()) & Q(geographical_scope="National") |
+                                                 (Q(geographical_scope = "Provincial") & Q(province__icontains=prov_str)) |
+                                                 (Q(geographical_scope = "Local") & Q(city__icontains=city_str)))
+    return ads
 
+def show_advertisement(request, header):
+    try:
+        advert = Advertisement.objects.get(header=header)
+        if advert is not None:
+            if advert.hit_count is None:
+                advert.hit_count = 1
+            else:
+                advert.hit_count += 1
+            advert.save()
+            print(advert.url)
+            return redirect("https://" + advert.url)
+    except:
+        return home(request)
+    return home(request)

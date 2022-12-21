@@ -334,7 +334,7 @@ class Order(models.Model):
 
 
 class Advertisement(models.Model):
-    GEOGRAPHICAL_SCOPE_CHOICES = (('National', 'National'), ('Local', 'Local'), ('Provincial', 'Provincial'))
+    GEOGRAPHICAL_SCOPE_CHOICES = (('Local', 'Local'), ('Provincial', 'Provincial'), ('National', 'National'))
 
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     creation_time = models.DateTimeField()
@@ -343,6 +343,9 @@ class Advertisement(models.Model):
     header = models.TextField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     geographical_scope = models.CharField(max_length=100, choices=GEOGRAPHICAL_SCOPE_CHOICES, blank=True, null=True)
+    city = models.TextField(blank=True, null=True)
+    province = models.TextField(blank=True, null=True)
+    country = models.TextField(blank=True, null=True)
     image = models.ImageField(blank=True, null=True)
     url = models.TextField(blank=True, null=True)
     client = models.TextField(blank=True, null=True)

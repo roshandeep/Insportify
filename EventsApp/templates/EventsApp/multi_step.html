@@ -41,57 +41,57 @@
                         </div>
                     <div class="card-body">
                         <div class="form-row p-2">
-                            <input type="text" class="form-control" name="event_title" placeholder="* Event Title"/>
+                            <input type="text" class="form-control" name="event_title" placeholder="* Event Title" value="{{values.event_title}}" />
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" class="form-control" name="description" placeholder="* Description"/>
+                            <input type="text" class="form-control" name="description" placeholder="Description" value="{{values.description}}"/>
                         </div>
                         <div class="form-row p-2" id="event_type">
                             <select class="form-select select2" name="event_type" style="width:100%">
                                 <option value="" selected="selected">* Select Event Type</option>
-                                <option value="Camp">Camp</option>
-                                <option value="Charity">Charity</option>
-                                <option value="Conditioning">Conditioning</option>
-                                <option value="Development">Development</option>
-                                <option value="Game/Session">Game/Session</option>
-                                <option value="Online">Online</option>
-                                <option value="Registration">Registration</option>
-                                <option value="Social">Social</option>
-                                <option value="Tournament">Tournament</option>
+                                <option value="Camp" {% if values.event_type == 'Camp' %}selected="selected"{% endif %}>Camp</option>
+                                <option value="Charity" {% if values.event_type == 'Charity' %}selected="selected"{% endif %}>Charity</option>
+                                <option value="Conditioning" {% if values.event_type == 'Conditioning' %}selected="selected"{% endif %}>Conditioning</option>
+                                <option value="Development" {% if values.event_type == 'Development' %}selected="selected"{% endif %}>Development</option>
+                                <option value="Game/Session" {% if values.event_type == 'Game/Session' %}selected="selected"{% endif %}>Game/Session</option>
+                                <option value="Online" {% if values.event_type == 'Online' %}selected="selected"{% endif %}>Online</option>
+                                <option value="Registration" {% if values.event_type == 'Registration' %}selected="selected"{% endif %}>Registration</option>
+                                <option value="Social" {% if values.event_type == 'Social' %}selected="selected"{% endif %}>Social</option>
+                                <option value="Tournament" {% if values.event_type == 'Tournament' %}selected="selected"{% endif %}>Tournament</option>
                             </select>
                         </div>
                         <div class="form-row p-2">
                             <label>Gender</label>
                             <div>
-                            <label for="Male"><input type="radio" id="Male" name="gender" value="Male"> Male Only </input></label>
-                            <label for="Female"><input type="radio" id="Female" name="gender" value="Female"> Female Only </input></label>
-                            <label for="Coed"><input type="radio" id="Coed" name="gender" value="Coed"> Coed </input></label>
+                            <label for="Male"><input type="radio" id="Male" name="gender" value="Male" {% if values.gender == 'Male' %}checked{% endif %}> Male Only </input></label>
+                            <label for="Female"><input type="radio" id="Female" name="gender" value="Female" {% if values.gender == 'Female' %}checked{% endif %}> Female Only </input></label>
+                            <label for="Coed"><input type="radio" id="Coed" name="gender" value="Coed" {% if values.gender == 'Coed' %}checked{% endif %}> Coed </input></label>
                             </div>
                         </div>
                         <div class="form-row p-2">
-                            <label>Is this a drop-in event?</label>
+                            <label>* Is this a Drop-in event, or a Registration program?</label>
                             <div>
-                            <label for="Dropin"><input type="radio" id="Dropin" name="dropin" value="Drop-in"> Yes, Drop In </input></label>
-                            <label for="Registration"><input type="radio" id="Registration" name="dropin" value="Registration"> No, Registration Only </input></label>
+                            <label for="Dropin"><input type="radio" {% if values.dropin == 'Drop-in' %}checked="checked"{% endif %} id="Dropin" name="dropin" value="Drop-in"> Drop In </input></label>
+                            <label for="Registration"><input type="radio" {% if values.dropin == 'Registration' %}checked="checked"{% endif %} id="Registration" name="dropin" value="Registration"> Registration </input></label>
                             </div>
                         </div>
                         <div class="form-row p-2">
                             <label>* Is this a recurring event? &nbsp &nbsp</label>
                             <br>
-                            <label for="chkYes"><input type="radio" value="Yes" id="chkYes" name="recurring_event">Yes</input></label>
-                            <label for="chkNo"><input type="radio" value="No" id="chkNo" name="recurring_event"> No </input></label>
+                            <label for="chkYes"><input type="radio" value="Yes" id="chkYes" name="recurring_event" {% if values.recurring_event == 'Yes' %}checked="checked"{% endif %}>Yes</input></label>
+                            <label for="chkNo"><input type="radio" value="No" id="chkNo" name="recurring_event" {% if values.recurring_event == 'No' %}checked="checked"{% endif %}> No </input></label>
                         </div>
                         <div class="form-row p-2" id="fields_recurring" style="display:None">
                             <label>* Which days does the event occur &nbsp &nbsp</label>
                             <select class="select2 form-control" style="width: 100%" id="recurring_selection"
                                     name="recurring_days" multiple="multiple">
-                                <option>Monday</option>
-                                <option>Tuesday</option>
-                                <option>Wednesday</option>
-                                <option>Thursday</option>
-                                <option>Friday</option>
-                                <option>Saturday</option>
-                                <option>Sunday</option>
+                                <option {% if 'Monday' in values.recurring_days %}selected="selected"{% endif %}>Monday</option>
+                                <option {% if 'Tuesday' in values.recurring_days %}selected="selected"{% endif %}>Tuesday</option>
+                                <option {% if 'Wednesday' in values.recurring_days %}selected="selected"{% endif %}>Wednesday</option>
+                                <option {% if 'Thursday' in values.recurring_days %}selected="selected"{% endif %}>Thursday</option>
+                                <option {% if 'Friday' in values.recurring_days %}selected="selected"{% endif %}>Friday</option>
+                                <option {% if 'Saturday' in values.recurring_days %}selected="selected"{% endif %}>Saturday</option>
+                                <option {% if 'Sunday' in values.recurring_days %}selected="selected"{% endif %}>Sunday</option>
                             </select>
                         </div>
                         <div class="form-row p-2" id="Monday_dates" style="display:None">
@@ -99,17 +99,19 @@
                             <div class="form-group row p-2">
                                 <div class="col-md-6">
                                     <input type="text" name="datetimes_monday_date" id="datetimes_monday_date"
-                                           placeholder="Event Date" class="form-control daterange-mon" />
+                                           placeholder="Event Date" class="form-control daterange-mon" value="{{values.datetimes_monday_date}}" />
                                 </div>
                                  <div class="col-md-3">
+                                     <div class="my-label">Start Time</div>
                                      <input type="time"
                                             id="datetimes_monday_start_time"
-                                            name="datetimes_monday_start_time" class="form-control timepicker" placeholder="Start Time"/>
+                                            name="datetimes_monday_start_time" class="form-control timepicker" value="{{values.datetimes_monday_start_time}}" placeholder="Start Time"/>
                                  </div>
                                  <div class="col-md-3">
+                                     <div class="my-label">End Time</div>
                                      <input type="time"
                                             id="datetimes_monday_end_time"
-                                            name="datetimes_monday_end_time" class="form-control timepicker" placeholder="End Time"/>
+                                            name="datetimes_monday_end_time" class="form-control timepicker" value="{{values.datetimes_monday_end_time}}" placeholder="End Time"/>
                                  </div>
                             </div>
                         </div>
@@ -118,17 +120,19 @@
                             <div class="form-group row p-2">
                                 <div class="col-md-6">
                                     <input type="text" name="datetimes_tuesday_date" id="datetimes_tuesday_date"
-                                           placeholder="Event Date" class="form-control daterange-tue" />
+                                           placeholder="Event Date" class="form-control daterange-tue" value="{{values.datetimes_tuesday_date}}" />
                                 </div>
                                  <div class="col-md-3">
+                                     <div class="my-label">Start Time</div>
                                      <input type="time"
                                             id="datetimes_tuesday_start_time"
-                                            name="datetimes_tuesday_start_time" class="form-control timepicker" placeholder="Start Time"/>
+                                            name="datetimes_tuesday_start_time" class="form-control timepicker" value="{{values.datetimes_tuesday_start_time}}" placeholder="Start Time"/>
                                  </div>
                                  <div class="col-md-3">
+                                     <div class="my-label">End Time</div>
                                      <input type="time"
                                             id="datetimes_tuesday_end_time"
-                                            name="datetimes_tuesday_end_time" class="form-control timepicker" placeholder="End Time"/>
+                                            name="datetimes_tuesday_end_time" class="form-control timepicker" value="{{values.datetimes_tuesday_end_time}}" placeholder="End Time"/>
                                  </div>
                             </div>
                         </div>
@@ -137,17 +141,19 @@
                             <div class="form-group row p-2">
                                 <div class="col-md-6">
                                     <input type="text" name="datetimes_wednesday_date" id="datetimes_wednesday_date"
-                                           placeholder="Event Date" class="form-control daterange-wed" />
+                                           placeholder="Event Date" class="form-control daterange-wed" value="{{values.datetimes_wednesday_date}}"/>
                                 </div>
                                  <div class="col-md-3">
+                                     <div class="my-label">Start Time</div>
                                      <input type="time"
                                             id="datetimes_wednesday_start_time"
-                                            name="datetimes_wednesday_start_time" class="form-control timepicker" placeholder="Start Time"/>
+                                            name="datetimes_wednesday_start_time" class="form-control timepicker" value="{{values.datetimes_wednesday_start_time}}" placeholder="Start Time"/>
                                  </div>
                                  <div class="col-md-3">
+                                     <div class="my-label">End Time</div>
                                      <input type="time"
                                             id="datetimes_wednesday_end_time"
-                                            name="datetimes_wednesday_end_time" class="form-control timepicker" placeholder="End Time"/>
+                                            name="datetimes_wednesday_end_time" class="form-control timepicker" value="{{values.datetimes_wednesday_end_time}}" placeholder="End Time"/>
                                  </div>
                             </div>
                         </div>
@@ -156,17 +162,19 @@
                             <div class="form-group row p-2">
                                 <div class="col-md-6">
                                     <input type="text" name="datetimes_thursday_date" id="datetimes_thursday_date"
-                                           placeholder="Event Date" class="form-control daterange-thu" />
+                                           placeholder="Event Date" class="form-control daterange-thu" value="{{values.datetimes_thursday_date}}" />
                                 </div>
                                  <div class="col-md-3">
+                                     <div class="my-label">Start Time</div>
                                      <input type="time"
                                             id="datetimes_thursday_start_time"
-                                            name="datetimes_thursday_start_time" class="form-control timepicker" placeholder="Start Time"/>
+                                            name="datetimes_thursday_start_time" class="form-control timepicker" placeholder="Start Time" value="{{values.datetimes_thursday_start_time}}"/>
                                  </div>
                                  <div class="col-md-3">
+                                     <div class="my-label">End Time</div>
                                      <input type="time"
                                             id="datetimes_thursday_end_time"
-                                            name="datetimes_thursday_end_time" class="form-control timepicker" placeholder="End Time"/>
+                                            name="datetimes_thursday_end_time" class="form-control timepicker" placeholder="End Time" value="{{values.datetimes_thursday_end_time}}"/>
                                  </div>
                             </div>
                         </div>
@@ -175,17 +183,19 @@
                             <div class="form-group row p-2">
                                 <div class="col-md-6">
                                     <input type="text" name="datetimes_friday_date" id="datetimes_friday_date"
-                                           placeholder="Event Date" class="form-control daterange-fri" />
+                                           placeholder="Event Date" class="form-control daterange-fri" value="{{values.datetimes_friday_date}}"/>
                                 </div>
                                  <div class="col-md-3">
+                                     <div class="my-label">Start Time</div>
                                      <input type="time"
                                             id="datetimes_friday_start_time"
-                                            name="datetimes_friday_start_time" class="form-control timepicker" placeholder="Start Time"/>
+                                            name="datetimes_friday_start_time" class="form-control timepicker" placeholder="Start Time" value="{{values.datetimes_friday_start_time}}"/>
                                  </div>
                                  <div class="col-md-3">
+                                     <div class="my-label">End Time</div>
                                      <input type="time"
                                             id="datetimes_friday_end_time"
-                                            name="datetimes_friday_end_time" class="form-control timepicker" placeholder="End Time"/>
+                                            name="datetimes_friday_end_time" class="form-control timepicker" placeholder="End Time" value="{{values.datetimes_friday_end_time}}"/>
                                  </div>
                             </div>
                         </div>
@@ -194,17 +204,19 @@
                             <div class="form-group row p-2">
                                 <div class="col-md-6">
                                     <input type="text" name="datetimes_saturday_date" id="datetimes_saturday_date"
-                                           placeholder="Event Date" class="form-control daterange-sat" />
+                                           placeholder="Event Date" class="form-control daterange-sat" value="{{values.datetimes_saturday_date}}"/>
                                 </div>
                                  <div class="col-md-3">
+                                     <div class="my-label">Start Time</div>
                                      <input type="time"
                                             id="datetimes_saturday_start_time"
-                                            name="datetimes_saturday_start_time" class="form-control timepicker" placeholder="Start Time"/>
+                                            name="datetimes_saturday_start_time" class="form-control timepicker" placeholder="Start Time" value="{{values.datetimes_saturday_start_time}}"/>
                                  </div>
                                  <div class="col-md-3">
+                                     <div class="my-label">End Time</div>
                                      <input type="time"
                                             id="datetimes_saturday_end_time"
-                                            name="datetimes_saturday_end_time" class="form-control timepicker" placeholder="End Time"/>
+                                            name="datetimes_saturday_end_time" class="form-control timepicker" placeholder="End Time" value="{{values.datetimes_saturday_end_time}}"/>
                                  </div>
                             </div>
                         </div>
@@ -213,24 +225,26 @@
                             <div class="form-group row p-2">
                                 <div class="col-md-6">
                                     <input type="text" name="datetimes_sunday_date" id="datetimes_sunday_date"
-                                           placeholder="Event Date" class="form-control daterange-sun" />
+                                           placeholder="Event Date" class="form-control daterange-sun" value="{{values.datetimes_sunday_date}}"/>
                                 </div>
                                  <div class="col-md-3">
+                                     <div class="my-label">Start Time</div>
                                      <input type="time"
                                             id="datetimes_sunday_start_time"
-                                            name="datetimes_sunday_start_time" class="form-control timepicker" placeholder="Start Time"/>
+                                            name="datetimes_sunday_start_time" class="form-control timepicker" placeholder="Start Time" value="{{values.datetimes_sunday_start_time}}"/>
                                  </div>
                                  <div class="col-md-3">
+                                     <div class="my-label">End Time</div>
                                      <input type="time"
                                             id="datetimes_sunday_end_time"
-                                            name="datetimes_sunday_end_time" class="form-control timepicker" placeholder="End Time"/>
+                                            name="datetimes_sunday_end_time" class="form-control timepicker" placeholder="End Time" value="{{values.datetimes_sunday_end_time}}"/>
                                  </div>
                             </div>
                         </div>
                         <div class="form-row p-2" id="Exception_dates" style="display:None">
                             <label style="font-style:italic">Enter Exceptions &nbsp &nbsp</label>
                             <div class="form-row p-2">
-                                <input type="text" class="form-control date-except"  name="datetimes_exceptions" id="datetimes_exceptions"/>
+                                <input type="text" class="form-control date-except"  name="datetimes_exceptions" id="datetimes_exceptions" value="{{values.datetimes_exceptions}}"/>
                             </div>
                         </div>
                         <div class="form-row p-2" id="single_dates" style="display:None">
@@ -238,17 +252,19 @@
                             <div class="form-group row p-2">
                                 <div class="col-md-4">
                                     <input type="text" name="datetimes_date" id="datetimes_date"
-                                           placeholder="Event Date" class="form-control datesingle" />
+                                           placeholder="Event Date" class="form-control datesingle" value="{{values.datetimes_date}}"/>
                                 </div>
                                  <div class="col-md-4">
+                                     <div class="my-label">Start Time</div>
                                      <input type="time"
                                             id="datetimes_start_time"
-                                            name="datetimes_start_time" class="form-control timepicker" placeholder="Start Time"/>
+                                            name="datetimes_start_time" class="form-control timepicker" placeholder="Start Time" value="{{values.datetimes_start_time}}"/>
                                  </div>
                                  <div class="col-md-4">
+                                     <div class="my-label">End Time</div>
                                      <input type="time"
                                             id="datetimes_end_time"
-                                            name="datetimes_end_time" class="form-control timepicker" placeholder="End Time"/>
+                                            name="datetimes_end_time" class="form-control timepicker" placeholder="End Time" value="{{values.datetimes_end_time}}"/>
                                  </div>
                             </div>
                         </div>
@@ -275,7 +291,7 @@
                                     aria-label=".form-select-lg example" style="width:100%;">
                                 <option selected disabled>* Choose Sport</option>
                                 {% for type in sports_type %}
-                                <option value="{{type.sports_type_text}}">{{type.sports_type_text}}</option>
+                                <option value="{{type.sports_type_text}}" {% if type.sports_type_text in values.sport_type %}selected="selected"{% endif %}>{{type.sports_type_text}}</option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -308,29 +324,29 @@
                                     aria-label=".form-select-lg example" style="width:100%">
                                 <option selected disabled>* Choose Venue</option>
                                 {% for venue in venues %}
-                                <option value="{{venue.vm_name}}">{{venue.vm_name}}</option>
+                                <option value="{{venue.vm_name}}" {% if venue.vm_name in values.venue %}selected="selected"{% endif %}>{{venue.vm_name}}</option>
                                 {% endfor %}
                             </select>
                         </div>
                         <div class="form-row p-2">
                             <input type="text" class="form-control" id="street" name="street"
-                                   placeholder="Street" readonly/>
+                                   placeholder="Street" value="{{values.street}}" readonly/>
                         </div>
                         <div class="form-row p-2">
                             <input type="text" class="form-control" id="city" name="city"
-                                   placeholder="City" readonly/>
+                                   placeholder="City" value="{{values.city}}" readonly/>
                         </div>
                         <div class="form-row p-2">
                             <input type="text" class="form-control" id="province" name="province"
-                                   placeholder="Province" readonly/>
+                                   placeholder="Province" value="{{values.province}}" readonly/>
                         </div>
                         <div class="form-row p-2">
                             <input type="text" class="form-control" id="country" name="country"
-                                   placeholder="Country" readonly/>
+                                   placeholder="Country" value="{{values.country}}" readonly/>
                         </div>
                         <div class="form-row p-2">
                             <input type="text" class="form-control" id="zip_code" name="zip_code"
-                                   placeholder="Area Code" readonly/>
+                                   placeholder="Area Code" value="{{values.zip_code}}" readonly/>
                         </div>
                         <div class="form-row p-2 text-center">
 
@@ -355,6 +371,8 @@
       rel="stylesheet"/>
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 <style>
 
    #progressbar {
@@ -552,8 +570,8 @@ $("#datetimes_saturday_start_time").change(function () {
     });
 
 
-$("#sport_type").change(function () {
-        var index = 1;
+function setupSportsSubPage(){
+var index = 1;
         $(".positions-container").remove();
         var selected_type_value = $("#sport_type option:selected");
         var selected_type_text = selected_type_value.text();
@@ -598,13 +616,58 @@ $("#sport_type").change(function () {
                         }
                     });
                     html2 += `<div class="row g-2"><label class="col-md-2 align-middle my-4"  style="font-weight: bold;">${data.position_type}</label>`
-                    html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2 select-style" name="no_of_position' + index + '" placeholder = "# of positions" min=0 onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"></div>'
-                    html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2 select-style" name ="position_cost' + index + '" placeholder="Cost" step="any"></div>'
-                    html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2 select-style" name="min_age' + index + '" min=0 onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" placeholder="Min. Age"></div>'
-                    html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2 select-style" name="max_age' + index + '" min=0 onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" placeholder="Max. Age"></div>'
-                    html2 += `<div id='select-type-event' class="col-md-2 py-2">${skills_dropdown}</div>`
-                    html2 += `<div style="display:none"><input value="${data.position_type}" name="position_name${index}" value=></div>`
+                    //legacy monstrosity, this needs to be redone at some point
+                    if(index == 1){
+                        html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2 select-style" name="no_of_position' + index + '" placeholder = "# of positions" min=0 value="{{no_of_position1}}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"></div>'
+                        html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2 select-style" name ="position_cost' + index + '" placeholder="Cost" value="{{position_cost1}}" step="any"></div>'
+                        html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2 select-style" name="min_age' + index + '" min=0 value="{{min_age1}}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" placeholder="Min. Age"></div>'
+                        html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2 select-style" name="max_age' + index + '" min=0 value="{{max_age1}}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" placeholder="Max. Age"></div>'
+                        html2 += `<div id='select-type-event' class="col-md-2 py-2">${skills_dropdown}</div>`
+                        html2 += `<div style="display:none"><input value="${data.position_type}" name="position_name${index}"></div>`
+                    }
+                    else if(index == 2){
+                        html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2 select-style" name="no_of_position' + index + '" placeholder = "# of positions" min=0 value="{{no_of_position2}}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"></div>'
+                        html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2 select-style" name ="position_cost' + index + '" placeholder="Cost" value="{{position_cost2}}" step="any"></div>'
+                        html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2 select-style" name="min_age' + index + '" min=0 value="{{min_age2}}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" placeholder="Min. Age"></div>'
+                        html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2 select-style" name="max_age' + index + '" min=0 value="{{max_age2}}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" placeholder="Max. Age"></div>'
+                        html2 += `<div id='select-type-event' class="col-md-2 py-2">${skills_dropdown}</div>`
+                        html2 += `<div style="display:none"><input value="${data.position_type}" name="position_name${index}"></div>`
+                    }
+                    else if(index == 3){
+                        html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2 select-style" name="no_of_position' + index + '" placeholder = "# of positions" min=0 value="{{no_of_position3}}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"></div>'
+                        html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2 select-style" name ="position_cost' + index + '" placeholder="Cost" value="{{position_cost3}}" step="any"></div>'
+                        html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2 select-style" name="min_age' + index + '" min=0 value="{{min_age3}}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" placeholder="Min. Age"></div>'
+                        html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2 select-style" name="max_age' + index + '" min=0 value="{{max_age3}}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" placeholder="Max. Age"></div>'
+                        html2 += `<div id='select-type-event' class="col-md-2 py-2">${skills_dropdown}</div>`
+                        html2 += `<div style="display:none"><input value="${data.position_type}" name="position_name${index}"></div>`
+                    }
+                    else if(index == 4){
+                        html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2 select-style" name="no_of_position' + index + '" placeholder = "# of positions" min=0 value="{{no_of_position4}}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"></div>'
+                        html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2 select-style" name ="position_cost' + index + '" placeholder="Cost" value="{{position_cost4}}" step="any"></div>'
+                        html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2 select-style" name="min_age' + index + '" min=0 value="{{min_age4}}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" placeholder="Min. Age"></div>'
+                        html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2 select-style" name="max_age' + index + '" min=0 value="{{max_age4}}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" placeholder="Max. Age"></div>'
+                        html2 += `<div id='select-type-event' class="col-md-2 py-2">${skills_dropdown}</div>`
+                        html2 += `<div style="display:none"><input value="${data.position_type}" name="position_name${index}"></div>`
+                    }
+                    else if(index == 5){
+                        html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2 select-style" name="no_of_position' + index + '" placeholder = "# of positions" min=0 value="{{no_of_position5}}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"></div>'
+                        html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2 select-style" name ="position_cost' + index + '" placeholder="Cost" value="{{position_cost5}}" step="any"></div>'
+                        html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2 select-style" name="min_age' + index + '" min=0 value="{{min_age5}}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" placeholder="Min. Age"></div>'
+                        html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2 select-style" name="max_age' + index + '" min=0 value="{{max_age5}}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" placeholder="Max. Age"></div>'
+                        html2 += `<div id='select-type-event' class="col-md-2 py-2">${skills_dropdown}</div>`
+                        html2 += `<div style="display:none"><input value="${data.position_type}" name="position_name${index}"></div>`
+                    }
+                    else{
+                        html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2 select-style" name="no_of_position' + index + '" placeholder = "# of positions" min=0 onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"></div>'
+                        html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2 select-style" name ="position_cost' + index + '" placeholder="Cost" step="any"></div>'
+                        html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2 select-style" name="min_age' + index + '" min=0 onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" placeholder="Min. Age"></div>'
+                        html2 += '<div class="col-md-2"><input type="number" class="form-control mt-2 select-style" name="max_age' + index + '" min=0 onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" placeholder="Max. Age"></div>'
+                        html2 += `<div id='select-type-event' class="col-md-2 py-2">${skills_dropdown}</div>`
+                        html2 += `<div style="display:none"><input value="${data.position_type}" name="position_name${index}"></div>`
+                    }
                     html2 += '</div>'
+
+
                     html_data += `<option value="${data.position_type}">${data.position_type}</option>`
                     index++;
                 });
@@ -618,6 +681,14 @@ $("#sport_type").change(function () {
                 });
             }
         });
+}
+
+if($("#sport_type").prop('selectedIndex') > 0){
+    setupSportsSubPage()
+}
+
+$("#sport_type").change(function () {
+       setupSportsSubPage();
     });
 
 $(document).ready(function(){
@@ -861,6 +932,46 @@ $(function() {
     },
   });
 
+$('#datetimes_sunday_date').focusin(function() {
+ToastifyDates();
+});
+$('#datetimes_monday_date').focusin(function() {
+    ToastifyDates();
+  });
+  $('#datetimes_tuesday_date').focusin(function() {
+    ToastifyDates();
+  });
+  $('#datetimes_wednesday_date').focusin(function() {
+    ToastifyDates();
+  });
+  $('#datetimes_thursday_date').focusin(function() {
+    ToastifyDates();
+  });
+  $('#datetimes_friday_date').focusin(function() {
+    ToastifyDates();
+  });
+    $('#datetimes_saturday_date').focusin(function() {
+    ToastifyDates();
+  });
+
+  $('#datetimes_exceptions').click(function() {
+   Toastify({
+      text: "Please select range of dates to exclude",
+      duration: 3000,
+      destination: "https://github.com/apvarun/toastify-js",
+      newWindow: true,
+      close: true,
+      gravity: "bottom", // `top` or `bottom`
+      position: "right", // `left`, `center` or `right`
+      stopOnFocus: true, // Prevents dismissing of toast on hover
+      style: {
+        background: "blue",
+      },
+      onClick: function(){} // Callback after click
+    }).showToast();
+  });
+
+
 
   $('.daterange-mon').daterangepicker({
     timePicker: false,
@@ -950,6 +1061,26 @@ $(function () {
                 $("#single_dates").show();
             }
         });
+        if ($("#chkYes").is(":checked")) {
+                $("#fields_recurring").show();
+                $("#single_dates").hide();
+                for (let i of $('#recurring_selection').select2('data')){
+                    $("#"+i.text+"_dates").show();
+                }
+                $("#Exception_dates").show();
+
+            } else if ($("#chkNo").is(":checked")) {
+                $("#fields_recurring").hide();
+                $("#Monday_dates").hide();
+                $("#Tuesday_dates").hide();
+                $("#Wednesday_dates").hide();
+                $("#Thursday_dates").hide();
+                $("#Friday_dates").hide();
+                $("#Saturday_dates").hide();
+                $("#Sunday_dates").hide();
+                $("#Exception_dates").hide();
+                $("#single_dates").show();
+            }
         $('#recurring_selection').on('select2:select', function (e) {
             $("#"+e.params.data.text+"_dates").show();
         });
@@ -1167,7 +1298,6 @@ $('.radio').change(function() {
         //};
     });
 
-
 // Make Placeholders title when user types something
 function addInputLabel(evt) {
     if (document.getElementsByName(evt.currentTarget.name)[0] && document.getElementsByName(evt.currentTarget.name)[0].type !== 'button'){
@@ -1185,10 +1315,29 @@ function addInputLabel(evt) {
         }
     }
 }
+
+function ToastifyDates(){
+    Toastify({
+      text: "Please select a start and end date",
+      duration: 3000,
+      destination: "https://github.com/apvarun/toastify-js",
+      newWindow: true,
+      close: true,
+      gravity: "bottom", // `top` or `bottom`
+      position: "right", // `left`, `center` or `right`
+      stopOnFocus: true, // Prevents dismissing of toast on hover
+      style: {
+        background: "blue",
+      },
+      onClick: function(){} // Callback after click
+    }).showToast();
+}
+
 // Fix daterangepicker position to given element
 function updateDateRangePickerPosition(evt) {
-if(evt.currentTarget.id && $('#' + evt.currentTarget.id) && $('#' + evt.currentTarget.id).offset()){
-    $('.daterangepicker').css('margin-top',$('#' + evt.currentTarget.id).offset().top);}
+    if(evt.currentTarget.id && $('#' + evt.currentTarget.id) && $('#' + evt.currentTarget.id).offset()){
+        $('.daterangepicker').css('margin-top',$('#' + evt.currentTarget.id).offset().top - 100);
+    }
 }
 
 
