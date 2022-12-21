@@ -970,9 +970,8 @@ def fetch_organization_locations(request):
 def home(request):
     # Individual.objects.filter(pk=16).delete()
     sports = SportsType.objects.values('pk', 'sports_type_text').order_by('sports_type_text')
-    ad_list = get_advertisements(request)
 
-    advertisements = Advertisement.objects.all()
+    advertisements = get_advertisements(request)
     for item in advertisements:
         print(item.image)
     advertisements = [advertisements[i:i + 3] for i in range(0, len(advertisements), 3)]

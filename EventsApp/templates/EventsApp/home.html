@@ -15,21 +15,21 @@
                         {% for advertisement in sublist %}
                         <div
                              class="event-card card {% if forloop.counter0 != 0 %}d-none d-md-block{% endif %} col-4"
-                             onclick=""
+                             onclick="window.open('show_advertisement/{{advertisement.header}}');"
                              style="cursor:pointer">
-                            <img src="/media/{{advertisement.image}}" class="card-img-top" alt="...">
+                            <img src="/media/{{advertisement.image}}" class="card-img-top" alt="{{advertisement.header}}">
                         </div>
                         {% endfor %}
                     </div>
                 </div>
                 {% endfor %}
             </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#carousel_ad"
+            <button class="carousel-control-prev" type="button" data-bs-target="#carousel_ad" id="ad_prev"
                     data-bs-slide="prev" style="left: -5%;">
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Previous</span>
             </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carousel_ad"
+            <button class="carousel-control-next" type="button" data-bs-target="#carousel_ad" id="ad_next"
                     data-bs-slide="next" style="right: -5%">
                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Next</span>
@@ -93,19 +93,6 @@
 </form>
 </div>
 
-<div class="col-11 mx-auto">
-    <div class="row p-3" >
-        <div class="card-group">
-        {% for advert in adList %}
-        <div class="card"  style="height:100px">
-            <img src="media\{{advert.image}}" class="card-img-top" alt="{{advert.header}}"
-                 onclick="window.open('show_advertisement/{{advert.header}}');">
-        </div>
-        {% endfor %}
-        </div>
-    </div>
-</div>
-
 {% if user.is_authenticated %}
 
 <div class="col-11 mx-auto">
@@ -160,7 +147,7 @@
         </div>
     </div>
     <div class="row p-3">
-        <h5>Recommended Registration Events For You</h5>
+        <h5>Recommended Registration Programs For You</h5>
         <hr class="my-2">
         <div id="carouselExampleControls2" class="carousel slide" data-ride="carousel" data-interval="false"
              data-touch="true">
@@ -265,7 +252,7 @@
         </div>
     </div>
     <div class="row p-3">
-        <h5>All Registration Events</h5>
+        <h5>All Registration Programs</h5>
         <hr class="my-2">
         <div id="carouselExampleControls" class="carousel slide" data-ride="carousel" data-interval="false"
              data-touch="true">
@@ -331,6 +318,11 @@
             if (direction == 'right') $(this).carousel('prev');
         },
         allowPageScroll: "vertical"
+    });
+
+    // Autoscroll Ad Carousel
+    $(document).ready(function(){
+        adAutoScroll = setInterval(function(){ $('#ad_next').trigger('click'); }, 10000);
     });
 
     $(document).ready(function () {
