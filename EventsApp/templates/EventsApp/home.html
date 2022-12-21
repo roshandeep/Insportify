@@ -4,6 +4,40 @@
 {% load static %}
 {% block content %}
 
+<div class="col-11 mx-auto">
+    <div class="row">
+        <div id="carousel_ad" class="carousel slide" data-ride="carousel" data-interval="false"
+             data-touch="true">
+            <div class="carousel-inner" role="listbox">
+                {% for sublist in advertisements %}
+                <div class="carousel-item {% if forloop.counter0 == 0 %}active{% endif %}">
+                    <div class="cards-wrapper">
+                        {% for advertisement in sublist %}
+                        <div
+                             class="event-card card {% if forloop.counter0 != 0 %}d-none d-md-block{% endif %} col-4"
+                             onclick=""
+                             style="cursor:pointer">
+                            <img src="/media/{{advertisement.image}}" class="card-img-top" alt="...">
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carousel_ad"
+                    data-bs-slide="prev" style="left: -5%;">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carousel_ad"
+                    data-bs-slide="next" style="right: -5%">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </div>
+</div>
+
 <div id="event-page" class="col-lg-9 col-md-12 mx-auto">
 <form id="form-events" class="row p-3" action="{% url 'EventsApp:home' %}" method="get">
     <div class="col mb-2" id="events_types_select" style="flex-grow: 1;">
@@ -76,56 +110,6 @@
 
 <div class="col-11 mx-auto">
     <div class="row p-3">
-        <h5>Recommended Registration Events For You</h5>
-        <hr class="my-2">
-        <div id="carouselExampleControls2" class="carousel slide" data-ride="carousel" data-interval="false"
-             data-touch="true">
-            <div id="event-cards2" class="carousel-inner" role="listbox">
-                {% for sublist in recommended_registrationList %}
-                <div class="carousel-item {% if forloop.counter0 == 0 %}active{% endif %}">
-                    <div class="cards-wrapper">
-                        {% for event in sublist %}
-                        <div id="event-card2"
-                             class="event-card card {% if forloop.counter0 != 0 %}d-none d-md-block{% endif %} col-4"
-                             onclick="location.href='event_details/{{event.pk}}/{% if event.datetimes %}{{event.datetimes}}{% elif event.current_datetimes %}{{event.current_datetimes}}{% endif %}/'"
-                             style="cursor:pointer">
-                            <img src="{{event.sport_logo}}" class="card-img-top" alt="...">
-                            <div class="card-body">
-                                <h5 class="card-title">{{event.sport_type}}</h5>
-                                <h6 class="card-subtitle mb-2 text-muted">
-                                    {% if event.event_title %}
-                                    {{event.event_title}} :
-                                    {% endif %}
-                                    {% if event.event_type %}
-                                    {{event.event_type}}
-                                    {% endif %}
-                                </h6>
-                                <p class="card-text">{{event.venue}}, {{event.city}}, {{event.province}}</p>
-                                {% if event.datetimes %}
-                                <p class="text-dark text-start eventdatetime">{{event.datetimes}}</p>
-                                {% elif event.current_datetimes %}
-                                <p class="text-dark text-start eventdatetime">{{event.current_datetimes}}</p>
-                                {% endif %}
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls2"
-                    data-bs-slide="prev" style="left: -5%;">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls2"
-                    data-bs-slide="next" style="right: -5%">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </button>
-        </div>
-    </div>
-    <div class="row p-3">
         <h5>Recommended Drop In Events For You</h5>
         <hr class="my-2">
         <div id="carouselExampleControls4" class="carousel slide" data-ride="carousel" data-interval="false"
@@ -175,22 +159,17 @@
             </button>
         </div>
     </div>
-</div>
-
-{% else %}
-
-<div class="col-11 mx-auto">
     <div class="row p-3">
-        <h5>All Registration Events</h5>
+        <h5>Recommended Registration Events For You</h5>
         <hr class="my-2">
-        <div id="carouselExampleControls" class="carousel slide" data-ride="carousel" data-interval="false"
+        <div id="carouselExampleControls2" class="carousel slide" data-ride="carousel" data-interval="false"
              data-touch="true">
-            <div id="event-cards1" class="carousel-inner" role="listbox">
-                {% for sublist in registrationList %}
+            <div id="event-cards2" class="carousel-inner" role="listbox">
+                {% for sublist in recommended_registrationList %}
                 <div class="carousel-item {% if forloop.counter0 == 0 %}active{% endif %}">
                     <div class="cards-wrapper">
                         {% for event in sublist %}
-                        <div id="event-card1"
+                        <div id="event-card2"
                              class="event-card card {% if forloop.counter0 != 0 %}d-none d-md-block{% endif %} col-4"
                              onclick="location.href='event_details/{{event.pk}}/{% if event.datetimes %}{{event.datetimes}}{% elif event.current_datetimes %}{{event.current_datetimes}}{% endif %}/'"
                              style="cursor:pointer">
@@ -218,18 +197,23 @@
                 </div>
                 {% endfor %}
             </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls"
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls2"
                     data-bs-slide="prev" style="left: -5%;">
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Previous</span>
             </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls"
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls2"
                     data-bs-slide="next" style="right: -5%">
                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Next</span>
             </button>
         </div>
     </div>
+</div>
+
+{% else %}
+
+<div class="col-11 mx-auto">
     <div class="row p-3">
         <h5>All Drop In Events</h5>
         <hr class="my-2">
@@ -274,6 +258,56 @@
                 <span class="visually-hidden">Previous</span>
             </button>
             <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls3"
+                    data-bs-slide="next" style="right: -5%">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </div>
+    <div class="row p-3">
+        <h5>All Registration Events</h5>
+        <hr class="my-2">
+        <div id="carouselExampleControls" class="carousel slide" data-ride="carousel" data-interval="false"
+             data-touch="true">
+            <div id="event-cards1" class="carousel-inner" role="listbox">
+                {% for sublist in registrationList %}
+                <div class="carousel-item {% if forloop.counter0 == 0 %}active{% endif %}">
+                    <div class="cards-wrapper">
+                        {% for event in sublist %}
+                        <div id="event-card1"
+                             class="event-card card {% if forloop.counter0 != 0 %}d-none d-md-block{% endif %} col-4"
+                             onclick="location.href='event_details/{{event.pk}}/{% if event.datetimes %}{{event.datetimes}}{% elif event.current_datetimes %}{{event.current_datetimes}}{% endif %}/'"
+                             style="cursor:pointer">
+                            <img src="{{event.sport_logo}}" class="card-img-top" alt="...">
+                            <div class="card-body">
+                                <h5 class="card-title">{{event.sport_type}}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">
+                                    {% if event.event_title %}
+                                    {{event.event_title}} :
+                                    {% endif %}
+                                    {% if event.event_type %}
+                                    {{event.event_type}}
+                                    {% endif %}
+                                </h6>
+                                <p class="card-text">{{event.venue}}, {{event.city}}, {{event.province}}</p>
+                                {% if event.datetimes %}
+                                <p class="text-dark text-start eventdatetime">{{event.datetimes}}</p>
+                                {% elif event.current_datetimes %}
+                                <p class="text-dark text-start eventdatetime">{{event.current_datetimes}}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls"
+                    data-bs-slide="prev" style="left: -5%;">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls"
                     data-bs-slide="next" style="right: -5%">
                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Next</span>
