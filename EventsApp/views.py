@@ -2011,6 +2011,7 @@ def get_advertisements(request):
                                                  (Q(geographical_scope = "Local") & Q(city__icontains=city_str)))
     return ads
 
+
 def show_advertisement(request, header):
     try:
         advert = Advertisement.objects.get(header=header)

@@ -35,11 +35,18 @@
                         style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">
                         Tell us little
                         about you</h4>
-                        <div class="p-2 d-flex justify-content-end">
-                            <input type="button" name="next" class="next action-button btn btn-primary"
-                                   value="Next" id="next-tab-1" style="width: 90px;"/>
+<!--                        <div class="p-2 d-flex justify-content-end">-->
+<!--                            <input type="button" name="next" class="next action-button btn btn-primary"-->
+<!--                                   value="Next" id="next-tab-1" style="width: 90px;"/>-->
+<!--                        </div>-->
+                    <div class="card-body row">
+                        <div class="col-sm-1">
+                        <div class="d-flex justify-content-center" style="position: fixed;">
+                            <input type="button" class="next action-button btn btn-primary"
+                                    value="&#x3c;" disabled/>
                         </div>
-                    <div class="card-body">
+                        </div>
+                        <div class="col-sm-10">
                         <div class="form-row p-2">
                             <input type="text" class="form-control" name="first_name" placeholder="* First Name"
                                    value="{% if individual.first_name %} {{individual.first_name}} {% else %} None {% endif %}"/>
@@ -88,6 +95,13 @@
                                    {% if individual.concussion == "Yes" %} checked {% endif %}>Yes</input></label>
                                    <label for="No"><input type="radio" id="No" name="is_concussion" value="No"
                                    {% if individual.concussion == "No" %} checked {% endif %}> No</input></label>
+                        </div>
+                        </div>
+                        <div class="col-sm-1">
+                        <div class="d-flex justify-content-center" style="position: fixed;">
+                            <input type="button" name="next" class="next action-button btn btn-primary"
+                                   id="next-tab-1" value="&#x3e;"/>
+                        </div>
                         </div>
                     </div>
                 </div>

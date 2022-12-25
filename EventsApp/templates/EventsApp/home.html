@@ -15,7 +15,7 @@
                         {% for advertisement in sublist %}
                         <div
                              class="event-card card {% if forloop.counter0 != 0 %}d-none d-md-block{% endif %} col-4"
-                             onclick="window.open('show_advertisement/{{advertisement.header}}');"
+                             onclick="location.href='show_advertisement/{{advertisement.header}}'"
                              style="cursor:pointer">
                             <img src="/media/{{advertisement.image}}" class="card-img-top" alt="{{advertisement.header}}">
                         </div>
