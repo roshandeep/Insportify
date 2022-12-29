@@ -462,8 +462,60 @@ def user_profile(request):
     context['sec_sport_choices'] = sec_sport_choices
     context['locations'] = locations
     context['user_avaiability'] = user_avaiability
+
+    def get_current_individual(u):
+        return Individual.objects.get(user=u, is_current=True)
+        # try:
+        #     ind = Individual.objects.get(user=u, is_current=True)
+        #     return ind
+        # except Employee.DoesNotExist:
+        #     return None
+        # except Employee.MultipleObjectsReturned:
+        #     return Individual.objects.filter(user=u).first()
+
+    def modify_individual(response, individual):
+        if "first_name" in response:
+            individual.first_name = response["first_name"].strip() if response["first_name"] else ""
+        if "is_current" in response:
+            obj.is_current = response["is_current"].strip()
+        if "last_name" in response:
+            individual.last_name = response["last_name"].strip() if response["last_name"] else ""
+        if "mobile" in response:
+            mobile = response["mobile"].strip()
+            mobile = ''.join(i for i in mobile if i.isdigit())
+            individual.phone = mobile
+        if "contact_email" in response:
+            individual.email = response["contact_email"].strip() if response["contact_email"] else ""
+        if "website" in response:
+            individual.website = response["website"].strip()
+        if "job_title" in response:
+            individual.job_title = response["job_title"].strip()
+        if "dob" in response:
+            individual.dob = response["dob"].strip() if response["dob"] else ""
+        if "is_concussion" in response:
+            individual.concussion = response["is_concussion"].strip()
+        if "is_student" in response:
+            individual.is_student = response["is_student"].strip()
+        if "interest_gender" in response:
+            individual.participation_interest = ','.join(item for item in request.POST.getlist('interest_gender'))
+        if "city" in response:
+            individual.city = response["city"].strip() if response["city"] else ""
+        if "province" in response:
+            individual.province = response["province"].strip() if response["province"] else ""
+        if "country" in response:
+            individual.country = response["country"].strip() if response["country"] else ""
+        if "contact_email" in response:
+            individual.contact_email = response["contact_email"].strip() if response["contact_email"] else ""
+        if "sport_type" in response:
+            individual.sports_type = response["sport_type"].strip() if response["sport_type"] else ""
+        if "position" in response:
+            individual.sports_position = response["position"].strip() if response["position"] else ""
+        if "skill" in response:
+            individual.sports_skill = response["skill"].strip() if response["skill"] else ""
+        return individual
+
     if request.method == "GET":
-        individual = Individual.objects.get(user=request.user)
+        individual = get_current_individual(request.user)
         # print(individual.__dict__)
         context['individual'] = individual
         return render(request, 'registration/individual_view.html', context)
@@ -472,84 +524,19 @@ def user_profile(request):
         individual = Individual.objects.filter(user=request.user)
         response = request.POST.dict()
         if not ValidateUserProfileForm(request, context):
-            individual = Individual.objects.get(user=request.user)
+            individual = get_current_individual(request.user)
             context['individual'] = individual
             return render(request, 'registration/individual_view.html', context)
         if individual.exists():
-            individual = Individual.objects.get(user=request.user)
-            individual.user = request.user
-            if "first_name" in response:
-                individual.first_name = response["first_name"].strip() if response["first_name"] else ""
-            if "last_name" in response:
-                individual.last_name = response["last_name"].strip() if response["last_name"] else ""
-            if "mobile" in response:
-                mobile = response["mobile"].strip()
-                mobile = ''.join(i for i in mobile if i.isdigit())
-                individual.phone = mobile
-            if "contact_email" in response:
-                individual.email = response["contact_email"].strip() if response["contact_email"] else ""
-            if "website" in response:
-                individual.website = response["website"].strip()
-            if "job_title" in response:
-                individual.job_title = response["job_title"].strip()
-            if "dob" in response:
-                individual.dob = response["dob"].strip() if response["dob"] else ""
-            if "is_concussion" in response:
-                individual.concussion = response["is_concussion"].strip()
-            if "is_student" in response:
-                individual.is_student = response["is_student"].strip()
-            if "interest_gender" in response:
-                individual.participation_interest = ','.join(item for item in request.POST.getlist('interest_gender'))
-            if "city" in response:
-                individual.city = response["city"].strip() if response["city"] else ""
-            if "province" in response:
-                individual.province = response["province"].strip() if response["province"] else ""
-            if "country" in response:
-                individual.country = response["country"].strip() if response["country"] else ""
-            if "contact_email" in response:
-                individual.contact_email = response["contact_email"].strip() if response["contact_email"] else ""
-            if "sport_type" in response:
-                individual.sports_type = response["sport_type"].strip() if response["sport_type"] else ""
-            if "position" in response:
-                individual.sports_position = response["position"].strip() if response["position"] else ""
-            if "skill" in response:
-                individual.sports_skill = response["skill"].strip() if response["skill"] else ""
+            individual = get_current_individual(request.user)
+            individual.user = request.user # why is this being reassigned?
+            individual = modify_individual(response,individual)
             individual.save()
             context['individual'] = individual
         else:
             obj = Individual()
             obj.user = request.user
-            if "first_name" in response:
-                obj.first_name = response["first_name"].strip() if response["first_name"] else ""
-            if "last_name" in response:
-                obj.last_name = response["last_name"].strip() if response["last_name"] else ""
-            if "mobile" in response:
-                mobile = response["mobile"].strip()
-                mobile = ''.join(i for i in mobile if i.isdigit())
-                obj.phone = mobile
-            if "contact_email" in response:
-                obj.email = response["contact_email"].strip() if response["contact_email"] else ""
-            if "dob" in response:
-                obj.dob = response["dob"].strip() if response["dob"] else ""
-            if "is_concussion" in response:
-                obj.concussion = response["is_concussion"].strip()
-            if "is_student" in response:
-                obj.is_student = response["is_student"].strip()
-            if "interest_gender" in response:
-                obj.participation_interest = ','.join(item for item in request.POST.getlist('interest_gender'))
-            if "city" in response:
-                obj.city = response["city"].strip() if response["city"] else ""
-            if "province" in response:
-                obj.province = response["province"].strip() if response["province"] else ""
-            if "country" in response:
-                obj.country = response["country"].strip() if response["country"] else ""
-            if "sport_type" in response:
-                obj.sports_type = response["sport_type"].strip() if response["sport_type"] else ""
-            if "position" in response:
-                obj.sports_position = response["position"].strip() if response["position"] else ""
-            if "skill" in response:
-                obj.sports_skill = response["skill"].strip() if response["skill"] else ""
-
+            obj = modify_individual(response,obj)
             obj.save()
             context['individual'] = obj
         messages.success(request, 'Individual details updated!')

@@ -52,7 +52,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_organization = models.BooleanField(default=False)
     first_name = models.CharField(max_length=40, null=True)
     last_name = models.CharField(max_length=40, null=True)
-    is_active = models.BooleanField(default=False, null=True)
+    # is_active = models.BooleanField(default=False, null=True)
     is_mvp = models.BooleanField(default=False, null=True)
     is_active = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
@@ -106,7 +106,9 @@ class master_table(models.Model):
 
 
 class Individual(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+    # user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    is_current = models.BooleanField(default=True)
     first_name = models.CharField(max_length=50, null=True)
     last_name = models.CharField(max_length=50, null=True)
     phone = models.CharField(max_length=50, null=True)
@@ -239,6 +241,7 @@ class Organization_Availability(models.Model):
     start_time = models.TimeField(blank=True, null=True)
     end_time = models.TimeField(blank=True, null=True)
     all_day = models.BooleanField(default=False)
+
 
 class Logo(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
