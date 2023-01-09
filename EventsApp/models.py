@@ -52,10 +52,40 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_organization = models.BooleanField(default=False)
     first_name = models.CharField(max_length=40, null=True)
     last_name = models.CharField(max_length=40, null=True)
-    # is_active = models.BooleanField(default=False, null=True)
     is_mvp = models.BooleanField(default=False, null=True)
     is_active = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
+    active_profile_name = models.CharField(max_length=40, null=True)
+
+
+class Profile(models.Model):
+    active_user = models.OneToOneField(User, on_delete=models.SET_NULL, null=True, related_name="ActiveProfile")
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    is_master = models.BooleanField()
+    name = models.CharField(max_length=20)  # TODO : Adding uniqueness within user
+
+
+class Individual(models.Model):
+    profile = models.OneToOneField(Profile, on_delete=models.CASCADE, primary_key=True)
+    first_name = models.CharField(max_length=50, null=True)
+    last_name = models.CharField(max_length=50, null=True)
+    phone = models.CharField(max_length=50, null=True)
+    job_title = models.CharField(max_length=100, null=True)
+    website = models.CharField(max_length=100, null=True)
+    dob = models.CharField(max_length=50, blank=True, null=True)
+    concussion = models.CharField(max_length=100, blank=True, null=True)
+    is_student = models.CharField(max_length=100, blank=True, null=True)
+    participation_interest = models.CharField(max_length=100, blank=True, null=True)
+    city = models.CharField(verbose_name="City", max_length=50, blank=True, null=True)
+    province = models.CharField(max_length=100, blank=True, null=True)
+    country = models.CharField(max_length=250, blank=True, null=True)
+    sports_category = models.CharField(max_length=50, null=True)
+    sports_type = models.CharField(max_length=50, null=True)
+    sports_position = models.CharField(max_length=50, null=True)
+    sports_skill = models.CharField(max_length=50, null=True)
+
+    def __str__(self):
+        return self.first_name
 
 
 class master_table(models.Model):
@@ -94,7 +124,7 @@ class master_table(models.Model):
     no_of_position = models.IntegerField(blank=True, null=True)
     position_cost = models.IntegerField(blank=True, null=True)
     sport_logo = models.CharField(max_length=300, blank=True, null=True)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    created_by = models.ForeignKey(Profile, on_delete=models.CASCADE, blank=True, null=True)
     current_datetimes = models.CharField(max_length=500, blank=True, null=True)
 
     def __str__(self):
@@ -105,34 +135,8 @@ class master_table(models.Model):
         db_table = 'master_table'
 
 
-class Individual(models.Model):
-    # user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    is_current = models.BooleanField(default=True)
-    first_name = models.CharField(max_length=50, null=True)
-    last_name = models.CharField(max_length=50, null=True)
-    phone = models.CharField(max_length=50, null=True)
-    email = models.CharField(max_length=50, null=True)
-    job_title = models.CharField(max_length=100, null=True)
-    website = models.CharField(max_length=100, null=True)
-    dob = models.CharField(max_length=50, blank=True, null=True)
-    concussion = models.CharField(max_length=100, blank=True, null=True)
-    is_student = models.CharField(max_length=100, blank=True, null=True)
-    participation_interest = models.CharField(max_length=100, blank=True, null=True)
-    city = models.CharField(verbose_name="City", max_length=50, blank=True, null=True)
-    province = models.CharField(max_length=100, blank=True, null=True)
-    country = models.CharField(max_length=250, blank=True, null=True)
-    sports_category = models.CharField(max_length=50, null=True)
-    sports_type = models.CharField(max_length=50, null=True)
-    sports_position = models.CharField(max_length=50, null=True)
-    sports_skill = models.CharField(max_length=50, null=True)
-
-    def __str__(self):
-        return self.first_name
-
-
 class Organization(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+    profile = models.OneToOneField(Profile, on_delete=models.CASCADE, primary_key=True)
     organization_name = models.CharField(max_length=50, null=True)
     parent_organization_name = models.CharField(max_length=50, null=True)
     registration_no = models.CharField(max_length=50, null=True)
@@ -144,7 +148,6 @@ class Organization(models.Model):
     country = models.CharField(max_length=250, blank=True, null=True)
     postal_code = models.CharField(max_length=50, blank=True, null=True)
     phone = models.CharField(max_length=50, null=True)
-    email = models.CharField(max_length=50, null=True)
     website = models.CharField(max_length=50, null=True)
     gender_focus = models.CharField(max_length=50, null=True)
     age_group = models.CharField(max_length=50, null=True)
@@ -213,7 +216,7 @@ class PositionAndSkillType(models.Model):
 
 class Invite(models.Model):
     email = models.CharField(max_length=100)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     event = models.ForeignKey(master_table, on_delete=models.CASCADE, blank=True, null=True)
     invite_date = models.DateField(null=True)
 
@@ -228,7 +231,7 @@ class Availability(models.Model):
         SATURDAY = 6
         SUNDAY = 7
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     day_of_week = models.IntegerField(choices=Day.choices)
     start_time = models.TimeField(blank=True, null=True)
     end_time = models.TimeField(blank=True, null=True)
@@ -236,7 +239,7 @@ class Availability(models.Model):
 
 
 class Organization_Availability(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     day_of_week = models.CharField(max_length=100)
     start_time = models.TimeField(blank=True, null=True)
     end_time = models.TimeField(blank=True, null=True)
@@ -244,11 +247,11 @@ class Organization_Availability(models.Model):
 
 
 class Logo(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    individual = models.ForeignKey(Individual, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='images')
 
     def __str__(self):
-        return self.user.first_name + "_logo"
+        return self.individual.first_name + "_logo"
 
 
 class Events_PositionInfo(models.Model):
@@ -268,7 +271,7 @@ class Events_PositionInfo(models.Model):
 
 
 class Extra_Loctaions(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     street = models.CharField(max_length=300, blank=True, null=True)
     city = models.CharField(max_length=50, blank=True, null=True)
     province = models.CharField(max_length=100, blank=True, null=True)
@@ -276,17 +279,17 @@ class Extra_Loctaions(models.Model):
     zipcode = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
-        return self.user.first_name + " Location_" + str(self.pk)
+        return self.individual.first_name + " Location_" + str(self.pk)
 
 
 class Secondary_SportsChoice(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     sport_type = models.CharField(max_length=30, blank=True, null=True)
     position = models.CharField(max_length=30, blank=True, null=True)
     skill = models.CharField(max_length=30, blank=True, null=True)
 
     def __str__(self):
-        return self.user.first_name + " Sport_Choice_" + str(self.pk)
+        return self.individual.first_name + " Sport_Choice_" + str(self.pk)
 
 
 class SportsImage(models.Model):
@@ -298,7 +301,7 @@ class SportsImage(models.Model):
 
 
 class OrderItems(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     event = models.ForeignKey(master_table, on_delete=models.CASCADE)
     position_id = models.ForeignKey(Events_PositionInfo, on_delete=models.CASCADE)
     date = models.DateField()
@@ -318,7 +321,7 @@ class Order(models.Model):
         ("Card", "Card"),
     )
 
-    customer = models.ForeignKey(User, on_delete=models.CASCADE)
+    customer = models.ForeignKey(Profile, on_delete=models.CASCADE)
     items = models.ManyToManyField(OrderItems)
     order_date = models.DateTimeField()
     order_amount = models.FloatField()
@@ -339,7 +342,7 @@ class Order(models.Model):
 class Advertisement(models.Model):
     GEOGRAPHICAL_SCOPE_CHOICES = (('Local', 'Local'), ('Provincial', 'Provincial'), ('National', 'National'))
 
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_by = models.ForeignKey(Profile, on_delete=models.CASCADE)
     creation_time = models.DateTimeField()
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()

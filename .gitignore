@@ -365,3 +365,5 @@ FodyWeavers.xsd
 .idea/*
 
 *.json
+
+*.sqlite3

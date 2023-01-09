@@ -2,10 +2,11 @@ from django.contrib import admin
 from EventsApp.models import master_table, User, \
     Individual, Organization, SportsCategory, SportsType, Venues, Availability, Order, Logo, Extra_Loctaions, \
     Events_PositionInfo, Secondary_SportsChoice, OrderItems, PositionAndSkillType, SportsImage, \
-    Organization_Availability, Advertisement
+    Organization_Availability, Advertisement, Profile
 
 admin.site.register(master_table)
 admin.site.register(User)
+admin.site.register(Profile)
 admin.site.register(SportsCategory)
 admin.site.register(SportsType)
 admin.site.register(Individual)
@@ -31,28 +32,28 @@ admin.site.register(Events_PositionInfo, Events_PositionInfoAdmin)
 
 
 class Secondary_SportsChoiceAdmin(admin.ModelAdmin):
-    list_display = ('user', 'sport_type', 'position',)
+    list_display = ('profile', 'sport_type', 'position',)
 
 
 admin.site.register(Secondary_SportsChoice, Secondary_SportsChoiceAdmin)
 
 
 class Extra_LoctaionsAdmin(admin.ModelAdmin):
-    list_display = ('user', 'city', 'province', 'country',)
+    list_display = ('profile', 'city', 'province', 'country',)
 
 
 admin.site.register(Extra_Loctaions, Extra_LoctaionsAdmin)
 
 
 class AvailabilityAdmin(admin.ModelAdmin):
-    list_display = ('user', 'day_of_week', 'start_time', 'end_time',)
+    list_display = ('profile', 'day_of_week', 'start_time', 'end_time',)
 
 
 admin.site.register(Availability, AvailabilityAdmin)
 
 
 class OrderItemsAdmin(admin.ModelAdmin):
-    list_display = ('user', 'event', 'position_type', 'skill', 'no_of_position', 'position_cost', 'total_cost', )
+    list_display = ('profile', 'event', 'position_type', 'skill', 'no_of_position', 'position_cost', 'total_cost', )
 
 
 admin.site.register(OrderItems, OrderItemsAdmin)
@@ -67,7 +68,7 @@ admin.site.register(Order, OrderAdmin)
 
 
 class Organization_AvailabilityAdmin(admin.ModelAdmin):
-    list_display = ('user', 'day_of_week', 'start_time', 'end_time',)
+    list_display = ('profile', 'day_of_week', 'start_time', 'end_time',)
 
 
 admin.site.register(Organization_Availability, Organization_AvailabilityAdmin)

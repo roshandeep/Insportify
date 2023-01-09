@@ -1,8 +1,8 @@
 from django import forms
 from django.forms import ModelForm
-from .models import master_table, Availability, Invite, Logo
+from .models import master_table, Availability, Invite, Logo, Profile
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 
 
@@ -35,6 +35,12 @@ class LoginForm(AuthenticationForm):
     username = forms.CharField(label='Email / Username')
 
 
+class NewProfileForm(forms.ModelForm):
+    name = forms.CharField(label="name")
+
+    class Meta:
+        model = Profile
+        fields = ['name']
 
 class AvailabilityForm(forms.ModelForm):
     class Meta:
@@ -54,7 +60,7 @@ class InviteForm(forms.ModelForm):
         model = Invite
         fields = ['email']
 
-    field_order = ['email', ]
+    field_order = ['email']
 
 
 class LogoForm(forms.ModelForm):

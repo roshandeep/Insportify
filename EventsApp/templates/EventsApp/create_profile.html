@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% load widget_tweaks %}
+{% load static %}
+{% block content %}
+
+<div class="row">
+  <div class="col-5 mx-auto">
+    <form method="POST"> {% csrf_token %}
+      {{ form.as_p }}
+      <div class="col-auto">
+        <button type="submit" class="btn btn-primary mb-2">Create New Profile</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}
+
+
+
+<!--<div class="col-auto">-->
+<!--  <input action="{% url 'EventsApp:create_profile' %}" type="text" class="form-control mb-2" id="inlineFormInput" placeholder="Profile Name">-->
+<!--</div>-->
