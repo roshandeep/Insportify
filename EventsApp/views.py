@@ -1995,6 +1995,7 @@ def remove_exceptions_from_recurring_days(all_dates, exception_dates):
     # print(filtered_dates)
     return ','.join(filtered_dates)
 
+
 def get_advertisements(request):
     ads = []
     if not request.user.is_authenticated:

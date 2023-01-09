@@ -6,8 +6,7 @@
 
 <div class="col-11 mx-auto">
     <div class="row">
-        <div id="carousel_ad" class="carousel slide" data-ride="carousel" data-interval="false"
-             data-touch="true">
+        <div id="carousel_ad" class="carousel slide" data-bs-ride="carousel" data-bs-touch="true">
             <div class="carousel-inner" role="listbox">
                 {% for sublist in advertisements %}
                 <div class="carousel-item {% if forloop.counter0 == 0 %}active{% endif %}">
@@ -25,12 +24,12 @@
                 {% endfor %}
             </div>
             <button class="carousel-control-prev" type="button" data-bs-target="#carousel_ad" id="ad_prev"
-                    data-bs-slide="prev" style="left: -5%;">
+                    data-bs-slide="prev">
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Previous</span>
             </button>
             <button class="carousel-control-next" type="button" data-bs-target="#carousel_ad" id="ad_next"
-                    data-bs-slide="next" style="right: -5%">
+                    data-bs-slide="next">
                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Next</span>
             </button>
@@ -320,10 +319,6 @@
         allowPageScroll: "vertical"
     });
 
-    // Autoscroll Ad Carousel
-    $(document).ready(function(){
-        adAutoScroll = setInterval(function(){ $('#ad_next').trigger('click'); }, 10000);
-    });
 
     $(document).ready(function () {
         let myWidth = $(window).width();
