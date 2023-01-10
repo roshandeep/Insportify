@@ -32,7 +32,7 @@ def activate(request, uidb64, token):
     if user is not None and account_activation_token.check_token(user, token):
         user.is_active = True
         user.save()
-        login(request, user)
+        login(request, user, backend='django.contrib.auth.backends.ModelBackend')
         if user.is_individual:
             return redirect('EventsApp:user_profile')
         elif user.is_organization:
@@ -164,7 +164,8 @@ def login_request(request):
             messages.error(request, "Invalid email or password")
     elif request.method == 'GET':
         if request.GET.get('next', ""):
-            messages.info(request, "Please Log-in or Sign-up below to access this feature and more of INsportify!")
+            messages.info(
+                request, "Please Log-in or Sign-up below to access this feature and more of INsportify!")
     return render(request, 'registration/login.html', context={'form': AuthenticationForm()})
 
 
@@ -228,7 +229,8 @@ def password_reset_request(request):
                             'uid': force_text(urlsafe_base64_encode(force_bytes(user.pk))),
                             'token': default_token_generator.make_token(user),
                         }),
-                        to=[password_reset_form.cleaned_data.get('email').lower()]
+                        to=[password_reset_form.cleaned_data.get(
+                            'email').lower()]
                     )
                     email.send()
                     return redirect("/users/password_reset/done/")
