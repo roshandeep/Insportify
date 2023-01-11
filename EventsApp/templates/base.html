@@ -56,52 +56,31 @@
             {% if request.user.is_authenticated %}
             <li class="nav-item">
                 <a class="nav-link link-secondary text-white label-inline" href="{% url 'EventsApp:home' %}"
-                   {% if request.path == '/' %} style="display:none" {% endif %}>
+                   {% comment %} {% if request.path == '/' %} style="display:none" {% endif %} {% endcomment %}
+                   >
                     My Calendar
                     <div class="vr" style="margin-left:20px"></div>
                 </a>
             </li>
-            <!-- {% if request.user.is_organization == True %}
-            <li class="nav-item">
-                <a class="nav-link link-secondary text-white mx-auto mb-0 label-inline" href="{% url 'EventsApp:organization_profile' %}"
-                   {% if request.path == '/organization/profile/' %} style="display:none" {% endif %}>
-                    User Profile
-                    <div class="vr" style="margin-left:20px"></div>
-                </a>
+
+            <li class="nav-item dropdown">
+                <a href="#" class=" text-white label-inline nav-link dropdown-toggle" data-bs-toggle="dropdown">Events </a>
+                <div class="dropdown-menu">
+                    <a href="{% url 'EventsApp:multistep' %}" class="dropdown-item">Create Events</a>
+                    <a href="{% url 'EventsApp:list-events' %}" class="dropdown-item">My Events</a>
+                    <a href="{% url 'EventsApp:committed_events' %}" class="dropdown-item"> Committed Events</a>
+                </div>
             </li>
-            {% else %}
-            <li class="nav-item">
-                <a class="nav-link link-secondary text-white label-inline" href="{% url 'EventsApp:user_profile' %}"
-                   {% if request.path == '/individual/profile/' %} style="display:none" {% endif %}>
-                    User Profile
-                    <div class="vr" style="margin-left:20px"></div>
-                </a>
-            </li>
-            {% endif %} -->
-            <li class="nav-item">
-                <a class="nav-link link-secondary text-white label-inline" href="{% url 'EventsApp:multistep' %}"
-                   {% if request.path == '/create/' %} style="display:none" {% endif %}>
-                    Create Events
-                    <div class="vr" style="margin-left:20px"></div>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link link-secondary text-white label-inline" href="{% url 'EventsApp:list-events' %}"
-                   {% if request.path == '/show/' %} style="display:none" {% endif %}>
-                    My Events
-                    <div class="vr" style="margin-left:20px"></div>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link link-secondary text-white label-inline" href="{% url 'EventsApp:committed_events' %}"
-                   {% if request.path == '/committed/' %} style="display:none" {% endif %}>
-                     Committed Events
-                    <div class="vr" style="margin-left:20px"></div>
-                </a>
-            </li>
+            
+            <a class="nav-link link-secondary text-white label-inline">                    
+                <div class="vr" style="margin-left:20px"></div>
+            </a>
+            
+
             <li class="nav-item">
                 <a class="nav-link link-secondary text-white label-inline" href="{% url 'EventsApp:cart_summary' %}"
-                   {% if request.path == '/cart_summary/' %} style="display:none" {% endif %}>
+                   {% comment %} {% if request.path == '/cart_summary/' %} style="display:none" {% endif %} {% endcomment %}
+                   >
                     Cart
                     <div class="vr" style="margin-left:20px"></div>
                 </a>

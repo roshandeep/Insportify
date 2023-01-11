@@ -6,19 +6,23 @@
 
 <div class="row">
   <div class="col-5 mx-auto">
+    <div>
+      <h3 class="mx-auto text-center fw-light">Create a New Profile</h3>
+      <hr />
+    </div>
+  </div>
+</div>
+<div class="col-5 mx-auto">
+  <div >
     <form method="POST"> {% csrf_token %}
-      {{ form.as_p }}
-      <div class="col-auto">
-        <button type="submit" class="btn btn-primary mb-2">Create New Profile</button>
+      
+      
+      <div class="col-8 mx-auto">
+        {{ form }}
+        <button type="submit" class="btn btn-primary mb-2" style="margin-left: 10px;">Create New Profile</button>
       </div>
     </form>
   </div>
 </div>
 
 {% endblock %}
-
-
-
-<!--<div class="col-auto">-->
-<!--  <input action="{% url 'EventsApp:create_profile' %}" type="text" class="form-control mb-2" id="inlineFormInput" placeholder="Profile Name">-->
-<!--</div>-->
