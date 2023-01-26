@@ -982,8 +982,8 @@ def home(request):
     sports = SportsType.objects.values('pk', 'sports_type_text').order_by('sports_type_text')
 
     advertisements = get_advertisements(request)
-    # advertisements = list(advertisements)
-    advertisements = [advertisements[i:i + 3] for i in range(0, len(advertisements), 3)]
+    advertisements = list(advertisements)
+    # advertisements = [advertisements[i:i + 3] for i in range(0, len(advertisements), 3)]
 
     if request.user.is_authenticated and request.user.is_individual:
         user_sports = Secondary_SportsChoice.objects.filter(user=request.user).values('sport_type')

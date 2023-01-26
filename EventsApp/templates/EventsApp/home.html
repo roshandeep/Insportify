@@ -5,31 +5,26 @@
 {% block content %}
 
 <div class="col-11 mx-auto">
-    <div class="row">
-        <div id="carousel_ad" class="carousel slide" data-bs-ride="carousel" data-bs-touch="true">
-            <div id="ad_outer_list" class="carousel-inner" role="listbox">
-                {% for sublist in advertisements %}
-                <div class="carousel-item {% if forloop.counter0 == 0 %}active{% endif %}">
-                    <div class="cards-wrapper">
-                        {% for advertisement in sublist %}
-                        <div
-                             class="event-card card {% if forloop.counter0 != 0 %}d-none d-md-block{% endif %} col-4"
-                             onclick="location.href='show_advertisement/{{advertisement.header}}'"
-                             style="cursor:pointer">
-                            <img src="/media/{{advertisement.image}}" class="card-img-top" alt="{{advertisement.header}}">
-                        </div>
-                        {% endfor %}
-                    </div>
+    <div class="container-fluid">
+        <div id="carouselExample" class="carousel slide" data-ride="carousel" data-interval="9000">
+            <div class="carousel-inner row w-10 mx-auto" role="listbox">
+                {% for advertisement in advertisements %}
+                <div class="carousel-item col-md-4 {% if forloop.counter0 == 0 %}active{% endif %}"
+                style="text-align: center;">
+                    <img src="/media/{{advertisement.image}}" class="img-fluid mx-auto d-bloc"
+                         alt="{{advertisement.header}}"
+                         onclick="location.href='show_advertisement/{{advertisement.header}}'"
+                         style="cursor:pointer; height: 140px;">
                 </div>
                 {% endfor %}
             </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#carousel_ad" id="ad_prev"
-                    data-bs-slide="prev">
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample"
+                    data-bs-slide="prev" style="left: -5%;">
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Previous</span>
             </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carousel_ad" id="ad_next"
-                    data-bs-slide="next">
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExample"
+                    data-bs-slide="next" style="right: -5%">
                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Next</span>
             </button>
@@ -426,14 +421,6 @@
                     i.classList.add('col-4')
                 }
             }
-            if(document.querySelector("#ad_outer_list")){
-                const container = document.querySelector("#ad_outer_list");
-                const corCard = container.querySelectorAll(".event-card");
-                for (i of corCard){
-                    i.classList.remove('col-12');
-                    i.classList.add('col-4')
-                }
-            }
 
         } else {
             if(document.getElementById("events_types")){
@@ -489,20 +476,82 @@
                     i.classList.add('col-12')
                 }
             }
-            if(document.querySelector("#ad_outer_list")){
-                const container = document.querySelector("#ad_outer_list");
-                const corCard = container.querySelectorAll(".event-card");
-                for (i of corCard){
-                    i.classList.remove('col-4');
-                    i.classList.add('col-12')
-                }
-            }
         }
     }
 
 </script>
 
 <style>
+
+
+@media (min-width: 768px) {
+
+    /* show 3 items */
+    .carousel-inner .active,
+    .carousel-inner .active + .carousel-item,
+    .carousel-inner .active + .carousel-item + .carousel-item {
+        display: block;
+    }
+
+    .carousel-item {
+        width: 33%;
+  }
+
+    .carousel-inner .carousel-item.active:not(.carousel-item-right):not(.carousel-item-left),
+    .carousel-inner .carousel-item.active:not(.carousel-item-right):not(.carousel-item-left) + .carousel-item,
+    .carousel-inner .carousel-item.active:not(.carousel-item-right):not(.carousel-item-left) + .carousel-item + .carousel-item {
+        transition: none;
+        margin-right: initial;
+    }
+
+    .carousel-inner .carousel-item-next,
+    .carousel-inner .carousel-item-prev {
+      position: relative;
+      transform: translate3d(0, 0, 0);
+    }
+
+    .carousel-inner .active.carousel-item + .carousel-item + .carousel-item + .carousel-item {
+        position: absolute;
+        top: 0;
+        right: -33.3333%;
+        z-index: -1;
+        display: block;
+        visibility: visible;
+    }
+
+    /* left or forward direction */
+    .active.carousel-item-left + .carousel-item-next.carousel-item-left,
+    .carousel-item-next.carousel-item-left + .carousel-item,
+    .carousel-item-next.carousel-item-left + .carousel-item + .carousel-item,
+    .carousel-item-next.carousel-item-left + .carousel-item + .carousel-item + .carousel-item {
+        position: relative;
+        transform: translate3d(-100%, 0, 0);
+        visibility: visible;
+    }
+
+    /* farthest right hidden item must be abso position for animations */
+    .carousel-inner .carousel-item-prev.carousel-item-right {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: -1;
+        display: block;
+        visibility: visible;
+    }
+
+    /* right or prev direction */
+    .active.carousel-item-right + .carousel-item-prev.carousel-item-right,
+    .carousel-item-prev.carousel-item-right + .carousel-item,
+    .carousel-item-prev.carousel-item-right + .carousel-item + .carousel-item,
+    .carousel-item-prev.carousel-item-right + .carousel-item + .carousel-item + .carousel-item {
+        position: relative;
+        transform: translate3d(100%, 0, 0);
+        visibility: visible;
+        display: block;
+        visibility: visible;
+    }
+
+}
 
 
 .cards-wrapper {
