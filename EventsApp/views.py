@@ -16,6 +16,8 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.views.decorators.csrf import csrf_exempt
+from openpyxl import Workbook
+
 from Insportify import settings
 from .forms import MultiStepForm, AvailabilityForm, LogoForm, InviteForm
 from .models import master_table, Individual, Organization, Venues, SportsCategory, SportsType, Order, User, \
@@ -397,6 +399,7 @@ def save_event_position_info(request, event):
 
 @login_required
 def all_events(request):
+    # sports_type_excel()
     expired_events = []
     event_list = list(master_table.objects.filter(created_by=request.user))
     event_list = get_events_by_time(event_list)
@@ -979,6 +982,7 @@ def home(request):
     sports = SportsType.objects.values('pk', 'sports_type_text').order_by('sports_type_text')
 
     advertisements = get_advertisements(request)
+    # advertisements = list(advertisements)
     advertisements = [advertisements[i:i + 3] for i in range(0, len(advertisements), 3)]
 
     if request.user.is_authenticated and request.user.is_individual:
@@ -2026,3 +2030,34 @@ def show_advertisement(request, header):
     except:
         return home(request)
     return home(request)
+
+
+
+def sports_type_excel():
+    workbook = Workbook()
+    sheet = workbook.active
+    sheet.title = "SPORTS DB"
+    sheet["A1"] = "Sports Category"
+    sheet["B1"] = "Sports Type"
+    sheet["C1"] = "Position"
+    sheet["D1"] = "Skill"
+
+    pos_skill = PositionAndSkillType.objects.all()
+    row=2
+    for item in pos_skill:
+        print(item)
+        c1 = sheet.cell(row=row, column=1)
+        c1.value = item.sports_category.sports_catgeory_text
+
+        c2 = sheet.cell(row=row, column=2)
+        c2.value = item.sports_type.sports_type_text
+
+        c3 = sheet.cell(row=row, column=3)
+        c3.value = item.position_type
+
+        c4 = sheet.cell(row=row, column=4)
+        c4.value = item.skill_type
+
+        row=row+1
+
+    workbook.save(filename='sports_db.xlsx')

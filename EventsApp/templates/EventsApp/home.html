@@ -7,7 +7,7 @@
 <div class="col-11 mx-auto">
     <div class="row">
         <div id="carousel_ad" class="carousel slide" data-bs-ride="carousel" data-bs-touch="true">
-            <div class="carousel-inner" role="listbox">
+            <div id="ad_outer_list" class="carousel-inner" role="listbox">
                 {% for sublist in advertisements %}
                 <div class="carousel-item {% if forloop.counter0 == 0 %}active{% endif %}">
                     <div class="cards-wrapper">
@@ -426,6 +426,14 @@
                     i.classList.add('col-4')
                 }
             }
+            if(document.querySelector("#ad_outer_list")){
+                const container = document.querySelector("#ad_outer_list");
+                const corCard = container.querySelectorAll(".event-card");
+                for (i of corCard){
+                    i.classList.remove('col-12');
+                    i.classList.add('col-4')
+                }
+            }
 
         } else {
             if(document.getElementById("events_types")){
@@ -475,6 +483,14 @@
             }
             if(document.querySelector("#event-cards4")){
                 const container = document.querySelector("#event-cards4");
+                const corCard = container.querySelectorAll(".event-card");
+                for (i of corCard){
+                    i.classList.remove('col-4');
+                    i.classList.add('col-12')
+                }
+            }
+            if(document.querySelector("#ad_outer_list")){
+                const container = document.querySelector("#ad_outer_list");
                 const corCard = container.querySelectorAll(".event-card");
                 for (i of corCard){
                     i.classList.remove('col-4');
