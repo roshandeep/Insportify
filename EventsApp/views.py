@@ -1090,8 +1090,9 @@ def home(request):
             elif event.registration_type == "Drop-in":
                 recommended_drop_in.append(event)
 
-        recommended_registrationList = [recommended_registrationList[i:i + 3] for i in range(0, len(recommended_registrationList), 3)]
-        recommended_drop_in = [recommended_drop_in[i:i + 3] for i in range(0, len(recommended_drop_in), 3)]
+
+        # recommended_registrationList = [recommended_registrationList[i:i + 3] for i in range(0, len(recommended_registrationList), 3)]
+        # recommended_drop_in = [recommended_drop_in[i:i + 3] for i in range(0, len(recommended_drop_in), 3)]
         # recommended_events = [recommended_events[i:i + 3] for i in range(0, len(recommended_events), 3)]
 
     for event in events:
@@ -1109,8 +1110,8 @@ def home(request):
         elif event.registration_type == "Drop-in":
             drop_in_eventList.append(event)
 
-    registrationList = [registrationList[i:i + 3] for i in range(0, len(registrationList), 3)]
-    drop_in_eventList = [drop_in_eventList[i:i + 3] for i in range(0, len(drop_in_eventList), 3)]
+    # registrationList = [registrationList[i:i + 3] for i in range(0, len(registrationList), 3)]
+    # drop_in_eventList = [drop_in_eventList[i:i + 3] for i in range(0, len(drop_in_eventList), 3)]
     # events = [events[i:i + 3] for i in range(0, len(events), 3)]
     context = {
         'sports_list': sports,
