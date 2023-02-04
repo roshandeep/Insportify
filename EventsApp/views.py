@@ -283,7 +283,7 @@ def ValidateFormValues(request):
     return date_valid and event_count_valid and fields_valid
 
 
-def ValidateUserProfileForm(request, context):
+def ValidateUserProfileForm(request):
     valid = True
     if not request.POST.get('first_name') or request.POST['first_name'].strip() == "":
         messages.error(request, "Please enter First Name")
@@ -316,7 +316,7 @@ def ValidateUserProfileForm(request, context):
     return valid
 
 
-def ValidateOrgProfileForm(request, context):
+def ValidateOrgProfileForm(request):
     valid = True
     if not request.POST.get('company_name') or request.POST['company_name'].strip() == "":
         messages.error(request, "Please enter Organization Name")
@@ -504,9 +504,9 @@ def modify_individual(response, individual):
     return individual
 
 
+@login_required
 def display_profile(request):
     profiles = Profile.objects.filter(user=request.user)
-    print(profiles)
     context = {
         'profiles_list':profiles
     }
@@ -538,11 +538,13 @@ def _switch_profile(user, name):
     return True
 
 
+@login_required
 def switch_profile(request, name):
     _switch_profile(request.user, name)
     return home(request)
 
 
+@login_required
 def delete_current_profile(request):
     curr_prof = get_profile_from_user(request.user)
     master_prof = Profile.objects.get(user=request.user, is_master=True)
@@ -555,6 +557,7 @@ def delete_current_profile(request):
     return home(request)
 
 
+@login_required
 def create_profile(request):
     if request.user.is_organization:
         return home(request)
@@ -611,26 +614,27 @@ def user_profile(request):
     context['locations'] = locations
     context['user_avaiability'] = user_avaiability
 
-    if request.method == "GET":
-        return render(request, 'registration/individual_view.html', context)
+    return render(request, 'registration/individual_view.html', context)
 
-    elif request.method == "POST":
-        print('POST request fields', request.POST.dict())
-        response = request.POST.dict()
-        if not ValidateUserProfileForm(request, context):
-            return render(request, 'registration/individual_view.html', context)
-        else:
-            print('form validated')
-            # individual.profile = profile # why is this being reassigned?
-            individual = modify_individual(response,individual)
-            individual.save()
-            context['individual'] = individual
-        print('Individual details updated!')
-        messages.success(request, 'Individual details updated!')
-        # TODO : render to home
+
+@login_required
+def user_profile_submit(request):
+
+    print('POST request fields', request.POST.dict())
+    context = request.POST.dict()
+    if not ValidateUserProfileForm(context):
         return render(request, 'registration/individual_view.html', context)
-    # TODO : Remove this after verification
-    print('Error : Should not have reached here : ', request.POST.dict())
+    else:
+        profile = get_profile_from_user(request.user)
+        request.user.has_incomplete_profile = False
+        request.user.save()
+        individual = Individual.objects.get(profile=profile)
+        individual = modify_individual(context,individual)
+        individual.save()
+        context['individual'] = individual
+    print('Individual details updated!')
+    # messages.success(request, 'Individual details updated!')
+    # return render(request, 'registration/individual_view.html', context)
     return home(request)
 
 
@@ -1063,6 +1067,12 @@ def fetch_organization_locations(request):
 
 def home(request):
     # Individual.objects.filter(pk=16).delete()
+
+    if request.user.is_authenticated:
+        if request.user.has_incomplete_profile:
+            print('Redirecting to user profile...')
+            return redirect('EventsApp:user_profile')
+
     sports = SportsType.objects.values('pk', 'sports_type_text').order_by('sports_type_text')
 
     advertisements = get_advertisements(request)

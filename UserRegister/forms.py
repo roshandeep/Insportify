@@ -40,8 +40,10 @@ class IndividualSignUpForm(UserCreationForm):
         user.last_name = self.cleaned_data.get('last_name')
         user.email = self.cleaned_data.get('email').lower()
         user.set_password(self.cleaned_data["password1"])
+        user.has_incomplete_profile = user.first_name
         user.save()
-        profile = Profile.objects.create(active_user=user,user=user, name=user.first_name, is_master=True)
+        profile = Profile.objects.create(active_user=user, user=user, name=user.first_name, is_master=True,
+                                         is_complete=False)
         individual = Individual.objects.create(profile=profile)
         individual.phone = self.cleaned_data.get('phone')
         # individual.email = self.cleaned_data.get('email').lower()
@@ -84,8 +86,9 @@ class MVPSignUpForm(forms.ModelForm):
         user.last_name = self.cleaned_data.get('last_name')
         user.email = self.cleaned_data.get('email').lower()
         user.set_password(self.cleaned_data["password1"])
+        user.has_incomplete_profile = user.first_name
         user.save()
-        profile = Profile.objects.create(active_user=user,user=user, is_master=True)
+        profile = Profile.objects.create(active_user=user, user=user, is_master=True, is_complete=False)
         individual = Individual.objects.create(profile=profile)
         individual.phone = self.cleaned_data.get('phone')
         # individual.email = self.cleaned_data.get('email').lower()
@@ -134,9 +137,10 @@ class OrganizationSignUpForm(forms.ModelForm):
         user.first_name = self.cleaned_data.get('organization_name')
         user.email = self.cleaned_data.get('email').lower()
         user.set_password(self.cleaned_data["password1"])
+        user.has_incomplete_profile = user.first_name
         # print(self.cleaned_data["password1"])
         user.save()
-        profile = Profile.objects.create(active_user=user,user=user, is_master=True)
+        profile = Profile.objects.create(active_user=user, user=user, is_master=True, is_complete=False)
         organization = Organization.objects.create(profile=profile)
         organization.organization_name = self.cleaned_data.get('organization_name')
         organization.phone = self.cleaned_data.get('phone')
