@@ -19,9 +19,10 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-                  path('admin/', admin.site.urls),
-                  path('', include('EventsApp.urls')),
-                  path('users/', include('UserRegister.urls')),
-                  # path('users/', include('django.contrib.auth.urls')),
-              ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL,
-                                                                                         document_root=settings.STATIC_ROOT)
+    path('admin/', admin.site.urls),
+    path('', include('EventsApp.urls')),
+    path('users/', include('UserRegister.urls')),
+    # path('users/', include('django.contrib.auth.urls')),
+    path('oauth/', include('social_django.urls', namespace='social')),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL,
+                                                                           document_root=settings.STATIC_ROOT)

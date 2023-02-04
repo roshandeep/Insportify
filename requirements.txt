@@ -30,3 +30,5 @@ openpyxl
 six
 # ngnix
 gunicorn
+whitenoise
+social-auth-app-django

@@ -26,7 +26,8 @@ SECRET_KEY = 'django-insecure-ck(g2(+&@t-o2-mssd@xbx4@+offxrv1o-c&2u-lvts2&1%g+w
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['35.182.44.234', '127.0.0.1', 'localhost', 'insportify.com:8000', 'www.insportify.com', '*.insportify.*', 'insportify.com', 'https://localhost']
+ALLOWED_HOSTS = ['35.182.44.234', '127.0.0.1', 'localhost', 'insportify.com:8000',
+                 'www.insportify.com', '*.insportify.*', 'insportify.com', 'https://localhost', 'insportify-staging.azurewebsites.net']
 
 # Application definition
 
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'EventsApp',
     'UserRegister',
+    'social_django',
 ]
 
 MIDDLEWARE = [
@@ -51,6 +53,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'social_django.middleware.SocialAuthExceptionMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware'
 ]
 
 ROOT_URLCONF = 'Insportify.urls'
@@ -67,6 +71,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -94,7 +100,7 @@ CSRF_COOKIE_SECURE = False
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-## Dev DB Configurations
+# Dev DB Configurations
 
 # DATABASES = {
 #     'default': {
@@ -107,7 +113,7 @@ CSRF_COOKIE_SECURE = False
 #     }
 # }
 
-## Prod DB Configurations
+# Prod DB Configurations
 
 DATABASES = {
     # 'default': {
@@ -118,6 +124,7 @@ DATABASES = {
     #     'HOST': 'insportify3.cz5lufvg1olp.ca-central-1.rds.amazonaws.com',
     #     'PORT': '5432',
     # }
+
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
@@ -172,12 +179,12 @@ LOGOUT_REDIRECT_URL = 'UserRegister:login'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MESSAGE_TAGS = {
-        messages.DEBUG: 'alert-secondary',
-        messages.INFO: 'alert-info',
-        messages.SUCCESS: 'alert-success',
-        messages.WARNING: 'alert-warning',
-        messages.ERROR: 'alert-danger',
- }
+    messages.DEBUG: 'alert-secondary',
+    messages.INFO: 'alert-info',
+    messages.SUCCESS: 'alert-success',
+    messages.WARNING: 'alert-warning',
+    messages.ERROR: 'alert-danger',
+}
 
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10240
@@ -191,3 +198,17 @@ STRIPE_SECRET_KEY = 'sk_test_L940ji4j5UAJZm9qmsKICL1Z00Xel3ppet'
 # STRIPE_PUBLISHABLE_KEY = 'pk_test_cBzZxJm1Sk4UFJ5i0nypvIEv00HazZHrCi'
 # STRIPE_SECRET_KEY = 'sk_test_L940ji4j5UAJZm9qmsKICL1Z00Xel3ppet'
 
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.facebook.FacebookOAuth2',
+    'social_core.backends.twitter.TwitterOAuth',
+    'social_core.backends.github.GithubOAuth2',
+
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+SOCIAL_AUTH_FACEBOOK_KEY = '3284975825102812'
+SOCIAL_AUTH_FACEBOOK_SECRET = '6beaf02eb4fe3143d65b676a79fa9e96'
+
+
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+STATIC_ROOT = BASE_DIR / "staticfiles"
