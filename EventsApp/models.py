@@ -56,7 +56,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     active_profile_name = models.CharField(max_length=40, null=True)
-    has_incomplete_profile = models.CharField(max_length=40, default=False, null=True)
+    profile_status = models.BooleanField(default=False, null=True)
 
 
 class Profile(models.Model):
@@ -64,7 +64,7 @@ class Profile(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     is_master = models.BooleanField()
     name = models.CharField(max_length=20)  # TODO : Adding uniqueness within user
-    is_complete = models.BooleanField(default=False)
+    profile_status = models.BooleanField(default=False)
 
 
 class Individual(models.Model):

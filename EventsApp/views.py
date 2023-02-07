@@ -25,7 +25,6 @@ import util
 from django.db.models import Q
 from functools import lru_cache
 
-
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
@@ -180,7 +179,7 @@ def ValidateFormValues(request):
     if not request.user.is_mvp and event_count >= 2:
         messages.error(request, "Cannot create event, maximum events possible by non-MVP member is 2")
         event_count_valid = False
-    if not request.POST.get('event_title') or not request.POST.get('venue')\
+    if not request.POST.get('event_title') or not request.POST.get('venue') \
             or not request.POST.get('event_type') or not request.POST.get('sport_type'):
         messages.error(request, "All fields are required, please enter valid information")
         fields_valid = False
@@ -300,6 +299,9 @@ def ValidateUserProfileForm(request):
     if not request.POST.get('interest_gender') or request.POST['interest_gender'].strip() == "":
         messages.error(request, "Please select Event gender preferences")
         valid = False
+
+    # profile = get_profile_from_user(request.user)
+    # locations = Extra_Loctaions.objects.filter(profile=profile).order_by("city")
 
     if not request.POST.get('city') or request.POST['city'].strip() == "":
         messages.error(request, "Please enter City")
@@ -508,9 +510,9 @@ def modify_individual(response, individual):
 def display_profile(request):
     profiles = Profile.objects.filter(user=request.user)
     context = {
-        'profiles_list':profiles
+        'profiles_list': profiles
     }
-    return render(request,'EventsApp/switch_profile.html', context)
+    return render(request, 'EventsApp/switch_profile.html', context)
 
 
 def _switch_profile(user, name):
@@ -532,6 +534,7 @@ def _switch_profile(user, name):
     profile.save()
 
     user.active_profile_name = profile.name
+    user.profile_status = profile.profile_status
     user.save()
 
     get_profile_from_user.cache_clear()
@@ -564,7 +567,7 @@ def create_profile(request):
 
     if request.method == 'GET':
         form = NewProfileForm()
-        context =  {'form':form}
+        context = {'form': form}
         return render(request, 'EventsApp/create_profile.html', context)
 
     if request.method == 'POST':
@@ -573,7 +576,8 @@ def create_profile(request):
             # TODO : Add validation
             name = form.cleaned_data.get('name').lower()
 
-            profile = Profile.objects.create(active_user=None, user=request.user, name=name, is_master=False)
+            profile = Profile.objects.create(active_user=None, user=request.user, profile_status=False, name=name,
+                                             is_master=False)
             profile.save()
 
             individual = Individual.objects.create(profile=profile, first_name=name)
@@ -587,7 +591,7 @@ def create_profile(request):
             # context = {'individual': individual, 'sports_type': [], 'sec_sport_choices': [], 'locations': [], 'user_avaiability': []}
             # return render(request, 'registration/individual_view.html', context)
 
-            return home(request)
+            return redirect('EventsApp:user_profile')
         else:
             print('Form not valid')
             return render(request, 'EventsApp/create_profile.html')
@@ -619,21 +623,24 @@ def user_profile(request):
 
 @login_required
 def user_profile_submit(request):
-
     print('POST request fields', request.POST.dict())
     context = request.POST.dict()
-    if not ValidateUserProfileForm(context):
+
+    if not ValidateUserProfileForm(request):
+        print('Validation Failed')
         return render(request, 'registration/individual_view.html', context)
     else:
         profile = get_profile_from_user(request.user)
-        request.user.has_incomplete_profile = False
+        request.user.profile_status = True
+        profile.profile_status = True
+        profile.save()
         request.user.save()
         individual = Individual.objects.get(profile=profile)
-        individual = modify_individual(context,individual)
+        individual = modify_individual(context, individual)
         individual.save()
         context['individual'] = individual
     print('Individual details updated!')
-    # messages.success(request, 'Individual details updated!')
+    messages.success(request, 'Individual details updated!')
     # return render(request, 'registration/individual_view.html', context)
     return home(request)
 
@@ -927,7 +934,8 @@ def save_organization_timings(profile, response):
             obj.end_time = response["sunday_end_time"]
             obj.save()
         else:
-            obj = Organization_Availability(profile=profile, day_of_week="Sunday", start_time=response["sunday_start_time"],
+            obj = Organization_Availability(profile=profile, day_of_week="Sunday",
+                                            start_time=response["sunday_start_time"],
                                             end_time=response["sunday_end_time"])
             obj.save()
     if "monday_start_time" in response and response["monday_start_time"] != "" and "monday_end_time" in response and \
@@ -938,7 +946,8 @@ def save_organization_timings(profile, response):
             obj.end_time = response["monday_end_time"]
             obj.save()
         else:
-            obj = Organization_Availability(profile=profile, day_of_week="Monday", start_time=response["monday_start_time"],
+            obj = Organization_Availability(profile=profile, day_of_week="Monday",
+                                            start_time=response["monday_start_time"],
                                             end_time=response["monday_end_time"])
             obj.save()
     if "tuesday_start_time" in response and response["tuesday_start_time"] != "" and "tuesday_end_time" in response and \
@@ -949,7 +958,8 @@ def save_organization_timings(profile, response):
             obj.end_time = response["tuesday_end_time"]
             obj.save()
         else:
-            obj = Organization_Availability(profile=profile, day_of_week="Tuesday", start_time=response["tuesday_start_time"],
+            obj = Organization_Availability(profile=profile, day_of_week="Tuesday",
+                                            start_time=response["tuesday_start_time"],
                                             end_time=response["tuesday_end_time"])
             obj.save()
     if "wednesday_start_time" in response and response[
@@ -1069,7 +1079,7 @@ def home(request):
     # Individual.objects.filter(pk=16).delete()
 
     if request.user.is_authenticated:
-        if request.user.has_incomplete_profile:
+        if not request.user.profile_status:
             print('Redirecting to user profile...')
             return redirect('EventsApp:user_profile')
 
@@ -1175,7 +1185,8 @@ def home(request):
             elif event.registration_type == "Drop-in":
                 recommended_drop_in.append(event)
 
-        recommended_registrationList = [recommended_registrationList[i:i + 3] for i in range(0, len(recommended_registrationList), 3)]
+        recommended_registrationList = [recommended_registrationList[i:i + 3] for i in
+                                        range(0, len(recommended_registrationList), 3)]
         recommended_drop_in = [recommended_drop_in[i:i + 3] for i in range(0, len(recommended_drop_in), 3)]
         # recommended_events = [recommended_events[i:i + 3] for i in range(0, len(recommended_events), 3)]
 
@@ -1186,8 +1197,8 @@ def home(request):
         else:
             event.sport_logo = "/media/images/Multisport.jpg"
 
-    drop_in_eventList=[]
-    registrationList=[]
+    drop_in_eventList = []
+    registrationList = []
     for event in events:
         if event.registration_type == "Registration":
             registrationList.append(event)
@@ -1212,11 +1223,10 @@ def home(request):
     # html_template = loader.get_template('EventsApp/home.html')
     # return HttpResponse(html_template.render(context, request))
 
-    return render(request,'EventsApp/home.html', context)
+    return render(request, 'EventsApp/home.html', context)
 
 
 def sort_events_by_date(events):
-
     def getDate(event):
         datetimes = event.datetimes if event.datetimes else event.current_datetimes
         time = datetimes.split("-")
@@ -1254,7 +1264,6 @@ def get_events_by_time(events):
 
 
 def get_recommended_events(request):
-
     profile = get_profile_from_user(request.user)
     user_avaiability = Availability.objects.filter(profile=profile)
 
@@ -1328,7 +1337,7 @@ def get_recommended_events(request):
                     # print(event.event_title, gender_list, individual_gender, flag)
                     recommended_events.remove(event)
 
-    # FILTER BY Positions
+        # FILTER BY Positions
         position_choices = Secondary_SportsChoice.objects.filter(profile=profile)
         position_list = []
         for item in position_choices:
@@ -1344,7 +1353,7 @@ def get_recommended_events(request):
             if flag > 0:
                 recommended_events.remove(event)
 
-    # FILTER BY Skills
+        # FILTER BY Skills
         skill_choices = Secondary_SportsChoice.objects.filter(profile=profile)
         skill_list = []
         for item in skill_choices:
@@ -1378,7 +1387,7 @@ def extract_event_datetime(event):
     event_start_time = ""
     event_end_time = ""
 
-    times_list=[]
+    times_list = []
 
     if event.datetimes:
         split_list = event.datetimes.split("-")
@@ -1421,7 +1430,8 @@ def format_time(events):
             event.datetimes = str_datetime
         elif event.current_datetimes:
             string_date = datetime.strptime(event.current_datetimes[0:10], '%m/%d/%Y').date()
-            str_datetime = string_date.strftime("%B %d") + " from " + event.current_datetimes[10:len(event.current_datetimes)]
+            str_datetime = string_date.strftime("%B %d") + " from " + event.current_datetimes[
+                                                                      10:len(event.current_datetimes)]
             event.current_datetimes = str_datetime
 
     return events
@@ -1540,7 +1550,7 @@ def event_details(request, event_id, event_date):
                 event_message = "A new user has subscribed to event: " + event.event_title + "\n" + \
                                 "Subscriber Name: " + sub_prof.first_name + " " + \
                                 sub_prof.last_name if sub_prof.last_name else "" + "\n" + \
-                                                                      "Subscriber Email: " + request.user.email + "\n"
+                                                                              "Subscriber Email: " + request.user.email + "\n"
                 # if event.created_by:
                 #     util.email(event_subject, event_message, [event.created_by.email])
 
@@ -1643,10 +1653,9 @@ def cart_summary(request):
     return render(request, "EventsApp/cart_summary.html", context)
 
 
-
 @login_required
 def charge(request):
-    context={}
+    context = {}
     char_set = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
     key = settings.STRIPE_PUBLISHABLE_KEY
     context['key'] = key
@@ -2101,6 +2110,7 @@ def remove_exceptions_from_recurring_days(all_dates, exception_dates):
     # print(filtered_dates)
     return ','.join(filtered_dates)
 
+
 def get_advertisements(request):
     ads = []
     if not request.user.is_authenticated:
@@ -2114,9 +2124,11 @@ def get_advertisements(request):
             city_str += loc.city
             prov_str += loc.province
         ads = Advertisement.objects.all().filter(Q(end_time__gte=date.today()) & Q(geographical_scope="National") |
-                                                 (Q(geographical_scope = "Provincial") & Q(province__icontains=prov_str)) |
-                                                 (Q(geographical_scope = "Local") & Q(city__icontains=city_str)))
+                                                 (Q(geographical_scope="Provincial") & Q(
+                                                     province__icontains=prov_str)) |
+                                                 (Q(geographical_scope="Local") & Q(city__icontains=city_str)))
     return ads
+
 
 def show_advertisement(request, header):
     try:

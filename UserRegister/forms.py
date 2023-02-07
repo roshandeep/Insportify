@@ -40,10 +40,10 @@ class IndividualSignUpForm(UserCreationForm):
         user.last_name = self.cleaned_data.get('last_name')
         user.email = self.cleaned_data.get('email').lower()
         user.set_password(self.cleaned_data["password1"])
-        user.has_incomplete_profile = user.first_name
+        user.profile_status = False
         user.save()
         profile = Profile.objects.create(active_user=user, user=user, name=user.first_name, is_master=True,
-                                         is_complete=False)
+                                         profile_status=False)
         individual = Individual.objects.create(profile=profile)
         individual.phone = self.cleaned_data.get('phone')
         # individual.email = self.cleaned_data.get('email').lower()
@@ -86,9 +86,9 @@ class MVPSignUpForm(forms.ModelForm):
         user.last_name = self.cleaned_data.get('last_name')
         user.email = self.cleaned_data.get('email').lower()
         user.set_password(self.cleaned_data["password1"])
-        user.has_incomplete_profile = user.first_name
+        user.profile_status = user.first_name
         user.save()
-        profile = Profile.objects.create(active_user=user, user=user, is_master=True, is_complete=False)
+        profile = Profile.objects.create(active_user=user, user=user, is_master=True, profile_status=False)
         individual = Individual.objects.create(profile=profile)
         individual.phone = self.cleaned_data.get('phone')
         # individual.email = self.cleaned_data.get('email').lower()
