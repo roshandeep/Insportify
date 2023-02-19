@@ -40,6 +40,7 @@
                                    value="Next" id="next-tab-1" style="width: 90px;"/>
                         </div>
                     <div class="card-body">
+
                         <div class="form-row p-2">
                             <input type="text" class="form-control" name="first_name" placeholder="* First Name"
                                    value="{% if individual.first_name %} {{individual.first_name}}{% endif %}"/>
@@ -102,7 +103,7 @@
                                    {% if individual.concussion == "No" %} checked {% endif %}> No</input>
                             </label>
                         </div>
-                    </div>
+                        </div>
                 </div>
 
             </fieldset>

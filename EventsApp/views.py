@@ -16,6 +16,8 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.views.decorators.csrf import csrf_exempt
+from openpyxl import Workbook
+
 from Insportify import settings
 from .forms import MultiStepForm, AvailabilityForm, LogoForm, InviteForm, NewProfileForm
 from .models import master_table, Individual, Organization, Venues, SportsCategory, SportsType, Order, User, \
@@ -1083,9 +1085,8 @@ def home(request):
     sports = SportsType.objects.values('pk', 'sports_type_text').order_by('sports_type_text')
 
     advertisements = get_advertisements(request)
-    for item in advertisements:
-        print(item.image)
-    advertisements = [advertisements[i:i + 3] for i in range(0, len(advertisements), 3)]
+    advertisements = list(advertisements)
+    # advertisements = [advertisements[i:i + 3] for i in range(0, len(advertisements), 3)]
 
     if request.user.is_authenticated:
         profile = get_profile_from_user(request.user)
@@ -1121,42 +1122,57 @@ def home(request):
 
     if request.GET.get('events_types'):
         selected_events_types = request.GET.getlist('events_types')
-        print(selected_events_types)
         if request.user.is_authenticated:
-            recommended_events = recommended_events.filter(event_type__in=selected_events_types)
+            for event in recommended_events[:]:
+                if event.event_type not in selected_events_types:
+                    recommended_events.remove(event)
         else:
-            events = events.filter(event_type__in=selected_events_types)
+            for event in events[:]:
+                if event.event_type not in selected_events_types:
+                    events.remove(event)
 
     if request.GET.get('sports'):
         selected_sports = request.GET.get('sports')
         if request.user.is_authenticated:
-            recommended_events = recommended_events.filter(sport_type=selected_sports)
+            for event in recommended_events[:]:
+                if event.sport_type not in selected_sports:
+                    recommended_events.remove(event)
         else:
-            events = events.filter(sport_type=selected_sports)
+            for event in events[:]:
+                if event.sport_type not in selected_sports:
+                    events.remove(event)
 
     if request.GET.get('cities'):
         selected_cities = request.GET.get('cities')
         if request.user.is_authenticated:
-            recommended_events = recommended_events.filter(city=selected_cities)
+            for event in recommended_events[:]:
+                if event.city not in selected_cities:
+                    recommended_events.remove(event)
         else:
-            events = events.filter(city=selected_cities)
+            for event in events[:]:
+                if event.city not in selected_cities:
+                    events.remove(event)
 
     if request.GET.get('venues'):
         selected_venues = request.GET.get('venues')
         if request.user.is_authenticated:
-            recommended_events = recommended_events.filter(venue=selected_venues)
+            for event in recommended_events[:]:
+                if event.venue not in selected_venues:
+                    recommended_events.remove(event)
         else:
-            events = events.filter(venue=selected_venues)
+            for event in events[:]:
+                if event.venue not in selected_venues:
+                    events.remove(event)
 
     if request.GET.get('date_range'):
         selected_date = request.GET.get('date_range')
         if selected_date != 'Select Date':
             selected_date = datetime.strptime(selected_date.strip(), '%Y-%m-%d').date()
-            print(selected_date)
+            # print(selected_date)
             if request.user.is_authenticated:
-                recommended_events = get_events_by_date(recommended_events, selected_date)
+                recommended_events = get_events_by_selected_date(recommended_events, selected_date)
             else:
-                events = get_events_by_date(events, selected_date)
+                events = get_events_by_selected_date(events, selected_date)
 
     sort_events_by_date(events)
 
@@ -1182,9 +1198,9 @@ def home(request):
             elif event.registration_type == "Drop-in":
                 recommended_drop_in.append(event)
 
-        recommended_registrationList = [recommended_registrationList[i:i + 3] for i in
-                                        range(0, len(recommended_registrationList), 3)]
-        recommended_drop_in = [recommended_drop_in[i:i + 3] for i in range(0, len(recommended_drop_in), 3)]
+        # recommended_registrationList = [recommended_registrationList[i:i + 3] for i in range(0, len(recommended_registrationList), 3)]
+        # recommended_drop_in = [recommended_drop_in[i:i + 3] for i in range(0, len(recommended_drop_in), 3)]
+
         # recommended_events = [recommended_events[i:i + 3] for i in range(0, len(recommended_events), 3)]
 
     for event in events:
@@ -1202,8 +1218,8 @@ def home(request):
         elif event.registration_type == "Drop-in":
             drop_in_eventList.append(event)
 
-    registrationList = [registrationList[i:i + 3] for i in range(0, len(registrationList), 3)]
-    drop_in_eventList = [drop_in_eventList[i:i + 3] for i in range(0, len(drop_in_eventList), 3)]
+    # registrationList = [registrationList[i:i + 3] for i in range(0, len(registrationList), 3)]
+    # drop_in_eventList = [drop_in_eventList[i:i + 3] for i in range(0, len(drop_in_eventList), 3)]
     # events = [events[i:i + 3] for i in range(0, len(events), 3)]
 
     context = {
@@ -1294,6 +1310,8 @@ def get_recommended_events(request):
                 recommended_events.remove(event)
 
     recommended_events = list(recommended_events)
+    # print("Location Filter", recommended_events)
+
 
     if request.user.is_individual:
         individual = Individual.objects.get(profile=profile)
@@ -1315,7 +1333,13 @@ def get_recommended_events(request):
                 if age_fail_count == len(positions):
                     recommended_events.remove(event)
 
-        # FILTER BY Gender
+
+    # print("Age Filter", recommended_events)
+
+    # FILTER BY Gender
+    if user.is_individual:
+        individual = Individual.objects.get(user=user)
+
         individual_gender = []
         if individual.participation_interest and individual.participation_interest != "":
             # print(individual.participation_interest)
@@ -1334,8 +1358,24 @@ def get_recommended_events(request):
                     # print(event.event_title, gender_list, individual_gender, flag)
                     recommended_events.remove(event)
 
-        # FILTER BY Positions
-        position_choices = Secondary_SportsChoice.objects.filter(profile=profile)
+
+    # print("Gender Filter", recommended_events)
+
+    # FILTER BY Sports
+    sport_choices = Secondary_SportsChoice.objects.filter(user=user).order_by("sport_type")
+    sports_list = []
+    for item in sport_choices:
+        sports_list.append(item.sport_type)
+
+    for event in recommended_events[:]:
+        if event.sport_type not in sports_list:
+            recommended_events.remove(event)
+
+    # print("Sports Filter", recommended_events)
+
+    # FILTER BY Positions
+    if user.is_individual:
+        position_choices = Secondary_SportsChoice.objects.filter(user=user)
         position_list = []
         for item in position_choices:
             position_list.append(item.position)
@@ -1350,8 +1390,12 @@ def get_recommended_events(request):
             if flag > 0:
                 recommended_events.remove(event)
 
-        # FILTER BY Skills
-        skill_choices = Secondary_SportsChoice.objects.filter(profile=profile)
+    # print("Positions Filter", recommended_events)
+
+    # FILTER BY Skills
+    if user.is_individual:
+        skill_choices = Secondary_SportsChoice.objects.filter(user=user)
+
         skill_list = []
         for item in skill_choices:
             skill_list.append(item.skill)
@@ -1366,15 +1410,7 @@ def get_recommended_events(request):
             if flag > 0:
                 recommended_events.remove(event)
 
-    # FILTER BY Sports
-    sport_choices = Secondary_SportsChoice.objects.filter(profile=profile).order_by("sport_type")
-    sports_list = []
-    for item in sport_choices:
-        sports_list.append(item.sport_type)
-
-    for event in recommended_events[:]:
-        if event.sport_type not in sports_list:
-            recommended_events.remove(event)
+    # print("Skills Filter", recommended_events)
 
     return recommended_events
 
@@ -1453,30 +1489,16 @@ def format_time_helper(time):
     return str_datetime
 
 
-def get_events_by_date(events, selected_date):
-    for event in events[:]:
-        selected_event = master_table.objects.get(pk=event.pk)
+def get_events_by_selected_date(events_list, selected_date):
+    new_events_list=[]
+    for event in events_list[:]:
+        if event.current_datetimes:
+            evt_date = event.current_datetimes[0:10]
+            evt_date = datetime.strptime(evt_date.strip(), '%m/%d/%Y').date()
+            if selected_date == evt_date:
+                new_events_list.append(event)
 
-        if selected_event.datetimes:
-            time = selected_event.datetimes.split("-")
-            start_date = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p').date()
-            end_date = datetime.strptime(time[-1].strip(), '%m/%d/%Y %I:%M %p').date()
-            if selected_date < start_date or selected_date > end_date:
-                events = events.exclude(pk=event.id)
-
-        elif selected_event.datetimes_all:
-            all_dates_arr = selected_event.datetimes_all.strip(',').split(',')
-            flag = 0
-            for all_dates in all_dates_arr:
-                time = all_dates.split(" ")
-                start_date = datetime.strptime(time[0].strip(), '%m/%d/%Y').date()
-                if start_date != selected_date:
-                    flag = flag + 1
-
-            if flag == len(all_dates_arr):
-                events = events.exclude(pk=event.id)
-
-    return events
+    return new_events_list
 
 
 @login_required
@@ -2136,8 +2158,39 @@ def show_advertisement(request, header):
             else:
                 advert.hit_count += 1
             advert.save()
-            print(advert.url)
+            # print(advert.url)
             return redirect("https://" + advert.url)
     except:
         return home(request)
     return home(request)
+
+
+def sports_type_excel():
+    workbook = Workbook()
+    sheet = workbook.active
+    sheet.title = "SPORTS DB"
+    sheet["A1"] = "Sports Category"
+    sheet["B1"] = "Sports Type"
+    sheet["C1"] = "Position"
+    sheet["D1"] = "Skill"
+
+    pos_skill = PositionAndSkillType.objects.all()
+    row=2
+    for item in pos_skill:
+        print(item)
+        c1 = sheet.cell(row=row, column=1)
+        c1.value = item.sports_category.sports_catgeory_text
+
+        c2 = sheet.cell(row=row, column=2)
+        c2.value = item.sports_type.sports_type_text
+
+        c3 = sheet.cell(row=row, column=3)
+        c3.value = item.position_type
+
+        c4 = sheet.cell(row=row, column=4)
+        c4.value = item.skill_type
+
+        row=row+1
+
+    workbook.save(filename='sports_db.xlsx')
+

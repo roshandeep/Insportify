@@ -348,7 +348,7 @@ class Advertisement(models.Model):
     creation_time = models.DateTimeField()
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
-    header = models.TextField(blank=True, null=True)
+    header = models.TextField(blank=False, null=False)
     description = models.TextField(blank=True, null=True)
     geographical_scope = models.CharField(max_length=100, choices=GEOGRAPHICAL_SCOPE_CHOICES, blank=True, null=True)
     city = models.TextField(blank=True, null=True)
