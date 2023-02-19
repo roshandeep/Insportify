@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% load widget_tweaks %}
+{% load static %}
+{% block content %}
+
+<div class="row">
+  <div class="col-5 mx-auto">
+    <div>
+      <h3 class="mx-auto text-center fw-light">Create a New Profile</h3>
+      <hr />
+    </div>
+  </div>
+</div>
+<div class="col-5 mx-auto">
+  <div >
+    <form method="POST"> {% csrf_token %}
+      
+      
+      <div class="col-8 mx-auto">
+        {{ form }}
+        <button type="submit" class="btn btn-primary mb-2" style="margin-left: 10px;">Create New Profile</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}
