@@ -296,22 +296,31 @@ def ValidateUserProfileForm(request):
         messages.error(request, "Please enter Date of Birth")
         valid = False
 
-    if not request.POST.get('interest_gender') or request.POST['interest_gender'].strip() == "":
+    if not request.POST.get('participation_interest1') and request.POST['participation_interest1'].strip() == "" and \
+        not request.POST.get('participation_interest2') and request.POST['participation_interest2'].strip() == "" and \
+            not request.POST.get('participation_interest3') and request.POST['participation_interest3'].strip() == "":
         messages.error(request, "Please select Event gender preferences")
         valid = False
 
-    # profile = get_profile_from_user(request.user)
-    # locations = Extra_Loctaions.objects.filter(profile=profile).order_by("city")
-
+    location_valid = False
     if not request.POST.get('city') or request.POST['city'].strip() == "":
-        messages.error(request, "Please enter City")
-        valid = False
+        profile = get_profile_from_user(request.user)
+        locations = Extra_Loctaions.objects.filter(profile=profile).order_by("city")
+        print(locations.all())
+        if len(locations) == 0:
+            messages.error(request, "Please enter City")
+            valid = False
+        else:
+            location_valid = True
+    if location_valid:
+        pass
+        # TODO: Location Validation code goes here.
 
-    if not request.POST.get('province') or request.POST['province'].strip() == "":
+    if request.POST.get('province')=="0" or request.POST['province'].strip() == "":
         messages.error(request, "Please enter Province")
         valid = False
 
-    if not request.POST.get('country') or request.POST['country'].strip() == "":
+    if request.POST.get('country') == "0" or request.POST['country'].strip() == "":
         messages.error(request, "Please enter Country")
         valid = False
 
@@ -353,9 +362,9 @@ def ValidateOrgProfileForm(request):
     if not request.POST.get('age_group') or request.POST['age_group'].strip() == "":
         messages.error(request, "Please select Age Group")
         valid = False
-    if not request.POST.get('sport_type') or request.POST['sport_type'].strip() == "":
-        messages.error(request, "Please select Sports you facilitate")
-        valid = False
+    # if not request.POST.get('sport_type') or request.POST['sport_type'].strip() == "":
+    #     messages.error(request, "Please select Sports you facilitate")
+    #     valid = False
 
     return valid
 
@@ -469,16 +478,17 @@ def delete_profile(request):
 
 
 def modify_individual(response, individual):
+
     if "first_name" in response:
         individual.first_name = response["first_name"].strip() if response["first_name"] else ""
     if "is_current" in response:
         individual.is_current = response["is_current"].strip()
     if "last_name" in response:
         individual.last_name = response["last_name"].strip() if response["last_name"] else ""
-    if "mobile" in response:
-        mobile = response["mobile"].strip()
-        mobile = ''.join(i for i in mobile if i.isdigit())
-        individual.phone = mobile
+    if "phone" in response:
+        phone = response["phone"].strip()
+        phone = ''.join(i for i in phone if i.isdigit())
+        individual.phone = phone
     if "website" in response:
         individual.website = response["website"].strip()
     if "job_title" in response:
@@ -489,8 +499,15 @@ def modify_individual(response, individual):
         individual.concussion = response["is_concussion"].strip()
     if "is_student" in response:
         individual.is_student = response["is_student"].strip()
-    if "interest_gender" in response:
-        individual.participation_interest = ','.join(item for item in response['interest_gender'])
+    participation_interest = []
+    if "participation_interest1" in response:
+        participation_interest.append(response['participation_interest1'])
+    if "participation_interest2" in response:
+        participation_interest.append(response['participation_interest2'])
+    if "participation_interest3" in response:
+        participation_interest.append(response['participation_interest3'])
+    individual.participation_interest = ','.join(item for item in participation_interest)
+
     if "city" in response:
         individual.city = response["city"].strip() if response["city"] else ""
     if "province" in response:
@@ -606,7 +623,8 @@ def user_profile(request):
     profile = get_profile_from_user(request.user)
     individual = Individual.objects.get(profile=profile)
     context = {
-        'individual': individual
+        'individual': individual,
+        'profile': profile
     }
     sports_type = SportsType.objects.all().order_by('sports_type_text')
     sec_sport_choices = Secondary_SportsChoice.objects.filter(profile=profile).order_by("sport_type")
@@ -624,25 +642,41 @@ def user_profile(request):
 @login_required
 def user_profile_submit(request):
     print('POST request fields', request.POST.dict())
-    context = request.POST.dict()
 
     if not ValidateUserProfileForm(request):
         print('Validation Failed')
+        profile = get_profile_from_user(request.user)
+        context = {
+            'individual': request.POST.dict(),
+            'profile': profile
+        }
+        print(context)
+        sports_type = SportsType.objects.all().order_by('sports_type_text')
+        sec_sport_choices = Secondary_SportsChoice.objects.filter(profile=profile).order_by("sport_type")
+        locations = Extra_Loctaions.objects.filter(profile=profile).order_by("city")
+        user_avaiability = Availability.objects.filter(profile=profile)
+        get_day_of_week(user_avaiability)
+        context['sports_type'] = sports_type
+        context['sec_sport_choices'] = sec_sport_choices
+        context['locations'] = locations
+        context['user_avaiability'] = user_avaiability
         return render(request, 'registration/individual_view.html', context)
     else:
+
         profile = get_profile_from_user(request.user)
         request.user.profile_status = True
         profile.profile_status = True
+        individual = Individual.objects.get(profile=profile)
+        individual = modify_individual(request.POST.dict(), individual)
         profile.save()
         request.user.save()
-        individual = Individual.objects.get(profile=profile)
-        individual = modify_individual(context, individual)
         individual.save()
-        context['individual'] = individual
-    print('Individual details updated!')
-    messages.success(request, 'Individual details updated!')
+        print('Individual details updated!')
+        return home(request)
+
+    # messages.success(request, 'Individual details updated!')
     # return render(request, 'registration/individual_view.html', context)
-    return home(request)
+
 
 
 def add_sports_positions(request):
@@ -825,14 +859,15 @@ def organization_profile(request):
         organization = Organization.objects.filter(profile=profile)
         locations = Extra_Loctaions.objects.filter(profile=profile).order_by("city")
         sports_type = SportsType.objects.all().order_by('sports_type_text')
+        context['organization'] = organization
         context['locations'] = locations
         context['sports_type'] = sports_type
         response = request.POST.dict()
-        if not ValidateOrgProfileForm(request, context):
+        if not ValidateOrgProfileForm(request):
             organization = Organization.objects.get(profile=profile)
-            context['organization'] = organization
+            context['organization'] = request.POST.dict()
             return render(request, 'registration/organization_view.html', context)
-        if organization.exists():
+        else:# organization.exists():
             organization = Organization.objects.get(profile=profile)
             organization.profile = profile
             if "type_of_organization" in response:
@@ -875,53 +910,15 @@ def organization_profile(request):
             if "sport_type" in response:
                 save_organization_sports(profile, request.POST.getlist('sport_type'))
             save_organization_timings(profile, response)
+            request.user.profile_status = True
+            profile.profile_status = True
+            profile.save()
+            request.user.save()
             organization.save()
             context['organization'] = organization
-        else:
-            obj = Organization()
-            obj.profile = profile
-            if "type_of_organization" in response:
-                obj.type_of_organization = response["type_of_organization"].strip() if response[
-                    "type_of_organization"] else ""
-            if "company_name" in response:
-                obj.organization_name = response["company_name"].strip() if response["company_name"] else ""
-            if "parent_organization" in response:
-                obj.parent_organization_name = response["parent_organization"].strip() if response[
-                    "parent_organization"] else ""
-            if "registration" in response:
-                obj.registration_no = response["registration"].strip() if response["registration"] else ""
-            if "year_established" in response:
-                obj.year_established = response["year_established"].strip() if response["year_established"] else ""
-            if "street_name" in response:
-                obj.street = response["street_name"].strip() if response["street_name"] else ""
-            if "city" in response:
-                obj.city = response["city"].strip() if response["city"] else ""
-            if "province" in response:
-                obj.province = response["province"].strip() if response["province"] else ""
-            if "country" in response:
-                obj.country = response["country"].strip() if response["country"] else ""
-            if "postal_code" in response:
-                obj.postal_code = response["postal_code"].strip() if response["postal_code"] else ""
-            if "email" in response:
-                obj.email = response["email"].strip() if response["email"] else ""
-            if "phone" in response:
-                phone = response["phone"].strip()
-                phone = ''.join(i for i in phone if i.isdigit())
-                obj.phone = phone
-            if "website" in response:
-                obj.website = response["website"].strip() if response["website"] else ""
-            if "gender" in response:
-                obj.gender_focus = ','.join(item for item in request.POST.getlist('gender'))
-            if "age_group" in response:
-                obj.age_group = ','.join(item for item in request.POST.getlist('age_group'))
-            if "participants" in response:
-                organization.participants = response["participants"].strip() if response["participants"] else ""
-            if "sport_type" in response:
-                save_organization_sports(profile, request.POST.getlist('sport_type'))
-            save_organization_timings(profile, response)
-            obj.save()
-            context['organization'] = obj
-        messages.success(request, 'Organization details updated!')
+
+            # messages.success(request, 'Organization details updated!')
+            return home(request)
     return render(request, 'registration/organization_view.html', context)
 
 

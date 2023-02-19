@@ -108,22 +108,22 @@
                     <li>
                         {% if request.user.is_organization == True %}
                                 <a class="dropdown-item" href="{% url 'EventsApp:organization_profile' %}">My Profile</a>
+                        {% else %}
+                            {% if request.user.is_mvp == True %}
+                                <a class="dropdown-item" href="{% url 'EventsApp:user_profile' %}">My Profile</a>
                             {% else %}
-                                {% if request.user.is_mvp == True %}
-                                    <a class="dropdown-item" href="{% url 'EventsApp:user_profile' %}">My Profile</a>
-                                {% else %}
-                                    <a class="dropdown-item" href="{% url 'EventsApp:user_profile' %}">My Profile</a>
-                                {% endif %}
+                                <a class="dropdown-item" href="{% url 'EventsApp:user_profile' %}">My Profile</a>
+                            {% endif %}
 
-                    </li>
+                            </li>
 
-                    <li>
-                        <a class="dropdown-item" href="{% url 'EventsApp:display_profile' %}">Switch Profile</a>
-                    </li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="{% url 'EventsApp:create_profile' %}">Create New Profile</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    {% endif %}
+                            <li>
+                                <a class="dropdown-item" href="{% url 'EventsApp:display_profile' %}">Switch Profile</a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'EventsApp:create_profile' %}">Create New Profile</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                        {% endif %}
                     <li><a class="dropdown-item"  href="{% url 'UserRegister:logout' %}">Logout</a></li>
                 </ul>
 

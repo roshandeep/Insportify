@@ -281,7 +281,7 @@ class Extra_Loctaions(models.Model):
     zipcode = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
-        return self.individual.first_name + " Location_" + str(self.pk)
+        return self.profile.name + " Location_" + str(self.pk)
 
 
 class Secondary_SportsChoice(models.Model):
@@ -291,7 +291,7 @@ class Secondary_SportsChoice(models.Model):
     skill = models.CharField(max_length=30, blank=True, null=True)
 
     def __str__(self):
-        return self.individual.first_name + " Sport_Choice_" + str(self.pk)
+        return self.profile.name + " Sport_Choice_" + str(self.pk)
 
 
 class SportsImage(models.Model):
