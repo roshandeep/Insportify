@@ -599,7 +599,7 @@ def create_profile(request):
     if request.method == 'POST':
         form = NewProfileForm(request.POST)
         if form.is_valid():
-            # TODO : Add validation
+
             name = form.cleaned_data.get('name').lower()
 
             profile = Profile.objects.create(active_user=None, user=request.user, profile_status=False, name=name,
@@ -1319,7 +1319,6 @@ def get_recommended_events(request):
     recommended_events = list(recommended_events)
     # print("Location Filter", recommended_events)
 
-
     if request.user.is_individual:
         individual = Individual.objects.get(profile=profile)
 
@@ -1344,8 +1343,8 @@ def get_recommended_events(request):
     # print("Age Filter", recommended_events)
 
     # FILTER BY Gender
-    if user.is_individual:
-        individual = Individual.objects.get(user=user)
+    if request.user.is_individual:
+        individual = Individual.objects.get(profile=profile)
 
         individual_gender = []
         if individual.participation_interest and individual.participation_interest != "":
@@ -1369,7 +1368,7 @@ def get_recommended_events(request):
     # print("Gender Filter", recommended_events)
 
     # FILTER BY Sports
-    sport_choices = Secondary_SportsChoice.objects.filter(user=user).order_by("sport_type")
+    sport_choices = Secondary_SportsChoice.objects.filter(profile=profile).order_by("sport_type")
     sports_list = []
     for item in sport_choices:
         sports_list.append(item.sport_type)
@@ -1381,8 +1380,8 @@ def get_recommended_events(request):
     # print("Sports Filter", recommended_events)
 
     # FILTER BY Positions
-    if user.is_individual:
-        position_choices = Secondary_SportsChoice.objects.filter(user=user)
+    if request.user.is_individual:
+        position_choices = Secondary_SportsChoice.objects.filter(profile=profile)
         position_list = []
         for item in position_choices:
             position_list.append(item.position)
@@ -1400,8 +1399,8 @@ def get_recommended_events(request):
     # print("Positions Filter", recommended_events)
 
     # FILTER BY Skills
-    if user.is_individual:
-        skill_choices = Secondary_SportsChoice.objects.filter(user=user)
+    if request.user.is_individual:
+        skill_choices = Secondary_SportsChoice.objects.filter(profile=profile)
 
         skill_list = []
         for item in skill_choices:
