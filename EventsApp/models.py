@@ -71,6 +71,7 @@ class Individual(models.Model):
     profile = models.OneToOneField(Profile, on_delete=models.CASCADE, primary_key=True)
     first_name = models.CharField(max_length=50, null=True)
     last_name = models.CharField(max_length=50, null=True)
+    pronouns = models.CharField(max_length=50,null=True)
     phone = models.CharField(max_length=50, null=True)
     job_title = models.CharField(max_length=100, null=True)
     website = models.CharField(max_length=100, null=True)

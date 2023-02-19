@@ -298,6 +298,10 @@ def ValidateUserProfileForm(request):
         messages.error(request, "Please enter Date of Birth")
         valid = False
 
+    if not request.POST.get('dob') or request.POST['dob'].strip() == "":
+        messages.error(request, "Please enter Date of Birth")
+        valid = False
+
     if not request.POST.get('participation_interest1') and request.POST['participation_interest1'].strip() == "" and \
         not request.POST.get('participation_interest2') and request.POST['participation_interest2'].strip() == "" and \
             not request.POST.get('participation_interest3') and request.POST['participation_interest3'].strip() == "":
@@ -509,6 +513,9 @@ def modify_individual(response, individual):
     if "participation_interest3" in response:
         participation_interest.append(response['participation_interest3'])
     individual.participation_interest = ','.join(item for item in participation_interest)
+
+    if "pronoun" in response:
+        individual.pronoun = response["pronoun"].strip() if response["pronoun"] else ""
 
     if "city" in response:
         individual.city = response["city"].strip() if response["city"] else ""

@@ -12,17 +12,14 @@
     </div>
   </div>
 </div>
-<div class="col-5 mx-auto">
+<div class="col-4 mx-auto">
   <div >
     <form method="POST"> {% csrf_token %}
-      
-      
       <div class="col-8 mx-auto">
         {{ form }}
-        <button type="submit" class="btn btn-primary mb-2" style="margin-left: 10px;">Create New Profile</button>
+        <button type="submit" class="btn btn-primary mb-2 mt-2" >Create New Profile</button>
       </div>
     </form>
   </div>
 </div>
-
 {% endblock %}
