@@ -602,6 +602,15 @@ def create_profile(request):
 
             name = form.cleaned_data.get('name').lower()
 
+            existing_profiles = Profile.objects.filter(user=request.user)
+            print(existing_profiles)
+            for prof in existing_profiles:
+                if prof.name == name:
+                    messages.error(request, "A profile with this name already exists. Use another name.")
+                    form = NewProfileForm()
+                    context = {'form': form}
+                    return render(request, 'EventsApp/create_profile.html', context)
+
             profile = Profile.objects.create(active_user=None, user=request.user, profile_status=False, name=name,
                                              is_master=False)
             profile.save()

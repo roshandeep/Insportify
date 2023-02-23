@@ -26,8 +26,8 @@ stripe==2.74.0
 typing-extensions==3.7.4.3
 tzlocal==1.5.1
 wincertstore==0.2
-openpyxl
-six
+openpyxl~=3.0.10
+six~=1.16.0
 # ngnix
 gunicorn
 whitenoise

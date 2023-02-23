@@ -78,7 +78,7 @@ urlpatterns = [
     path('add_user_availability/', views.add_user_availability,
          name='add_user_availability'),
     # path('notifications/', views.notifications, name='notifications'),
-    path('delete_availability/', views.delete_availability,
+    path('delete_availability/', views.delete_availability, name='delete_availability'),
     path('upload/', views.logo_upload_view, name='logo_upload'),
     path('event_details/<int:event_id>/<str:event_date>/',
          views.event_details, name='event_details'),
@@ -93,5 +93,5 @@ urlpatterns = [
     path('payment-cancel/', views.paymentCancel, name='payment-cancel'),
     path('charge/', views.charge, name='charge'),
     path('pay_at_venue/', views.pay_at_venue, name='pay_at_venue'),
-    path('oauth/', include('social_django.urls', namespace='social')),
+    path('oauth/', include('social_django.urls', namespace='social'))
 ]

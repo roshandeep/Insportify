@@ -35,8 +35,17 @@ class LoginForm(AuthenticationForm):
     username = forms.CharField(label='Email / Username')
 
 
+# class NewProfileForm(forms.ModelForm):
+#     name = forms.CharField(label="Name")
+#
+#     class Meta:
+#         model = Profile
+#         fields = ['name']
+
+
 class NewProfileForm(forms.ModelForm):
-    name = forms.CharField(label="name")
+    name = forms.CharField(label="", widget=forms.TextInput(attrs={'class': 'form-control',
+                                                                   'placeholder': 'New Profile Name'}))
 
     class Meta:
         model = Profile
