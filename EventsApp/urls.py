@@ -93,5 +93,4 @@ urlpatterns = [
     path('payment-cancel/', views.paymentCancel, name='payment-cancel'),
     path('charge/', views.charge, name='charge'),
     path('pay_at_venue/', views.pay_at_venue, name='pay_at_venue'),
-    path('oauth/', include('social_django.urls', namespace='social'))
 ]
