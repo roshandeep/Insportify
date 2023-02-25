@@ -400,6 +400,7 @@ def save_event_position_info(request, event):
 @login_required
 def all_events(request):
     # sports_type_excel()
+    venue_excel()
     expired_events = []
     event_list = list(master_table.objects.filter(created_by=request.user))
     event_list = get_events_by_time(event_list)
@@ -2062,3 +2063,45 @@ def sports_type_excel():
         row=row+1
 
     workbook.save(filename='sports_db.xlsx')
+
+
+def venue_excel():
+    workbook = Workbook()
+    sheet = workbook.active
+    sheet.title = "Latest Venue List"
+    sheet["A1"] = "vm_name"
+    sheet["B1"] = "vm_venue_description"
+    sheet["C1"] = "vm_venue_street"
+    sheet["D1"] = "vm_venuecity"
+    sheet["E1"] = "vm_venue_province"
+    sheet["F1"] = "vm_venue_country"
+    sheet["G1"] = "vm_venue_zip"
+
+    venues = Venues.objects.all()
+    row=2
+    for item in venues:
+        print(item)
+        c1 = sheet.cell(row=row, column=1)
+        c1.value = item.vm_name
+
+        c2 = sheet.cell(row=row, column=2)
+        c2.value = item.vm_venue_description
+
+        c3 = sheet.cell(row=row, column=3)
+        c3.value = item.vm_venue_street
+
+        c4 = sheet.cell(row=row, column=4)
+        c4.value = item.vm_venuecity
+
+        c5 = sheet.cell(row=row, column=5)
+        c5.value = item.vm_venue_province
+
+        c6 = sheet.cell(row=row, column=6)
+        c6.value = item.vm_venue_country
+
+        c7 = sheet.cell(row=row, column=7)
+        c7.value = item.vm_venue_zip
+
+        row=row+1
+
+    workbook.save(filename='ON_latest_venue.xlsx')
