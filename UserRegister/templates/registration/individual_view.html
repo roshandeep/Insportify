@@ -10,7 +10,7 @@
             <h3 class="mx-auto text-center fw-light">User Profile</h3>
             <hr>
         </div>
-        <form id="msform" method="post">
+        <form id="msform" method="post" action="{% url 'EventsApp:user_profile_submit'%}">
             {% csrf_token %}
             {% if messages %}
             {% for message in messages %}
@@ -33,8 +33,8 @@
                 <div class="card shadow">
                     <h4 class="card-header text-white text-center"
                         style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">
-                        Tell us little
-                        about you</h4>
+                        Tell us little about you
+                    </h4>
                         <div class="p-2 d-flex justify-content-end">
                             <input type="button" name="next" class="next action-button btn btn-primary"
                                    value="Next" id="next-tab-1" style="width: 90px;"/>
@@ -43,7 +43,7 @@
 
                         <div class="form-row p-2">
                             <input type="text" class="form-control" name="first_name" placeholder="* First Name"
-                                   value="{% if individual.first_name %} {{individual.first_name}} {% else %} None {% endif %}"/>
+                                   value="{% if individual.first_name %} {{individual.first_name}}{% endif %}"/>
                         </div>
                         <div class="form-row p-2">
                             <input type="text" class="form-control" name="last_name" placeholder="* Last Name"
@@ -55,40 +55,64 @@
                                    value="{% if individual.dob %} {{individual.dob}} {% endif %}"/>
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" class="form-control" name="contact_email" placeholder="* Contact Email"
-                                   value="{% if individual.email %} {{individual.email}} {% endif %}"/>
-                        </div>
-                        <div class="form-row p-2">
-                            <input type="text" class="form-control" name="mobile" placeholder="Mobile"
+                            <input type="text" class="form-control" name="phone" placeholder="Mobile"
                                    value="{% if individual.phone %} {{individual.phone}} {% endif %}"/>
                         </div>
+                        <div class="form-row p-2">
+                            <select name="pronoun" id="pronoun" class="form-select">
+                                <option value="0">Choose Preferred Pronoun</option>
+                                <option value="1" {% if individual.pronoun == "1" %} selected {% endif %}>she/her/hers/herself</option>
+                                <option value="2" {% if individual.pronoun == "2" %} selected {% endif %}>he/him/his/himself</option>
+                                <option value="3" {% if individual.pronoun == "3" %} selected {% endif %}>they/them/their/theirs/themself</option>
+                                <option value="4" {% if individual.pronoun == "4" %} selected {% endif %}>others</option>
+                                <option value="5" {% if individual.pronoun == "5" %} selected {% endif %}>Prefer not to say</option>
+                            </select>
+                        </div>
+
                         <div class="form-row p-2">
                             <label>* I am interest in participating in ?</label>
                             <br>
                             <div>
-                                <label class="label-inline" for="Male"><input type="checkbox" id="Male" name="interest_gender" value="Male"
-                                {% if "Male" in individual.participation_interest %} checked {% endif %}>Male Only</input></label>
-                                <label class="label-inline" for="Female"><input type="checkbox" id="Female" name="interest_gender" value="Female"
-                                {% if "Female" in individual.participation_interest %} checked {% endif %}>Female Only</input></label>
-                                <label class="label-inline" for="Coed"><input type="checkbox" id="Coed" name="interest_gender" value="Coed"
-                                {% if "Coed" in individual.participation_interest %} checked {% endif %}>Coed</input></label>
+                                <label class="label-inline" for="Male">
+                                    <input type="checkbox" id="Male" name="participation_interest1" value="Male"
+                                        {% if "Male" in individual.participation_interest or individual.participation_interest1 %}
+                                            checked
+                                        {% endif %}>Male Only
+                                    </input>
+                                </label>
+                                <label class="label-inline" for="Female">
+                                    <input type="checkbox" id="Female" name="participation_interest2" value="Female"
+                                {% if "Female" in individual.participation_interest or individual.participation_interest2 %} checked {% endif %}>Female Only
+                                    </input>
+                                </label>
+                                <label class="label-inline" for="Coed">
+                                    <input type="checkbox" id="Coed" name="participation_interest3" value="Coed"
+                                {% if "Coed" in individual.participation_interest or individual.participation_interest3 %} checked {% endif %}>Coed</input>
+                                </label>
                                 </div>
                         </div>
                         <div class="form-row p-2">
                             <label>Are you a Student?</label>
                             <br>
-                            <label for="Yes"><input type="radio" id="Yes" name="is_student" value="Yes"
-                                   {% if individual.is_student == "Yes" %} checked {% endif %}>Yes</input></label>
+                            <label for="Yes">
+                                <input type="radio" id="Yes" name="is_student" value="Yes"
+                                   {% if individual.is_student == "Yes" %} checked {% endif %}>Yes
+                                </input>
+                            </label>
                             <label for="No"><input type="radio" id="No" name="is_student" value="No"
                                    {% if individual.is_student == "No" %} checked {% endif %}> No</input></label>
                         </div>
                         <div class="form-row p-2">
                             <label>Have you ever suffered concussion?</label>
                             <br>
-                            <label for="Yes"></label><input type="radio" id="Yes" name="is_concussion" value="Yes"
-                                   {% if individual.concussion == "Yes" %} checked {% endif %}>Yes</input></label>
-                                   <label for="No"><input type="radio" id="No" name="is_concussion" value="No"
-                                   {% if individual.concussion == "No" %} checked {% endif %}> No</input></label>
+                            <label for="Yes">
+                                <input type="radio" id="Yes" name="concussion" value="Yes"
+                                       {% if individual.concussion == "Yes" %} checked {% endif %}>Yes</input>
+                            </label>
+                            <label for="No">
+                                <input type="radio" id="No" name="concussion" value="No"
+                                   {% if individual.concussion == "No" %} checked {% endif %}> No</input>
+                            </label>
                         </div>
                         </div>
                 </div>
@@ -117,13 +141,33 @@
                                    value="{% if individual.city %} {{individual.city}} {% endif %}"/>
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" class="form-control" name="province" id="province" placeholder="* Province"
-                                   value="{% if individual.province %} {{individual.province}} {% endif %}"/>
+<!--                            {% comment %} <input type="text" class="form-control" name="province" id="province" placeholder="* Province"-->
+<!--                                   value="{% if individual.province %} {{individual.province}} {% endif %}"/> {% endcomment %}-->
+                            <select name="province" id="province" class="form-select">
+                                <option value="0">Select Province</option>
+                                {% comment %} {% for province in provinces %}
+                                    <option {% if individual.province == province %} selected {% endif %} value="{{ province }}">{{ province }}</option>
+                                {% endfor %} {% endcomment %}
+                                <option value="British Columbia" {% if individual.province == "British Columbia" %} selected {% endif %}>British Columbia</option>
+                                <option value="Manitoba" {% if individual.province == "Manitoba" %} selected {% endif %}>Manitoba</option>
+                                <option value="New Brunswick" {% if individual.province == "New Brunswick" %} selected {% endif %}>New Brunswick</option>
+                                <option value="Newfoundland and Labrador" {% if individual.province == "Newfoundland and Labrador" %} selected {% endif %}>Newfoundland and Labrador</option>
+                                <option value="Nova Scotia" {% if individual.province == "Nova Scotia" %} selected {% endif %}>Nova Scotia</option>
+                                <option value="Northwest Territories" {% if individual.province == "Northwest Territories" %} selected {% endif %}>Northwest Territories</option>
+                                <option value="Nunavut" {% if individual.province == "Nunavut" %} selected {% endif %}>Nunavut</option>
+                                <option value="Ontario" {% if individual.province == "Ontario" %} selected {% endif %}>Ontario</option>
+                                <option value="Prince Edward Island" {% if individual.province == "Prince Edward Island" %} selected {% endif %}>Prince Edward Island</option>
+                                <option value="Quebec" {% if individual.province == "Quebec" %} selected {% endif %}>Quebec</option>
+                                <option value="Saskatchewan" {% if individual.province == "Saskatchewan" %} selected {% endif %}>Saskatchewan</option>
+                                <option value="Yukon" {% if individual.province == "Yukon" %} selected {% endif %}>Yukon</option>
+                            </select>
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" class="form-control" name="country" id="country" placeholder="* Country"
-                                   value="{% if individual.country %} {{individual.country}} {% endif %}"/>
-                        </div>
+                            <select name="country" id="country" class="form-select">
+                                <option value="0">Select Country</option>
+                                <option value="Canada" {% if individual.country == "Canada" %} selected {% endif %}>Canada</option>
+
+                            </select>
                         <div class="form-row p-2 text-center">
                             <div id="input_fields_wrap">
                                 <input type="button" class="action-button btn btn-primary"
@@ -337,7 +381,7 @@
             </fieldset>
 
         </form>
-
+        {% if profile.is_master %}
         <div class="p-2 text-center">
             <input type="button" class="btn btn-danger" id="btn_delete_account"
                    value="Delete Account" data-bs-toggle="modal" data-bs-target="#delete_modal"/>
@@ -365,6 +409,33 @@
                 </div>
             </div>
         </div>
+        {% else %}
+        <div class="p-2 text-center">
+            <input type="button" class="btn btn-danger" id="btn_delete_profile"
+                   value="Delete Profile" data-bs-toggle="modal" data-bs-target="#delete_modal_profile"/>
+        </div>
+        <div class="modal fade" id="delete_modal_profile" data-bs-backdrop="static" data-keyboard="false" tabindex="-1"
+             aria-labelledby="deleteModalLabel_profile" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteModalLabel_profile">Delete Porifle</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to delete this profile?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <a type="button" class="btn btn-primary" href="{% url 'EventsApp:delete_profile' %}">
+                            Confirm Delete</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
     </div>
 </div>
 
@@ -387,6 +458,7 @@
 
 #progressbar .active {
     color: #ff6f3d;
+    cursor: pointer;
 }
 
 #progressbar li {
@@ -836,12 +908,42 @@ $("#position").change(function () {
     });
 
     $(document).ready(function () {
+        var tab1 = $("#tab-1");
         var tab2 = $("#tab-2");
         var tab3 = $("#tab-3");
         var tab4 = $("#tab-4");
         tab2.hide();
         tab3.hide();
         tab4.hide();
+
+        $("li#step1").click(function () {
+            tab1.show();
+            tab2.hide();
+            tab3.hide();
+            tab4.hide();
+            $("#step1").addClass("active");
+        });
+        $("li#step2").click(function () {
+            tab1.hide();
+            tab2.show();
+            tab3.hide();
+            tab4.hide();
+            $("#step2").addClass("active");
+        });
+        $("li#step3").click(function () {
+            tab1.hide();
+            tab2.hide();
+            tab3.show();
+            tab4.hide();
+            $("#step3").addClass("active");
+        });
+        $("li#step4").click(function () {
+            tab1.hide();
+            tab2.hide();
+            tab3.hide();
+            tab4.show();
+            $("#step4").addClass("active");
+        });
 
         $("#next-tab-1").click(function () {
             var tab1 = $("#tab-1");

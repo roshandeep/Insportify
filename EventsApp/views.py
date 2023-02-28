@@ -19,21 +19,33 @@ from django.views.decorators.csrf import csrf_exempt
 from openpyxl import Workbook
 
 from Insportify import settings
-from .forms import MultiStepForm, AvailabilityForm, LogoForm, InviteForm
+from .forms import MultiStepForm, AvailabilityForm, LogoForm, InviteForm, NewProfileForm
 from .models import master_table, Individual, Organization, Venues, SportsCategory, SportsType, Order, User, \
     Availability, Logo, Extra_Loctaions, Events_PositionInfo, Secondary_SportsChoice, Invite, \
-    PositionAndSkillType, SportsImage, Organization_Availability, OrderItems, Advertisement
+    PositionAndSkillType, SportsImage, Organization_Availability, OrderItems, Advertisement, Profile
 import util
 from django.db.models import Q
+from functools import lru_cache
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
+
+
+@lru_cache()
+def get_profile_from_user(user):
+    # user = User.objects.get(user=request.user)
+    return Profile.objects.get(active_user=user)
+
 
 @login_required
 def multistep(request):
     entered_values = {}
     sports_type = SportsType.objects.all().order_by('sports_type_text')
+
+    profile = get_profile_from_user(request.user)
+
     if request.user.is_individual:
-        user_loc = Extra_Loctaions.objects.filter(user=request.user).values_list('city', flat=True)
+
+        user_loc = Extra_Loctaions.objects.filter(profile=profile).values_list('city', flat=True)
         venues = Venues.objects.values('pk', 'vm_name', 'vm_venuecity').filter(
             vm_venuecity__in=list(user_loc)).order_by('vm_name')
     else:
@@ -53,7 +65,7 @@ def multistep(request):
             print(list(request.POST.items()))
             # Save data
             obj = form.save(commit=False)
-            obj.created_by = request.user
+            obj.created_by = profile
             obj.sport_type = request.POST['sport_type']
             obj.venue = request.POST['venue']
             obj.street = request.POST['street']
@@ -162,7 +174,10 @@ def ValidateFormValues(request):
     date_valid = True
     event_count_valid = True
     fields_valid = True
-    event_count = len(master_table.objects.filter(created_by=request.user))
+
+    profile = get_profile_from_user(request.user)
+
+    event_count = len(master_table.objects.filter(created_by=profile))
     if not request.user.is_mvp and event_count >= 2:
         messages.error(request, "Cannot create event, maximum events possible by non-MVP member is 2")
         event_count_valid = False
@@ -269,7 +284,7 @@ def ValidateFormValues(request):
     return date_valid and event_count_valid and fields_valid
 
 
-def ValidateUserProfileForm(request, context):
+def ValidateUserProfileForm(request):
     valid = True
     if not request.POST.get('first_name') or request.POST['first_name'].strip() == "":
         messages.error(request, "Please enter First Name")
@@ -280,31 +295,40 @@ def ValidateUserProfileForm(request, context):
     if not request.POST.get('dob') or request.POST['dob'].strip() == "":
         messages.error(request, "Please enter Date of Birth")
         valid = False
-    if not request.POST.get('contact_email') or request.POST['contact_email'].strip() == "":
-        messages.error(request, "Please enter Contact Email")
-        valid = False
-    # if not request.POST.get('mobile') or request.POST['mobile'].strip() == "":
-    #     messages.error(request, "Please enter Mobile")
-    #     valid = False
-    if not request.POST.get('interest_gender') or request.POST['interest_gender'].strip() == "":
+
+    if not request.POST.get('participation_interest1') and request.POST['participation_interest1'].strip() == "" and \
+            not request.POST.get('participation_interest2') and request.POST[
+        'participation_interest2'].strip() == "" and \
+            not request.POST.get('participation_interest3') and request.POST['participation_interest3'].strip() == "":
         messages.error(request, "Please select Event gender preferences")
         valid = False
 
-    # if len(context['locations']) == 0:
+    location_valid = False
     if not request.POST.get('city') or request.POST['city'].strip() == "":
-        messages.error(request, "Please enter City")
-        valid = False
-    if not request.POST.get('province') or request.POST['province'].strip() == "":
+        profile = get_profile_from_user(request.user)
+        locations = Extra_Loctaions.objects.filter(profile=profile).order_by("city")
+        print(locations.all())
+        if len(locations) == 0:
+            messages.error(request, "Please enter City")
+            valid = False
+        else:
+            location_valid = True
+    if location_valid:
+        pass
+        # TODO: Location Validation code goes here.
+
+    if request.POST.get('province') == "0" or request.POST['province'].strip() == "":
         messages.error(request, "Please enter Province")
         valid = False
-    if not request.POST.get('country') or request.POST['country'].strip() == "":
+
+    if request.POST.get('country') == "0" or request.POST['country'].strip() == "":
         messages.error(request, "Please enter Country")
         valid = False
 
     return valid
 
 
-def ValidateOrgProfileForm(request, context):
+def ValidateOrgProfileForm(request):
     valid = True
     if not request.POST.get('company_name') or request.POST['company_name'].strip() == "":
         messages.error(request, "Please enter Organization Name")
@@ -312,9 +336,9 @@ def ValidateOrgProfileForm(request, context):
     if not request.POST.get('registration') or request.POST['registration'].strip() == "":
         messages.error(request, "Please enter Registration Number")
         valid = False
-    if not request.POST.get('email') or request.POST['email'].strip() == "":
-        messages.error(request, "Please enter Contact Email")
-        valid = False
+    # if not request.POST.get('email') or request.POST['email'].strip() == "":
+    #     messages.error(request, "Please enter Contact Email")
+    #     valid = False
     if not request.POST.get('phone') or request.POST['phone'].strip() == "":
         messages.error(request, "Please enter Contact Phone Number")
         valid = False
@@ -340,9 +364,9 @@ def ValidateOrgProfileForm(request, context):
     if not request.POST.get('age_group') or request.POST['age_group'].strip() == "":
         messages.error(request, "Please select Age Group")
         valid = False
-    if not request.POST.get('sport_type') or request.POST['sport_type'].strip() == "":
-        messages.error(request, "Please select Sports you facilitate")
-        valid = False
+    # if not request.POST.get('sport_type') or request.POST['sport_type'].strip() == "":
+    #     messages.error(request, "Please select Sports you facilitate")
+    #     valid = False
 
     return valid
 
@@ -399,10 +423,11 @@ def save_event_position_info(request, event):
 
 @login_required
 def all_events(request):
-    # sports_type_excel()
-    venue_excel()
+
+    profile = get_profile_from_user(request.user)
+
     expired_events = []
-    event_list = list(master_table.objects.filter(created_by=request.user))
+    event_list = list(master_table.objects.filter(created_by=profile))
     event_list = get_events_by_time(event_list)
     today = date.today()
     for event in event_list[:]:
@@ -435,8 +460,8 @@ def all_events(request):
 @login_required
 def committed_events(request):
     event_list = set()
-
-    cart = OrderItems.objects.filter(user=request.user)
+    profile = get_profile_from_user(request.user)
+    cart = OrderItems.objects.filter(profile=profile)
     if len(cart) > 0:
         for item in cart:
             event = master_table.objects.get(pk=item.event.pk)
@@ -447,118 +472,225 @@ def committed_events(request):
 
 @login_required
 def delete_profile(request):
-    User.objects.filter(pk=request.user.pk).delete()
-    logout(request)
-    return redirect('EventsApp:home')
+    profile = get_profile_from_user(request.user)
+    if profile.is_master:
+        User.objects.filter(pk=request.user.pk).delete()
+        logout(request)
+        return redirect('EventsApp:home')
+    else:
+        return delete_current_profile(request)
+
+
+def modify_individual(response, individual):
+    if "first_name" in response:
+        individual.first_name = response["first_name"].strip() if response["first_name"] else ""
+    if "is_current" in response:
+        individual.is_current = response["is_current"].strip()
+    if "last_name" in response:
+        individual.last_name = response["last_name"].strip() if response["last_name"] else ""
+    if "phone" in response:
+        phone = response["phone"].strip()
+        phone = ''.join(i for i in phone if i.isdigit())
+        individual.phone = phone
+    if "website" in response:
+        individual.website = response["website"].strip()
+    if "job_title" in response:
+        individual.job_title = response["job_title"].strip()
+    if "dob" in response:
+        individual.dob = response["dob"].strip() if response["dob"] else ""
+    if "is_concussion" in response:
+        individual.concussion = response["is_concussion"].strip()
+    if "is_student" in response:
+        individual.is_student = response["is_student"].strip()
+    participation_interest = []
+    if "participation_interest1" in response:
+        participation_interest.append(response['participation_interest1'])
+    if "participation_interest2" in response:
+        participation_interest.append(response['participation_interest2'])
+    if "participation_interest3" in response:
+        participation_interest.append(response['participation_interest3'])
+    individual.participation_interest = ','.join(item for item in participation_interest)
+
+    if "pronoun" in response:
+        individual.pronoun = response["pronoun"].strip() if response["pronoun"] else ""
+
+    if "city" in response:
+        individual.city = response["city"].strip() if response["city"] else ""
+    if "province" in response:
+        individual.province = response["province"].strip() if response["province"] else ""
+    if "country" in response:
+        individual.country = response["country"].strip() if response["country"] else ""
+    if "sport_type" in response:
+        individual.sports_type = response["sport_type"].strip() if response["sport_type"] else ""
+    if "position" in response:
+        individual.sports_position = response["position"].strip() if response["position"] else ""
+    if "skill" in response:
+        individual.sports_skill = response["skill"].strip() if response["skill"] else ""
+    return individual
+
+
+@login_required
+def display_profile(request):
+    profiles = Profile.objects.filter(user=request.user)
+    context = {
+        'profiles_list': profiles
+    }
+    return render(request, 'EventsApp/switch_profile.html', context)
+
+
+def _switch_profile(user, name):
+    profile = Profile.objects.get(user=user, name=name)
+    if not profile:
+        print('Profile not found : ', name)
+        return False
+
+    curr_prof = get_profile_from_user(user)
+    if curr_prof.name == name:
+        return True
+
+    curr_prof.active_user = None
+    # request.user.profile = None
+    curr_prof.save()
+
+    # Assuming name is unique
+    profile.active_user = user
+    profile.save()
+
+    user.active_profile_name = profile.name
+    user.profile_status = profile.profile_status
+    user.save()
+
+    get_profile_from_user.cache_clear()
+    return True
+
+
+@login_required
+def switch_profile(request, name):
+    _switch_profile(request.user, name)
+    return home(request)
+
+
+@login_required
+def delete_current_profile(request):
+    curr_prof = get_profile_from_user(request.user)
+    master_prof = Profile.objects.get(user=request.user, is_master=True)
+    _switch_profile(request.user, master_prof.name)
+    if not curr_prof.is_master:
+        curr_prof.delete()
+    else:
+        print('Cannot delete master profile.')
+    get_profile_from_user.cache_clear()
+    return home(request)
+
+
+@login_required
+def create_profile(request):
+    if request.user.is_organization:
+        return home(request)
+
+    if request.method == 'GET':
+        form = NewProfileForm()
+        context = {'form': form}
+        return render(request, 'EventsApp/create_profile.html', context)
+
+    if request.method == 'POST':
+        form = NewProfileForm(request.POST)
+        if form.is_valid():
+            # TODO : Add validation
+            name = form.cleaned_data.get('name').lower()
+
+            existing_profiles = Profile.objects.filter(user=request.user)
+            print(existing_profiles)
+            for prof in existing_profiles:
+                if prof.name == name:
+                    messages.error(request, "A profile with this name already exists. Use another name.")
+                    form = NewProfileForm()
+                    context = {'form': form}
+                    return render(request, 'EventsApp/create_profile.html', context)
+
+            profile = Profile.objects.create(active_user=None, user=request.user, profile_status=False, name=name,
+                                             is_master=False)
+            profile.save()
+
+            individual = Individual.objects.create(profile=profile, first_name=name)
+            individual.save()
+
+            _switch_profile(request.user, name)
+
+            get_profile_from_user.cache_clear()
+
+            request.user.refresh_from_db()
+            # context = {'individual': individual, 'sports_type': [], 'sec_sport_choices': [], 'locations': [], 'user_avaiability': []}
+            # return render(request, 'registration/individual_view.html', context)
+
+            return redirect('EventsApp:user_profile')
+        else:
+            print('Form not valid')
+            return render(request, 'EventsApp/create_profile.html')
+
+    print('Error in profile creation.')
+    return home(request)
 
 
 @login_required
 def user_profile(request):
+    # Displays or updates user profile
+    profile = get_profile_from_user(request.user)
+    individual = Individual.objects.get(profile=profile)
     context = {
-        'user': request.user
+        'individual': individual,
+        'profile': profile
     }
     sports_type = SportsType.objects.all().order_by('sports_type_text')
-    sec_sport_choices = Secondary_SportsChoice.objects.filter(user=request.user).order_by("sport_type")
-    locations = Extra_Loctaions.objects.filter(user=request.user).order_by("city")
-    user_avaiability = Availability.objects.filter(user=request.user)
+    sec_sport_choices = Secondary_SportsChoice.objects.filter(profile=profile).order_by("sport_type")
+    locations = Extra_Loctaions.objects.filter(profile=profile).order_by("city")
+    user_avaiability = Availability.objects.filter(profile=profile)
     get_day_of_week(user_avaiability)
     context['sports_type'] = sports_type
     context['sec_sport_choices'] = sec_sport_choices
     context['locations'] = locations
     context['user_avaiability'] = user_avaiability
-    if request.method == "GET":
-        individual = Individual.objects.get(user=request.user)
-        # print(individual.__dict__)
-        context['individual'] = individual
-        return render(request, 'registration/individual_view.html', context)
-
-    elif request.method == "POST":
-        individual = Individual.objects.filter(user=request.user)
-        response = request.POST.dict()
-        if not ValidateUserProfileForm(request, context):
-            individual = Individual.objects.get(user=request.user)
-            context['individual'] = individual
-            return render(request, 'registration/individual_view.html', context)
-        if individual.exists():
-            individual = Individual.objects.get(user=request.user)
-            individual.user = request.user
-            if "first_name" in response:
-                individual.first_name = response["first_name"].strip() if response["first_name"] else ""
-            if "last_name" in response:
-                individual.last_name = response["last_name"].strip() if response["last_name"] else ""
-            if "mobile" in response:
-                mobile = response["mobile"].strip()
-                mobile = ''.join(i for i in mobile if i.isdigit())
-                individual.phone = mobile
-            if "contact_email" in response:
-                individual.email = response["contact_email"].strip() if response["contact_email"] else ""
-            if "website" in response:
-                individual.website = response["website"].strip()
-            if "job_title" in response:
-                individual.job_title = response["job_title"].strip()
-            if "dob" in response:
-                individual.dob = response["dob"].strip() if response["dob"] else ""
-            if "is_concussion" in response:
-                individual.concussion = response["is_concussion"].strip()
-            if "is_student" in response:
-                individual.is_student = response["is_student"].strip()
-            if "interest_gender" in response:
-                individual.participation_interest = ','.join(item for item in request.POST.getlist('interest_gender'))
-            if "city" in response:
-                individual.city = response["city"].strip() if response["city"] else ""
-            if "province" in response:
-                individual.province = response["province"].strip() if response["province"] else ""
-            if "country" in response:
-                individual.country = response["country"].strip() if response["country"] else ""
-            if "contact_email" in response:
-                individual.contact_email = response["contact_email"].strip() if response["contact_email"] else ""
-            if "sport_type" in response:
-                individual.sports_type = response["sport_type"].strip() if response["sport_type"] else ""
-            if "position" in response:
-                individual.sports_position = response["position"].strip() if response["position"] else ""
-            if "skill" in response:
-                individual.sports_skill = response["skill"].strip() if response["skill"] else ""
-            individual.save()
-            context['individual'] = individual
-        else:
-            obj = Individual()
-            obj.user = request.user
-            if "first_name" in response:
-                obj.first_name = response["first_name"].strip() if response["first_name"] else ""
-            if "last_name" in response:
-                obj.last_name = response["last_name"].strip() if response["last_name"] else ""
-            if "mobile" in response:
-                mobile = response["mobile"].strip()
-                mobile = ''.join(i for i in mobile if i.isdigit())
-                obj.phone = mobile
-            if "contact_email" in response:
-                obj.email = response["contact_email"].strip() if response["contact_email"] else ""
-            if "dob" in response:
-                obj.dob = response["dob"].strip() if response["dob"] else ""
-            if "is_concussion" in response:
-                obj.concussion = response["is_concussion"].strip()
-            if "is_student" in response:
-                obj.is_student = response["is_student"].strip()
-            if "interest_gender" in response:
-                obj.participation_interest = ','.join(item for item in request.POST.getlist('interest_gender'))
-            if "city" in response:
-                obj.city = response["city"].strip() if response["city"] else ""
-            if "province" in response:
-                obj.province = response["province"].strip() if response["province"] else ""
-            if "country" in response:
-                obj.country = response["country"].strip() if response["country"] else ""
-            if "sport_type" in response:
-                obj.sports_type = response["sport_type"].strip() if response["sport_type"] else ""
-            if "position" in response:
-                obj.sports_position = response["position"].strip() if response["position"] else ""
-            if "skill" in response:
-                obj.sports_skill = response["skill"].strip() if response["skill"] else ""
-
-            obj.save()
-            context['individual'] = obj
-        messages.success(request, 'Individual details updated!')
 
     return render(request, 'registration/individual_view.html', context)
+
+
+@login_required
+def user_profile_submit(request):
+    print('POST request fields', request.POST.dict())
+
+    if not ValidateUserProfileForm(request):
+        print('Validation Failed')
+        profile = get_profile_from_user(request.user)
+        context = {
+            'individual': request.POST.dict(),
+            'profile': profile
+        }
+        print(context)
+        sports_type = SportsType.objects.all().order_by('sports_type_text')
+        sec_sport_choices = Secondary_SportsChoice.objects.filter(profile=profile).order_by("sport_type")
+        locations = Extra_Loctaions.objects.filter(profile=profile).order_by("city")
+        user_avaiability = Availability.objects.filter(profile=profile)
+        get_day_of_week(user_avaiability)
+        context['sports_type'] = sports_type
+        context['sec_sport_choices'] = sec_sport_choices
+        context['locations'] = locations
+        context['user_avaiability'] = user_avaiability
+        return render(request, 'registration/individual_view.html', context)
+    else:
+
+        profile = get_profile_from_user(request.user)
+        request.user.profile_status = True
+        profile.profile_status = True
+        individual = Individual.objects.get(profile=profile)
+        individual = modify_individual(request.POST.dict(), individual)
+        profile.save()
+        request.user.save()
+        individual.save()
+        print('Individual details updated!')
+        return home(request)
+
+    # messages.success(request, 'Individual details updated!')
+    # return render(request, 'registration/individual_view.html', context)
 
 
 def add_sports_positions(request):
@@ -567,12 +699,15 @@ def add_sports_positions(request):
         selected_position = request.POST['selected_position_text']
         selected_skill = request.POST['selected_skill_text']
         # print(selected_skill, selected_position, selected_sport)
+
+        profile = get_profile_from_user(request.user)
+
         try:
-            if Secondary_SportsChoice.objects.filter(user=request.user, sport_type=selected_sport,
+            if Secondary_SportsChoice.objects.filter(profile=profile, sport_type=selected_sport,
                                                      position=selected_position, skill=selected_skill).exists():
                 return JsonResponse({'status': 'Duplicate Position cannot be added!'}, safe=False)
             else:
-                obj = Secondary_SportsChoice(user=request.user, sport_type=selected_sport,
+                obj = Secondary_SportsChoice(profile=profile, sport_type=selected_sport,
                                              position=selected_position, skill=selected_skill)
                 obj.save()
             return JsonResponse({'status': 'New Position added!'}, safe=False)
@@ -582,7 +717,8 @@ def add_sports_positions(request):
 
 def fetch_user_sports_positions(request):
     if request.is_ajax():
-        position_choices = Secondary_SportsChoice.objects.filter(user=request.user).order_by("sport_type")
+        profile = get_profile_from_user(request.user)
+        position_choices = Secondary_SportsChoice.objects.filter(profile=profile).order_by("sport_type")
         position_choices = list(position_choices.values("sport_type", "position", "skill", "pk"))
         return JsonResponse(position_choices, safe=False)
 
@@ -608,11 +744,12 @@ def add_user_locations(request):
         # print(selected_city, selected_province, selected_country)
         try:
             if selected_city != "" and selected_province != "" and selected_country != "":
-                if Extra_Loctaions.objects.filter(user=request.user, city=selected_city,
+                profile = get_profile_from_user(request.user)
+                if Extra_Loctaions.objects.filter(profile=profile, city=selected_city,
                                                   province=selected_province, country=selected_country).exists():
                     return JsonResponse({'status': 'Duplicate Location cannot be added!'}, safe=False)
                 else:
-                    obj = Extra_Loctaions(user=request.user, city=selected_city,
+                    obj = Extra_Loctaions(profile=profile, city=selected_city,
                                           province=selected_province, country=selected_country)
                     obj.save()
                 return JsonResponse({'status': 'New Location added!'}, safe=False)
@@ -624,7 +761,8 @@ def add_user_locations(request):
 
 def fetch_user_locations(request):
     if request.is_ajax():
-        location_choices = Extra_Loctaions.objects.filter(user=request.user).order_by("city")
+        profile = get_profile_from_user(request.user)
+        location_choices = Extra_Loctaions.objects.filter(profile=profile).order_by("city")
         location_choices = list(location_choices.values("city", "province", "country", "pk"))
         return JsonResponse(location_choices, safe=False)
 
@@ -717,13 +855,14 @@ def get_selected_sports_positions(request):
 
 @login_required
 def organization_profile(request):
+    profile = get_profile_from_user(request.user)
     context = {
-        'user': request.user
+        'profile': profile
     }
     if request.method == "GET":
-        organization = Organization.objects.get(user=request.user)
+        organization = Organization.objects.get(profile=profile)
         # print(organization.__dict__)
-        locations = Extra_Loctaions.objects.filter(user=request.user).order_by("city")
+        locations = Extra_Loctaions.objects.filter(profile=profile).order_by("city")
         sports_type = SportsType.objects.all().order_by('sports_type_text')
         context['locations'] = locations
         context['sports_type'] = sports_type
@@ -731,19 +870,20 @@ def organization_profile(request):
         return render(request, 'registration/organization_view.html', context)
 
     if request.method == "POST":
-        organization = Organization.objects.filter(user=request.user)
-        locations = Extra_Loctaions.objects.filter(user=request.user).order_by("city")
+        organization = Organization.objects.filter(profile=profile)
+        locations = Extra_Loctaions.objects.filter(profile=profile).order_by("city")
         sports_type = SportsType.objects.all().order_by('sports_type_text')
+        context['organization'] = organization
         context['locations'] = locations
         context['sports_type'] = sports_type
         response = request.POST.dict()
-        if not ValidateOrgProfileForm(request, context):
-            organization = Organization.objects.get(user=request.user)
-            context['organization'] = organization
+        if not ValidateOrgProfileForm(request):
+            organization = Organization.objects.get(profile=profile)
+            context['organization'] = request.POST.dict()
             return render(request, 'registration/organization_view.html', context)
-        if organization.exists():
-            organization = Organization.objects.get(user=request.user)
-            organization.user = request.user
+        else:  # organization.exists():
+            organization = Organization.objects.get(profile=profile)
+            organization.profile = profile
             if "type_of_organization" in response:
                 organization.type_of_organization = response["type_of_organization"].strip() if response[
                     "type_of_organization"] else ""
@@ -782,137 +922,102 @@ def organization_profile(request):
             if "participants" in response:
                 organization.participants = response["participants"].strip() if response["participants"] else ""
             if "sport_type" in response:
-                save_organization_sports(request.user, request.POST.getlist('sport_type'))
-            save_organization_timings(request.user, response)
+                save_organization_sports(profile, request.POST.getlist('sport_type'))
+            save_organization_timings(profile, response)
+            request.user.profile_status = True
+            profile.profile_status = True
+            profile.save()
+            request.user.save()
             organization.save()
             context['organization'] = organization
-        else:
-            obj = Organization()
-            obj.user = request.user
-            if "type_of_organization" in response:
-                obj.type_of_organization = response["type_of_organization"].strip() if response[
-                    "type_of_organization"] else ""
-            if "company_name" in response:
-                obj.organization_name = response["company_name"].strip() if response["company_name"] else ""
-            if "parent_organization" in response:
-                obj.parent_organization_name = response["parent_organization"].strip() if response[
-                    "parent_organization"] else ""
-            if "registration" in response:
-                obj.registration_no = response["registration"].strip() if response["registration"] else ""
-            if "year_established" in response:
-                obj.year_established = response["year_established"].strip() if response["year_established"] else ""
-            if "street_name" in response:
-                obj.street = response["street_name"].strip() if response["street_name"] else ""
-            if "city" in response:
-                obj.city = response["city"].strip() if response["city"] else ""
-            if "province" in response:
-                obj.province = response["province"].strip() if response["province"] else ""
-            if "country" in response:
-                obj.country = response["country"].strip() if response["country"] else ""
-            if "postal_code" in response:
-                obj.postal_code = response["postal_code"].strip() if response["postal_code"] else ""
-            if "email" in response:
-                obj.email = response["email"].strip() if response["email"] else ""
-            if "phone" in response:
-                phone = response["phone"].strip()
-                phone = ''.join(i for i in phone if i.isdigit())
-                obj.phone = phone
-            if "website" in response:
-                obj.website = response["website"].strip() if response["website"] else ""
-            if "gender" in response:
-                obj.gender_focus = ','.join(item for item in request.POST.getlist('gender'))
-            if "age_group" in response:
-                obj.age_group = ','.join(item for item in request.POST.getlist('age_group'))
-            if "participants" in response:
-                organization.participants = response["participants"].strip() if response["participants"] else ""
-            if "sport_type" in response:
-                save_organization_sports(request.user, request.POST.getlist('sport_type'))
-            save_organization_timings(request.user, response)
-            obj.save()
-            context['organization'] = obj
-        messages.success(request, 'Organization details updated!')
+
+            # messages.success(request, 'Organization details updated!')
+            return home(request)
     return render(request, 'registration/organization_view.html', context)
 
 
-def save_organization_timings(user, response):
+def save_organization_timings(profile, response):
     if "sunday_start_time" in response and response["sunday_start_time"] != "" and "sunday_end_time" in response and \
             response["sunday_end_time"] != "":
-        if Organization_Availability.objects.filter(user=user, day_of_week="Sunday").exists():
-            obj = Organization_Availability.objects.get(user=user, day_of_week="Sunday")
+        if Organization_Availability.objects.filter(profile=profile, day_of_week="Sunday").exists():
+            obj = Organization_Availability.objects.get(profile=profile, day_of_week="Sunday")
             obj.start_time = response["sunday_start_time"]
             obj.end_time = response["sunday_end_time"]
             obj.save()
         else:
-            obj = Organization_Availability(user=user, day_of_week="Sunday", start_time=response["sunday_start_time"],
+            obj = Organization_Availability(profile=profile, day_of_week="Sunday",
+                                            start_time=response["sunday_start_time"],
                                             end_time=response["sunday_end_time"])
             obj.save()
     if "monday_start_time" in response and response["monday_start_time"] != "" and "monday_end_time" in response and \
             response["monday_end_time"] != "":
-        if Organization_Availability.objects.filter(user=user, day_of_week="Monday").exists():
-            obj = Organization_Availability.objects.get(user=user, day_of_week="Monday")
+        if Organization_Availability.objects.filter(profile=profile, day_of_week="Monday").exists():
+            obj = Organization_Availability.objects.get(profile=profile, day_of_week="Monday")
             obj.start_time = response["monday_start_time"]
             obj.end_time = response["monday_end_time"]
             obj.save()
         else:
-            obj = Organization_Availability(user=user, day_of_week="Monday", start_time=response["monday_start_time"],
+            obj = Organization_Availability(profile=profile, day_of_week="Monday",
+                                            start_time=response["monday_start_time"],
                                             end_time=response["monday_end_time"])
             obj.save()
     if "tuesday_start_time" in response and response["tuesday_start_time"] != "" and "tuesday_end_time" in response and \
             response["tuesday_end_time"] != "":
-        if Organization_Availability.objects.filter(user=user, day_of_week="Tuesday").exists():
-            obj = Organization_Availability.objects.get(user=user, day_of_week="Tuesday")
+        if Organization_Availability.objects.filter(profile=profile, day_of_week="Tuesday").exists():
+            obj = Organization_Availability.objects.get(profile=profile, day_of_week="Tuesday")
             obj.start_time = response["tuesday_start_time"]
             obj.end_time = response["tuesday_end_time"]
             obj.save()
         else:
-            obj = Organization_Availability(user=user, day_of_week="Tuesday", start_time=response["tuesday_start_time"],
+            obj = Organization_Availability(profile=profile, day_of_week="Tuesday",
+                                            start_time=response["tuesday_start_time"],
                                             end_time=response["tuesday_end_time"])
             obj.save()
     if "wednesday_start_time" in response and response[
         "wednesday_start_time"] != "" and "wednesday_end_time" in response and response["wednesday_end_time"] != "":
-        if Organization_Availability.objects.filter(user=user, day_of_week="Wednesday").exists():
-            obj = Organization_Availability.objects.get(user=user, day_of_week="Wednesday")
+        if Organization_Availability.objects.filter(profile=profile, day_of_week="Wednesday").exists():
+            obj = Organization_Availability.objects.get(profile=profile, day_of_week="Wednesday")
             obj.start_time = response["wednesday_start_time"]
             obj.end_time = response["wednesday_end_time"]
             obj.save()
         else:
-            obj = Organization_Availability(user=user, day_of_week="Wednesday",
+            obj = Organization_Availability(profile=profile, day_of_week="Wednesday",
                                             start_time=response["wednesday_start_time"],
                                             end_time=response["wednesday_end_time"])
             obj.save()
     if "thursday_start_time" in response and response[
         "thursday_start_time"] != "" and "thursday_end_time" in response and response["thursday_end_time"] != "":
-        if Organization_Availability.objects.filter(user=user, day_of_week="Thursday").exists():
-            obj = Organization_Availability.objects.get(user=user, day_of_week="Thursday")
+        if Organization_Availability.objects.filter(profile=profile, day_of_week="Thursday").exists():
+            obj = Organization_Availability.objects.get(profile=profile, day_of_week="Thursday")
             obj.start_time = response["thursday_start_time"]
             obj.end_time = response["thursday_end_time"]
             obj.save()
         else:
-            obj = Organization_Availability(user=user, day_of_week="Thursday",
+            obj = Organization_Availability(profile=profile, day_of_week="Thursday",
                                             start_time=response["thursday_start_time"],
                                             end_time=response["thursday_end_time"])
             obj.save()
     if "friday_start_time" in response and response["friday_start_time"] != "" and "friday_end_time" in response and \
             response["friday_end_time"] != "":
-        if Organization_Availability.objects.filter(user=user, day_of_week="Friday").exists():
-            obj = Organization_Availability.objects.get(user=user, day_of_week="Friday")
+        if Organization_Availability.objects.filter(profile=profile, day_of_week="Friday").exists():
+            obj = Organization_Availability.objects.get(profile=profile, day_of_week="Friday")
             obj.start_time = response["friday_start_time"]
             obj.end_time = response["friday_end_time"]
             obj.save()
         else:
-            obj = Organization_Availability(user=user, day_of_week="Friday",
+            obj = Organization_Availability(profile=profile, day_of_week="Friday",
                                             start_time=response["friday_start_time"],
                                             end_time=response["friday_end_time"])
             obj.save()
     if "saturday_start_time" in response and response[
         "saturday_start_time"] != "" and "saturday_end_time" in response and response["saturday_end_time"] != "":
-        if Organization_Availability.objects.filter(user=user, day_of_week="Saturday").exists():
-            obj = Organization_Availability.objects.get(user=user, day_of_week="Saturday")
+        if Organization_Availability.objects.filter(profile=profile, day_of_week="Saturday").exists():
+            obj = Organization_Availability.objects.get(profile=profile, day_of_week="Saturday")
             obj.start_time = response["saturday_start_time"]
             obj.end_time = response["saturday_end_time"]
             obj.save()
         else:
-            obj = Organization_Availability(user=user, day_of_week="Saturday",
+            obj = Organization_Availability(profile=profile, day_of_week="Saturday",
 
                                             start_time=response["saturday_start_time"],
                                             end_time=response["saturday_end_time"])
@@ -921,13 +1026,14 @@ def save_organization_timings(user, response):
 
 def get_organization_timings(request):
     if request.is_ajax():
-        availability = Organization_Availability.objects.filter(user=request.user)
+        profile = get_profile_from_user(request.user)
+        availability = Organization_Availability.objects.filter(profile=profile)
         availability = list(availability.values("day_of_week", "start_time", "end_time", "pk"))
         return JsonResponse(availability, safe=False)
 
 
-def save_organization_sports(user, sport_type_list):
-    user_choice = Secondary_SportsChoice.objects.filter(user=user)
+def save_organization_sports(profile, sport_type_list):
+    user_choice = Secondary_SportsChoice.objects.filter(profile=profile)
     # Remove the sport choces from DB if they have been removed from current list
     if len(user_choice):
         for item in user_choice:
@@ -936,8 +1042,8 @@ def save_organization_sports(user, sport_type_list):
 
     # Add/Update sport choices for user
     for sport in sport_type_list:
-        if not Secondary_SportsChoice.objects.filter(user=user, sport_type=sport).exists():
-            obj = Secondary_SportsChoice(user=user, sport_type=sport)
+        if not Secondary_SportsChoice.objects.filter(profile=profile, sport_type=sport).exists():
+            obj = Secondary_SportsChoice(profile=profile, sport_type=sport)
             obj.save()
     return
 
@@ -954,13 +1060,14 @@ def add_organization_locations(request):
             'selected_zipcode_text'] else ""
 
         try:
+            profile = get_profile_from_user(request.user)
             if selected_city != "" and selected_province != "" and selected_country != "" and selected_zipcode != "":
-                if Extra_Loctaions.objects.filter(user=request.user, street=selected_street, city=selected_city,
+                if Extra_Loctaions.objects.filter(profile=profile, street=selected_street, city=selected_city,
                                                   province=selected_province, country=selected_country,
                                                   zipcode=selected_zipcode).exists():
                     return JsonResponse({'status': 'Duplicate Location cannot be added!'}, safe=False)
                 else:
-                    obj = Extra_Loctaions(user=request.user, street=selected_street, city=selected_city,
+                    obj = Extra_Loctaions(profile=profile, street=selected_street, city=selected_city,
                                           province=selected_province, country=selected_country,
                                           zipcode=selected_zipcode)
                     obj.save()
@@ -973,21 +1080,36 @@ def add_organization_locations(request):
 
 def fetch_organization_locations(request):
     if request.is_ajax():
-        location_choices = Extra_Loctaions.objects.filter(user=request.user).order_by("city")
+        profile = get_profile_from_user(request.user)
+        location_choices = Extra_Loctaions.objects.filter(profile=profile).order_by("city")
         location_choices = list(location_choices.values("street", "city", "province", "country", "zipcode", "pk"))
         return JsonResponse(location_choices, safe=False)
 
 
 def home(request):
     # Individual.objects.filter(pk=16).delete()
+    # load_venues_excel()
+    # load_pos_skill_type()
+
+    if request.user.is_authenticated:
+        if not request.user.profile_status:
+            print('Redirecting to user profile...')
+            return redirect('EventsApp:user_profile')
+
     sports = SportsType.objects.values('pk', 'sports_type_text').order_by('sports_type_text')
 
     advertisements = get_advertisements(request)
     advertisements = list(advertisements)
     # advertisements = [advertisements[i:i + 3] for i in range(0, len(advertisements), 3)]
 
+    if request.user.is_authenticated:
+        profile = get_profile_from_user(request.user)
+    else:
+        profile = None
+
     if request.user.is_authenticated and request.user.is_individual:
-        user_sports = Secondary_SportsChoice.objects.filter(user=request.user).values('sport_type')
+
+        user_sports = Secondary_SportsChoice.objects.filter(profile=profile).values('sport_type')
         for item in sports:
             flag = False
             for item2 in user_sports:
@@ -997,8 +1119,7 @@ def home(request):
             if not flag:
                 sports = sports.exclude(sports_type_text=item['sports_type_text'])
 
-    if request.user.is_authenticated and request.user.is_individual:
-        user_loc = Extra_Loctaions.objects.filter(user=request.user).values_list('city', flat=True)
+        user_loc = Extra_Loctaions.objects.filter(profile=profile).values_list('city', flat=True)
         venues = Venues.objects.values('pk', 'vm_name', 'vm_venuecity').filter(
             vm_venuecity__in=list(user_loc)).order_by('vm_name')
     else:
@@ -1122,15 +1243,16 @@ def home(request):
         'drop_in_eventList': drop_in_eventList,
         'recommended_registrationList': recommended_registrationList,
         'recommended_drop_in': recommended_drop_in,
-        'advertisements': advertisements,
+        'advertisements': advertisements
     }
     # print(events)
-    html_template = loader.get_template('EventsApp/home.html')
-    return HttpResponse(html_template.render(context, request))
+    # html_template = loader.get_template('EventsApp/home.html')
+    # return HttpResponse(html_template.render(context, request))
+
+    return render(request, 'EventsApp/home.html', context)
 
 
 def sort_events_by_date(events):
-
     def getDate(event):
         datetimes = event.datetimes if event.datetimes else event.current_datetimes
         time = datetimes.split("-")
@@ -1168,13 +1290,13 @@ def get_events_by_time(events):
 
 
 def get_recommended_events(request):
-    user = User.objects.get(email=request.user.email)
-    user_avaiability = Availability.objects.filter(user=user)
+    profile = get_profile_from_user(request.user)
+    user_avaiability = Availability.objects.filter(profile=profile)
 
     events = master_table.objects.all()
     events = get_events_by_time(events)
 
-    locations_saved = Extra_Loctaions.objects.filter(user=user)
+    locations_saved = Extra_Loctaions.objects.filter(profile=profile)
     loc_list = [item.city.lower() for item in locations_saved]
     recommended_events = []
 
@@ -1203,9 +1325,10 @@ def get_recommended_events(request):
     recommended_events = list(recommended_events)
     # print("Location Filter", recommended_events)
 
-    # FILTER BY Age
-    if user.is_individual:
-        individual = Individual.objects.get(user=user)
+    if request.user.is_individual:
+        individual = Individual.objects.get(profile=profile)
+
+        # FILTER BY Age
         if individual.dob:
             dob = datetime.strptime(individual.dob, '%Y-%m-%d').date()
             today = date.today()
@@ -1225,8 +1348,9 @@ def get_recommended_events(request):
     # print("Age Filter", recommended_events)
 
     # FILTER BY Gender
-    if user.is_individual:
-        individual = Individual.objects.get(user=user)
+    if request.user.is_individual:
+        individual = Individual.objects.get(profile=profile)
+
         individual_gender = []
         if individual.participation_interest and individual.participation_interest != "":
             # print(individual.participation_interest)
@@ -1248,7 +1372,7 @@ def get_recommended_events(request):
     # print("Gender Filter", recommended_events)
 
     # FILTER BY Sports
-    sport_choices = Secondary_SportsChoice.objects.filter(user=user).order_by("sport_type")
+    sport_choices = Secondary_SportsChoice.objects.filter(profile=profile).order_by("sport_type")
     sports_list = []
     for item in sport_choices:
         sports_list.append(item.sport_type)
@@ -1260,8 +1384,8 @@ def get_recommended_events(request):
     # print("Sports Filter", recommended_events)
 
     # FILTER BY Positions
-    if user.is_individual:
-        position_choices = Secondary_SportsChoice.objects.filter(user=user)
+    if request.user.is_individual:
+        position_choices = Secondary_SportsChoice.objects.filter(profile=profile)
         position_list = []
         for item in position_choices:
             position_list.append(item.position)
@@ -1279,8 +1403,9 @@ def get_recommended_events(request):
     # print("Positions Filter", recommended_events)
 
     # FILTER BY Skills
-    if user.is_individual:
-        skill_choices = Secondary_SportsChoice.objects.filter(user=user)
+    if request.user.is_individual:
+        skill_choices = Secondary_SportsChoice.objects.filter(profile=profile)
+
         skill_list = []
         for item in skill_choices:
             skill_list.append(item.skill)
@@ -1348,7 +1473,8 @@ def format_time(events):
             event.datetimes = str_datetime
         elif event.current_datetimes:
             string_date = datetime.strptime(event.current_datetimes[0:10], '%m/%d/%Y').date()
-            str_datetime = string_date.strftime("%B %d") + " from " + event.current_datetimes[10:len(event.current_datetimes)]
+            str_datetime = string_date.strftime("%B %d") + " from " + event.current_datetimes[
+                                                                      10:len(event.current_datetimes)]
             event.current_datetimes = str_datetime
 
     return events
@@ -1389,7 +1515,7 @@ def get_events_by_selected_date(events_list, selected_date):
 def event_details(request, event_id, event_date):
     context = {}
     event = master_table.objects.get(pk=event_id)
-    user = request.user
+    profile = get_profile_from_user(request.user)
     event_postions = list(Events_PositionInfo.objects.filter(event=event_id))
     # print(event_postions)
     if event.is_recurring:
@@ -1404,7 +1530,7 @@ def event_details(request, event_id, event_date):
     context['event_date'] = event_date
 
     if request.method == 'POST':
-        print(request.POST.dict())
+        # print(request.POST.dict())
         response = request.POST.dict()
         for key in response:
             if 'chk' in key:
@@ -1418,14 +1544,14 @@ def event_details(request, event_id, event_date):
                 pos_cost = response['cost_' + idx]
                 ## Fetch previous unpurchased orderitems to set checkout timer to current
                 remove_expired_cart_items(request)
-                current_cart = OrderItems.objects.filter(user=user, purchased=False)
+                current_cart = OrderItems.objects.filter(profile=profile, purchased=False)
                 for current_item in current_cart:
                     current_item.checkout_timer = datetime.now(timezone.utc)
                     current_item.save()
                 ## Add to cart
                 cart = OrderItems()
                 cart.event = master_table.objects.get(pk=event_id)
-                cart.user = User.objects.get(email=request.user.email)
+                cart.profile = profile
                 cart.position_id = Events_PositionInfo.objects.get(pk=position_id)
                 cart.date = date.today()
                 cart.position_type = pos_name
@@ -1443,12 +1569,17 @@ def event_details(request, event_id, event_date):
 
                 # print(request.user)
 
+                if request.user.is_individual:
+                    sub_prof = Individual.objects.get(profile=profile)
+                elif request.user.is_organization:
+                    sub_prof = Organization.objects.get(profile=profile)
+
                 # Email Creator - New Subscriber
                 event_subject = "New subscriber for Event: " + event.event_title
                 event_message = "A new user has subscribed to event: " + event.event_title + "\n" + \
-                                "Subscriber Name: " + user.first_name + " " + \
-                                user.last_name if user.last_name else "" + "\n" + \
-                                                                      "Subscriber Email: " + user.email + "\n"
+                                "Subscriber Name: " + sub_prof.first_name + " " + \
+                                sub_prof.last_name if sub_prof.last_name else "" + "\n" + \
+                                                                              "Subscriber Email: " + request.user.email + "\n"
                 # if event.created_by:
                 #     util.email(event_subject, event_message, [event.created_by.email])
 
@@ -1480,8 +1611,9 @@ def fetch_cart_items(request):
     total = 0
     order_items = []
     remove_expired_cart_items(request)
+    profile = get_profile_from_user(request.user)
     if request.is_ajax():
-        cart = OrderItems.objects.filter(user=request.user, purchased=False)
+        cart = OrderItems.objects.filter(profile=profile, purchased=False)
         for item in cart:
             total = total + item.total_cost
 
@@ -1498,7 +1630,8 @@ def fetch_cart_items(request):
 
 
 def remove_expired_cart_items(request):
-    cart = OrderItems.objects.filter(user=request.user, purchased=False)
+    profile = get_profile_from_user(request.user)
+    cart = OrderItems.objects.filter(profile=profile, purchased=False)
     for item in cart:
         time_delta = (datetime.now(timezone.utc) - item.checkout_timer)
         total_mins = (time_delta.total_seconds()) / 60
@@ -1514,19 +1647,19 @@ def remove_expired_cart_items(request):
 def cart_summary(request):
     context = {}
     total = 0
-    user = request.user
+    profile = get_profile_from_user(request.user)
     remove_expired_cart_items(request)
     context['STRIPE_PUBLISHABLE_KEY'] = settings.STRIPE_PUBLISHABLE_KEY,
-    cart = OrderItems.objects.filter(user=user, purchased=False)
+    cart = OrderItems.objects.filter(profile=profile, purchased=False)
     for item in cart:
         total = total + item.total_cost
 
     context["cart"] = cart
     context["total"] = total
     if request.method == 'POST':
-        order_obj = Order.objects.filter(customer=request.user, payment=False)
+        order_obj = Order.objects.filter(customer=profile, payment=False)
         if order_obj.exists():
-            order_obj = Order.objects.get(customer=request.user, payment=False)
+            order_obj = Order.objects.get(customer=profile, payment=False)
             order_obj.items.clear()
             order_obj.order_date = timezone.now()
             for order_items in cart:
@@ -1536,7 +1669,7 @@ def cart_summary(request):
             order_obj.order_amount = total
         else:
             order = Order()
-            order.customer = User.objects.get(email=request.user.email)
+            order.customer = profile
             order.order_date = timezone.now()
             order.order_amount = total
             order.payment = False
@@ -1549,15 +1682,13 @@ def cart_summary(request):
     return render(request, "EventsApp/cart_summary.html", context)
 
 
-
 @login_required
 def charge(request):
-    context={}
-    user = request.user
+    context = {}
     char_set = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
     key = settings.STRIPE_PUBLISHABLE_KEY
     context['key'] = key
-    order = Order.objects.get(customer=request.user, payment=False)
+    order = Order.objects.get(customer=Profile.objects.get(active_user=request.user), payment=False)
     cart = order.items.all()
     context["order"] = order
     context["cart"] = cart
@@ -1647,19 +1778,20 @@ def pay_at_venue(request):
 @login_required
 def add_availability(request):
     context = {}
+    profile = get_profile_from_user(request.user)
     form = AvailabilityForm(request.POST or None,
                             instance=Availability(),
-                            initial={'user': request.user})
+                            initial={'profile': profile})
 
     context['form'] = form
-    user = User.objects.get(email=request.user.email)
-    user_avaiability = Availability.objects.filter(user=user)
+    # user = User.objects.get(email=request.user.email)
+    user_avaiability = Availability.objects.filter(profile=profile)
     get_day_of_week(user_avaiability)
 
     context["user_availability"] = user_avaiability
     if request.POST:
         if form.is_valid():
-            obj = Availability(user=user,
+            obj = Availability(profile=profile,
                                day_of_week=form.cleaned_data['day_of_week'],
                                start_time=form.cleaned_data['start_time'],
                                end_time=form.cleaned_data['end_time'],
@@ -1669,7 +1801,7 @@ def add_availability(request):
                 messages.error(request, "Duplicate Availability!")
             else:
                 obj.save()
-                user_avaiability = Availability.objects.filter(user=user)
+                user_avaiability = Availability.objects.filter(profile=profile)
                 get_day_of_week(user_avaiability)
                 context["user_availability"] = user_avaiability
                 messages.success(request, "New Availability Added!")
@@ -1683,9 +1815,10 @@ def add_availability(request):
 
 
 def get_user_availability(request):
+    profile = get_profile_from_user(request.user)
     if request.is_ajax():
-        user = User.objects.get(email=request.user.email)
-        user_availability = Availability.objects.filter(user=user)
+        # user = User.objects.get(email=request.user.email)
+        user_availability = Availability.objects.filter(profile=profile)
         user_availability = list(user_availability.values("day_of_week", "start_time", "end_time", "pk", "all_day"))
         for avail in user_availability:
             if avail["day_of_week"] == 1:
@@ -1710,10 +1843,11 @@ def get_user_availability(request):
 
 
 def add_user_availability(request):
-    user = User.objects.get(email=request.user.email)
-    user_avaiability = Availability.objects.filter(user=user)
+    # user = User.objects.get(email=request.user.email)
+    profile = get_profile_from_user(request.user)
+    user_avaiability = Availability.objects.filter(profile=profile)
     if request.method == "POST":
-        obj = Availability(user=user,
+        obj = Availability(profile=profile,
                            day_of_week=request.POST['day_of_week'],
                            start_time=request.POST['start_time'],
                            end_time=request.POST['end_time'],
@@ -1723,7 +1857,7 @@ def add_user_availability(request):
             return JsonResponse({'status': 'Duplicate Availability!'}, safe=False)
         else:
             obj.save()
-            user_avaiability = Availability.objects.filter(user=user)
+            user_avaiability = Availability.objects.filter(profile=profile)
             get_day_of_week(user_avaiability)
             return JsonResponse({'status': 'New Availability Added!'}, safe=False)
     else:
@@ -1786,12 +1920,13 @@ def get_day_of_week(user_avaiability):
 
 
 def load_venues_excel():
-    path = "./venue.xlsx"
+    path = "./latest_venue.xlsx"
     wb_obj = openpyxl.load_workbook(path)
     sheet_obj = wb_obj.active
     # Venues.objects.all().delete()
-    for i in range(1, sheet_obj.max_row + 1):
-        if sheet_obj.cell(row=i, column=5).value.strip() == "ON":
+    for i in range(2, sheet_obj.max_row + 1):
+        if sheet_obj.cell(row=i, column=5).value.strip() == "ON" or sheet_obj.cell(row=i,
+                                                                                   column=5).value.strip() == "Ontario":
             vm_name = sheet_obj.cell(row=i, column=1).value.strip()
             vm_venue_description = sheet_obj.cell(row=i, column=2).value.strip()
             vm_venue_street = sheet_obj.cell(row=i, column=3).value.strip()
@@ -1799,33 +1934,47 @@ def load_venues_excel():
             vm_venue_province = sheet_obj.cell(row=i, column=5).value.strip()
             vm_venue_country = sheet_obj.cell(row=i, column=6).value.strip()
             vm_venue_zip = sheet_obj.cell(row=i, column=7).value.strip()
-            obj = Venues(vm_name=vm_name, vm_venue_description=vm_venue_description, vm_venue_street=vm_venue_street,
+            if not Venues.objects.filter(vm_name=vm_name, vm_venue_description=vm_venue_description, vm_venue_street=vm_venue_street,
                          vm_venuecity=vm_venuecity, vm_venue_province=vm_venue_province,
-                         vm_venue_country=vm_venue_country, vm_venue_zip=vm_venue_zip)
-            # obj.save()
+                         vm_venue_country=vm_venue_country, vm_venue_zip=vm_venue_zip).exists():
+                obj = Venues(vm_name=vm_name, vm_venue_description=vm_venue_description, vm_venue_street=vm_venue_street,
+                             vm_venuecity=vm_venuecity, vm_venue_province=vm_venue_province,
+                             vm_venue_country=vm_venue_country, vm_venue_zip=vm_venue_zip)
+                print(i)
+                obj.save()
 
 
 def load_pos_skill_type():
-    path = "./INsportify sport database.xlsx"
+    path = "./sports_db.xlsx"
     wb_obj = openpyxl.load_workbook(path)
     sheet_obj = wb_obj.active
     for i in range(2, sheet_obj.max_row + 1):
-        sports_category = SportsCategory.objects.get(sports_catgeory_text=sheet_obj.cell(row=i, column=1).value.strip())
-        try:
-            sports_type = SportsType.objects.get(sports_type_text=sheet_obj.cell(row=i, column=2).value.strip())
-            position = sheet_obj.cell(row=i, column=3).value.strip()
-            skill = sheet_obj.cell(row=i, column=4).value.strip()
+        sports_catgeory_text = sheet_obj.cell(row=i, column=1).value.strip()
+        if not SportsCategory.objects.filter(sports_catgeory_text=sports_catgeory_text).exists():
+            sc = SportsCategory(sports_catgeory_text=sports_catgeory_text)
+            sc.save()
+
+        sports_category = SportsCategory.objects.get(sports_catgeory_text=sports_catgeory_text)
+        sports_type_text = sheet_obj.cell(row=i, column=2).value.strip()
+
+        if not SportsType.objects.filter(sports_category=sports_category, sports_type_text=sports_type_text).exists():
+            st = SportsType(sports_category=sports_category, sports_type_text=sports_type_text)
+            st.save()
+
+        sports_type = SportsType.objects.get(sports_type_text=sports_type_text)
+
+        position = sheet_obj.cell(row=i, column=3).value.strip()
+        skill = sheet_obj.cell(row=i, column=4).value.strip()
+        if not PositionAndSkillType.objects.filter(sports_category=sports_category,
+                                   sports_type=sports_type,
+                                   position_type=position,
+                                   skill_type=skill).exists():
             obj = PositionAndSkillType(sports_category=sports_category,
                                        sports_type=sports_type,
                                        position_type=position,
                                        skill_type=skill)
-            # print(i, sports_category, sports_type, obj)
+            print(i, sports_category, sports_type, obj)
             obj.save()
-        except SportsType.DoesNotExist:
-            s = SportsType(sports_category=sports_category,
-                           sports_type_text=sheet_obj.cell(row=i, column=2).value.strip())
-            s.save()
-        # obj.save()
 
 
 @login_required
@@ -1879,20 +2028,22 @@ def delete_by_id(request, event_id, date):
 
 @login_required
 def invite_by_id(request, event_id, email=None):
+    ## only works for individual
     context = {}
+    profile = get_profile_from_user(request.user)
     form = InviteForm(request.POST or None,
                       instance=Invite(),
-                      initial={'user': request.user})
-
+                      initial={'profile': profile})
+    individual = Individual.objects.get(profile=profile)
     context['form'] = form
-    user = User.objects.get(email=request.user.email)
+    # user = User.objects.get(email=request.user.email)
     event = master_table.objects.get(pk=event_id)
     context["event"] = event
     context["invites"] = Invite.objects.all().filter(event=event).distinct('email')
 
     if email:
-        if user.first_name and user.last_name:
-            full_name = user.first_name + " " + user.last_name
+        if individual.first_name and individual.last_name:
+            full_name = individual.first_name + " " + individual.last_name
         else:
             full_name = ""
         util.email("Invitation from Insportify", "Hi there! " + full_name
@@ -1903,12 +2054,12 @@ def invite_by_id(request, event_id, email=None):
 
     if request.POST:
         if form.is_valid():
-            obj = Invite(user=user,
+            obj = Invite(profile=profile,
                          event=event,
                          email=form.cleaned_data['email'])
             obj.save()
-            if user.first_name and user.last_name:
-                full_name = user.first_name + " " + user.last_name
+            if individual.first_name and individual.last_name:
+                full_name = individual.first_name + " " + individual.last_name
             else:
                 full_name = ""
             util.email("Invitation from Insportify", "Hi there! " + full_name
@@ -1925,29 +2076,31 @@ def invite_by_id(request, event_id, email=None):
 
 @login_required
 def invite(request):
+    ## works only for individual
     context = {}
+    profile = get_profile_from_user(request.user)
     form = InviteForm(request.POST or None,
                       instance=Invite(),
-                      initial={'user': request.user})
+                      initial={'profile': profile})
 
     context['form'] = form
-    user = User.objects.get(email=request.user.email)
-    context["invites"] = Invite.objects.all().filter(user=user)
-
+    # user = User.objects.get(email=request.user.email)
+    context["invites"] = Invite.objects.all().filter(profile=profile)
+    individual = Individual.objects.get(profile=profile)
     if request.POST:
         if form.is_valid():
-            obj = Invite(user=user,
+            obj = Invite(profile=profile,
                          event=None,
                          email=form.cleaned_data['email'])
             obj.save()
-            if user.first_name and user.last_name:
-                full_name = user.first_name + " " + user.last_name
+            if individual.first_name and individual.last_name:
+                full_name = individual.first_name + " " + individual.last_name
             else:
                 full_name = ""
             util.email("Invitation from Insportify", "Hi there! " + full_name
                        + " has invited you to Insportify! Join Now: " + "http://127.0.0.1:8000/",
                        [form.cleaned_data['email']])
-            context["invites"] = Invite.objects.all().filter(user=user)
+            context["invites"] = Invite.objects.all().filter(profile=profile)
         else:
             print(form.errors)
 
@@ -1956,24 +2109,25 @@ def invite(request):
 
 @login_required
 def logo_upload_view(request):
+    profile = get_profile_from_user(request.user)
     if request.method == 'POST':
         img_obj = ""
         form = LogoForm(request.POST, request.FILES)
         if form.is_valid():
-            if Logo.objects.filter(user=request.user).exists():
-                img_obj = Logo.objects.get(user=request.user)
+            if Logo.objects.filter(profile=profile).exists():
+                img_obj = Logo.objects.get(profile=profile)
                 img_obj.image = form.instance.image
                 img_obj.save()
             else:
                 obj = form.save(commit=False)
-                obj.user = request.user
+                obj.profile = profile
                 obj.save()
             return render(request, 'EventsApp/add_logo.html', {'form': form, 'img_obj': img_obj})
     else:
         img_obj = ""
         form = LogoForm()
-        if Logo.objects.filter(user=request.user).exists():
-            img_obj = Logo.objects.get(user=request.user)
+        if Logo.objects.filter(profile=profile).exists():
+            img_obj = Logo.objects.get(profile=profile)
 
     return render(request, 'EventsApp/add_logo.html', {'form': form, 'img_obj': img_obj})
 
@@ -2006,15 +2160,17 @@ def get_advertisements(request):
     if not request.user.is_authenticated:
         ads = Advertisement.objects.all().filter(Q(end_time__gte=date.today()) & Q(geographical_scope="National"))
     else:
-        locs = Extra_Loctaions.objects.all().filter(user=request.user)
+        profile = get_profile_from_user(request.user)
+        locs = Extra_Loctaions.objects.all().filter(profile=profile)
         city_str = ''
         prov_str = ''
         for loc in locs:
             city_str += loc.city
             prov_str += loc.province
         ads = Advertisement.objects.all().filter(Q(end_time__gte=date.today()) & Q(geographical_scope="National") |
-                                                 (Q(geographical_scope = "Provincial") & Q(province__icontains=prov_str)) |
-                                                 (Q(geographical_scope = "Local") & Q(city__icontains=city_str)))
+                                                 (Q(geographical_scope="Provincial") & Q(
+                                                     province__icontains=prov_str)) |
+                                                 (Q(geographical_scope="Local") & Q(city__icontains=city_str)))
     return ads
 
 

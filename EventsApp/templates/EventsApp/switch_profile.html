@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% load widget_tweaks %}
+{% load static %}
+{% block content %}
+
+<div class="row">
+  <div class="col-5 mx-auto">
+    <div>
+      <h3 class="mx-auto text-center fw-light">Your Registered Profiles</h3>
+      <hr />
+    </div>
+  </div>
+</div>
+<div>
+  <div class="col-5 mx-auto" style="overflow-x: auto">
+    <table class="table table-striped">
+      <thead>
+        <th>#</th>
+        <th>Profile Name</th>
+        <th></th>
+      </thead>
+      <tbody>
+        {% for prof in profiles_list %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{prof.name}}</td>
+          <td>
+            <button class="btn btn-primary mr-2 m-2" >
+              <a class="nostyle" href="{% url 'EventsApp:switch_profile' prof.name %}">
+                Switch To Profile
+                </a
+              >
+            </button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<style>
+  table {
+    border-collapse: collapse !important;
+    width: 100% !important;
+  }
+
+  th,
+  td {
+    text-align: left !important;
+    padding: 8px !important;
+  }
+
+  @media only screen and (max-width: 768px) {
+    table {
+      width: 768px !important;
+    }
+    .horizontal-scroll-text {
+      display: block;
+    }
+  }
+
+  @media only screen and (min-width: 769px) {
+    table {
+      width: 100% !important;
+    }
+    .horizontal-scroll-text {
+      display: none;
+    }
+  }
+
+  td .id {
+    position: relative;
+    color: #000;
+    text-decoration: none;
+  }
+
+  td .id:hover {
+    color: #000;
+  }
+  td .id::before {
+    content: "";
+    position: absolute;
+    display: block;
+    width: 100%;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: #000;
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+  }
+
+  td .id:hover::before {
+    transform: scaleX(1);
+  }
+
+  a.disabled {
+    pointer-events: none;
+    cursor: default;
+  }
+
+  a.nostyle {
+    text-decoration: inherit;
+    color: inherit;
+    cursor: auto;
+}
+</style>
+{% endblock %}
+
+
+

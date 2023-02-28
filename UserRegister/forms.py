@@ -4,7 +4,7 @@ from django import forms
 from django.db import transaction
 from EventsApp.models import User
 from django.contrib.auth import get_user_model
-from EventsApp.models import Individual, Organization
+from EventsApp.models import Individual, Organization, Profile
 
 User = get_user_model()
 
@@ -40,10 +40,13 @@ class IndividualSignUpForm(UserCreationForm):
         user.last_name = self.cleaned_data.get('last_name')
         user.email = self.cleaned_data.get('email').lower()
         user.set_password(self.cleaned_data["password1"])
+        user.profile_status = False
         user.save()
-        individual = Individual.objects.create(user=user)
+        profile = Profile.objects.create(active_user=user, user=user, name=user.first_name, is_master=True,
+                                         profile_status=False)
+        individual = Individual.objects.create(profile=profile)
         individual.phone = self.cleaned_data.get('phone')
-        individual.email = self.cleaned_data.get('email').lower()
+        # individual.email = self.cleaned_data.get('email').lower()
         individual.first_name = self.cleaned_data.get('first_name')
         individual.last_name = self.cleaned_data.get('last_name')
         individual.save()
@@ -83,10 +86,12 @@ class MVPSignUpForm(forms.ModelForm):
         user.last_name = self.cleaned_data.get('last_name')
         user.email = self.cleaned_data.get('email').lower()
         user.set_password(self.cleaned_data["password1"])
+        user.profile_status = False
         user.save()
-        individual = Individual.objects.create(user=user)
+        profile = Profile.objects.create(active_user=user, user=user, is_master=True,name=user.first_name, profile_status=False)
+        individual = Individual.objects.create(profile=profile)
         individual.phone = self.cleaned_data.get('phone')
-        individual.email = self.cleaned_data.get('email').lower()
+        # individual.email = self.cleaned_data.get('email').lower()
         individual.first_name = self.cleaned_data.get('first_name')
         individual.last_name = self.cleaned_data.get('last_name')
         individual.website = self.cleaned_data.get('website')
@@ -132,9 +137,11 @@ class OrganizationSignUpForm(forms.ModelForm):
         user.first_name = self.cleaned_data.get('organization_name')
         user.email = self.cleaned_data.get('email').lower()
         user.set_password(self.cleaned_data["password1"])
+        user.profile_status = False
         # print(self.cleaned_data["password1"])
         user.save()
-        organization = Organization.objects.create(user=user)
+        profile = Profile.objects.create(active_user=user, user=user, is_master=True, name=user.first_name, profile_status=False)
+        organization = Organization.objects.create(profile=profile)
         organization.organization_name = self.cleaned_data.get('organization_name')
         organization.phone = self.cleaned_data.get('phone')
         organization.email = self.cleaned_data.get('email').lower()
