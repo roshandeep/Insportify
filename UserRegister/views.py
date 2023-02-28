@@ -135,26 +135,24 @@ class organization_register(CreateView):
             user.is_active = False
             user.save()
             is_localhost = get_current_site(self.request).domain == localhost
-
             if is_localhost:
                 ssl = 'http://'
             else:
                 ssl = 'https://'
             domain = ''.join([ssl, get_current_site(self.request).domain])
-            activation_link = render_to_string('acc_active_email.html', {
-                'user': user,
-                'domain': domain,
-                'uid': force_text(urlsafe_base64_encode(force_bytes(user.email))),
-                'token': account_activation_token.make_token(user),
-            }),
+            email = EmailMessage(
+                'Welcome to Insportify!',
+                render_to_string('acc_active_email.html', {
+                    'user': user,
+                    'domain': domain,
+                    'uid': force_text(urlsafe_base64_encode(force_bytes(user.email))),
+                    'token': account_activation_token.make_token(user),
+                }),
+                to=[form.cleaned_data.get('email')]
+            )
             if is_localhost:
-                print(activation_link)
+                print(email.body)
             else:
-                email = EmailMessage(
-                    'Welcome to Insportify!',
-                    activation_link,
-                    to=[form.cleaned_data.get('email').lower()]
-                )
                 email.send()
             messages.success(self.request,
                              'Account created! A verification email has been sent to your email address. Please confirm your email address to complete the registration.')
