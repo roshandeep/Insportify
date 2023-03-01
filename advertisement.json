@@ -1,1 +1,212 @@
-[{"model": "EventsApp.advertisement", "pk": 3, "fields": {"created_by": 21, "creation_time": "2022-12-20T14:06:37Z", "start_time": "2022-12-20T14:06:40Z", "end_time": "2023-12-31T14:06:53Z", "header": "INsportify", "description": "", "geographical_scope": "National", "city": "", "province": "", "country": "", "image": "54D2B2C8-5322-4271-9CC6-811EAEBAF926.jpeg", "url": "www.insportify.com", "client": "INsportify Hockey", "hit_count": 10, "max_hits": null}}, {"model": "EventsApp.advertisement", "pk": 4, "fields": {"created_by": 21, "creation_time": "2022-12-24T14:56:51Z", "start_time": "2022-12-24T14:56:53Z", "end_time": "2023-12-24T14:56:59Z", "header": "National Shunt", "description": "", "geographical_scope": "National", "city": "", "province": "Ontario, On", "country": "Canada", "image": "NSSL_global_1.jpg", "url": "www.nationalshunt.com/", "client": "Chad Stewart", "hit_count": 17, "max_hits": null}}, {"model": "EventsApp.advertisement", "pk": 5, "fields": {"created_by": 21, "creation_time": "2022-12-24T15:13:29Z", "start_time": "2022-12-24T15:13:32Z", "end_time": "2023-12-24T15:13:34Z", "header": "BNCresting", "description": "", "geographical_scope": "National", "city": "", "province": "Ontario, ON", "country": "Canada", "image": "logo.png", "url": "www.bncresting.com", "client": "Andrew Bilon", "hit_count": 18, "max_hits": null}}, {"model": "EventsApp.advertisement", "pk": 6, "fields": {"created_by": 21, "creation_time": "2022-12-24T15:18:01Z", "start_time": "2022-12-24T15:18:04Z", "end_time": "2023-12-24T15:18:12Z", "header": "OCHL", "description": "", "geographical_scope": "National", "city": "", "province": "", "country": "", "image": "6A07E99D-7F75-4409-A582-C5ABDB66949B.png", "url": "www.ochl.ca", "client": "", "hit_count": 9, "max_hits": null}}, {"model": "EventsApp.advertisement", "pk": 7, "fields": {"created_by": 21, "creation_time": "2023-01-12T02:48:50Z", "start_time": "2023-01-12T02:48:53Z", "end_time": "2024-01-12T02:49:17Z", "header": "Wokbox", "description": "", "geographical_scope": "National", "city": "Oshawa", "province": "Ontario", "country": "Canada", "image": "wokbox_image_2.png", "url": "wokbox.ca", "client": "", "hit_count": 6, "max_hits": null}}, {"model": "EventsApp.advertisement", "pk": 8, "fields": {"created_by": 21, "creation_time": "2023-01-14T14:00:59Z", "start_time": "2023-01-14T14:01:05Z", "end_time": "2024-01-14T14:01:10Z", "header": "Port Hope Panthers", "description": "", "geographical_scope": "National", "city": "Port Hope", "province": "Ontario", "country": "Canada", "image": "0B13559B-B120-4471-9CB6-ED86C5050D88.jpeg", "url": "https://porthopepanthers.pjhlon.hockeytech.com/", "client": "", "hit_count": 1, "max_hits": null}}, {"model": "EventsApp.advertisement", "pk": 9, "fields": {"created_by": 21, "creation_time": "2023-01-30T18:52:09Z", "start_time": "2023-01-30T18:52:16Z", "end_time": "2024-01-30T18:52:21Z", "header": "Hemys", "description": "", "geographical_scope": "National", "city": "Oshawa, Whitby, Lindsay, Omemee, Port Perry", "province": "Ontario", "country": "Canada", "image": "EB376A5A-97E9-411E-956F-92C0C29C8B45.jpeg", "url": "Www.Hemyhockey.com", "client": "", "hit_count": null, "max_hits": null}}, {"model": "EventsApp.advertisement", "pk": 10, "fields": {"created_by": 21, "creation_time": "2023-01-30T18:54:17Z", "start_time": "2023-01-30T18:54:19Z", "end_time": "2024-01-30T18:54:22Z", "header": "Boomer Targets", "description": "", "geographical_scope": "National", "city": "Oshawa, Barrie,", "province": "Ontario", "country": "Canada", "image": "1A623A87-B3C9-47BD-9704-29D9B9524CE1.jpeg", "url": "Www.boomerhockey.ca", "client": "", "hit_count": 2, "max_hits": null}}, {"model": "EventsApp.advertisement", "pk": 11, "fields": {"created_by": 21, "creation_time": "2023-01-30T18:58:38Z", "start_time": "2023-01-30T18:58:40Z", "end_time": "2024-01-30T18:58:44Z", "header": "Blacks Optometry", "description": "", "geographical_scope": "National", "city": "Oshawa", "province": "Ontario", "country": "Canada", "image": "EE736DC4-329A-4210-A496-C587FE27D3DC.jpeg", "url": "Www.seedrblack.com", "client": "", "hit_count": 3, "max_hits": null}}, {"model": "EventsApp.advertisement", "pk": 12, "fields": {"created_by": 21, "creation_time": "2023-02-08T14:11:31Z", "start_time": "2023-02-08T14:11:34Z", "end_time": "2024-02-08T14:11:37Z", "header": "Crows", "description": "", "geographical_scope": "National", "city": "Oshawa", "province": "Ontario", "country": "Canada", "image": "crows_sports.jpg", "url": "www.crowssports.com", "client": "", "hit_count": 1, "max_hits": null}}]
+[
+  {
+    "model": "EventsApp.advertisement",
+    "pk": 3,
+    "fields": {
+      "created_by": 21,
+      "creation_time": "2022-12-20T14:06:37Z",
+      "start_time": "2022-12-20T14:06:40Z",
+      "end_time": "2023-12-31T14:06:53Z",
+      "header": "INsportify",
+      "description": "",
+      "geographical_scope": "National",
+      "city": "",
+      "province": "",
+      "country": "",
+      "image": "54D2B2C8-5322-4271-9CC6-811EAEBAF926.jpeg",
+      "url": "www.insportify.com",
+      "client": "INsportify Hockey",
+      "hit_count": 10,
+      "max_hits": null
+    }
+  },
+  {
+    "model": "EventsApp.advertisement",
+    "pk": 4,
+    "fields": {
+      "created_by": 21,
+      "creation_time": "2022-12-24T14:56:51Z",
+      "start_time": "2022-12-24T14:56:53Z",
+      "end_time": "2023-12-24T14:56:59Z",
+      "header": "National Shunt",
+      "description": "",
+      "geographical_scope": "National",
+      "city": "",
+      "province": "Ontario, On",
+      "country": "Canada",
+      "image": "NSSL_global_1.jpg",
+      "url": "www.nationalshunt.com/",
+      "client": "Chad Stewart",
+      "hit_count": 17,
+      "max_hits": null
+    }
+  },
+  {
+    "model": "EventsApp.advertisement",
+    "pk": 5,
+    "fields": {
+      "created_by": 21,
+      "creation_time": "2022-12-24T15:13:29Z",
+      "start_time": "2022-12-24T15:13:32Z",
+      "end_time": "2023-12-24T15:13:34Z",
+      "header": "BNCresting",
+      "description": "",
+      "geographical_scope": "National",
+      "city": "",
+      "province": "Ontario, ON",
+      "country": "Canada",
+      "image": "logo.png",
+      "url": "www.bncresting.com",
+      "client": "Andrew Bilon",
+      "hit_count": 18,
+      "max_hits": null
+    }
+  },
+  {
+    "model": "EventsApp.advertisement",
+    "pk": 6,
+    "fields": {
+      "created_by": 21,
+      "creation_time": "2022-12-24T15:18:01Z",
+      "start_time": "2022-12-24T15:18:04Z",
+      "end_time": "2023-12-24T15:18:12Z",
+      "header": "OCHL",
+      "description": "",
+      "geographical_scope": "National",
+      "city": "",
+      "province": "",
+      "country": "",
+      "image": "6A07E99D-7F75-4409-A582-C5ABDB66949B.png",
+      "url": "www.ochl.ca",
+      "client": "",
+      "hit_count": 9,
+      "max_hits": null
+    }
+  },
+  {
+    "model": "EventsApp.advertisement",
+    "pk": 7,
+    "fields": {
+      "created_by": 21,
+      "creation_time": "2023-01-12T02:48:50Z",
+      "start_time": "2023-01-12T02:48:53Z",
+      "end_time": "2024-01-12T02:49:17Z",
+      "header": "Wokbox",
+      "description": "",
+      "geographical_scope": "National",
+      "city": "Oshawa",
+      "province": "Ontario",
+      "country": "Canada",
+      "image": "wokbox_image_2.png",
+      "url": "wokbox.ca",
+      "client": "",
+      "hit_count": 6,
+      "max_hits": null
+    }
+  },
+  {
+    "model": "EventsApp.advertisement",
+    "pk": 8,
+    "fields": {
+      "created_by": 21,
+      "creation_time": "2023-01-14T14:00:59Z",
+      "start_time": "2023-01-14T14:01:05Z",
+      "end_time": "2024-01-14T14:01:10Z",
+      "header": "Port Hope Panthers",
+      "description": "",
+      "geographical_scope": "National",
+      "city": "Port Hope",
+      "province": "Ontario",
+      "country": "Canada",
+      "image": "0B13559B-B120-4471-9CB6-ED86C5050D88.jpeg",
+      "url": "https://porthopepanthers.pjhlon.hockeytech.com/",
+      "client": "",
+      "hit_count": 1,
+      "max_hits": null
+    }
+  },
+  {
+    "model": "EventsApp.advertisement",
+    "pk": 9,
+    "fields": {
+      "created_by": 21,
+      "creation_time": "2023-01-30T18:52:09Z",
+      "start_time": "2023-01-30T18:52:16Z",
+      "end_time": "2024-01-30T18:52:21Z",
+      "header": "Hemys",
+      "description": "",
+      "geographical_scope": "National",
+      "city": "Oshawa, Whitby, Lindsay, Omemee, Port Perry",
+      "province": "Ontario",
+      "country": "Canada",
+      "image": "EB376A5A-97E9-411E-956F-92C0C29C8B45.jpeg",
+      "url": "Www.Hemyhockey.com",
+      "client": "",
+      "hit_count": null,
+      "max_hits": null
+    }
+  },
+  {
+    "model": "EventsApp.advertisement",
+    "pk": 10,
+    "fields": {
+      "created_by": 21,
+      "creation_time": "2023-01-30T18:54:17Z",
+      "start_time": "2023-01-30T18:54:19Z",
+      "end_time": "2024-01-30T18:54:22Z",
+      "header": "Boomer Targets",
+      "description": "",
+      "geographical_scope": "National",
+      "city": "Oshawa, Barrie,",
+      "province": "Ontario",
+      "country": "Canada",
+      "image": "1A623A87-B3C9-47BD-9704-29D9B9524CE1.jpeg",
+      "url": "Www.boomerhockey.ca",
+      "client": "",
+      "hit_count": 2,
+      "max_hits": null
+    }
+  },
+  {
+    "model": "EventsApp.advertisement",
+    "pk": 11,
+    "fields": {
+      "created_by": 21,
+      "creation_time": "2023-01-30T18:58:38Z",
+      "start_time": "2023-01-30T18:58:40Z",
+      "end_time": "2024-01-30T18:58:44Z",
+      "header": "Blacks Optometry",
+      "description": "",
+      "geographical_scope": "National",
+      "city": "Oshawa",
+      "province": "Ontario",
+      "country": "Canada",
+      "image": "EE736DC4-329A-4210-A496-C587FE27D3DC.jpeg",
+      "url": "Www.seedrblack.com",
+      "client": "",
+      "hit_count": 3,
+      "max_hits": null
+    }
+  },
+  {
+    "model": "EventsApp.advertisement",
+    "pk": 12,
+    "fields": {
+      "created_by": 21,
+      "creation_time": "2023-02-08T14:11:31Z",
+      "start_time": "2023-02-08T14:11:34Z",
+      "end_time": "2024-02-08T14:11:37Z",
+      "header": "Crows",
+      "description": "",
+      "geographical_scope": "National",
+      "city": "Oshawa",
+      "province": "Ontario",
+      "country": "Canada",
+      "image": "crows_sports.jpg",
+      "url": "www.crowssports.com",
+      "client": "",
+      "hit_count": 1,
+      "max_hits": null
+    }
+  }
+]

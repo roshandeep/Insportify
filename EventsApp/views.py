@@ -286,6 +286,7 @@ def ValidateFormValues(request):
 
 def ValidateUserProfileForm(request):
     valid = True
+    print(request.POST)
     if not request.POST.get('first_name') or request.POST['first_name'].strip() == "":
         messages.error(request, "Please enter First Name")
         valid = False
@@ -656,6 +657,7 @@ def user_profile(request):
 
 @login_required
 def user_profile_submit(request):
+    print('GET request fields', request.GET.dict())
     print('POST request fields', request.POST.dict())
 
     if not ValidateUserProfileForm(request):

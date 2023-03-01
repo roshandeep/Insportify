@@ -75,19 +75,19 @@
                             <div>
                                 <label class="label-inline" for="Male">
                                     <input type="checkbox" id="Male" name="participation_interest1" value="Male"
-                                        {% if "Male" in individual.participation_interest or individual.participation_interest1 %}
+                                        {% if "Male" in individual.participation_interest1 or individual.participation_interest1 %}
                                             checked
                                         {% endif %}>Male Only
                                     </input>
                                 </label>
                                 <label class="label-inline" for="Female">
                                     <input type="checkbox" id="Female" name="participation_interest2" value="Female"
-                                {% if "Female" in individual.participation_interest or individual.participation_interest2 %} checked {% endif %}>Female Only
+                                {% if "Female" in individual.participation_interest2 or individual.participation_interest2 %} checked {% endif %}>Female Only
                                     </input>
                                 </label>
                                 <label class="label-inline" for="Coed">
                                     <input type="checkbox" id="Coed" name="participation_interest3" value="Coed"
-                                {% if "Coed" in individual.participation_interest or individual.participation_interest3 %} checked {% endif %}>Coed</input>
+                                {% if "Coed" in individual.participation_interest3 or individual.participation_interest3 %} checked {% endif %}>Coed</input>
                                 </label>
                                 </div>
                         </div>

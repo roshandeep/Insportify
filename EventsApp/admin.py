@@ -6,7 +6,6 @@ from EventsApp.models import master_table, User, \
 
 admin.site.register(master_table)
 admin.site.register(User)
-admin.site.register(Profile)
 admin.site.register(SportsCategory)
 admin.site.register(SportsType)
 admin.site.register(Individual)
@@ -14,6 +13,15 @@ admin.site.register(Organization)
 admin.site.register(Logo)
 admin.site.register(PositionAndSkillType)
 admin.site.register(SportsImage)
+
+
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ('name', 'active_user',)
+    search_fields = ['name', 'active_user',]
+
+
+admin.site.register(Profile, ProfileAdmin)
+
 
 class VenuesAdmin(admin.ModelAdmin):
     list_display = ('vm_name', 'vm_venue_street', 'vm_venuecity', 'vm_venue_province', 'vm_venue_country', 'vm_venue_zip',)
