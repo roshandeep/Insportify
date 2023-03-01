@@ -67,16 +67,6 @@ class individual_register(CreateView):
             else:
                 ssl = 'https://'
             domain = ''.join([ssl, get_current_site(self.request).domain])
-            activation_link = render_to_string('acc_active_email.html', {
-                'user': user,
-                'domain': domain,
-                'uid': force_text(urlsafe_base64_encode(force_bytes(user.email))),
-                'token': account_activation_token.make_token(user),
-            })
-            # if is_localhost:
-            #     print(activation_link)
-            # else:
-            print(activation_link, type(activation_link))
             email = EmailMessage(
                 'Welcome to Insportify!',
                 render_to_string('acc_active_email.html', {
@@ -85,9 +75,12 @@ class individual_register(CreateView):
                     'uid': force_text(urlsafe_base64_encode(force_bytes(user.email))),
                     'token': account_activation_token.make_token(user),
                 }),
-                to=[form.cleaned_data.get('email').lower()]
+                to=[form.cleaned_data.get('email')]
             )
-            email.send()
+            if is_localhost:
+                print(email.body)
+            else:
+                email.send()
             messages.success(self.request,
                              'Account created! A verification email has been sent to your email address. Please confirm your email address to complete the registration.')
         return redirect('/users/individual_register')
@@ -124,12 +117,7 @@ class mvp_register(CreateView):
             else:
                 email = EmailMessage(
                     'Welcome to Insportify!',
-                    render_to_string('acc_active_email.html', {
-                        'user': user,
-                        'domain': domain,
-                        'uid': force_text(urlsafe_base64_encode(force_bytes(user.email))),
-                        'token': account_activation_token.make_token(user),
-                    }),
+                    activation_link,
                     to=[form.cleaned_data.get('email').lower()]
                 )
                 email.send()
@@ -167,12 +155,7 @@ class organization_register(CreateView):
             else:
                 email = EmailMessage(
                     'Welcome to Insportify!',
-                    render_to_string('acc_active_email.html', {
-                        'user': user,
-                        'domain': domain,
-                        'uid': force_text(urlsafe_base64_encode(force_bytes(user.email))),
-                        'token': account_activation_token.make_token(user),
-                    }),
+                    activation_link,
                     to=[form.cleaned_data.get('email').lower()]
                 )
                 email.send()
