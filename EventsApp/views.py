@@ -1751,8 +1751,9 @@ def pay_at_venue(request):
     context = {
         "payment_status": "VenuePay"
     }
+    profile = get_profile_from_user(request.user)
     char_set = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-    order = Order.objects.get(customer=request.user, payment=False)
+    order = Order.objects.get(customer=profile, payment=False)
     print(order.order_amount)
     orderId = get_random_string(length=16, allowed_chars=char_set)
     paymentId = get_random_string(length=16, allowed_chars=char_set)
