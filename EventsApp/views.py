@@ -29,8 +29,8 @@ from functools import lru_cache
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
-
-@lru_cache()
+# Cache might be creating run time db issues
+# @lru_cache()
 def get_profile_from_user(user):
     # user = User.objects.get(user=request.user)
     return Profile.objects.get(active_user=user)
@@ -297,10 +297,9 @@ def ValidateUserProfileForm(request):
         messages.error(request, "Please enter Date of Birth")
         valid = False
 
-    if not request.POST.get('participation_interest1') and request.POST['participation_interest1'].strip() == "" and \
-            not request.POST.get('participation_interest2') and request.POST[
-        'participation_interest2'].strip() == "" and \
-            not request.POST.get('participation_interest3') and request.POST['participation_interest3'].strip() == "":
+    if not request.POST.get('participation_interest1') and request.POST.get('participation_interest1','').strip() == "" and \
+        not request.POST.get('participation_interest2') and request.POST.get('participation_interest2','').strip() == "" and \
+        not request.POST.get('participation_interest3') and request.POST.get('participation_interest3','').strip() == "":
         messages.error(request, "Please select Event gender preferences")
         valid = False
 
@@ -561,7 +560,7 @@ def _switch_profile(user, name):
     user.profile_status = profile.profile_status
     user.save()
 
-    get_profile_from_user.cache_clear()
+    # get_profile_from_user.cache_clear()
     return True
 
 
@@ -618,7 +617,7 @@ def create_profile(request):
 
             _switch_profile(request.user, name)
 
-            get_profile_from_user.cache_clear()
+            # get_profile_from_user.cache_clear()
 
             request.user.refresh_from_db()
             # context = {'individual': individual, 'sports_type': [], 'sec_sport_choices': [], 'locations': [], 'user_avaiability': []}
