@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'EventsApp',
     'UserRegister',
-    'hitcount',
+    # 'hitcount',
 ]
 
 MIDDLEWARE = [

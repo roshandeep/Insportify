@@ -14,9 +14,9 @@ from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.views.decorators.csrf import csrf_exempt
 from openpyxl import Workbook
-from hitcount.models import HitCountMixin, HitCount
-from django.contrib.contenttypes.fields import GenericRelation
-from hitcount.views import HitCountDetailView
+# from hitcount.models import HitCountMixin, HitCount
+# from django.contrib.contenttypes.fields import GenericRelation
+# from hitcount.views import HitCountDetailView
 
 from Insportify import settings
 from .forms import MultiStepForm, AvailabilityForm, LogoForm, InviteForm, NewProfileForm
