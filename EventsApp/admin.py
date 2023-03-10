@@ -2,7 +2,7 @@ from django.contrib import admin
 from EventsApp.models import master_table, User, \
     Individual, Organization, SportsCategory, SportsType, Venues, Availability, Order, Logo, Extra_Loctaions, \
     Events_PositionInfo, Secondary_SportsChoice, OrderItems, PositionAndSkillType, SportsImage, \
-    Organization_Availability, Advertisement, Profile
+    Organization_Availability, Advertisement, Profile, Ad_HitCount
 
 admin.site.register(master_table)
 admin.site.register(User)
@@ -87,8 +87,15 @@ admin.site.register(Organization_Availability, Organization_AvailabilityAdmin)
 
 
 class AdvertisementAdmin(admin.ModelAdmin):
-    list_display = ('header', 'created_by', 'creation_time', 'start_time', 'end_time',)
+    list_display = ('header', 'created_by', 'creation_time', 'start_time', 'end_time', 'hit_count')
 
 
 admin.site.register(Advertisement, AdvertisementAdmin)
+
+
+class Ad_HitCountAdmin(admin.ModelAdmin):
+    list_display = ('ad', 'user_ip')
+
+
+admin.site.register(Ad_HitCount, Ad_HitCountAdmin)
 

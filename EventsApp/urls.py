@@ -87,6 +87,7 @@ urlpatterns = [
     path('delete_cart_item/', views.delete_cart_item, name='delete_cart_item'),
     path('fetch_cart_items/', views.fetch_cart_items, name='fetch_cart_items'),
     path('show_advertisement/<str:header>/', views.show_advertisement, name='show_advertisement'),
+    path('update_hit_count/', views.update_hit_count, name='update_hit_count'),
 
     # PAYMENT URL'S
     path('payment-success/', views.paymentSuccess, name='payment-success'),

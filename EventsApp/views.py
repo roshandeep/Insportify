@@ -22,7 +22,7 @@ from Insportify import settings
 from .forms import MultiStepForm, AvailabilityForm, LogoForm, InviteForm, NewProfileForm
 from .models import master_table, Individual, Organization, Venues, SportsCategory, SportsType, Order, User, \
     Availability, Logo, Extra_Loctaions, Events_PositionInfo, Secondary_SportsChoice, Invite, \
-    PositionAndSkillType, SportsImage, Organization_Availability, OrderItems, Advertisement, Profile
+    PositionAndSkillType, SportsImage, Organization_Availability, OrderItems, Advertisement, Profile, Ad_HitCount
 import util
 from django.db.models import Q
 from functools import lru_cache
@@ -1085,6 +1085,39 @@ def fetch_organization_locations(request):
         location_choices = Extra_Loctaions.objects.filter(profile=profile).order_by("city")
         location_choices = list(location_choices.values("street", "city", "province", "country", "zipcode", "pk"))
         return JsonResponse(location_choices, safe=False)
+
+
+def update_hit_count(request):
+    data={}
+    if request.method == "GET":
+        ad_pk = request.GET['ad_pk']
+        try:
+            client_ip = get_client_ip(request)
+            clicked_ad = Advertisement.objects.get(pk=ad_pk)
+            if not Ad_HitCount.objects.filter(ad=clicked_ad, user_ip=client_ip).exists():
+                obj = Ad_HitCount(ad=clicked_ad, user_ip=client_ip)
+                obj.save()
+                if clicked_ad.hit_count is None:
+                    clicked_ad.hit_count = 1
+                else:
+                    clicked_ad.hit_count += 1
+                clicked_ad.save()
+
+                data['success_message'] = 'Hit Count Updated'
+                return JsonResponse(data)
+
+        except Exception:
+            data['error_message'] = 'error'
+            return JsonResponse(data)
+
+
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
 
 
 def home(request):

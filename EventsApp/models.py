@@ -356,8 +356,12 @@ class Advertisement(models.Model):
     city = models.TextField(blank=True, null=True)
     province = models.TextField(blank=True, null=True)
     country = models.TextField(blank=True, null=True)
-    image = models.ImageField(blank=True, null=True, validators=[image_restriction])
+    image = models.ImageField(blank=True, null=True, validators=[image_restriction],)
     url = models.TextField(blank=True, null=True)
     client = models.TextField(blank=True, null=True)
     hit_count = models.IntegerField(blank=True, null=True)
     max_hits = models.IntegerField(blank=True, null=True)
+
+class Ad_HitCount(models.Model):
+    ad = models.ForeignKey(Advertisement, on_delete=models.CASCADE)
+    user_ip = models.GenericIPAddressField()

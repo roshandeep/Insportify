@@ -13,7 +13,7 @@
                 style="text-align: center;">
                     <img src="/media/{{advertisement.image}}" class="img-fluid mx-auto d-bloc"
                          alt="{{advertisement.header}}"
-                         onclick="location.href='show_advertisement/{{advertisement.header}}'"
+                         onclick="check_ad_count({{advertisement.pk}}); location.href='show_advertisement/{{advertisement.header}}';"
                          style="cursor:pointer; height: 140px;">
                 </div>
                 {% endfor %}
@@ -297,6 +297,19 @@
         integrity="sha512-YYiD5ZhmJ0GCdJvx6Xe6HzHqHvMpJEPomXwPbsgcpMFPW+mQEeVBU6l9n+2Y+naq+CLbujk91vHyN18q6/RSYw=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
+
+function check_ad_count(pk){
+    $.ajax({
+            type: "GET",
+            url: '{% url "EventsApp:update_hit_count" %}',
+            data: {
+                'ad_pk': pk,
+            },
+            success: function (data) {
+                console.log("Done");
+            }
+        });
+}
 
     $(".carousel").swipe({
         swipe: function (event, direction, distance, duration, fingerCount, fingerData) {
