@@ -2167,8 +2167,8 @@ def get_advertisements(request):
         city_str = ''
         prov_str = ''
         for loc in locs:
-            city_str += loc.city
-            prov_str += loc.province
+            city_str += loc.city + ' '
+            prov_str += loc.province + ' '
         ads = Advertisement.objects.all().filter(Q(end_time__gte=date.today()) & Q(geographical_scope="National") |
                                                  (Q(geographical_scope="Provincial") & Q(
                                                      province__icontains=prov_str)) |

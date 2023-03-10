@@ -3,6 +3,7 @@ from django.contrib.auth.models import BaseUserManager, PermissionsMixin
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from datetime import datetime
+from .validator import image_restriction
 
 
 class UserManager(BaseUserManager):
@@ -355,7 +356,7 @@ class Advertisement(models.Model):
     city = models.TextField(blank=True, null=True)
     province = models.TextField(blank=True, null=True)
     country = models.TextField(blank=True, null=True)
-    image = models.ImageField(blank=True, null=True)
+    image = models.ImageField(blank=True, null=True, validators=[image_restriction])
     url = models.TextField(blank=True, null=True)
     client = models.TextField(blank=True, null=True)
     hit_count = models.IntegerField(blank=True, null=True)

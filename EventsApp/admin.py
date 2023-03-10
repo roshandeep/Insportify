@@ -11,9 +11,13 @@ admin.site.register(SportsType)
 admin.site.register(Individual)
 admin.site.register(Organization)
 admin.site.register(Logo)
-admin.site.register(PositionAndSkillType)
 admin.site.register(SportsImage)
 
+
+class PositionAndSkillTypeAdmin(admin.ModelAdmin):
+    list_display = ('sports_category', 'sports_type', 'position_type', 'skill_type',)
+
+admin.site.register(PositionAndSkillType, PositionAndSkillTypeAdmin)
 
 class ProfileAdmin(admin.ModelAdmin):
     list_display = ('name', 'active_user',)
