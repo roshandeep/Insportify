@@ -213,6 +213,7 @@ class PositionAndSkillType(models.Model):
     sports_type = models.ForeignKey(SportsType, on_delete=models.CASCADE)
     position_type = models.CharField(max_length=100)
     skill_type = models.CharField(max_length=100)
+    skill_rank = models.IntegerField(default=0)
 
     def __str__(self):
         return self.position_type + ' ' + self.skill_type
