@@ -1124,6 +1124,7 @@ def home(request):
     # Individual.objects.filter(pk=16).delete()
     # load_venues_excel()
     # load_pos_skill_type()
+    # sports_type_excel()
 
     if request.user.is_authenticated:
         if not request.user.profile_status:
@@ -2234,6 +2235,7 @@ def sports_type_excel():
     sheet["B1"] = "Sports Type"
     sheet["C1"] = "Position"
     sheet["D1"] = "Skill"
+    sheet["E1"] = "Skill_Rank"
 
     pos_skill = PositionAndSkillType.objects.all()
     row=2
@@ -2253,7 +2255,7 @@ def sports_type_excel():
 
         row=row+1
 
-    workbook.save(filename='sports_db.xlsx')
+    workbook.save(filename='sports_db_15Mar.xlsx')
 
 
 def venue_excel():
