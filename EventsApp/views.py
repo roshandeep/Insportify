@@ -1,5 +1,6 @@
 import calendar
 import copy
+import operator
 from datetime import datetime, timedelta, date
 import time
 import openpyxl
@@ -25,9 +26,10 @@ from .models import master_table, Individual, Organization, Venues, SportsCatego
     PositionAndSkillType, SportsImage, Organization_Availability, OrderItems, Advertisement, Profile, Ad_HitCount
 import util
 from django.db.models import Q
-from functools import lru_cache
+from functools import lru_cache, reduce
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
+
 
 # Cache might be creating run time db issues
 # @lru_cache()
@@ -181,7 +183,7 @@ def ValidateFormValues(request):
     if not request.user.is_mvp and event_count >= 2:
         messages.error(request, "Cannot create event, maximum events possible by non-MVP member is 2")
         event_count_valid = False
-    if not request.POST.get('event_title') or not request.POST.get('venue')\
+    if not request.POST.get('event_title') or not request.POST.get('venue') \
             or not request.POST.get('event_type') or not request.POST.get('sport_type'):
         messages.error(request, "All fields are required, please enter valid information")
         fields_valid = False
@@ -297,9 +299,12 @@ def ValidateUserProfileForm(request):
         messages.error(request, "Please enter Date of Birth")
         valid = False
 
-    if not request.POST.get('participation_interest1') and request.POST.get('participation_interest1','').strip() == "" and \
-        not request.POST.get('participation_interest2') and request.POST.get('participation_interest2','').strip() == "" and \
-        not request.POST.get('participation_interest3') and request.POST.get('participation_interest3','').strip() == "":
+    if not request.POST.get('participation_interest1') and request.POST.get('participation_interest1',
+                                                                            '').strip() == "" and \
+            not request.POST.get('participation_interest2') and request.POST.get('participation_interest2',
+                                                                                 '').strip() == "" and \
+            not request.POST.get('participation_interest3') and request.POST.get('participation_interest3',
+                                                                                 '').strip() == "":
         messages.error(request, "Please select Event gender preferences")
         valid = False
 
@@ -423,7 +428,6 @@ def save_event_position_info(request, event):
 
 @login_required
 def all_events(request):
-
     profile = get_profile_from_user(request.user)
 
     expired_events = []
@@ -1088,7 +1092,7 @@ def fetch_organization_locations(request):
 
 
 def update_hit_count(request):
-    data={}
+    data = {}
     if request.method == "GET":
         ad_pk = request.GET['ad_pk']
         try:
@@ -1121,11 +1125,6 @@ def get_client_ip(request):
 
 
 def home(request):
-    # Individual.objects.filter(pk=16).delete()
-    # load_venues_excel()
-    # load_pos_skill_type()
-    # sports_type_excel()
-
     if request.user.is_authenticated:
         if not request.user.profile_status:
             print('Redirecting to user profile...')
@@ -1247,7 +1246,6 @@ def home(request):
             elif event.registration_type == "Drop-in":
                 recommended_drop_in.append(event)
 
-
         # recommended_registrationList = [recommended_registrationList[i:i + 3] for i in range(0, len(recommended_registrationList), 3)]
         # recommended_drop_in = [recommended_drop_in[i:i + 3] for i in range(0, len(recommended_drop_in), 3)]
         # recommended_events = [recommended_events[i:i + 3] for i in range(0, len(recommended_events), 3)]
@@ -1259,8 +1257,8 @@ def home(request):
         else:
             event.sport_logo = "/media/images/Multisport.jpg"
 
-    drop_in_eventList=[]
-    registrationList=[]
+    drop_in_eventList = []
+    registrationList = []
     for event in events:
         if event.registration_type == "Registration":
             registrationList.append(event)
@@ -1465,7 +1463,7 @@ def extract_event_datetime(event):
     event_start_time = ""
     event_end_time = ""
 
-    times_list=[]
+    times_list = []
 
     if event.datetimes:
         split_list = event.datetimes.split("-")
@@ -1535,7 +1533,7 @@ def format_time_helper(time):
 
 
 def get_events_by_selected_date(events_list, selected_date):
-    new_events_list=[]
+    new_events_list = []
     for event in events_list[:]:
         if event.current_datetimes:
             evt_date = event.current_datetimes[0:10]
@@ -1970,10 +1968,12 @@ def load_venues_excel():
             vm_venue_province = sheet_obj.cell(row=i, column=5).value.strip()
             vm_venue_country = sheet_obj.cell(row=i, column=6).value.strip()
             vm_venue_zip = sheet_obj.cell(row=i, column=7).value.strip()
-            if not Venues.objects.filter(vm_name=vm_name, vm_venue_description=vm_venue_description, vm_venue_street=vm_venue_street,
-                         vm_venuecity=vm_venuecity, vm_venue_province=vm_venue_province,
-                         vm_venue_country=vm_venue_country, vm_venue_zip=vm_venue_zip).exists():
-                obj = Venues(vm_name=vm_name, vm_venue_description=vm_venue_description, vm_venue_street=vm_venue_street,
+            if not Venues.objects.filter(vm_name=vm_name, vm_venue_description=vm_venue_description,
+                                         vm_venue_street=vm_venue_street,
+                                         vm_venuecity=vm_venuecity, vm_venue_province=vm_venue_province,
+                                         vm_venue_country=vm_venue_country, vm_venue_zip=vm_venue_zip).exists():
+                obj = Venues(vm_name=vm_name, vm_venue_description=vm_venue_description,
+                             vm_venue_street=vm_venue_street,
                              vm_venuecity=vm_venuecity, vm_venue_province=vm_venue_province,
                              vm_venue_country=vm_venue_country, vm_venue_zip=vm_venue_zip)
                 print(i)
@@ -2002,9 +2002,9 @@ def load_pos_skill_type():
         position = sheet_obj.cell(row=i, column=3).value.strip()
         skill = sheet_obj.cell(row=i, column=4).value.strip()
         if not PositionAndSkillType.objects.filter(sports_category=sports_category,
-                                   sports_type=sports_type,
-                                   position_type=position,
-                                   skill_type=skill).exists():
+                                                   sports_type=sports_type,
+                                                   position_type=position,
+                                                   skill_type=skill).exists():
             obj = PositionAndSkillType(sports_category=sports_category,
                                        sports_type=sports_type,
                                        position_type=position,
@@ -2198,15 +2198,34 @@ def get_advertisements(request):
     else:
         profile = get_profile_from_user(request.user)
         locs = Extra_Loctaions.objects.all().filter(profile=profile)
-        city_str = ''
-        prov_str = ''
+        city_list = []
+        prov_list = []
         for loc in locs:
-            city_str += loc.city + ' '
-            prov_str += loc.province + ' '
-        ads = Advertisement.objects.all().filter(Q(end_time__gte=date.today()) & Q(geographical_scope="National") |
-                                                 (Q(geographical_scope="Provincial") & Q(
-                                                     province__icontains=prov_str)) |
-                                                 (Q(geographical_scope="Local") & Q(city__icontains=city_str)))
+            city_list.append(loc.city)
+            prov_list.append(loc.province)
+
+
+        ads = list(Advertisement.objects.all().filter(Q(end_time__gte=date.today())))
+
+        for ad in ads[:]:
+            if ad.geographical_scope == "Provincial":
+                flag=0
+                for item in prov_list:
+                    if item in ad.province:
+                        flag=1
+
+                if flag == 0:
+                    ads.remove(ad)
+
+            elif ad.geographical_scope == "Local":
+                flag = 0
+                for item in city_list:
+                    if item in ad.city:
+                        flag = 1
+
+                if flag == 0:
+                    ads.remove(ad)
+
     return ads
 
 
@@ -2226,7 +2245,6 @@ def show_advertisement(request, header):
     return home(request)
 
 
-
 def sports_type_excel():
     workbook = Workbook()
     sheet = workbook.active
@@ -2238,7 +2256,7 @@ def sports_type_excel():
     sheet["E1"] = "Skill_Rank"
 
     pos_skill = PositionAndSkillType.objects.all()
-    row=2
+    row = 2
     for item in pos_skill:
         print(item)
         c1 = sheet.cell(row=row, column=1)
@@ -2253,7 +2271,7 @@ def sports_type_excel():
         c4 = sheet.cell(row=row, column=4)
         c4.value = item.skill_type
 
-        row=row+1
+        row = row + 1
 
     workbook.save(filename='sports_db_15Mar.xlsx')
 
@@ -2271,7 +2289,7 @@ def venue_excel():
     sheet["G1"] = "vm_venue_zip"
 
     venues = Venues.objects.all()
-    row=2
+    row = 2
     for item in venues:
         print(item)
         c1 = sheet.cell(row=row, column=1)
@@ -2295,6 +2313,6 @@ def venue_excel():
         c7 = sheet.cell(row=row, column=7)
         c7.value = item.vm_venue_zip
 
-        row=row+1
+        row = row + 1
 
     workbook.save(filename='ON_latest_venue.xlsx')

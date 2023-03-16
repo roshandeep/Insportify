@@ -87,7 +87,7 @@ admin.site.register(Organization_Availability, Organization_AvailabilityAdmin)
 
 
 class AdvertisementAdmin(admin.ModelAdmin):
-    list_display = ('header', 'created_by', 'creation_time', 'start_time', 'end_time', 'hit_count')
+    list_display = ('header', 'created_by', 'creation_time', 'start_time', 'end_time', 'geographical_scope', 'hit_count')
 
 
 admin.site.register(Advertisement, AdvertisementAdmin)
