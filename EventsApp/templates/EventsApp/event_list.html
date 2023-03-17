@@ -57,7 +57,7 @@
                 <td>{{event.event_type }}</td>
                 <td>{{event.venue}}</td>
                 <td class="text-center">
-                    {% if request.user == event.created_by %}
+                    {% if request.user.email == event.created_by.user.email %}
                     {% if event.datetimes %}
                     <a href="/delete/{{event.pk}}/{{event.datetimes}}"
                        onclick="return confirm('Cancel Event for {{event.datetimes}}?');">
