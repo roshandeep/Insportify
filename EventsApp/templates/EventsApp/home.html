@@ -10,7 +10,7 @@
             <div class="carousel-inner row w-10 mx-auto" role="listbox">
                 {% for advertisement in advertisements %}
                 <div class="carousel-item col-md-4 {% if forloop.counter0 == 0 %}active{% endif %}"
-                style="text-align: center;">
+                     style="text-align: center;">
                     <img src="/media/{{advertisement.image}}" class="img-fluid mx-auto d-bloc"
                          alt="{{advertisement.header}}"
                          onclick="check_ad_count({{advertisement.pk}}); location.href='show_advertisement/{{advertisement.header}}';"
@@ -33,58 +33,64 @@
 </div>
 
 <div id="event-page" class="col-lg-9 col-md-12 mx-auto">
-<form id="form-events" class="row p-3" action="{% url 'EventsApp:home' %}" method="get">
-    <div class="col mb-2" id="events_types_select" style="flex-grow: 1;">
-        <select id="events_types" class="form-select select2" multiple name="events_types" style="height:26px; flex-grow: 1;">
-            <option value="Camp">Camp</option>
-            <option value="Charity">Charity</option>
-            <option value="Conditioning">Conditioning</option>
-            <option value="Development">Development</option>
-            <option value="Game/Session">Game/Session</option>
-            <option value="Online">Online</option>
-            <option value="Registration">Registration</option>
-            <option value="Social">Social</option>
-            <option value="Tournament">Tournament</option>
-        </select>
-    </div>
-    <div id="sports_select" class="col mb-2" style="flex-grow: 1;">
-        <select id="sport_types" class="form-select select2sport" style="height:26px; flex-grow: 1;" name="sports">
-            <option value="" selected="selected">Select Sport</option>
-            {% for sports in sports_list %}
-            <option value="{{sports.sports_type_text}}">{{sports.sports_type_text}}</option>
-            {% endfor %}
-        </select>
-    </div>
-    <div class="col mb-2 mb-2">
-        <input class="form-control select-style datesingle" onfocus="(this.type='date')"
-               onblur="this.type='text'" value="Select Date" placeholder="Select Date" name="date_range"/>
-    </div>
-    <div id="venues_select" class="col mb-2 mb-2" style="flex-grow: 1;">
-        {% if user.is_authenticated %}
-        <select id="venue_types" class="form-select select2venue" style="height:26px; flex-grow: 1;" name="venues">
-            <option value="" selected="selected">Select Venue</option>
-            {% for venues in venues_list %}
-            <option value="{{venues.vm_name}}">{{venues.vm_name}}</option>
-            {% endfor %}
-        </select>
-        {% else %}
-        <select id="city_types" class="form-select select2city" style="height:26px; flex-grow: 1;" name="cities">
-            <option value="" selected="selected">Select City</option>
-            {% for city in cities_list %}
-            <option value="{{city.vm_venuecity}}">{{city.vm_venuecity}}</option>
-            {% endfor %}
-        </select>
-        {% endif %}
-    </div>
-    <div class="row-12 text-center">
-        <button type="submit" class="btn btn-primary mr-2 m-2" style="width: 90px;">
-            Search
-        </button>
-        <a href="{% url 'EventsApp:home' %}" class="btn btn-primary ml-2 m-2" style="width: 90px;">
-            Clear
-        </a>
-    </div>
-</form>
+    <form id="form-events" class="row p-3" action="{% url 'EventsApp:home' %}" method="get">
+        <div class="col mb-2" id="events_types_select" style="flex-grow: 1;">
+            <select id="events_types" class="form-select select2" multiple name="events_types"
+                    style="height:26px; flex-grow: 1;">
+                <option value="Camp" {% if 'Camp' in selected_events_types %}selected{% endif %}>Camp</option>
+                <option value="Charity" {% if 'Charity' in selected_events_types %}selected{% endif %}>Charity</option>
+                <option value="Conditioning" {% if 'Conditioning' in selected_events_types %}selected{% endif %}>Conditioning</option>
+                <option value="Development" {% if 'Development' in selected_events_types %}selected{% endif %}>Development</option>
+                <option value="Game/Session" {% if 'Game/Session' in selected_events_types %}selected{% endif %}>Game/Session</option>
+                <option value="Online" {% if 'Online' in selected_events_types %}selected{% endif %}>Online</option>
+                <option value="Registration" {% if 'Registration' in selected_events_types %}selected{% endif %}>Registration</option>
+                <option value="Social" {% if 'Social' in selected_events_types %}selected{% endif %}>Social</option>
+                <option value="Tournament" {% if 'Tournament' in selected_events_types %}selected{% endif %}>Tournament</option>
+            </select>
+        </div>
+        <div id="sports_select" class="col mb-2" style="flex-grow: 1;">
+            <select id="sport_types" class="form-select select2sport" style="height:26px; flex-grow: 1;" name="sports">
+                <option value="" selected="selected">Select Sport</option>
+                {% for sports in sports_list %}
+                <option value="{{sports.sports_type_text}}" {% if sports.sports_type_text == selected_sports %}selected{% endif %}>{{sports.sports_type_text}}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col mb-2 mb-2">
+            <input class="form-control select-style datesingle" onfocus="(this.type='date')"
+                   onblur="this.type='text'" value="{{selected_date}}" placeholder="Select Date" name="date_range"/>
+        </div>
+        <div id="venues_select" class="col mb-2 mb-2" style="flex-grow: 1;">
+            {% if user.is_authenticated %}
+            <select id="venue_types" class="form-select select2venue" style="height:26px; flex-grow: 1;" name="venues">
+                <option value="" selected="selected">Select Venue</option>
+                {% for venues in venues_list %}
+                <option value="{{venues.vm_name}}" {% if venues.vm_name == selected_venues %}selected{% endif %}>
+                    {{venues.vm_name}}
+                </option>
+                {% endfor %}
+            </select>
+            {% else %}
+            <select id="city_types" class="form-select select2city" style="height:26px; flex-grow: 1;" name="cities">
+                <option value="" selected="selected">Select City</option>
+                {% for city in cities_list %}
+                <option value="{{city.vm_venuecity}}" {% if city.vm_venuecity == selected_cities %}selected{% endif %}>
+                    {{city.vm_venuecity}}
+                </option>
+                {% endfor %}
+            </select>
+            {% endif %}
+        </div>
+        <div class="row-12 text-center">
+            <button type="submit" class="btn btn-primary mr-2 m-2" style="width: 90px;">
+                Search
+            </button>
+            <a href="{% url 'EventsApp:home' %}" class="btn btn-primary ml-2 m-2" style="width: 90px;">
+                Clear
+            </a>
+        </div>
+    </form>
 </div>
 
 {% if user.is_authenticated %}
@@ -93,15 +99,16 @@
     <div class="row p-3">
         <h5>Recommended Drop In Events</h5>
         <hr class="my-2">
-        <div id="carousel_recommended_drop_in_eventList" class="carousel slide" data-ride="carousel" data-interval="false"
+        <div id="carousel_recommended_drop_in_eventList" class="carousel slide" data-ride="carousel"
+             data-interval="false"
              data-touch="true">
             <div class="carousel-inner row w-10 mx-auto" role="listbox">
                 {% for event in recommended_drop_in %}
                 <div class="carousel-item col-md-4 {% if forloop.counter0 == 0 %}active{% endif %}"
                      style="text-align: center;">
                     <div class="event-card card"
-                            onclick="location.href='event_details/{{event.pk}}/{% if event.datetimes %}{{event.datetimes}}{% elif event.current_datetimes %}{{event.current_datetimes}}{% endif %}/'"
-                            style="cursor:pointer">
+                         onclick="location.href='event_details/{{event.pk}}/{% if event.datetimes %}{{event.datetimes}}{% elif event.current_datetimes %}{{event.current_datetimes}}{% endif %}/'"
+                         style="cursor:pointer">
                         <img src="{{event.sport_logo}}" class="img-fluid"
                              alt="..." style="cursor:pointer"
                              onclick="location.href='event_details/{{event.pk}}/{% if event.datetimes %}{{event.datetimes}}{% elif event.current_datetimes %}{{event.current_datetimes}}{% endif %}/'">
@@ -141,15 +148,16 @@
     <div class="row p-3">
         <h5>Recommended Registration Programs</h5>
         <hr class="my-2">
-        <div id="carousel_recommended_registration_eventList" class="carousel slide" data-ride="carousel" data-interval="false"
+        <div id="carousel_recommended_registration_eventList" class="carousel slide" data-ride="carousel"
+             data-interval="false"
              data-touch="true">
             <div class="carousel-inner row w-10 mx-auto" role="listbox">
                 {% for event in recommended_registrationList %}
                 <div class="carousel-item col-md-4 {% if forloop.counter0 == 0 %}active{% endif %}"
                      style="text-align: center;">
                     <div class="event-card card"
-                            onclick="location.href='event_details/{{event.pk}}/{% if event.datetimes %}{{event.datetimes}}{% elif event.current_datetimes %}{{event.current_datetimes}}{% endif %}/'"
-                            style="cursor:pointer">
+                         onclick="location.href='event_details/{{event.pk}}/{% if event.datetimes %}{{event.datetimes}}{% elif event.current_datetimes %}{{event.current_datetimes}}{% endif %}/'"
+                         style="cursor:pointer">
                         <img src="{{event.sport_logo}}" class="img-fluid"
                              alt="..." style="cursor:pointer"
                              onclick="location.href='event_details/{{event.pk}}/{% if event.datetimes %}{{event.datetimes}}{% elif event.current_datetimes %}{{event.current_datetimes}}{% endif %}/'">
@@ -174,12 +182,14 @@
                 </div>
                 {% endfor %}
             </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#carousel_recommended_registration_eventList"
+            <button class="carousel-control-prev" type="button"
+                    data-bs-target="#carousel_recommended_registration_eventList"
                     data-bs-slide="prev" style="left: -5%;">
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Previous</span>
             </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carousel_recommended_registration_eventList"
+            <button class="carousel-control-next" type="button"
+                    data-bs-target="#carousel_recommended_registration_eventList"
                     data-bs-slide="next" style="right: -5%">
                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Next</span>
@@ -201,8 +211,8 @@
                 <div class="carousel-item col-md-4 {% if forloop.counter0 == 0 %}active{% endif %}"
                      style="text-align: center;">
                     <div class="event-card card"
-                            onclick="location.href='event_details/{{event.pk}}/{% if event.datetimes %}{{event.datetimes}}{% elif event.current_datetimes %}{{event.current_datetimes}}{% endif %}/'"
-                            style="cursor:pointer">
+                         onclick="location.href='event_details/{{event.pk}}/{% if event.datetimes %}{{event.datetimes}}{% elif event.current_datetimes %}{{event.current_datetimes}}{% endif %}/'"
+                         style="cursor:pointer">
                         <img src="{{event.sport_logo}}" class="img-fluid"
                              alt="..." style="cursor:pointer"
                              onclick="location.href='event_details/{{event.pk}}/{% if event.datetimes %}{{event.datetimes}}{% elif event.current_datetimes %}{{event.current_datetimes}}{% endif %}/'">
@@ -249,8 +259,8 @@
                 <div class="carousel-item col-md-4 {% if forloop.counter0 == 0 %}active{% endif %}"
                      style="text-align: center;">
                     <div class="event-card card"
-                            onclick="location.href='event_details/{{event.pk}}/{% if event.datetimes %}{{event.datetimes}}{% elif event.current_datetimes %}{{event.current_datetimes}}{% endif %}/'"
-                            style="cursor:pointer">
+                         onclick="location.href='event_details/{{event.pk}}/{% if event.datetimes %}{{event.datetimes}}{% elif event.current_datetimes %}{{event.current_datetimes}}{% endif %}/'"
+                         style="cursor:pointer">
                         <img src="{{event.sport_logo}}" class="img-fluid"
                              alt="..." style="cursor:pointer"
                              onclick="location.href='event_details/{{event.pk}}/{% if event.datetimes %}{{event.datetimes}}{% elif event.current_datetimes %}{{event.current_datetimes}}{% endif %}/'">
@@ -298,8 +308,8 @@
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
 
-function check_ad_count(pk){
-    $.ajax({
+    function check_ad_count(pk) {
+        $.ajax({
             type: "GET",
             url: '{% url "EventsApp:update_hit_count" %}',
             data: {
@@ -309,7 +319,7 @@ function check_ad_count(pk){
                 console.log("Done");
             }
         });
-}
+    }
 
     $(".carousel").swipe({
         swipe: function (event, direction, distance, duration, fingerCount, fingerData) {
@@ -323,9 +333,8 @@ function check_ad_count(pk){
     $(document).ready(function () {
         let myWidth = $(window).width();
         let myHeight = window.innerHeight;
-        callFormSizeChange(myWidth, myHeight);   
-        $(window).resize(function ()
-        {
+        callFormSizeChange(myWidth, myHeight);
+        $(window).resize(function () {
             var nw = $(window).width();
             let myHeight = window.innerHeight;
             myWidth = nw;
@@ -373,49 +382,49 @@ function check_ad_count(pk){
 
     function callFormSizeChange(myWidth, myHeight) {
         if (myWidth >= 768) {
-            if(document.getElementById("events_types")){
-            document.getElementById("events_types").style.width = "100%";
+            if (document.getElementById("events_types")) {
+                document.getElementById("events_types").style.width = "100%";
             }
-            if(document.getElementById("sport_types")){
-            document.getElementById("sport_types").style.width = "100%";
+            if (document.getElementById("sport_types")) {
+                document.getElementById("sport_types").style.width = "100%";
             }
-            if(document.getElementById("venue_types")){
-            document.getElementById("venue_types").style.width = "100%";
+            if (document.getElementById("venue_types")) {
+                document.getElementById("venue_types").style.width = "100%";
             }
-            if(document.getElementById("city_types")){
-            document.getElementById("city_types").style.width = "100%";
+            if (document.getElementById("city_types")) {
+                document.getElementById("city_types").style.width = "100%";
             }
             // document.getElementById("logo-image").style.width = "200px";
-            if(document.getElementById('form-events')){
-            document.getElementById("form-events").classList.remove('col-12');
-            document.getElementById("form-events").classList.add('row');
+            if (document.getElementById('form-events')) {
+                document.getElementById("form-events").classList.remove('col-12');
+                document.getElementById("form-events").classList.add('row');
             }
-            if(document.getElementById('event-page')){
-            document.getElementById("event-page").classList.remove('col-12');
-            document.getElementById("event-page").classList.add('col-9');
+            if (document.getElementById('event-page')) {
+                document.getElementById("event-page").classList.remove('col-12');
+                document.getElementById("event-page").classList.add('col-9');
             }
 
         } else {
-            if(document.getElementById("events_types")){
-            document.getElementById("events_types").style.width = "100%";
+            if (document.getElementById("events_types")) {
+                document.getElementById("events_types").style.width = "100%";
             }
-            if(document.getElementById("sport_types")){
-            document.getElementById("sport_types").style.width = "100%";
+            if (document.getElementById("sport_types")) {
+                document.getElementById("sport_types").style.width = "100%";
             }
-            if(document.getElementById("city_types")){
-            document.getElementById("city_types").style.width = "100%";
+            if (document.getElementById("city_types")) {
+                document.getElementById("city_types").style.width = "100%";
             }
-            if(document.getElementById("venue_types")){
-            document.getElementById("venue_types").style.width = "100%";
+            if (document.getElementById("venue_types")) {
+                document.getElementById("venue_types").style.width = "100%";
             }
             // document.getElementById("logo-image").style.width = "150px";
-            if(document.getElementById('form-events')){
-            document.getElementById("form-events").classList.remove('row');
-            document.getElementById("form-events").classList.add('col-12');
+            if (document.getElementById('form-events')) {
+                document.getElementById("form-events").classList.remove('row');
+                document.getElementById("form-events").classList.add('col-12');
             }
-            if(document.getElementById('event-page')){
-            document.getElementById("event-page").classList.remove('col-9');
-            document.getElementById("event-page").classList.add('col-12');
+            if (document.getElementById('event-page')) {
+                document.getElementById("event-page").classList.remove('col-9');
+                document.getElementById("event-page").classList.add('col-12');
             }
 
         }
@@ -426,181 +435,190 @@ function check_ad_count(pk){
 <style>
 
 
-@media (min-width: 768px) {
+    @media (min-width: 768px) {
 
-    /* show 3 items */
-    .carousel-inner .active,
-    .carousel-inner .active + .carousel-item,
-    .carousel-inner .active + .carousel-item + .carousel-item {
-        display: block;
+        /* show 3 items */
+        .carousel-inner .active,
+        .carousel-inner .active + .carousel-item,
+        .carousel-inner .active + .carousel-item + .carousel-item {
+            display: block;
+        }
+
+        .carousel-item {
+            width: 33%;
+        }
+
+        .carousel-inner .carousel-item.active:not(.carousel-item-right):not(.carousel-item-left),
+        .carousel-inner .carousel-item.active:not(.carousel-item-right):not(.carousel-item-left) + .carousel-item,
+        .carousel-inner .carousel-item.active:not(.carousel-item-right):not(.carousel-item-left) + .carousel-item + .carousel-item {
+            transition: none;
+            margin-right: initial;
+        }
+
+        .carousel-inner .carousel-item-next,
+        .carousel-inner .carousel-item-prev {
+            position: relative;
+            transform: translate3d(0, 0, 0);
+        }
+
+        .carousel-inner .active.carousel-item + .carousel-item + .carousel-item + .carousel-item {
+            position: absolute;
+            top: 0;
+            right: -33.3333%;
+            z-index: -1;
+            display: block;
+            visibility: visible;
+        }
+
+        /* left or forward direction */
+        .active.carousel-item-left + .carousel-item-next.carousel-item-left,
+        .carousel-item-next.carousel-item-left + .carousel-item,
+        .carousel-item-next.carousel-item-left + .carousel-item + .carousel-item,
+        .carousel-item-next.carousel-item-left + .carousel-item + .carousel-item + .carousel-item {
+            position: relative;
+            transform: translate3d(-100%, 0, 0);
+            visibility: visible;
+        }
+
+        /* farthest right hidden item must be abso position for animations */
+        .carousel-inner .carousel-item-prev.carousel-item-right {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            display: block;
+            visibility: visible;
+        }
+
+        /* right or prev direction */
+        .active.carousel-item-right + .carousel-item-prev.carousel-item-right,
+        .carousel-item-prev.carousel-item-right + .carousel-item,
+        .carousel-item-prev.carousel-item-right + .carousel-item + .carousel-item,
+        .carousel-item-prev.carousel-item-right + .carousel-item + .carousel-item + .carousel-item {
+            position: relative;
+            transform: translate3d(100%, 0, 0);
+            visibility: visible;
+            display: block;
+            visibility: visible;
+        }
+
     }
 
-    .carousel-item {
-        width: 33%;
-  }
 
-    .carousel-inner .carousel-item.active:not(.carousel-item-right):not(.carousel-item-left),
-    .carousel-inner .carousel-item.active:not(.carousel-item-right):not(.carousel-item-left) + .carousel-item,
-    .carousel-inner .carousel-item.active:not(.carousel-item-right):not(.carousel-item-left) + .carousel-item + .carousel-item {
-        transition: none;
-        margin-right: initial;
+    .cards-wrapper {
+        display: flex;
+        justify-content: center;
     }
 
-    .carousel-inner .carousel-item-next,
-    .carousel-inner .carousel-item-prev {
-      position: relative;
-      transform: translate3d(0, 0, 0);
+    .card img {
+        max-width: 100%;
+        max-height: 100%;
     }
 
-    .carousel-inner .active.carousel-item + .carousel-item + .carousel-item + .carousel-item {
-        position: absolute;
-        top: 0;
-        right: -33.3333%;
-        z-index: -1;
-        display: block;
-        visibility: visible;
+    .card {
+        margin: 0 0.5em;
+        box-shadow: 2px 6px 8px 0 rgba(22, 22, 26, 0.18);
+        border: none;
+        border-radius: 0;
     }
 
-    /* left or forward direction */
-    .active.carousel-item-left + .carousel-item-next.carousel-item-left,
-    .carousel-item-next.carousel-item-left + .carousel-item,
-    .carousel-item-next.carousel-item-left + .carousel-item + .carousel-item,
-    .carousel-item-next.carousel-item-left + .carousel-item + .carousel-item + .carousel-item {
-        position: relative;
-        transform: translate3d(-100%, 0, 0);
-        visibility: visible;
+    .carousel-inner {
+        padding: 1em;
     }
 
-    /* farthest right hidden item must be abso position for animations */
-    .carousel-inner .carousel-item-prev.carousel-item-right {
-        position: absolute;
-        top: 0;
-        left: 0;
-        z-index: -1;
-        display: block;
-        visibility: visible;
+    .carousel-control-prev,
+    .carousel-control-next {
+        background-color: #e1e1e1;
+        width: 5vh;
+        height: 5vh;
+        border-radius: 50%;
+        top: 50%;
+        transform: translateY(-50%);
     }
 
-    /* right or prev direction */
-    .active.carousel-item-right + .carousel-item-prev.carousel-item-right,
-    .carousel-item-prev.carousel-item-right + .carousel-item,
-    .carousel-item-prev.carousel-item-right + .carousel-item + .carousel-item,
-    .carousel-item-prev.carousel-item-right + .carousel-item + .carousel-item + .carousel-item {
-        position: relative;
-        transform: translate3d(100%, 0, 0);
-        visibility: visible;
-        display: block;
-        visibility: visible;
+    @media (min-width: 768px) {
+        .card img {
+            height: 11em;
+        }
     }
 
-}
+    .select2-search__field {
+        height: 26px !important;
+    }
 
+    .select2sport-search__field {
+        height: 26px !important;
+    }
 
-.cards-wrapper {
-  display: flex;
-  justify-content: center;
-}
-.card img {
-  max-width: 100%;
-  max-height: 100%;
-}
-.card {
-  margin: 0 0.5em;
-  box-shadow: 2px 6px 8px 0 rgba(22, 22, 26, 0.18);
-  border: none;
-  border-radius: 0;
-}
-.carousel-inner {
-  padding: 1em;
-}
-.carousel-control-prev,
-.carousel-control-next {
-  background-color: #e1e1e1;
-  width: 5vh;
-  height: 5vh;
-  border-radius: 50%;
-  top: 50%;
-  transform: translateY(-50%);
-}
-@media (min-width: 768px) {
-  .card img {
-    height: 11em;
-  }
-}
+    .select2venue-search__field {
+        height: 26px !important;
+    }
 
-.select2-search__field{
-    height:26px !important;
-}
-.select2sport-search__field{
-    height:26px !important;
-}
-.select2venue-search__field{
-    height:26px !important;
-}
-.select2city-search__field{
-    height:26px !important;
-}
+    .select2city-search__field {
+        height: 26px !important;
+    }
 
-.select2-selection__placeholder {
-    color: black !important;
-}
+    .select2-selection__placeholder {
+        color: black !important;
+    }
 
-.select2-container .select2-selection--single{
-    height: initial !important;
-}
+    .select2-container .select2-selection--single {
+        height: initial !important;
+    }
 
-.card:hover {
-    box-shadow: 5px 6px 6px 2px #e9ecef;
-    transform: scale(1.05);
-    transition: all .4s ease;
-    -webkit-transition: all .4s ease;
-}
+    .card:hover {
+        box-shadow: 5px 6px 6px 2px #e9ecef;
+        transform: scale(1.05);
+        transition: all .4s ease;
+        -webkit-transition: all .4s ease;
+    }
 
-.select-style {
-    border: 1px solid #000 !important;
-    height: 37px;
-    color: black;
-    border-radius: 4px !important;
-    font-family: inherit !important;
-    font-size: 17px !important;
-}
+    .select-style {
+        border: 1px solid #000 !important;
+        height: 37px;
+        color: black;
+        border-radius: 4px !important;
+        font-family: inherit !important;
+        font-size: 17px !important;
+    }
 
-input[type=text]::placeholder {
-    color: #000;
-}
+    input[type=text]::placeholder {
+        color: #000;
+    }
 
-textarea::placeholder{
-  color: #000;  
-}
+    textarea::placeholder {
+        color: #000;
+    }
 
-.select2-container{
-    height: 37px;
-}
+    .select2-container {
+        height: 37px;
+    }
 
-.select2-container--default .select2-selection--single .select2-selection__arrow{
-    height: 37px;
-}
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 37px;
+    }
 
-.select2-container--default .select2-selection--single .select2-selection__placeholder{
-    font-size:17px;
-}
+    .select2-container--default .select2-selection--single .select2-selection__placeholder {
+        font-size: 17px;
+    }
 
-.select2-selection__rendered{
-    height:31px;
-}
+    .select2-selection__rendered {
+        height: 31px;
+    }
 
-.select2-container--default .select2-selection--single .select2-selection__rendered {
-    line-height: 31px;
-}
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 31px;
+    }
 
-.select2-selection--multiple {
-    height: 37px;
-}
-.select2-container .select2-search--inline .select2-search__field {
-    font-size: 17px;
-    font-family: inherit;
-    color: black;
-}
+    .select2-selection--multiple {
+        height: 37px;
+    }
+
+    .select2-container .select2-search--inline .select2-search__field {
+        font-size: 17px;
+        font-family: inherit;
+        color: black;
+    }
 </style>
 
 {% endblock %}

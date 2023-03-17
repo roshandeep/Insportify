@@ -1169,6 +1169,7 @@ def home(request):
         recommended_events = get_recommended_events(request)
         # recommended_events = master_table.objects.filter(pk__in=[event.pk for event in recommended_events])
 
+    selected_events_types=[]
     if request.GET.get('events_types'):
         selected_events_types = request.GET.getlist('events_types')
         if request.user.is_authenticated:
@@ -1180,6 +1181,7 @@ def home(request):
                 if event.event_type not in selected_events_types:
                     events.remove(event)
 
+    selected_sports = ''
     if request.GET.get('sports'):
         selected_sports = request.GET.get('sports')
         if request.user.is_authenticated:
@@ -1191,6 +1193,7 @@ def home(request):
                 if event.sport_type not in selected_sports:
                     events.remove(event)
 
+    selected_cities = ''
     if request.GET.get('cities'):
         selected_cities = request.GET.get('cities')
         if request.user.is_authenticated:
@@ -1202,6 +1205,7 @@ def home(request):
                 if event.city not in selected_cities:
                     events.remove(event)
 
+    selected_venues = ''
     if request.GET.get('venues'):
         selected_venues = request.GET.get('venues')
         if request.user.is_authenticated:
@@ -1213,6 +1217,7 @@ def home(request):
                 if event.venue not in selected_venues:
                     events.remove(event)
 
+    selected_date = ''
     if request.GET.get('date_range'):
         selected_date = request.GET.get('date_range')
         if selected_date != 'Select Date':
@@ -1269,6 +1274,7 @@ def home(request):
     # registrationList = [registrationList[i:i + 3] for i in range(0, len(registrationList), 3)]
     # drop_in_eventList = [drop_in_eventList[i:i + 3] for i in range(0, len(drop_in_eventList), 3)]
     # events = [events[i:i + 3] for i in range(0, len(events), 3)]
+
     context = {
         'sports_list': sports,
         'venues_list': venues,
@@ -1277,7 +1283,12 @@ def home(request):
         'drop_in_eventList': drop_in_eventList,
         'recommended_registrationList': recommended_registrationList,
         'recommended_drop_in': recommended_drop_in,
-        'advertisements': advertisements
+        'advertisements': advertisements,
+        'selected_sports': selected_sports,
+        'selected_cities': selected_cities,
+        'selected_venues': selected_venues,
+        'selected_date': str(selected_date),
+        'selected_events_types': selected_events_types
     }
     # print(events)
     # html_template = loader.get_template('EventsApp/home.html')
@@ -2205,15 +2216,14 @@ def get_advertisements(request):
             city_list.append(loc.city)
             prov_list.append(loc.province)
 
-
         ads = list(Advertisement.objects.all().filter(Q(end_time__gte=date.today())))
 
         for ad in ads[:]:
             if ad.geographical_scope == "Provincial":
-                flag=0
+                flag = 0
                 for item in prov_list:
                     if item in ad.province:
-                        flag=1
+                        flag = 1
 
                 if flag == 0:
                     ads.remove(ad)
