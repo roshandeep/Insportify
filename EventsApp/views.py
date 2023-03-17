@@ -646,6 +646,7 @@ def user_profile(request):
         'individual': individual,
         'profile': profile
     }
+    print(individual.participation_interest)
     sports_type = SportsType.objects.all().order_by('sports_type_text')
     sec_sport_choices = Secondary_SportsChoice.objects.filter(profile=profile).order_by("sport_type")
     locations = Extra_Loctaions.objects.filter(profile=profile).order_by("city")
