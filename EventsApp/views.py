@@ -517,7 +517,7 @@ def modify_individual(response, individual):
     individual.participation_interest = ','.join(item for item in participation_interest)
 
     if "pronoun" in response:
-        individual.pronoun = response["pronoun"].strip() if response["pronoun"] else ""
+        individual.pronouns = response["pronoun"].strip() if response["pronoun"] else ""
 
     if "city" in response:
         individual.city = response["city"].strip() if response["city"] else ""
@@ -692,6 +692,7 @@ def user_profile_submit(request):
         individual = modify_individual(request.POST.dict(), individual)
         profile.save()
         request.user.save()
+        print(individual.pronouns)
         individual.save()
         print('Individual details updated!')
         return home(request)
