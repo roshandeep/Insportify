@@ -107,11 +107,11 @@
                             <br>
                             <label for="Yes">
                                 <input type="radio" id="concussion_Yes" name="concussion" value="Yes"
-                                       {% if individual.concussion == "Yes" %} checked {% endif %}>Yes</input>
+                                       {% if individual.concussion == "Yes" %} checked disabled {% endif %}>Yes</input>
                             </label>
                             <label for="No">
                                 <input type="radio" id="concussion_No" name="concussion" value="No"
-                                   {% if individual.concussion == "No" %} checked {% endif %}> No</input>
+                                   {% if individual.concussion == "No" %} checked {% elif individual.concussion == "Yes"%} disabled {% endif %}> No</input>
                             </label>
                         </div>
                         </div>
