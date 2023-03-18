@@ -503,8 +503,8 @@ def modify_individual(response, individual):
         individual.job_title = response["job_title"].strip()
     if "dob" in response:
         individual.dob = response["dob"].strip() if response["dob"] else ""
-    if "is_concussion" in response:
-        individual.concussion = response["is_concussion"].strip()
+    if "concussion" in response:
+        individual.concussion = response["concussion"].strip()
     if "is_student" in response:
         individual.is_student = response["is_student"].strip()
     participation_interest = []
@@ -692,7 +692,6 @@ def user_profile_submit(request):
         individual = modify_individual(request.POST.dict(), individual)
         profile.save()
         request.user.save()
-        print(individual.pronouns)
         individual.save()
         print('Individual details updated!')
         return home(request)
