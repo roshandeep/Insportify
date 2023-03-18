@@ -759,7 +759,8 @@ $("#add_availability").click(function(e) {
     var start_time_val = $("#start_time").val();
     var end_time_val = $("#end_time").val();
     var all_day_val = $("#all_day")[0].checked;
-
+    console.log(start_time_val);
+    console.log(end_time_val);
     if(start_time_val === "" || end_time_val === "" || day_of_week_text === ""){
         let msg = "Please fill in the empty fields!";
         let html_data = `<div class="alert alert-warning alert-dismissible fade show" role="alert">`;
@@ -769,28 +770,38 @@ $("#add_availability").click(function(e) {
         let status = document.getElementById("availability_status");
         status.innerHTML = html_data;
     }
-    else{
-        $.ajax({
-            type: "POST",
-            url: '{% url "EventsApp:add_user_availability" %}',
-            data: {
-                'day_of_week': day_of_week_text,
-                'start_time': start_time_val,
-                'end_time': end_time_val,
-                'all_day': all_day_val,
-                'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
-            },
-            success: function (data) {
-                let html_data = `<div class="alert alert-warning alert-dismissible fade show" role="alert">`;
-                html_data += `${data["status"]}`;
-                html_data += `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
-                html_data += `</div>`;
-                let status = document.getElementById("availability_status");
-                status.innerHTML = html_data;
-                getUserAvailability();
-            }
-        });
-     }
+    else {
+        if (start_time_val > end_time_val) {
+            let msg = "Please check availability times! Start time cannot be after end time";
+            let html_data = `<div class="alert alert-warning alert-dismissible fade show" role="alert">`;
+            html_data += `${msg}`;
+            html_data += `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+            html_data += `</div>`;
+            let status = document.getElementById("availability_status");
+            status.innerHTML = html_data;
+        } else {
+            $.ajax({
+                type: "POST",
+                url: '{% url "EventsApp:add_user_availability" %}',
+                data: {
+                    'day_of_week': day_of_week_text,
+                    'start_time': start_time_val,
+                    'end_time': end_time_val,
+                    'all_day': all_day_val,
+                    'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+                },
+                success: function (data) {
+                    let html_data = `<div class="alert alert-warning alert-dismissible fade show" role="alert">`;
+                    html_data += `${data["status"]}`;
+                    html_data += `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+                    html_data += `</div>`;
+                    let status = document.getElementById("availability_status");
+                    status.innerHTML = html_data;
+                    getUserAvailability();
+                }
+            });
+        }
+    }
 });
 
 function getUserAvailability(){
