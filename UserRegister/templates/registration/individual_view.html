@@ -61,11 +61,11 @@
                         <div class="form-row p-2">
                             <select name="pronoun" id="pronoun" class="form-select">
                                 <option value="0">Choose Preferred Pronoun</option>
-                                <option value="1" {% if individual.pronoun == "1" %} selected {% endif %}>she/her/hers/herself</option>
-                                <option value="2" {% if individual.pronoun == "2" %} selected {% endif %}>he/him/his/himself</option>
-                                <option value="3" {% if individual.pronoun == "3" %} selected {% endif %}>they/them/their/theirs/themself</option>
-                                <option value="4" {% if individual.pronoun == "4" %} selected {% endif %}>others</option>
-                                <option value="5" {% if individual.pronoun == "5" %} selected {% endif %}>Prefer not to say</option>
+                                <option value="1" {% if individual.pronouns == "1" %} selected {% endif %}>she/her/hers/herself</option>
+                                <option value="2" {% if individual.pronouns == "2" %} selected {% endif %}>he/him/his/himself</option>
+                                <option value="3" {% if individual.pronouns == "3" %} selected {% endif %}>they/them/their/theirs/themself</option>
+                                <option value="4" {% if individual.pronouns == "4" %} selected {% endif %}>others</option>
+                                <option value="5" {% if individual.pronouns == "5" %} selected {% endif %}>Prefer not to say</option>
                             </select>
                         </div>
 
@@ -75,19 +75,19 @@
                             <div>
                                 <label class="label-inline" for="Male">
                                     <input type="checkbox" id="Male" name="participation_interest1" value="Male"
-                                        {% if "Male" in individual.participation_interest1 or individual.participation_interest1 %}
+                                        {% if "Male" in individual.participation_interest %}
                                             checked
                                         {% endif %}>Male Only
                                     </input>
                                 </label>
                                 <label class="label-inline" for="Female">
                                     <input type="checkbox" id="Female" name="participation_interest2" value="Female"
-                                {% if "Female" in individual.participation_interest2 or individual.participation_interest2 %} checked {% endif %}>Female Only
+                                {% if "Female" in individual.participation_interest %} checked {% endif %}>Female Only
                                     </input>
                                 </label>
                                 <label class="label-inline" for="Coed">
                                     <input type="checkbox" id="Coed" name="participation_interest3" value="Coed"
-                                {% if "Coed" in individual.participation_interest3 or individual.participation_interest3 %} checked {% endif %}>Coed</input>
+                                {% if "Coed" in individual.participation_interest %} checked {% endif %}>Coed</input>
                                 </label>
                                 </div>
                         </div>
@@ -106,12 +106,12 @@
                             <label>Have you ever suffered concussion?</label>
                             <br>
                             <label for="Yes">
-                                <input type="radio" id="Yes" name="concussion" value="Yes"
-                                       {% if individual.concussion == "Yes" %} checked {% endif %}>Yes</input>
+                                <input type="radio" id="concussion_Yes" name="concussion" value="Yes"
+                                       {% if individual.concussion == "Yes" %} checked disabled {% endif %}>Yes</input>
                             </label>
                             <label for="No">
-                                <input type="radio" id="No" name="concussion" value="No"
-                                   {% if individual.concussion == "No" %} checked {% endif %}> No</input>
+                                <input type="radio" id="concussion_No" name="concussion" value="No"
+                                   {% if individual.concussion == "No" %} checked {% elif individual.concussion == "Yes"%} disabled {% endif %}> No</input>
                             </label>
                         </div>
                         </div>
@@ -759,7 +759,8 @@ $("#add_availability").click(function(e) {
     var start_time_val = $("#start_time").val();
     var end_time_val = $("#end_time").val();
     var all_day_val = $("#all_day")[0].checked;
-
+    console.log(start_time_val);
+    console.log(end_time_val);
     if(start_time_val === "" || end_time_val === "" || day_of_week_text === ""){
         let msg = "Please fill in the empty fields!";
         let html_data = `<div class="alert alert-warning alert-dismissible fade show" role="alert">`;
@@ -769,28 +770,38 @@ $("#add_availability").click(function(e) {
         let status = document.getElementById("availability_status");
         status.innerHTML = html_data;
     }
-    else{
-        $.ajax({
-            type: "POST",
-            url: '{% url "EventsApp:add_user_availability" %}',
-            data: {
-                'day_of_week': day_of_week_text,
-                'start_time': start_time_val,
-                'end_time': end_time_val,
-                'all_day': all_day_val,
-                'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
-            },
-            success: function (data) {
-                let html_data = `<div class="alert alert-warning alert-dismissible fade show" role="alert">`;
-                html_data += `${data["status"]}`;
-                html_data += `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
-                html_data += `</div>`;
-                let status = document.getElementById("availability_status");
-                status.innerHTML = html_data;
-                getUserAvailability();
-            }
-        });
-     }
+    else {
+        if (start_time_val > end_time_val) {
+            let msg = "Please check availability times! Start time cannot be after end time";
+            let html_data = `<div class="alert alert-warning alert-dismissible fade show" role="alert">`;
+            html_data += `${msg}`;
+            html_data += `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+            html_data += `</div>`;
+            let status = document.getElementById("availability_status");
+            status.innerHTML = html_data;
+        } else {
+            $.ajax({
+                type: "POST",
+                url: '{% url "EventsApp:add_user_availability" %}',
+                data: {
+                    'day_of_week': day_of_week_text,
+                    'start_time': start_time_val,
+                    'end_time': end_time_val,
+                    'all_day': all_day_val,
+                    'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+                },
+                success: function (data) {
+                    let html_data = `<div class="alert alert-warning alert-dismissible fade show" role="alert">`;
+                    html_data += `${data["status"]}`;
+                    html_data += `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+                    html_data += `</div>`;
+                    let status = document.getElementById("availability_status");
+                    status.innerHTML = html_data;
+                    getUserAvailability();
+                }
+            });
+        }
+    }
 });
 
 function getUserAvailability(){
