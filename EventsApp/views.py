@@ -1126,6 +1126,8 @@ def get_client_ip(request):
 
 
 def home(request):
+    load_pos_skill_type()
+
     if request.user.is_authenticated:
         if not request.user.profile_status:
             print('Redirecting to user profile...')
@@ -1982,7 +1984,7 @@ def load_venues_excel():
 
 
 def load_pos_skill_type():
-    path = "./sports_db.xlsx"
+    path = "./sports_db_15Mar_ranked.xlsx"
     wb_obj = openpyxl.load_workbook(path)
     sheet_obj = wb_obj.active
     for i in range(2, sheet_obj.max_row + 1):
@@ -2002,6 +2004,7 @@ def load_pos_skill_type():
 
         position = sheet_obj.cell(row=i, column=3).value.strip()
         skill = sheet_obj.cell(row=i, column=4).value.strip()
+        rank = int(sheet_obj.cell(row=i, column=5).value)
         if not PositionAndSkillType.objects.filter(sports_category=sports_category,
                                                    sports_type=sports_type,
                                                    position_type=position,
@@ -2010,8 +2013,15 @@ def load_pos_skill_type():
                                        sports_type=sports_type,
                                        position_type=position,
                                        skill_type=skill)
-            print(i, sports_category, sports_type, obj)
-            obj.save()
+            # obj = PositionAndSkillType.objects.get(sports_category=sports_category,
+            #                            sports_type=sports_type,
+            #                            position_type=position,
+            #                            skill_type=skill)
+            print(i, sports_category, sports_type, position, skill)
+            obj.skill_rank = rank
+            # obj.save()
+        # else:
+        #     print(i, sports_category, sports_type, position, skill)
 
 
 @login_required
