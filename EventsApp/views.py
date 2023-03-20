@@ -836,8 +836,8 @@ def get_selected_sports_skill(request):
         selected_sport = request.POST['selected_type_text']
         # print(selected_sport, sport_position)
         try:
-            selected_skills = PositionAndSkillType.objects.filter(sports_type__sports_type_text=selected_sport).filter(
-                position_type=sport_position).values('pk', 'skill_type').distinct('skill_type')
+            selected_skills = PositionAndSkillType.objects.filter(sports_type__sports_type_text=selected_sport,
+                position_type=sport_position).values('pk', 'skill_type').distinct('skill_rank', 'skill_type').order_by('skill_rank')
             # print(selected_skills)
         except Exception:
             data['error_message'] = 'error'
@@ -1126,7 +1126,7 @@ def get_client_ip(request):
 
 
 def home(request):
-    load_pos_skill_type()
+    # load_pos_skill_type()
 
     if request.user.is_authenticated:
         if not request.user.profile_status:
