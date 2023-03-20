@@ -15,21 +15,27 @@ admin.site.register(SportsImage)
 
 
 class PositionAndSkillTypeAdmin(admin.ModelAdmin):
-    list_display = ('sports_category', 'sports_type', 'position_type', 'skill_type',)
+    list_display = ('sports_category', 'sports_type', 'position_type', 'skill_type', 'skill_rank')
+    search_fields = ['sports_category', 'sports_type', 'position_type', 'skill_type']
+    list_filter = ('sports_category', 'sports_type', 'position_type', 'skill_type', )
+
 
 admin.site.register(PositionAndSkillType, PositionAndSkillTypeAdmin)
 
+
 class ProfileAdmin(admin.ModelAdmin):
     list_display = ('name', 'active_user',)
-    search_fields = ['name', 'active_user',]
+    search_fields = ['name', 'active_user', ]
 
 
 admin.site.register(Profile, ProfileAdmin)
 
 
 class VenuesAdmin(admin.ModelAdmin):
-    list_display = ('vm_name', 'vm_venue_street', 'vm_venuecity', 'vm_venue_province', 'vm_venue_country', 'vm_venue_zip',)
-    search_fields = ['vm_name', 'vm_venue_street', 'vm_venuecity', 'vm_venue_province', 'vm_venue_country', 'vm_venue_zip',]
+    list_display = (
+    'vm_name', 'vm_venue_street', 'vm_venuecity', 'vm_venue_province', 'vm_venue_country', 'vm_venue_zip',)
+    search_fields = ['vm_name', 'vm_venue_street', 'vm_venuecity', 'vm_venue_province', 'vm_venue_country',
+                     'vm_venue_zip', ]
 
 
 admin.site.register(Venues, VenuesAdmin)
@@ -65,7 +71,7 @@ admin.site.register(Availability, AvailabilityAdmin)
 
 
 class OrderItemsAdmin(admin.ModelAdmin):
-    list_display = ('profile', 'event', 'position_type', 'skill', 'no_of_position', 'position_cost', 'total_cost', )
+    list_display = ('profile', 'event', 'position_type', 'skill', 'no_of_position', 'position_cost', 'total_cost',)
 
 
 admin.site.register(OrderItems, OrderItemsAdmin)
@@ -78,7 +84,6 @@ class OrderAdmin(admin.ModelAdmin):
 admin.site.register(Order, OrderAdmin)
 
 
-
 class Organization_AvailabilityAdmin(admin.ModelAdmin):
     list_display = ('profile', 'day_of_week', 'start_time', 'end_time',)
 
@@ -87,7 +92,8 @@ admin.site.register(Organization_Availability, Organization_AvailabilityAdmin)
 
 
 class AdvertisementAdmin(admin.ModelAdmin):
-    list_display = ('header', 'created_by', 'creation_time', 'start_time', 'end_time', 'geographical_scope', 'hit_count')
+    list_display = (
+    'header', 'created_by', 'creation_time', 'start_time', 'end_time', 'geographical_scope', 'hit_count')
 
 
 admin.site.register(Advertisement, AdvertisementAdmin)
@@ -98,4 +104,3 @@ class Ad_HitCountAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Ad_HitCount, Ad_HitCountAdmin)
-
