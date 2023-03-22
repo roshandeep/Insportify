@@ -286,6 +286,9 @@
                                    value="Next" id="next-tab-2" style="width: 90px;"/>
                         </div>
                     <div class="card-body">
+                        <div id="position_summary_msg">
+
+                        </div>
                         <div class="form-row p-2" id="sport_type_container">
                             <select name='sport_type' id="sport_type" class="form-select select2"
                                     aria-label=".form-select-lg example" style="width:100%;">
@@ -689,7 +692,32 @@ if($("#sport_type").prop('selectedIndex') > 0){
 
 $("#sport_type").change(function () {
        setupSportsSubPage();
+       displayExtraInfo();
     });
+
+
+function displayExtraInfo(){
+    var selected_type_value = $("#sport_type option:selected");
+    var selected_type_text = selected_type_value.text();
+    $.ajax({
+            type: "POST",
+            url: '{% url "EventsApp:get_extra_position_info" %}',
+            data: {
+                'selected_type_text': selected_type_text,
+                'csrfmiddlewaretoken':$('input[name=csrfmiddlewaretoken]').val(),
+            },
+            success: function (data) {
+                console.log(data);
+                let html_data = `<div class="alert alert-warning alert-dismissible fade show" role="alert">`;
+                html_data += `${data}`;
+                html_data += `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+                html_data += `</div>`;
+                let status = document.getElementById("position_summary_msg");
+                status.innerHTML = html_data;
+            }
+        });
+}
+
 
 $(document).ready(function(){
   $('.select2').select2();

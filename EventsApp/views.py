@@ -25,7 +25,7 @@ from .models import master_table, Individual, Organization, Venues, SportsCatego
     Availability, Logo, Extra_Loctaions, Events_PositionInfo, Secondary_SportsChoice, Invite, \
     PositionAndSkillType, SportsImage, Organization_Availability, OrderItems, Advertisement, Profile, Ad_HitCount
 import util
-from django.db.models import Q
+from django.db.models import Q, Count
 from functools import lru_cache, reduce
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -696,9 +696,6 @@ def user_profile_submit(request):
         print('Individual details updated!')
         return home(request)
 
-    # messages.success(request, 'Individual details updated!')
-    # return render(request, 'registration/individual_view.html', context)
-
 
 def add_sports_positions(request):
     if request.method == "POST":
@@ -858,6 +855,35 @@ def get_selected_sports_positions(request):
             data['error_message'] = 'error'
             return JsonResponse(data)
         return JsonResponse(list(selected_skills.values('pk', 'position_type')), safe=False)
+
+
+def get_extra_position_info(request):
+    data = {}
+    if request.method == "POST":
+        selected_sport = request.POST['selected_type_text']
+
+        try:
+            same_events = master_table.objects.filter(sport_type=selected_sport)
+            # print(same_events)
+            pos_dict = {}
+            for event in same_events:
+                event_pos = Events_PositionInfo.objects.filter(event__pk=event.pk).distinct('position_name')
+                # print(event_pos)
+                for each_pos in event_pos:
+                    if each_pos.position_name in pos_dict:
+                        pos_dict[each_pos.position_name] += each_pos.no_of_position
+                    else:
+                        pos_dict[each_pos.position_name] = each_pos.no_of_position
+
+                info_str = 'There are already events which have the following Positions :  \n'
+                for key in pos_dict:
+                    info_str = info_str + str(key) + ' ' + str(pos_dict[key]) + ' \n '
+
+        except Exception:
+            data['error_message'] = 'error'
+            return JsonResponse(data)
+
+        return JsonResponse(info_str, safe=False)
 
 
 @login_required
@@ -1128,6 +1154,7 @@ def get_client_ip(request):
 
 def home(request):
     # load_pos_skill_type()
+    # get_extra_position_info(request)
 
     if request.user.is_authenticated:
         if not request.user.profile_status:
@@ -1362,7 +1389,7 @@ def get_recommended_events(request):
     else:
         recommended_events = [event for event in events]
 
-    print("Availability Filter", recommended_events)
+    # print("Availability Filter", recommended_events)
 
     # FILTER BY Location
     for event in recommended_events[:]:
@@ -1371,7 +1398,7 @@ def get_recommended_events(request):
                 recommended_events.remove(event)
 
     recommended_events = list(recommended_events)
-    print("Location Filter", recommended_events)
+    # print("Location Filter", recommended_events)
 
     if request.user.is_individual:
         individual = Individual.objects.get(profile=profile)
@@ -1393,7 +1420,7 @@ def get_recommended_events(request):
                 if age_fail_count == len(positions):
                     recommended_events.remove(event)
 
-    print("Age Filter", recommended_events)
+    # print("Age Filter", recommended_events)
 
     # FILTER BY Gender
     if request.user.is_individual:
@@ -1417,7 +1444,7 @@ def get_recommended_events(request):
                     # print(event.event_title, gender_list, individual_gender, flag)
                     recommended_events.remove(event)
 
-    print("Gender Filter", recommended_events)
+    # print("Gender Filter", recommended_events)
 
     # FILTER BY Sports
     sport_choices = Secondary_SportsChoice.objects.filter(profile=profile).order_by("sport_type")
@@ -1429,7 +1456,7 @@ def get_recommended_events(request):
         if event.sport_type not in sports_list:
             recommended_events.remove(event)
 
-    print("Sports Filter", recommended_events)
+    # print("Sports Filter", recommended_events)
 
     # FILTER BY Positions
     if request.user.is_individual:
@@ -1448,7 +1475,7 @@ def get_recommended_events(request):
             if flag > 0:
                 recommended_events.remove(event)
 
-    print("Positions Filter", recommended_events)
+    # print("Positions Filter", recommended_events)
 
     # FILTER BY Skills
     if request.user.is_individual:
@@ -1468,7 +1495,7 @@ def get_recommended_events(request):
             if flag > 0:
                 recommended_events.remove(event)
 
-    print("Skills Filter", recommended_events)
+    # print("Skills Filter", recommended_events)
 
     return recommended_events
 

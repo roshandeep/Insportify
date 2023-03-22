@@ -57,6 +57,8 @@ urlpatterns = [
          name='add_sports_positions'),
     path('fetch_user_sports_positions/', views.fetch_user_sports_positions,
          name='fetch_user_sports_positions'),
+    path('get_extra_position_info/', views.get_extra_position_info,
+         name='get_extra_position_info'),
     path('delete_sports_choice/', views.delete_sports_choice,
          name='delete_sports_choice'),
     path('add_user_locations/', views.add_user_locations,

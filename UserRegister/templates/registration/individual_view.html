@@ -10,7 +10,7 @@
             <h3 class="mx-auto text-center fw-light">User Profile</h3>
             <hr>
         </div>
-        <form id="msform" method="post" action="{% url 'EventsApp:user_profile_submit'%}">
+        <form id="msform" action="{% url 'EventsApp:user_profile_submit'%}">
             {% csrf_token %}
             {% if messages %}
             {% for message in messages %}

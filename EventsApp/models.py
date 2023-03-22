@@ -52,7 +52,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_individual = models.BooleanField(default=False)
     is_organization = models.BooleanField(default=False)
     first_name = models.CharField(max_length=40, null=True)
-    last_name = models.CharField(max_length=40, null=True)
+    last_name = models.CharField(max_length=40, null=True, blank=True)
     is_mvp = models.BooleanField(default=False, null=True)
     is_active = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
