@@ -6,36 +6,38 @@
 
 <div class="col-11 mx-auto">
     <div class="container-fluid">
-        <div class="row mx-auto my-auto justify-content-center">
-        <div id="carouselExample" class="carousel slide" data-ride="carousel" data-interval="9000">
+        <div class="row">
+    <div class="row mx-auto my-auto justify-content-center">
+        <div id="adsCarousel" class="carousel slide" data-ride="carousel" data-interval="9000">
             <div class="carousel-inner" role="listbox">
                 {% for advertisement in advertisements %}
                 <div class="carousel-item {% if forloop.counter0 == 0 %}active{% endif %}"
                      style="text-align: center;">
-                    <div class="col-md-4">
-                    <img src="/media/{{advertisement.image}}" class="img-fluid mx-auto d-bloc"
+                <div class="col-md-4">
+                   <img src="/media/{{advertisement.image}}" class="mx-auto d-bloc"
                          alt="{{advertisement.header}}"
                          onclick="check_ad_count({{advertisement.pk}}); location.href='show_advertisement/{{advertisement.header}}';"
-                         style="cursor:pointer; height: 140px;">
-                    </div>
+                         style="cursor:pointer; height: 140px; max-width: 100%">
+                </div>
                 </div>
                 {% endfor %}
             </div>
 
-            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample"
+            <button class="carousel-control-prev" type="button" data-bs-target="#adsCarousel"
                     data-bs-slide="prev" style="left: -5%;">
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Previous</span>
             </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carouselExample"
+            <button class="carousel-control-next" type="button" data-bs-target="#adsCarousel"
                     data-bs-slide="next" style="right: -5%">
                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Next</span>
             </button>
         </div>
-        </div>
+    </div>
     </div>
 </div>
+
 
 <div id="event-page" class="col-lg-9 col-md-12 mx-auto">
     <form id="form-events" class="row p-3" action="{% url 'EventsApp:home' %}" method="get">
@@ -101,16 +103,18 @@
 {% if user.is_authenticated %}
 
 <div class="col-11 mx-auto">
+    <div class="container-fluid">
     <div class="row p-3">
         <h5>Recommended Drop In Events</h5>
         <hr class="my-2">
         <div id="carousel_recommended_drop_in_eventList" class="carousel slide" data-ride="carousel"
              data-interval="false"
              data-touch="true">
-            <div class="carousel-inner row w-10 mx-auto" role="listbox">
+            <div class="carousel-inner" role="listbox">
                 {% for event in recommended_drop_in %}
-                <div class="carousel-item col-md-4 {% if forloop.counter0 == 0 %}active{% endif %}"
+                <div class="carousel-item {% if forloop.counter0 == 0 %}active{% endif %}"
                      style="text-align: center;">
+                    <div class="col-md-4">
                     <div class="event-card card"
                          onclick="location.href='event_details/{{event.pk}}/{% if event.datetimes %}{{event.datetimes}}{% elif event.current_datetimes %}{{event.current_datetimes}}{% endif %}/'"
                          style="cursor:pointer">
@@ -135,6 +139,7 @@
                             {% endif %}
                         </div>
                     </div>
+                    </div>
                 </div>
                 {% endfor %}
             </div>
@@ -150,16 +155,19 @@
             </button>
         </div>
     </div>
+    </div>
+    <div class="container-fluid">
     <div class="row p-3">
         <h5>Recommended Registration Programs</h5>
         <hr class="my-2">
         <div id="carousel_recommended_registration_eventList" class="carousel slide" data-ride="carousel"
              data-interval="false"
              data-touch="true">
-            <div class="carousel-inner row w-10 mx-auto" role="listbox">
+            <div class="carousel-inneR" role="listbox">
                 {% for event in recommended_registrationList %}
-                <div class="carousel-item col-md-4 {% if forloop.counter0 == 0 %}active{% endif %}"
+                <div class="carousel-item {% if forloop.counter0 == 0 %}active{% endif %}"
                      style="text-align: center;">
+                    <div class="col-md-4">
                     <div class="event-card card"
                          onclick="location.href='event_details/{{event.pk}}/{% if event.datetimes %}{{event.datetimes}}{% elif event.current_datetimes %}{{event.current_datetimes}}{% endif %}/'"
                          style="cursor:pointer">
@@ -183,6 +191,7 @@
                             <p class="text-dark text-start eventdatetime">{{event.current_datetimes}}</p>
                             {% endif %}
                         </div>
+                    </div>
                     </div>
                 </div>
                 {% endfor %}
@@ -201,20 +210,23 @@
             </button>
         </div>
     </div>
+    </div>
 </div>
 
 {% else %}
 
 <div class="col-11 mx-auto">
+     <div class="container-fluid">
     <div class="row p-3">
         <h5>All Drop In Events</h5>
         <hr class="my-2">
-        <div id="carouseldrop_in_eventList" class="carousel slide" data-ride="carousel" data-interval="false"
+         <div id="carouseldrop_in_eventList" class="carousel slide" data-ride="carousel" data-interval="false"
              data-touch="true">
-            <div class="carousel-inner row w-10 mx-auto" role="listbox">
+            <div class="carousel-inner" role="listbox">
                 {% for event in drop_in_eventList %}
-                <div class="carousel-item col-md-4 {% if forloop.counter0 == 0 %}active{% endif %}"
+                <div class="carousel-item {% if forloop.counter0 == 0 %}active{% endif %}"
                      style="text-align: center;">
+                    <div class="col-md-4">
                     <div class="event-card card"
                          onclick="location.href='event_details/{{event.pk}}/{% if event.datetimes %}{{event.datetimes}}{% elif event.current_datetimes %}{{event.current_datetimes}}{% endif %}/'"
                          style="cursor:pointer">
@@ -238,6 +250,8 @@
                             <p class="text-dark text-start eventdatetime">{{event.current_datetimes}}</p>
                             {% endif %}
                         </div>
+                    </div>
+
                     </div>
                 </div>
                 {% endfor %}
@@ -253,16 +267,20 @@
                 <span class="visually-hidden">Next</span>
             </button>
         </div>
+
+        </div>
     </div>
+    <div class="container-fluid">
     <div class="row p-3">
         <h5>All Registration Programs</h5>
         <hr class="my-2">
         <div id="carouselregistration_eventList" class="carousel slide" data-ride="carousel" data-interval="false"
              data-touch="true">
-            <div class="carousel-inner row w-10 mx-auto" role="listbox">
+            <div class="carousel-inner" role="listbox">
                 {% for event in registrationList %}
-                <div class="carousel-item col-md-4 {% if forloop.counter0 == 0 %}active{% endif %}"
+                <div class="carousel-item {% if forloop.counter0 == 0 %}active{% endif %}"
                      style="text-align: center;">
+                    <div class="col-md-4">
                     <div class="event-card card"
                          onclick="location.href='event_details/{{event.pk}}/{% if event.datetimes %}{{event.datetimes}}{% elif event.current_datetimes %}{{event.current_datetimes}}{% endif %}/'"
                          style="cursor:pointer">
@@ -287,6 +305,7 @@
                             {% endif %}
                         </div>
                     </div>
+                    </div>
                 </div>
                 {% endfor %}
             </div>
@@ -301,6 +320,7 @@
                 <span class="visually-hidden">Next</span>
             </button>
         </div>
+    </div>
     </div>
 </div>
 
@@ -383,8 +403,36 @@
         }
 
         $('.datesingle').datepicker({orientation: 'top', format: 'yyyy-mm-dd',});
+
+
     });
 
+    let carousels=document.querySelectorAll(".carousel");
+    carousels.forEach((carousel)=>{
+        let items = carousel.querySelectorAll('.carousel-item');
+        create(items);
+    })
+
+
+    function create(items) {
+        items.forEach((el) => {
+            const minPerSlide = 3
+            let next = el.nextElementSibling
+            for (var i = 1; i < minPerSlide; i++) {
+                if (!next) {
+                    // wrap carousel by using first child
+                    next = items[0]
+                }
+                let cloneChild = next.cloneNode(true)
+                el.appendChild(cloneChild.children[0])
+                next = next.nextElementSibling
+            }
+        })
+    }
+$(document).ready(function(){
+  $('#adsCarousel').carousel({interval: false});
+  $('#adsCarousel').carousel('pause');
+});
     function callFormSizeChange(myWidth, myHeight) {
         if (myWidth >= 768) {
             if (document.getElementById("events_types")) {
@@ -435,21 +483,6 @@
         }
     }
 
-    let items = document.querySelectorAll('.carousel .carousel-item')
-
-		items.forEach((el) => {
-			const minPerSlide = 3
-			let next = el.nextElementSibling
-			for (var i=1; i<minPerSlide; i++) {
-				if (!next) {
-            // wrap carousel by using first child
-            next = items[0]
-        }
-        let cloneChild = next.cloneNode(true)
-        el.appendChild(cloneChild.children[0])
-        next = next.nextElementSibling
-    }
-})
 </script>
 
 <style>
@@ -489,6 +522,7 @@
         .card img {
             height: 11em;
         }
+
     }
 
     .select2-search__field {
@@ -569,6 +603,11 @@
         color: black;
     }
 
+    .carousel-inner .carousel-item.active,
+     .carousel-inner .carousel-item-next,
+     .carousel-inner .carousel-item-prev {
+        display: flex;
+    }
     @media (max-width: 767px) {
 		.carousel-inner .carousel-item > div {
 			display: none;
@@ -582,27 +621,7 @@
 	.carousel-inner .carousel-item-next,
 	.carousel-inner .carousel-item-prev {
 		display: flex;
-        justify-content: center
-	}
-
-	/* medium and up screens */
-	@media (min-width: 768px) {
-
-		.carousel-inner .carousel-item-end.active,
-		.carousel-inner .carousel-item-next {
-			transform: translateX(33%);
-		}
-
-		.carousel-inner .carousel-item-start.active,
-		.carousel-inner .carousel-item-prev {
-			transform: translateX(-33%);
-		}
-        .carousel-inner .carousel-item-end,
-        .carousel-inner .carousel-item-right,
-        .carousel-inner .carousel-item-left ,
-	    .carousel-inner .carousel-item-start {
-		    transform: translateX(0);
-	    }
+        justify-content: center;
 	}
 
 </style>
