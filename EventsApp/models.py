@@ -56,7 +56,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_mvp = models.BooleanField(default=False, null=True)
     is_active = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
-    active_profile_name = models.CharField(max_length=40, null=True)
+    # active_profile_name = models.CharField(max_length=40, null=True)
     profile_status = models.BooleanField(default=False, null=True)
 
 

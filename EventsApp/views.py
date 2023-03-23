@@ -31,10 +31,9 @@ from functools import lru_cache, reduce
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
-# Cache might be creating run time db issues
-# @lru_cache()
+
 def get_profile_from_user(user):
-    # user = User.objects.get(user=request.user)
+    print("check profile")
     return Profile.objects.get(active_user=user)
 
 
@@ -46,12 +45,12 @@ def multistep(request):
     profile = get_profile_from_user(request.user)
 
     if request.user.is_individual:
-
         user_loc = Extra_Loctaions.objects.filter(profile=profile).values_list('city', flat=True)
         venues = Venues.objects.values('pk', 'vm_name', 'vm_venuecity').filter(
             vm_venuecity__in=list(user_loc)).order_by('vm_name')
     else:
         venues = Venues.objects.values('pk', 'vm_name').order_by('vm_name')
+
     if request.method == "POST":
         # Had to remove required since some fieldsets are hidden due to pagination causing client side console errors
         # Checking validity here
@@ -561,11 +560,10 @@ def _switch_profile(user, name):
     profile.active_user = user
     profile.save()
 
-    user.active_profile_name = profile.name
+    # user.active_profile_name = profile.name
     user.profile_status = profile.profile_status
     user.save()
 
-    # get_profile_from_user.cache_clear()
     return True
 
 
@@ -1153,8 +1151,7 @@ def get_client_ip(request):
 
 
 def home(request):
-    # load_pos_skill_type()
-    # get_extra_position_info(request)
+    print("Home")
 
     if request.user.is_authenticated:
         if not request.user.profile_status:
@@ -1320,7 +1317,6 @@ def home(request):
         'selected_date': str(selected_date),
         'selected_events_types': selected_events_types
     }
-    # print(events)
     # html_template = loader.get_template('EventsApp/home.html')
     # return HttpResponse(html_template.render(context, request))
 
@@ -1365,6 +1361,7 @@ def get_events_by_time(events):
 
 
 def get_recommended_events(request):
+    print("Recommended")
     profile = get_profile_from_user(request.user)
     user_avaiability = Availability.objects.filter(profile=profile)
 
