@@ -42,7 +42,7 @@
 <div id="event-page" class="col-lg-9 col-md-12 mx-auto">
     <form id="form-events" class="row p-3" action="{% url 'EventsApp:home' %}" method="get">
         <div class="col mb-2" id="events_types_select" style="flex-grow: 1;">
-            <select id="events_types" class="form-select select2" multiple name="events_types"
+            <select id="events_types" class="form-control form-select select2" multiple name="events_types"
                     style="height:26px; flex-grow: 1;">
                 <option value="Camp" {% if 'Camp' in selected_events_types %}selected{% endif %}>Camp</option>
                 <option value="Charity" {% if 'Charity' in selected_events_types %}selected{% endif %}>Charity</option>
@@ -56,7 +56,7 @@
             </select>
         </div>
         <div id="sports_select" class="col mb-2" style="flex-grow: 1;">
-            <select id="sport_types" class="form-select select2sport" style="height:26px; flex-grow: 1;" name="sports">
+            <select id="sport_types" class="form-control form-select select2sport" style="height:26px; flex-grow: 1;" name="sports">
                 <option value="" selected="selected">Select Sport</option>
                 {% for sports in sports_list %}
                 <option value="{{sports.sports_type_text}}" {% if sports.sports_type_text == selected_sports %}selected{% endif %}>{{sports.sports_type_text}}
@@ -70,7 +70,7 @@
         </div>
         <div id="venues_select" class="col mb-2 mb-2" style="flex-grow: 1;">
             {% if user.is_authenticated %}
-            <select id="venue_types" class="form-select select2venue" style="height:26px; flex-grow: 1;" name="venues">
+            <select id="venue_types" class="form-control form-select select2venue" style="height:26px; flex-grow: 1;" name="venues">
                 <option value="" selected="selected">Select Venue</option>
                 {% for venues in venues_list %}
                 <option value="{{venues.vm_name}}" {% if venues.vm_name == selected_venues %}selected{% endif %}>
@@ -79,7 +79,7 @@
                 {% endfor %}
             </select>
             {% else %}
-            <select id="city_types" class="form-select select2city" style="height:26px; flex-grow: 1;" name="cities">
+            <select id="city_types" class="form-control form-select select2city" style="height:26px; flex-grow: 1;" name="cities">
                 <option value="" selected="selected">Select City</option>
                 {% for city in cities_list %}
                 <option value="{{city.vm_venuecity}}" {% if city.vm_venuecity == selected_cities %}selected{% endif %}>
@@ -577,6 +577,7 @@ $(document).ready(function(){
         height: 37px;
     }
 
+
     .select2-container--default .select2-selection--single .select2-selection__arrow {
         height: 37px;
     }
@@ -587,6 +588,7 @@ $(document).ready(function(){
 
     .select2-selection__rendered {
         height: 31px;
+        margin-left: 5px;
     }
 
     .select2-container--default .select2-selection--single .select2-selection__rendered {
@@ -602,6 +604,7 @@ $(document).ready(function(){
         font-family: inherit;
         color: black;
     }
+   .datesingle::placeholder { color: black; text-align: left}
 
     .carousel-inner .carousel-item.active,
      .carousel-inner .carousel-item-next,
