@@ -67,6 +67,9 @@ class Profile(models.Model):
     name = models.CharField(max_length=20)  # TODO : Adding uniqueness within user
     profile_status = models.BooleanField(default=False)
 
+    def __str__(self):
+        return self.user.email
+
 
 class Individual(models.Model):
     profile = models.OneToOneField(Profile, on_delete=models.CASCADE, primary_key=True)
