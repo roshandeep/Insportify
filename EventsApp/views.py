@@ -31,7 +31,6 @@ from functools import lru_cache, reduce
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
-
 def get_profile_from_user(user):
     print("check profile")
     return Profile.objects.get(active_user=user)
