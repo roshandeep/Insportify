@@ -2111,13 +2111,15 @@ def delete_by_id(request, event_id, date):
 
 @login_required
 def invite_by_id(request, event_id, email=None):
-    ## only works for individual
     context = {}
     profile = get_profile_from_user(request.user)
     form = InviteForm(request.POST or None,
                       instance=Invite(),
                       initial={'profile': profile})
-    individual = Individual.objects.get(profile=profile)
+    if request.user.is_individual:
+        user = Individual.objects.get(profile=profile)
+    else:
+        user = Organization.objects.get(profile=profile)
     context['form'] = form
     # user = User.objects.get(email=request.user.email)
     event = master_table.objects.get(pk=event_id)
@@ -2125,8 +2127,8 @@ def invite_by_id(request, event_id, email=None):
     context["invites"] = Invite.objects.all().filter(event=event).distinct('email')
 
     if email:
-        if individual.first_name and individual.last_name:
-            full_name = individual.first_name + " " + individual.last_name
+        if user.first_name:
+            full_name = user.first_name + " " + str(user.last_name or ' ')
         else:
             full_name = ""
         util.email("Invitation from Insportify", "Hi there! " + full_name
@@ -2141,8 +2143,8 @@ def invite_by_id(request, event_id, email=None):
                          event=event,
                          email=form.cleaned_data['email'])
             obj.save()
-            if individual.first_name and individual.last_name:
-                full_name = individual.first_name + " " + individual.last_name
+            if user.first_name:
+                full_name = user.first_name + " " + str(user.last_name or ' ')
             else:
                 full_name = ""
             util.email("Invitation from Insportify", "Hi there! " + full_name
@@ -2169,15 +2171,18 @@ def invite(request):
     context['form'] = form
     # user = User.objects.get(email=request.user.email)
     context["invites"] = Invite.objects.all().filter(profile=profile)
-    individual = Individual.objects.get(profile=profile)
+    if request.user.is_individual:
+        user = Individual.objects.get(profile=profile)
+    else:
+        user = Organization.objects.get(profile=profile)
     if request.POST:
         if form.is_valid():
             obj = Invite(profile=profile,
                          event=None,
                          email=form.cleaned_data['email'])
             obj.save()
-            if individual.first_name and individual.last_name:
-                full_name = individual.first_name + " " + individual.last_name
+            if user.first_name:
+                full_name = user.first_name + " " + str(user.last_name or ' ')
             else:
                 full_name = ""
             util.email("Invitation from Insportify", "Hi there! " + full_name
