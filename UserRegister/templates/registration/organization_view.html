@@ -115,7 +115,7 @@
                             value="{% if organization.email %} {{organization.email}} {% endif %}">
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" name="phone" class="form-control" placeholder="* Phone number"
+                            <input type="text" name="phone" id="phone" class="form-control" placeholder="* Phone number"
                             data-inputmask="'mask': '999-999-9999'" value="{% if organization.phone %} {{organization.phone}} {% endif %}">
                         </div>
                         <div class="form-row p-2">
@@ -910,7 +910,10 @@ function delete_user_location(user_location_id){
         //    });
         //};
     });
+let selector = document.getElementById("phone");
 
+let im = new Inputmask("999-999-9999");
+im.mask(selector);
 </script>
 
 

@@ -55,7 +55,7 @@
                                    value="{% if individual.dob %} {{individual.dob}} {% endif %}"/>
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" class="form-control" name="phone" placeholder="Mobile" data-inputmask="'mask': '999-999-9999'"
+                            <input type="text" class="form-control" name="phone" id="phone" placeholder="Mobile" data-inputmask="'mask': '999-999-9999'"
                                    value="{% if individual.phone %} {{individual.phone}} {% endif %}"/>
                         </div>
                         <div class="form-row p-2">
@@ -555,7 +555,6 @@
         let myHeight = window.innerHeight;
         myWidth = nw;
         callWidthChange(myWidth, myHeight);
-        $(":input").inputmask();
     });
     });
 
@@ -1265,7 +1264,10 @@ $(document).ready(function() {
     }
   });
 });
+let selector = document.getElementById("phone");
 
+let im = new Inputmask("999-999-9999");
+im.mask(selector);
 </script>
 
 {% endblock %}
