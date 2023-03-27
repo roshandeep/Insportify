@@ -1642,15 +1642,15 @@ def event_details(request, event_id, event_date):
 
                 if request.user.is_individual:
                     sub_prof = Individual.objects.get(profile=profile)
+                    full_name = sub_prof.first_name + " " + str(sub_prof.last_name or ' ')
                 elif request.user.is_organization:
                     sub_prof = Organization.objects.get(profile=profile)
+                    full_name = str(sub_prof.organization_name or ' ')
 
                 # Email Creator - New Subscriber
                 event_subject = "New subscriber for Event: " + event.event_title
                 event_message = "A new user has subscribed to event: " + event.event_title + "\n" + \
-                                "Subscriber Name: " + sub_prof.first_name + " " + \
-                                sub_prof.last_name if sub_prof.last_name else "" + "\n" + \
-                                                                              "Subscriber Email: " + request.user.email + "\n"
+                                "Subscriber Name: " + full_name + "\n" + "Subscriber Email: " + request.user.email + "\n"
                 # if event.created_by:
                 #     util.email(event_subject, event_message, [event.created_by.email])
 
