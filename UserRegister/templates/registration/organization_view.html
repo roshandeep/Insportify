@@ -115,8 +115,8 @@
                             value="{% if organization.email %} {{organization.email}} {% endif %}">
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" name="phone" class="form-control" placeholder="* Phone number"
-                            value="{% if organization.phone %} {{organization.phone}} {% endif %}">
+                            <input type="text" name="phone" id="phone" class="form-control" placeholder="* Phone number"
+                            data-inputmask="'mask': '999-999-9999'" value="{% if organization.phone %} {{organization.phone}} {% endif %}">
                         </div>
                         <div class="form-row p-2">
                             <input type="text" name="website" class="form-control" placeholder="Website"
@@ -363,6 +363,7 @@
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"/>
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/jquery.inputmask.bundle.min.js"></script>
 <style>
    #progressbar {
     margin-bottom: 30px;
@@ -909,7 +910,10 @@ function delete_user_location(user_location_id){
         //    });
         //};
     });
+let selector = document.getElementById("phone");
 
+let im = new Inputmask("999-999-9999");
+im.mask(selector);
 </script>
 
 
