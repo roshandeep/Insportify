@@ -55,7 +55,7 @@
                                    value="{% if individual.dob %} {{individual.dob}} {% endif %}"/>
                         </div>
                         <div class="form-row p-2">
-                            <input type="text" class="form-control" name="phone" placeholder="Mobile"
+                            <input type="text" class="form-control" name="phone" placeholder="Mobile" data-inputmask="'mask': '999-999-9999'"
                                    value="{% if individual.phone %} {{individual.phone}} {% endif %}"/>
                         </div>
                         <div class="form-row p-2">
@@ -448,6 +448,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.css"
       rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/jquery.inputmask.bundle.min.js"></script>
 <style>
 
    #progressbar {
@@ -553,7 +554,8 @@
         var nw = $(window).width();
         let myHeight = window.innerHeight;
         myWidth = nw;
-        callWidthChange(myWidth, myHeight);   
+        callWidthChange(myWidth, myHeight);
+        $(":input").inputmask();
     });
     });
 
