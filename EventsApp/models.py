@@ -344,7 +344,7 @@ class Order(models.Model):
     orderId = models.CharField(max_length=200, blank=True, null=True)
 
     def __str__(self):
-        return self.customer.first_name
+        return self.customer.active_user.email
 
 
 class Advertisement(models.Model):
