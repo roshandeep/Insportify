@@ -59,7 +59,7 @@
                                    value="{% if individual.phone %} {{individual.phone}} {% endif %}"/>
                         </div>
                         <div class="form-row p-2">
-                            <select name="pronoun" id="pronoun" class="form-select">
+                            <select name="pronoun" id="pronoun" class="form-select" title="pronoun">
                                 <option value="0">Choose Preferred Pronoun</option>
                                 <option value="1" {% if individual.pronouns == "1" %} selected {% endif %}>she/her/hers/herself</option>
                                 <option value="2" {% if individual.pronouns == "2" %} selected {% endif %}>he/him/his/himself</option>

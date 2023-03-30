@@ -11,7 +11,7 @@
                    <img src="/media/{{advertisement.image}}" class="mx-auto d-bloc"
                          alt="{{advertisement.header}}"
                          onclick="check_ad_count({{advertisement.pk}}); location.href='show_advertisement/{{advertisement.header}}';"
-                         style="cursor:pointer; height: 140px; max-width: 100%;width: auto">
+                         role="link" style="cursor:pointer; height: 140px; max-width: 100%;width: auto">
             </div>
                 {% endfor %}
     </div>
@@ -20,7 +20,7 @@
         <form id="form-events" class="row p-3" action="{% url 'EventsApp:home' %}" method="get">
             <div class="col mb-2" id="events_types_select" style="flex-grow: 1;">
                 <select id="events_types" class="form-control form-select select2" multiple name="events_types"
-                        style="height:26px; flex-grow: 1;">
+                        style="height:26px; flex-grow: 1;" title="event types">
                     <option value="Camp" {% if 'Camp' in selected_events_types %}selected{% endif %}>Camp</option>
                     <option value="Charity" {% if 'Charity' in selected_events_types %}selected{% endif %}>Charity</option>
                     <option value="Conditioning" {% if 'Conditioning' in selected_events_types %}selected{% endif %}>Conditioning</option>
