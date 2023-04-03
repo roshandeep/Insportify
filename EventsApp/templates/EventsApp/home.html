@@ -3,337 +3,239 @@
 {% load widget_tweaks %}
 {% load static %}
 {% block content %}
-
 <div class="col-11 mx-auto">
-    <div class="container-fluid">
-        <div class="row">
-    <div class="row mx-auto my-auto justify-content-center">
-        <div id="adsCarousel" class="carousel slide" data-ride="carousel" data-interval="9000">
-            <div class="carousel-inner" role="listbox">
-                {% for advertisement in advertisements %}
-                <div class="carousel-item {% if forloop.counter0 == 0 %}active{% endif %}"
-                     style="text-align: center;">
-                <div class="col-md-4">
+    <div class="slider">
+
+        {% for advertisement in advertisements %}
+            <div class="col-md-4 col-sm-10">
                    <img src="/media/{{advertisement.image}}" class="mx-auto d-bloc"
                          alt="{{advertisement.header}}"
                          onclick="check_ad_count({{advertisement.pk}}); location.href='show_advertisement/{{advertisement.header}}';"
-                         style="cursor:pointer; height: 140px; max-width: 100%">
+                         role="link" style="cursor:pointer; height: 140px; max-width: 100%;width: auto">
+            </div>
+                {% endfor %}
+    </div>
+
+    <div id="event-page" class="col-lg-9 col-md-12 mx-auto">
+        <form id="form-events" class="row p-3" action="{% url 'EventsApp:home' %}" method="get">
+            <div class="col mb-2" id="events_types_select" style="flex-grow: 1;">
+                <select id="events_types" class="form-control form-select select2" multiple name="events_types"
+                        style="height:26px; flex-grow: 1;" title="event types">
+                    <option value="Camp" {% if 'Camp' in selected_events_types %}selected{% endif %}>Camp</option>
+                    <option value="Charity" {% if 'Charity' in selected_events_types %}selected{% endif %}>Charity</option>
+                    <option value="Conditioning" {% if 'Conditioning' in selected_events_types %}selected{% endif %}>Conditioning</option>
+                    <option value="Development" {% if 'Development' in selected_events_types %}selected{% endif %}>Development</option>
+                    <option value="Game/Session" {% if 'Game/Session' in selected_events_types %}selected{% endif %}>Game/Session</option>
+                    <option value="Online" {% if 'Online' in selected_events_types %}selected{% endif %}>Online</option>
+                    <option value="Registration" {% if 'Registration' in selected_events_types %}selected{% endif %}>Registration</option>
+                    <option value="Social" {% if 'Social' in selected_events_types %}selected{% endif %}>Social</option>
+                    <option value="Tournament" {% if 'Tournament' in selected_events_types %}selected{% endif %}>Tournament</option>
+                </select>
+            </div>
+            <div id="sports_select" class="col mb-2" style="flex-grow: 1;">
+                <select id="sport_types" class="form-control form-select select2sport" style="height:26px; flex-grow: 1;" name="sports">
+                    <option value="" selected="selected">Select Sport</option>
+                    {% for sports in sports_list %}
+                    <option value="{{sports.sports_type_text}}" {% if sports.sports_type_text == selected_sports %}selected{% endif %}>{{sports.sports_type_text}}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col mb-2 mb-2">
+                <input class="form-control select-style datesingle" onfocus="(this.type='date')"
+                       onblur="this.type='text'" value="{{selected_date}}" placeholder="Select Date" name="date_range"/>
+            </div>
+            <div id="venues_select" class="col mb-2 mb-2" style="flex-grow: 1;">
+                {% if user.is_authenticated %}
+                <select id="venue_types" class="form-control form-select select2venue" style="height:26px; flex-grow: 1;" name="venues">
+                    <option value="" selected="selected">Select Venue</option>
+                    {% for venues in venues_list %}
+                    <option value="{{venues.vm_name}}" {% if venues.vm_name == selected_venues %}selected{% endif %}>
+                        {{venues.vm_name}}
+                    </option>
+                    {% endfor %}
+                </select>
+                {% else %}
+                <select id="city_types" class="form-control form-select select2city" style="height:26px; flex-grow: 1;" name="cities">
+                    <option value="" selected="selected">Select City</option>
+                    {% for city in cities_list %}
+                    <option value="{{city.vm_venuecity}}" {% if city.vm_venuecity == selected_cities %}selected{% endif %}>
+                        {{city.vm_venuecity}}
+                    </option>
+                    {% endfor %}
+                </select>
+                {% endif %}
+            </div>
+            <div class="row-12 text-center">
+                <button type="submit" class="btn btn-primary mr-2 m-2" style="width: 90px;">
+                    Search
+                </button>
+                <a href="{% url 'EventsApp:home' %}" class="btn btn-primary ml-2 m-2" style="width: 90px;">
+                    Clear
+                </a>
+            </div>
+        </form>
+    </div>
+
+    {% if user.is_authenticated %}
+    <div class="container-fluid">
+        <div class="row p-3">
+            <h5>Recommended Drop In Events</h5>
+            <hr class="my-2">
+            <div id="carousel_recommended_drop_in_eventList" class="slider">
+                {% for event in recommended_drop_in %}
+                <div class="col-md-4 col-sm-12">
+                <div class="event-card card"
+                     onclick="location.href='event_details/{{event.pk}}/{% if event.datetimes %}{{event.datetimes}}{% elif event.current_datetimes %}{{event.current_datetimes}}{% endif %}/'"
+                     style="cursor:pointer">
+                    <img src="{{event.sport_logo}}" class="img-fluid"
+                         alt="..." style="cursor:pointer"
+                         onclick="location.href='event_details/{{event.pk}}/{% if event.datetimes %}{{event.datetimes}}{% elif event.current_datetimes %}{{event.current_datetimes}}{% endif %}/'">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">{{event.sport_type}}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted text-center">
+                            {% if event.event_title %}
+                            {{event.event_title}} :
+                            {% endif %}
+                            {% if event.event_type %}
+                            {{event.event_type}}
+                            {% endif %}
+                        </h6>
+                        <p class="card-text text-center">{{event.venue}}, {{event.city}}, {{event.province}}</p>
+                        {% if event.datetimes %}
+                        <p class="text-dark text-start eventdatetime">{{event.datetimes}}</p>
+                        {% elif event.current_datetimes %}
+                        <p class="text-dark text-start eventdatetime">{{event.current_datetimes}}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                </div>
+            {% endfor %}
+            </div>
+        </div>
+
+    </div>
+    <div class="container-fluid">
+        <div class="row p-3">
+            <h5>Recommended Registration Programs</h5>
+            <hr class="my-2">
+            <div id="carousel_recommended_registration_eventList" class="slider">
+
+                {% for event in recommended_registrationList %}
+                <div class="col-md-4 col-sm-12">
+                <div class="event-card card"
+                         onclick="location.href='event_details/{{event.pk}}/{% if event.datetimes %}{{event.datetimes}}{% elif event.current_datetimes %}{{event.current_datetimes}}{% endif %}/'"
+                         style="cursor:pointer">
+                    <img src="{{event.sport_logo}}" class="img-fluid"
+                         alt="..." style="cursor:pointer"
+                         onclick="location.href='event_details/{{event.pk}}/{% if event.datetimes %}{{event.datetimes}}{% elif event.current_datetimes %}{{event.current_datetimes}}{% endif %}/'">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">{{event.sport_type}}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted text-center">
+                            {% if event.event_title %}
+                            {{event.event_title}} :
+                            {% endif %}
+                            {% if event.event_type %}
+                            {{event.event_type}}
+                            {% endif %}
+                        </h6>
+                        <p class="card-text text-center">{{event.venue}}, {{event.city}}, {{event.province}}</p>
+                        {% if event.datetimes %}
+                        <p class="text-dark text-start eventdatetime">{{event.datetimes}}</p>
+                        {% elif event.current_datetimes %}
+                        <p class="text-dark text-start eventdatetime">{{event.current_datetimes}}</p>
+                        {% endif %}
+                    </div>
                 </div>
                 </div>
                 {% endfor %}
             </div>
-
-            <button class="carousel-control-prev" type="button" data-bs-target="#adsCarousel"
-                    data-bs-slide="prev" style="left: -5%;">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#adsCarousel"
-                    data-bs-slide="next" style="right: -5%">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </button>
         </div>
     </div>
-    </div>
-</div>
-
-
-<div id="event-page" class="col-lg-9 col-md-12 mx-auto">
-    <form id="form-events" class="row p-3" action="{% url 'EventsApp:home' %}" method="get">
-        <div class="col mb-2" id="events_types_select" style="flex-grow: 1;">
-            <select id="events_types" class="form-control form-select select2" multiple name="events_types"
-                    style="height:26px; flex-grow: 1;">
-                <option value="Camp" {% if 'Camp' in selected_events_types %}selected{% endif %}>Camp</option>
-                <option value="Charity" {% if 'Charity' in selected_events_types %}selected{% endif %}>Charity</option>
-                <option value="Conditioning" {% if 'Conditioning' in selected_events_types %}selected{% endif %}>Conditioning</option>
-                <option value="Development" {% if 'Development' in selected_events_types %}selected{% endif %}>Development</option>
-                <option value="Game/Session" {% if 'Game/Session' in selected_events_types %}selected{% endif %}>Game/Session</option>
-                <option value="Online" {% if 'Online' in selected_events_types %}selected{% endif %}>Online</option>
-                <option value="Registration" {% if 'Registration' in selected_events_types %}selected{% endif %}>Registration</option>
-                <option value="Social" {% if 'Social' in selected_events_types %}selected{% endif %}>Social</option>
-                <option value="Tournament" {% if 'Tournament' in selected_events_types %}selected{% endif %}>Tournament</option>
-            </select>
+    {% else %}
+ <div class="container-fluid">
+        <div class="row p-3">
+            <h5>Recommended Drop In Events</h5>
+            <hr class="my-2">
+            <div id="carousel_drop_in_eventList" class="slider">
+                {% for event in drop_in_eventList %}
+                <div class="col-md-4 col-sm-12">
+                <div class="event-card card"
+                     onclick="location.href='event_details/{{event.pk}}/{% if event.datetimes %}{{event.datetimes}}{% elif event.current_datetimes %}{{event.current_datetimes}}{% endif %}/'"
+                     style="cursor:pointer">
+                    <img src="{{event.sport_logo}}" class="img-fluid"
+                         alt="..." style="cursor:pointer"
+                         onclick="location.href='event_details/{{event.pk}}/{% if event.datetimes %}{{event.datetimes}}{% elif event.current_datetimes %}{{event.current_datetimes}}{% endif %}/'">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">{{event.sport_type}}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted text-center">
+                            {% if event.event_title %}
+                            {{event.event_title}} :
+                            {% endif %}
+                            {% if event.event_type %}
+                            {{event.event_type}}
+                            {% endif %}
+                        </h6>
+                        <p class="card-text text-center">{{event.venue}}, {{event.city}}, {{event.province}}</p>
+                        {% if event.datetimes %}
+                        <p class="text-dark text-start eventdatetime">{{event.datetimes}}</p>
+                        {% elif event.current_datetimes %}
+                        <p class="text-dark text-start eventdatetime">{{event.current_datetimes}}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                </div>
+            {% endfor %}
+            </div>
         </div>
-        <div id="sports_select" class="col mb-2" style="flex-grow: 1;">
-            <select id="sport_types" class="form-control form-select select2sport" style="height:26px; flex-grow: 1;" name="sports">
-                <option value="" selected="selected">Select Sport</option>
-                {% for sports in sports_list %}
-                <option value="{{sports.sports_type_text}}" {% if sports.sports_type_text == selected_sports %}selected{% endif %}>{{sports.sports_type_text}}
-                </option>
+
+    </div>
+    <div class="container-fluid">
+        <div class="row p-3">
+            <h5>Recommended Registration Programs</h5>
+            <hr class="my-2">
+            <div id="carousel_registration_eventList" class="slider">
+
+                {% for event in registrationList %}
+                <div class="col-md-4 col-sm-12">
+                <div class="event-card card"
+                         onclick="location.href='event_details/{{event.pk}}/{% if event.datetimes %}{{event.datetimes}}{% elif event.current_datetimes %}{{event.current_datetimes}}{% endif %}/'"
+                         style="cursor:pointer">
+                    <img src="{{event.sport_logo}}" class="img-fluid"
+                         alt="..." style="cursor:pointer"
+                         onclick="location.href='event_details/{{event.pk}}/{% if event.datetimes %}{{event.datetimes}}{% elif event.current_datetimes %}{{event.current_datetimes}}{% endif %}/'">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">{{event.sport_type}}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted text-center">
+                            {% if event.event_title %}
+                            {{event.event_title}} :
+                            {% endif %}
+                            {% if event.event_type %}
+                            {{event.event_type}}
+                            {% endif %}
+                        </h6>
+                        <p class="card-text text-center">{{event.venue}}, {{event.city}}, {{event.province}}</p>
+                        {% if event.datetimes %}
+                        <p class="text-dark text-start eventdatetime">{{event.datetimes}}</p>
+                        {% elif event.current_datetimes %}
+                        <p class="text-dark text-start eventdatetime">{{event.current_datetimes}}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                </div>
                 {% endfor %}
-            </select>
-        </div>
-        <div class="col mb-2 mb-2">
-            <input class="form-control select-style datesingle" onfocus="(this.type='date')"
-                   onblur="this.type='text'" value="{{selected_date}}" placeholder="Select Date" name="date_range"/>
-        </div>
-        <div id="venues_select" class="col mb-2 mb-2" style="flex-grow: 1;">
-            {% if user.is_authenticated %}
-            <select id="venue_types" class="form-control form-select select2venue" style="height:26px; flex-grow: 1;" name="venues">
-                <option value="" selected="selected">Select Venue</option>
-                {% for venues in venues_list %}
-                <option value="{{venues.vm_name}}" {% if venues.vm_name == selected_venues %}selected{% endif %}>
-                    {{venues.vm_name}}
-                </option>
-                {% endfor %}
-            </select>
-            {% else %}
-            <select id="city_types" class="form-control form-select select2city" style="height:26px; flex-grow: 1;" name="cities">
-                <option value="" selected="selected">Select City</option>
-                {% for city in cities_list %}
-                <option value="{{city.vm_venuecity}}" {% if city.vm_venuecity == selected_cities %}selected{% endif %}>
-                    {{city.vm_venuecity}}
-                </option>
-                {% endfor %}
-            </select>
-            {% endif %}
-        </div>
-        <div class="row-12 text-center">
-            <button type="submit" class="btn btn-primary mr-2 m-2" style="width: 90px;">
-                Search
-            </button>
-            <a href="{% url 'EventsApp:home' %}" class="btn btn-primary ml-2 m-2" style="width: 90px;">
-                Clear
-            </a>
-        </div>
-    </form>
-</div>
-
-{% if user.is_authenticated %}
-
-    <div class="col-11 mx-auto">
-        <div class="container-fluid">
-            <div class="row p-3">
-                <h5>Recommended Drop In Events</h5>
-                <hr class="my-2">
-                <div id="carousel_recommended_drop_in_eventList" class="carousel slide" data-ride="carousel"
-                     data-interval="false"
-                     data-touch="true">
-                    <div class="carousel-inner" role="listbox">
-                        {% for event in recommended_drop_in %}
-                        <div class="carousel-item {% if forloop.counter0 == 0 %}active{% endif %}"
-                             style="text-align: center;">
-                            <div class="col-md-4">
-                                <div class="event-card card"
-                                     onclick="location.href='event_details/{{event.pk}}/{% if event.datetimes %}{{event.datetimes}}{% elif event.current_datetimes %}{{event.current_datetimes}}{% endif %}/'"
-                                     style="cursor:pointer">
-                                    <img src="{{event.sport_logo}}" class="img-fluid"
-                                         alt="..." style="cursor:pointer"
-                                         onclick="location.href='event_details/{{event.pk}}/{% if event.datetimes %}{{event.datetimes}}{% elif event.current_datetimes %}{{event.current_datetimes}}{% endif %}/'">
-                                    <div class="card-body">
-                                        <h5 class="card-title">{{event.sport_type}}</h5>
-                                        <h6 class="card-subtitle mb-2 text-muted">
-                                            {% if event.event_title %}
-                                            {{event.event_title}} :
-                                            {% endif %}
-                                            {% if event.event_type %}
-                                            {{event.event_type}}
-                                            {% endif %}
-                                        </h6>
-                                        <p class="card-text">{{event.venue}}, {{event.city}}, {{event.province}}</p>
-                                        {% if event.datetimes %}
-                                        <p class="text-dark text-start eventdatetime">{{event.datetimes}}</p>
-                                        {% elif event.current_datetimes %}
-                                        <p class="text-dark text-start eventdatetime">{{event.current_datetimes}}</p>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                    <button class="carousel-control-prev" type="button"
-                            data-bs-target="#carousel_recommended_drop_in_eventList"
-                            data-bs-slide="prev" style="left: -5%;">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Previous</span>
-                    </button>
-                    <button class="carousel-control-next" type="button"
-                            data-bs-target="#carousel_recommended_drop_in_eventList"
-                            data-bs-slide="next" style="right: -5%">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Next</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <div class="container-fluid">
-            <div class="row p-3">
-                <h5>Recommended Registration Programs</h5>
-                <hr class="my-2">
-                <div id="carousel_recommended_registration_eventList" class="carousel slide" data-ride="carousel"
-                     data-interval="false"
-                     data-touch="true">
-                    <div class="carousel-inner" role="listbox">
-                        {% for event in recommended_registrationList %}
-                        <div class="carousel-item {% if forloop.counter0 == 0 %}active{% endif %}"
-                             style="text-align: center;">
-                            <div class="col-md-4">
-                                <div class="event-card card"
-                                     onclick="location.href='event_details/{{event.pk}}/{% if event.datetimes %}{{event.datetimes}}{% elif event.current_datetimes %}{{event.current_datetimes}}{% endif %}/'"
-                                     style="cursor:pointer">
-                                    <img src="{{event.sport_logo}}" class="img-fluid"
-                                         alt="..." style="cursor:pointer"
-                                         onclick="location.href='event_details/{{event.pk}}/{% if event.datetimes %}{{event.datetimes}}{% elif event.current_datetimes %}{{event.current_datetimes}}{% endif %}/'">
-                                    <div class="card-body">
-                                        <h5 class="card-title">{{event.sport_type}}</h5>
-                                        <h6 class="card-subtitle mb-2 text-muted">
-                                            {% if event.event_title %}
-                                            {{event.event_title}} :
-                                            {% endif %}
-                                            {% if event.event_type %}
-                                            {{event.event_type}}
-                                            {% endif %}
-                                        </h6>
-                                        <p class="card-text">{{event.venue}}, {{event.city}}, {{event.province}}</p>
-                                        {% if event.datetimes %}
-                                        <p class="text-dark text-start eventdatetime">{{event.datetimes}}</p>
-                                        {% elif event.current_datetimes %}
-                                        <p class="text-dark text-start eventdatetime">{{event.current_datetimes}}</p>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                    <button class="carousel-control-prev" type="button"
-                            data-bs-target="#carousel_recommended_registration_eventList"
-                            data-bs-slide="prev" style="left: -5%;">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Previous</span>
-                    </button>
-                    <button class="carousel-control-next" type="button"
-                            data-bs-target="#carousel_recommended_registration_eventList"
-                            data-bs-slide="next" style="right: -5%">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Next</span>
-                    </button>
-                </div>
             </div>
         </div>
     </div>
-
-{% else %}
-
-    <div class="col-11 mx-auto">
-        <div class="container-fluid">
-            <div class="row p-3">
-                <h5>All Drop In Events</h5>
-                <hr class="my-2">
-                <div id="carouseldrop_in_eventList" class="carousel slide" data-ride="carousel" data-interval="false"
-                     data-touch="true">
-                    <div class="carousel-inner" role="listbox">
-                        {% for event in drop_in_eventList %}
-                        <div class="carousel-item {% if forloop.counter0 == 0 %}active{% endif %}"
-                             style="text-align: center;">
-                            <div class="col-md-4">
-                                <div class="event-card card"
-                                     onclick="location.href='event_details/{{event.pk}}/{% if event.datetimes %}{{event.datetimes}}{% elif event.current_datetimes %}{{event.current_datetimes}}{% endif %}/'"
-                                     style="cursor:pointer">
-                                    <img src="{{event.sport_logo}}" class="img-fluid"
-                                         alt="..." style="cursor:pointer"
-                                         onclick="location.href='event_details/{{event.pk}}/{% if event.datetimes %}{{event.datetimes}}{% elif event.current_datetimes %}{{event.current_datetimes}}{% endif %}/'">
-                                    <div class="card-body">
-                                        <h5 class="card-title">{{event.sport_type}}</h5>
-                                        <h6 class="card-subtitle mb-2 text-muted">
-                                            {% if event.event_title %}
-                                            {{event.event_title}} :
-                                            {% endif %}
-                                            {% if event.event_type %}
-                                            {{event.event_type}}
-                                            {% endif %}
-                                        </h6>
-                                        <p class="card-text">{{event.venue}}, {{event.city}}, {{event.province}}</p>
-                                        {% if event.datetimes %}
-                                        <p class="text-dark text-start eventdatetime">{{event.datetimes}}</p>
-                                        {% elif event.current_datetimes %}
-                                        <p class="text-dark text-start eventdatetime">{{event.current_datetimes}}</p>
-                                        {% endif %}
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#carouseldrop_in_eventList"
-                            data-bs-slide="prev" style="left: -5%;">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Previous</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#carouseldrop_in_eventList"
-                            data-bs-slide="next" style="right: -5%">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Next</span>
-                    </button>
-                </div>
-
-            </div>
-        </div>
-        <div class="container-fluid">
-            <div class="row p-3">
-                <h5>All Registration Programs</h5>
-                <hr class="my-2">
-                <div id="carouselregistration_eventList" class="carousel slide" data-ride="carousel"
-                     data-interval="false"
-                     data-touch="true">
-                    <div class="carousel-inner" role="listbox">
-                        {% for event in registrationList %}
-                        <div class="carousel-item {% if forloop.counter0 == 0 %}active{% endif %}"
-                             style="text-align: center;">
-                            <div class="col-md-4">
-                                <div class="event-card card"
-                                     onclick="location.href='event_details/{{event.pk}}/{% if event.datetimes %}{{event.datetimes}}{% elif event.current_datetimes %}{{event.current_datetimes}}{% endif %}/'"
-                                     style="cursor:pointer">
-                                    <img src="{{event.sport_logo}}" class="img-fluid"
-                                         alt="..." style="cursor:pointer"
-                                         onclick="location.href='event_details/{{event.pk}}/{% if event.datetimes %}{{event.datetimes}}{% elif event.current_datetimes %}{{event.current_datetimes}}{% endif %}/'">
-                                    <div class="card-body">
-                                        <h5 class="card-title">{{event.sport_type}}</h5>
-                                        <h6 class="card-subtitle mb-2 text-muted">
-                                            {% if event.event_title %}
-                                            {{event.event_title}} :
-                                            {% endif %}
-                                            {% if event.event_type %}
-                                            {{event.event_type}}
-                                            {% endif %}
-                                        </h6>
-                                        <p class="card-text">{{event.venue}}, {{event.city}}, {{event.province}}</p>
-                                        {% if event.datetimes %}
-                                        <p class="text-dark text-start eventdatetime">{{event.datetimes}}</p>
-                                        {% elif event.current_datetimes %}
-                                        <p class="text-dark text-start eventdatetime">{{event.current_datetimes}}</p>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselregistration_eventList"
-                            data-bs-slide="prev" style="left: -5%;">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Previous</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#carouselregistration_eventList"
-                            data-bs-slide="next" style="right: -5%">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Next</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-{% endif %}
+    {% endif %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.css"
       rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.touchswipe/1.6.19/jquery.touchSwipe.min.js"
         integrity="sha512-YYiD5ZhmJ0GCdJvx6Xe6HzHqHvMpJEPomXwPbsgcpMFPW+mQEeVBU6l9n+2Y+naq+CLbujk91vHyN18q6/RSYw=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
+    <script type="text/javascript" src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
 <script>
 
     function check_ad_count(pk) {
@@ -418,7 +320,7 @@
 
 
     function create(items) {
-        items.forEach((el) => {
+       /* items.forEach((el) => {
             const minPerSlide = 3
             let next = el.nextElementSibling
             for (var i = 1; i < minPerSlide; i++) {
@@ -430,11 +332,37 @@
                 el.appendChild(cloneChild.children[0])
                 next = next.nextElementSibling
             }
-        })
+        })*/
     }
 $(document).ready(function(){
   $('#adsCarousel').carousel({interval: false});
   $('#adsCarousel').carousel('pause');
+
+  $('.slider').slick({
+        dots: false,
+        infinite: true,
+        speed: 500,
+        slidesToShow: 3,
+        slidesToScroll: 1,
+        autoplay: true,
+        autoplaySpeed: 2000,
+        arrows: true,
+
+        responsive: [{
+          breakpoint: 600,
+          settings: {
+            slidesToShow: 2,
+            slidesToScroll: 1
+          }
+        },
+        {
+           breakpoint: 480,
+           settings: {
+              slidesToShow: 1,
+              slidesToScroll: 1
+           }
+        }]
+});
 });
     function callFormSizeChange(myWidth, myHeight) {
         if (myWidth >= 768) {
@@ -501,7 +429,7 @@ $(document).ready(function(){
     }
 
     .card {
-        margin: 0 0.5em;
+        margin: 1.0em 0.5em;
         box-shadow: 2px 6px 8px 0 rgba(22, 22, 26, 0.18);
         border: none;
         border-radius: 0;
@@ -512,7 +440,7 @@ $(document).ready(function(){
     }
 
     .carousel-control-prev,
-    .carousel-control-next {
+    .carousel-control-next, .slick-next, .slick-prev {
         background-color: #e1e1e1;
         width: 5vh;
         height: 5vh;
@@ -609,26 +537,374 @@ $(document).ready(function(){
     }
    .datesingle::placeholder { color: black; text-align: left}
 
-    .carousel-inner .carousel-item.active,
-     .carousel-inner .carousel-item-next,
-     .carousel-inner .carousel-item-prev {
-        display: flex;
-    }
-    @media (max-width: 767px) {
-		.carousel-inner .carousel-item > div {
-			display: none;
-		}
-		.carousel-inner .carousel-item > div:first-child {
-			display: block;
-		}
-	}
+    .slider {
+  max-width: 1350px;
+  margin: 0 auto;
+}
+.slick-slide {
+  margin: 0 5px;
+}
+.slick-list {
+  margin: 0px -5px 0px -5px;
+}
+button.slick-next, button.slick-next:hover {
+  /*position: absolute;
+  top: 41%;
+  right: 54px;
+  width: 47px;
+  height: 75px;
+  background-image: url("http://maggiesadler.com/wp-content/uploads/2015/10/left-right-arrow.png");
+  background-size: 95px;*/
+}
+button.slick-prev, button.slick-prev:hover {
+ /* position: absolute;
+  top: 41%;
+  left: 15px;
+  z-index: 1;
+  width: 47px;
+  height: 75px;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='%23000' width='10' height='10' viewBox='0 0 8 8'%3e%3cpath d='M5.25 0l-4 4 4 4 1.5-1.5L4.25 4l2.5-2.5L5.25 0z'/%3e%3c/svg%3e");
+  background-size: 95px;
+      background-position-x: right;*/
+}
+.slick-prev:before, .slick-next:before {
+  font-size: 70px;
+  color: #EA8496;
+  line-height: inherit;
+  font-weight: bold;
+}
+.slick-prev, .slick-next{
+    display: inline-block;
+    background-repeat: no-repeat;
+    background-position: 50%;
+    background-size: 100% 100%;
+}
+.slider img {
+ /* height: 324px;*/
+}
 
-	.carousel-inner .carousel-item.active,
-	.carousel-inner .carousel-item-next,
-	.carousel-inner .carousel-item-prev {
-		display: flex;
-        justify-content: center;
-	}
+/* Slick Slider Styles -- Provided by https://kenwheeler.github.io/slick/ */
+/* Slider */
+.slick-slider
+{
+    position: relative;
+
+    display: block;
+
+    -moz-box-sizing: border-box;
+         box-sizing: border-box;
+
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+
+    -webkit-touch-callout: none;
+    -khtml-user-select: none;
+    -ms-touch-action: pan-y;
+        touch-action: pan-y;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.slick-list
+{
+    position: relative;
+
+    display: block;
+    overflow: hidden;
+
+    margin: 0;
+    padding: 0;
+}
+.slick-list:focus
+{
+    outline: none;
+}
+.slick-list.dragging
+{
+    cursor: pointer;
+    cursor: hand;
+}
+
+.slick-slider .slick-track,
+.slick-slider .slick-list
+{
+    -webkit-transform: translate3d(0, 0, 0);
+       -moz-transform: translate3d(0, 0, 0);
+        -ms-transform: translate3d(0, 0, 0);
+         -o-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
+}
+
+.slick-track
+{
+    position: relative;
+    top: 0;
+    left: 0;
+
+    display: block;
+}
+.slick-track:before,
+.slick-track:after
+{
+    display: table;
+
+    content: '';
+}
+.slick-track:after
+{
+    clear: both;
+}
+.slick-loading .slick-track
+{
+    visibility: hidden;
+}
+
+.slick-slide
+{
+    display: none;
+    float: left;
+
+    height: 100%;
+    min-height: 1px;
+}
+[dir='rtl'] .slick-slide
+{
+    float: right;
+}
+.slick-slide img
+{
+    display: block;
+}
+.slick-slide.slick-loading img
+{
+    display: none;
+}
+.slick-slide.dragging img
+{
+    pointer-events: none;
+}
+.slick-initialized .slick-slide
+{
+    display: block;
+}
+.slick-loading .slick-slide
+{
+    visibility: hidden;
+}
+.slick-vertical .slick-slide
+{
+    display: block;
+
+    height: auto;
+
+    border: 1px solid transparent;
+}
+.slick-arrow.slick-hidden {
+    display: none;
+}
+
+    /* Slider */
+/*.slick-loading .slick-list
+{
+    background: #fff  center center no-repeat;
+}*/
+
+/* Icons */
+@font-face {
+    font-family: 'slick';
+    font-weight: normal;
+    font-style: normal;
+
+}
+/* Arrows */
+.slick-prev,
+.slick-next
+{
+    font-size: 0;
+    line-height: 0;
+
+    position: absolute;
+    top: 50%;
+
+    opacity: 0.5;
+    margin-top: 0px;
+    padding: 0;
+
+    cursor: pointer;
+
+    color: transparent;
+    border: none;
+    outline: none;
+
+    display: inline-block;
+    background-repeat: no-repeat;
+    background-position: 50%;
+    background-size: 75% 75%;
+}
+.slick-prev:hover,
+.slick-prev:focus,
+.slick-next:hover,
+.slick-next:focus
+{
+    opacity: 1;
+   /* color: transparent;
+    outline: none;
+    background: transparent;*/
+}
+.slick-prev:hover:before,
+.slick-prev:focus:before,
+.slick-next:hover:before,
+.slick-next:focus:before
+{
+    opacity: 1;
+}
+.slick-prev.slick-disabled:before,
+.slick-next.slick-disabled:before
+{
+    opacity: .25;
+}
+
+.slick-prev:before,
+.slick-next:before
+{
+    font-family: 'slick';
+    font-size: 20px;
+    line-height: 1;
+
+    opacity: .75;
+    color: white;
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.slick-prev
+{
+    left: -7%;
+}
+[dir='rtl'] .slick-prev
+{
+    right: -25px;
+    left: auto;
+}
+.slick-prev:before
+{
+    content: '';
+}
+[dir='rtl'] .slick-prev:before
+{
+    content: '';
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.slick-next
+{
+    right: -7%;
+}
+[dir='rtl'] .slick-next
+{
+    right: auto;
+    left: -25px;
+}
+.slick-next:before
+{
+    content: '';
+}
+[dir='rtl'] .slick-next:before
+{
+    content: '';
+}
+
+/* Dots */
+.slick-slider
+{
+    margin-bottom: 30px;
+}
+
+.slick-dots
+{
+    position: absolute;
+    bottom: -45px;
+
+    display: block;
+
+    width: 100%;
+    padding: 0;
+
+    list-style: none;
+
+    text-align: center;
+}
+.slick-dots li
+{
+    position: relative;
+
+    display: inline-block;
+
+    width: 20px;
+    height: 20px;
+    margin: 0 5px;
+    padding: 0;
+
+    cursor: pointer;
+}
+.slick-dots li button
+{
+    font-size: 0;
+    line-height: 0;
+
+    display: block;
+
+    width: 20px;
+    height: 20px;
+    padding: 5px;
+
+    cursor: pointer;
+
+    color: transparent;
+    border: 0;
+    outline: none;
+    background: transparent;
+}
+.slick-dots li button:hover,
+.slick-dots li button:focus
+{
+    outline: none;
+}
+.slick-dots li button:hover:before,
+.slick-dots li button:focus:before
+{
+    opacity: 1;
+}
+.slick-dots li button:before
+{
+    font-family: 'slick';
+    font-size: 6px;
+    line-height: 20px;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 20px;
+    height: 20px;
+
+    content: '•';
+    text-align: center;
+
+    opacity: .25;
+    color: black;
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+.slick-dots li.slick-active button:before
+{
+    opacity: .75;
+    color: black;
+}
 
 </style>
 
