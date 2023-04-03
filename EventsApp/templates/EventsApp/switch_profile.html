@@ -5,7 +5,7 @@
 {% block content %}
 
 <div class="row">
-  <div class="col-5 mx-auto">
+  <div class="col-md-5 mx-auto">
     <div>
       <h3 class="mx-auto text-center fw-light">Your Registered Profiles</h3>
       <hr />
@@ -13,7 +13,7 @@
   </div>
 </div>
 <div>
-  <div class="col-5 mx-auto" style="overflow-x: auto">
+  <div class="col-lg-5 col-md-7 mx-auto" style="overflow-x: auto">
     <table class="table table-striped">
       <thead>
         <th>#</th>
@@ -23,8 +23,8 @@
       <tbody>
         {% for prof in profiles_list %}
         <tr>
-          <td>{{ forloop.counter }}</td>
-          <td>{{prof.name}}</td>
+          <td style="vertical-align: center">{{ forloop.counter }}</td>
+          <td style="vertical-align: center">{{prof.name}}</td>
           <td>
             <button class="btn btn-primary mr-2 m-2" >
               <a class="nostyle" href="{% url 'EventsApp:switch_profile' prof.name %}">
@@ -53,7 +53,7 @@
 
   @media only screen and (max-width: 768px) {
     table {
-      width: 768px !important;
+      /*width: 768px !important;*/
     }
     .horizontal-scroll-text {
       display: block;

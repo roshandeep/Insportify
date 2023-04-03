@@ -366,6 +366,7 @@ class Advertisement(models.Model):
     hit_count = models.IntegerField(blank=True, null=True)
     max_hits = models.IntegerField(blank=True, null=True)
 
+
 class Ad_HitCount(models.Model):
     ad = models.ForeignKey(Advertisement, on_delete=models.CASCADE)
     user_ip = models.GenericIPAddressField()
