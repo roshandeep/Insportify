@@ -856,12 +856,11 @@ def get_selected_sports_positions(request):
 
 def get_extra_position_info(request):
     data = {}
+    info_str = ""
     if request.method == "POST":
         selected_sport = request.POST['selected_type_text']
-
         try:
             same_events = master_table.objects.filter(sport_type=selected_sport)
-            # print(same_events)
             pos_dict = {}
             for event in same_events:
                 event_pos = Events_PositionInfo.objects.filter(event__pk=event.pk).distinct('position_name')

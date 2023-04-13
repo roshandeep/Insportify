@@ -708,12 +708,14 @@ function displayExtraInfo(){
             },
             success: function (data) {
                 console.log(data);
-                let html_data = `<div class="alert alert-warning alert-dismissible fade show" role="alert">`;
-                html_data += `${data}`;
-                html_data += `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
-                html_data += `</div>`;
-                let status = document.getElementById("position_summary_msg");
-                status.innerHTML = html_data;
+                if(data){
+                    let html_data = `<div class="alert alert-warning alert-dismissible fade show" role="alert">`;
+                    html_data += `${data}`;
+                    html_data += `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+                    html_data += `</div>`;
+                    let status = document.getElementById("position_summary_msg");
+                    status.innerHTML = html_data;
+                }
             }
         });
 }
