@@ -178,7 +178,7 @@ def ValidateFormValues(request):
     profile = get_profile_from_user(request.user)
 
     event_count = len(master_table.objects.filter(created_by=profile))
-    if not request.user.is_mvp and event_count >= 2:
+    if not request.user.is_mvp and not request.user.is_organization and event_count >= 2:
         messages.error(request, "Cannot create event, maximum events possible by non-MVP member is 2")
         event_count_valid = False
     if not request.POST.get('event_title') or not request.POST.get('venue') \
