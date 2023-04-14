@@ -42,12 +42,12 @@
                         <div class="form-row p-2">
                             <div class="d-flex justify-content-center p-2">
                                 <label class="img-btn text-center">
-                                    <input type="radio" {% if values.dropin == 'Drop-in' %}checked="checked" {% endif %} id="Dropin" name="dropin" onchange="activateNextButton()" value="Drop-in"></input>
+                                    <input type="radio" {% if values.dropin == 'Drop-in' %}checked="checked" {% endif %} id="Dropin" name="dropin" onchange="eventTypeSelect()" value="Drop-in"></input>
                                     <img src="/media/images/login-icon.png" style="padding: 10px;">
                                     <p>Drop In</p>
                                 </label>
                                 <label class="img-btn text-center">
-                                    <input type="radio" {% if values.dropin == 'Registration' %}checked="checked" {% endif %} id="Registration" name="dropin" onchange="activateNextButton()" value="Registration"> </input>
+                                    <input type="radio" {% if values.dropin == 'Registration' %}checked="checked" {% endif %} id="Registration" name="dropin" onchange="eventTypeSelect();" value="Registration"> </input>
                                     <img src="/media/images/registration-icon.png" style="padding: 10px;">
                                     <p>Registration</p>
                                 </label>
@@ -768,8 +768,34 @@ function displayExtraInfo(){
 }
 
 
-function activateNextButton() {
+function eventTypeSelect() {
   document.getElementById("next-tab-1").disabled = false;
+
+  if ($('input[name=dropin]:checked').length > 0) {
+      dropin_value = $('input[name="dropin"]:checked').val();
+      console.log(dropin_value);
+      if(dropin_value == "Drop-in"){
+        document.getElementById("chkYes").disabled = false;
+        document.getElementById("chkNo").disabled = false;
+        document.getElementById("chkYes").checked = false;
+        document.getElementById("chkNo").checked = false;
+        $("#single_dates").hide();
+      }
+      else if(dropin_value == "Registration"){
+        document.getElementById("chkYes").disabled = true;
+        document.getElementById("chkNo").checked = true;
+        $("#fields_recurring").hide();
+        $("#Monday_dates").hide();
+        $("#Tuesday_dates").hide();
+        $("#Wednesday_dates").hide();
+        $("#Thursday_dates").hide();
+        $("#Friday_dates").hide();
+        $("#Saturday_dates").hide();
+        $("#Sunday_dates").hide();
+        $("#Exception_dates").hide();
+        $("#single_dates").show();
+      }
+    }
 }
 
 
