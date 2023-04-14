@@ -42,12 +42,12 @@
                         <div class="form-row p-2">
                             <div class="d-flex justify-content-center p-2">
                                 <label class="img-btn text-center">
-                                    <input type="radio" {% if values.dropin == 'Drop-in' %}checked="checked" {% endif %} id="Dropin" name="dropin" value="Drop-in"></input>
+                                    <input type="radio" {% if values.dropin == 'Drop-in' %}checked="checked" {% endif %} id="Dropin" name="dropin" onchange="activateNextButton()" value="Drop-in"></input>
                                     <img src="/media/images/login-icon.png" style="padding: 10px;">
                                     <p>Drop In</p>
                                 </label>
                                 <label class="img-btn text-center">
-                                    <input type="radio" {% if values.dropin == 'Registration' %}checked="checked" {% endif %} id="Registration" name="dropin" value="Registration"> </input>
+                                    <input type="radio" {% if values.dropin == 'Registration' %}checked="checked" {% endif %} id="Registration" name="dropin" onchange="activateNextButton()" value="Registration"> </input>
                                     <img src="/media/images/registration-icon.png" style="padding: 10px;">
                                     <p>Registration</p>
                                 </label>
@@ -768,8 +768,15 @@ function displayExtraInfo(){
 }
 
 
+function activateNextButton() {
+  document.getElementById("next-tab-1").disabled = false;
+}
+
+
 $(document).ready(function(){
   $('.select2').select2();
+  document.getElementById("next-tab-1").disabled = true;
+
   var tab2 = $("#tab-2");
   var tab3 = $("#tab-3");
   var tab4 = $("#tab-4");
