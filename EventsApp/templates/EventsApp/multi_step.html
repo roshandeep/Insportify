@@ -24,20 +24,52 @@
 
 
             <ul id="progressbar" class="d-flex justify-content-around mx-auto text-center" style="padding-left: 0px;">
-                <li class="active" id="step1">Event Information</li>
-                <li id="step2">Sports</li>
-                <li id="step3">Venue</li>
+                <li class="active" id="step1">Event Type</li>
+                <li id="step2">Event Information</li>
+                <li id="step3">Sports</li>
+                <li id="step4">Venue</li>
             </ul>
 
             <fieldset id="tab-1" class="p-2">
                 <div class="card shadow">
                     <h3 class="card-header text-white text-center"
-                        style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">
-                        Event
-                        Information</h3>
+                        style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);"> Event Type</h3>
                         <div class="p-2 d-flex justify-content-end">
                             <input type="button" name="next" class="next action-button btn btn-primary"
                                    value="Next" id="next-tab-1" style="width: 90px;"/>
+                        </div>
+                    <div class="card-body">
+                        <div class="form-row p-2">
+                            <div class="d-flex justify-content-center p-2">
+                                <label class="img-btn text-center">
+                                    <input type="radio" {% if values.dropin == 'Drop-in' %}checked="checked" {% endif %} id="Dropin" name="dropin" value="Drop-in"></input>
+                                    <img src="/media/images/login-icon.png" style="padding: 10px;">
+                                    <p>Drop In</p>
+                                </label>
+                                <label class="img-btn text-center">
+                                    <input type="radio" {% if values.dropin == 'Registration' %}checked="checked" {% endif %} id="Registration" name="dropin" value="Registration"> </input>
+                                    <img src="/media/images/registration-icon.png" style="padding: 10px;">
+                                    <p>Registration</p>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </fieldset>
+
+            <fieldset id="tab-2" class="p-2">
+                <div class="card shadow">
+                    <h3 class="card-header text-white text-center"
+                        style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">
+                        Event
+                        Information</h3>
+                        <div class="d-flex justify-content-between p-2">
+                            <input type="button" name="previous"
+                                   class="previous action-button-previous btn btn-primary"
+                                   value="Previous" id="previous-tab-2" style="width: 90px;"/>
+                            <input type="button" name="next" class="next action-button btn btn-primary"
+                                   value="Next" id="next-tab-2" style="width: 90px;"/>
                         </div>
                     <div class="card-body">
                         <div class="form-row p-2">
@@ -66,13 +98,6 @@
                             <label for="Male"><input type="radio" id="Male" name="gender" value="Male" {% if values.gender == 'Male' %}checked{% endif %}> Male Only </input></label>
                             <label for="Female"><input type="radio" id="Female" name="gender" value="Female" {% if values.gender == 'Female' %}checked{% endif %}> Female Only </input></label>
                             <label for="Coed"><input type="radio" id="Coed" name="gender" value="Coed" {% if values.gender == 'Coed' %}checked{% endif %}> Coed </input></label>
-                            </div>
-                        </div>
-                        <div class="form-row p-2">
-                            <label>* Is this a Drop-in event, or a Registration program?</label>
-                            <div>
-                            <label for="Dropin"><input type="radio" {% if values.dropin == 'Drop-in' %}checked="checked"{% endif %} id="Dropin" name="dropin" value="Drop-in"> Drop In </input></label>
-                            <label for="Registration"><input type="radio" {% if values.dropin == 'Registration' %}checked="checked"{% endif %} id="Registration" name="dropin" value="Registration"> Registration </input></label>
                             </div>
                         </div>
                         <div class="form-row p-2">
@@ -273,7 +298,7 @@
 
             </fieldset>
 
-            <fieldset id="tab-2" class="p-2">
+            <fieldset id="tab-3" class="p-2">
                 <div class="card shadow">
                     <h3 class="card-header text-white text-center"
                         style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">
@@ -281,9 +306,9 @@
                         <div class="d-flex justify-content-between p-2">
                             <input type="button" name="previous"
                                    class="previous action-button-previous btn btn-primary"
-                                   value="Previous" id="previous-tab-2" style="width: 90px;"/>
+                                   value="Previous" id="previous-tab-3" style="width: 90px;"/>
                             <input type="button" name="next" class="next action-button btn btn-primary"
-                                   value="Next" id="next-tab-2" style="width: 90px;"/>
+                                   value="Next" id="next-tab-3" style="width: 90px;"/>
                         </div>
                     <div class="card-body">
                         <div id="position_summary_msg">
@@ -311,7 +336,7 @@
                 </div>
             </fieldset>
 
-            <fieldset id="tab-3" class="p-2">
+            <fieldset id="tab-4" class="p-2">
                 <div class="card shadow">
                     <h2 class="card-header text-white text-center"
                         style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">
@@ -319,7 +344,7 @@
                         <div class="p-2 d-flex justify-content-start">
                             <input type="button" name="previous"
                                    class="previous action-button-previous btn btn-primary"
-                                   value="Previous" id="previous-tab-3" style="width: 90px;"/>
+                                   value="Previous" id="previous-tab-4" style="width: 90px;"/>
                         </div>
                     <div class="card-body">
                         <div class="form-row p-2">
@@ -409,6 +434,11 @@
     content: "3"
 }
 
+#progressbar #step4:before {
+    content: "4"
+}
+
+
 #progressbar li:before {
     width: 50px;
     height: 50px;
@@ -448,6 +478,23 @@
 .select2-container--default .select2-selection--single .select2-selection__arrow {
     height: 35px;
 }
+
+.img-btn img{
+  width:150px;
+}
+.img-btn > input{
+  display:none
+}
+.img-btn > img{
+  cursor:pointer;
+  border:5px solid transparent;
+  border-spacing: 10px;
+}
+.img-btn > input:checked + img{
+  border-color: black;
+  border-radius:10px;
+}
+
 </style>
 
 <script>
@@ -725,16 +772,20 @@ $(document).ready(function(){
   $('.select2').select2();
   var tab2 = $("#tab-2");
   var tab3 = $("#tab-3");
+  var tab4 = $("#tab-4");
   tab2.hide();
   tab3.hide();
+  tab4.hide();
 
   $("#next-tab-1").click(function(){
     var tab1 = $("#tab-1");
     var tab2 = $("#tab-2");
     var tab3 = $("#tab-3");
+    var tab4 = $("#tab-4");
     tab1.hide();
     tab2.show();
     tab3.hide();
+    tab4.hide();
     $("#step2").addClass("active");
   });
 
@@ -742,19 +793,35 @@ $(document).ready(function(){
     var tab1 = $("#tab-1");
     var tab2 = $("#tab-2");
     var tab3 = $("#tab-3");
+    var tab4 = $("#tab-4");
     tab1.hide();
     tab2.hide();
     tab3.show();
+    tab4.hide();
     $("#step3").addClass("active");
+  });
+
+  $("#next-tab-3").click(function(){
+    var tab1 = $("#tab-1");
+    var tab2 = $("#tab-2");
+    var tab3 = $("#tab-3");
+    var tab4 = $("#tab-4");
+    tab1.hide();
+    tab2.hide();
+    tab3.hide();
+    tab4.show();
+    $("#step4").addClass("active");
   });
 
   $("#previous-tab-2").click(function(){
     var tab1 = $("#tab-1");
     var tab2 = $("#tab-2");
     var tab3 = $("#tab-3");
+    var tab4 = $("#tab-4");
     tab1.show();
     tab2.hide();
     tab3.hide();
+    tab4.hide();
     $("#step2").removeClass("active");
   });
 
@@ -762,12 +829,26 @@ $(document).ready(function(){
     var tab1 = $("#tab-1");
     var tab2 = $("#tab-2");
     var tab3 = $("#tab-3");
+    var tab4 = $("#tab-4");
     tab1.hide();
     tab2.show();
     tab3.hide();
+    tab4.hide();
     $("#step3").removeClass("active");
   });
-  
+
+  $("#previous-tab-4").click(function(){
+    var tab1 = $("#tab-1");
+    var tab2 = $("#tab-2");
+    var tab3 = $("#tab-3");
+    var tab4 = $("#tab-4");
+    tab1.hide();
+    tab2.hide();
+    tab3.show();
+    tab4.hide();
+    $("#step4").removeClass("active");
+  });
+
 });
 
 function sports_skill_dropdown(skill_field_id){
