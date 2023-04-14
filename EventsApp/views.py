@@ -32,7 +32,7 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
 def get_profile_from_user(user):
-    print("check profile")
+    # print("check profile")
     return Profile.objects.get(active_user=user)
 
 
@@ -1149,7 +1149,7 @@ def get_client_ip(request):
 
 
 def home(request):
-    print("Home")
+    # print("Home")
 
     if request.user.is_authenticated:
         if not request.user.profile_status:
@@ -1359,7 +1359,7 @@ def get_events_by_time(events):
 
 
 def get_recommended_events(request):
-    print("Recommended")
+    # print("Recommended")
     profile = get_profile_from_user(request.user)
     user_avaiability = Availability.objects.filter(profile=profile)
 
@@ -1384,7 +1384,7 @@ def get_recommended_events(request):
     else:
         recommended_events = [event for event in events]
 
-    # print("Availability Filter", recommended_events)
+    print("Availability Filter", recommended_events)
 
     # FILTER BY Location
     for event in recommended_events[:]:
@@ -1393,7 +1393,7 @@ def get_recommended_events(request):
                 recommended_events.remove(event)
 
     recommended_events = list(recommended_events)
-    # print("Location Filter", recommended_events)
+    print("Location Filter", recommended_events)
 
     if request.user.is_individual:
         individual = Individual.objects.get(profile=profile)
@@ -1415,7 +1415,7 @@ def get_recommended_events(request):
                 if age_fail_count == len(positions):
                     recommended_events.remove(event)
 
-    # print("Age Filter", recommended_events)
+    print("Age Filter", recommended_events)
 
     # FILTER BY Gender
     if request.user.is_individual:
@@ -1439,7 +1439,7 @@ def get_recommended_events(request):
                     # print(event.event_title, gender_list, individual_gender, flag)
                     recommended_events.remove(event)
 
-    # print("Gender Filter", recommended_events)
+    print("Gender Filter", recommended_events)
 
     # FILTER BY Sports
     sport_choices = Secondary_SportsChoice.objects.filter(profile=profile).order_by("sport_type")
@@ -1451,7 +1451,7 @@ def get_recommended_events(request):
         if event.sport_type not in sports_list:
             recommended_events.remove(event)
 
-    # print("Sports Filter", recommended_events)
+    print("Sports Filter", recommended_events)
 
     # FILTER BY Positions
     if request.user.is_individual:
@@ -1470,7 +1470,7 @@ def get_recommended_events(request):
             if flag > 0:
                 recommended_events.remove(event)
 
-    # print("Positions Filter", recommended_events)
+    print("Positions Filter", recommended_events)
 
     # FILTER BY Skills
     if request.user.is_individual:
@@ -1490,7 +1490,7 @@ def get_recommended_events(request):
             if flag > 0:
                 recommended_events.remove(event)
 
-    # print("Skills Filter", recommended_events)
+    print("Skills Filter", recommended_events)
 
     return recommended_events
 
