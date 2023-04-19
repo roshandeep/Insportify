@@ -24,7 +24,7 @@
 
 
             <ul id="progressbar" class="d-flex justify-content-around mx-auto text-center" style="padding-left: 0px;">
-                <li class="active" id="step1">Event Type</li>
+                <li class="active" id="step1">Program Type</li>
                 <li id="step2">Event Information</li>
                 <li id="step3">Sports</li>
                 <li id="step4">Venue</li>
@@ -52,6 +52,29 @@
                                     <p>Registration</p>
                                 </label>
                             </div>
+                        </div>
+                        <hr>
+                        <div class="form-row p-2">
+                            <div class="d-flex justify-content-center p-2">
+                                <label class="img-btn text-center">
+                                    <input type="radio" id="online" name="venueType" onchange="venueTypeSelect();" value="Online" />
+                                    <img src="/media/images/online.png" style="padding: 10px;">
+                                    <p>Online</p>
+                                </label>
+                                <label class="img-btn text-center">
+                                    <input type="radio" id="inperson" name="venueType" onchange="venueTypeSelect();" value="In-Person" />
+                                    <img src="/media/images/inperson.jpg" style="padding: 10px;">
+                                    <p>In Person</p>
+                                </label>
+                                <label class="img-btn text-center">
+                                    <input type="radio" id="both" name="venueType" onchange="venueTypeSelect();" value="Both" />
+                                    <img src="/media/images/both.png" style="padding: 10px;">
+                                    <p>Both</p>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-row p-2" id="txt_url" style="display:none">
+                            <input type="text" class="form-control" id="event_url" name="event_url" placeholder="* Event URL" value="{{values.event_url}}" />
                         </div>
                     </div>
                 </div>
@@ -499,6 +522,28 @@
 
 <script>
 
+
+function venueTypeSelect(){
+    if ($('input[name=venueType]:checked').length > 0) {
+      venueType_value = $('input[name="venueType"]:checked').val();
+      var div_url = $("#txt_url");
+
+      if(venueType_value == "Both" || venueType_value == "Online"){
+        div_url.show();
+        if(venueType_value == "Online"){
+            console.log('Checking');
+            console.log(venue)
+            $("#venue").prop("disabled", true);
+        }
+      }
+      else
+      if(venueType_value == "In-Person"){
+        div_url.hide();
+        $("#venue").prop("disabled", false);
+      }
+    }
+}
+
 function callWidthChange(myWidth, myHeight) {
         if (myWidth >= 768) {
             if(document.getElementById("create-event-card")){
@@ -773,7 +818,6 @@ function eventTypeSelect() {
 
   if ($('input[name=dropin]:checked').length > 0) {
       dropin_value = $('input[name="dropin"]:checked').val();
-      console.log(dropin_value);
       if(dropin_value == "Drop-in"){
         document.getElementById("chkYes").disabled = false;
         document.getElementById("chkNo").disabled = false;

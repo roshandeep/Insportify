@@ -100,12 +100,15 @@ class master_table(models.Model):
                           ('Development', 'Development'), ('Game/Session', 'Game/Session'), ('Online', 'Online'),
                           ('Registration', 'Registration'), ('Social', 'Social'), ('Tournament', 'Tournament'))
     REGISTRATION_TYPE_CHOICES = (('Drop-in', 'Drop-in'), ('Registration', 'Registration'))
+    VENUE_TYPE_CHOICES = (('In-Person', 'In-Person'), ('Online', 'Online'), ('Both', 'Both'))
 
     event_title = models.CharField(max_length=300, blank=True, null=True)
     description = models.CharField(max_length=300, blank=True, null=True)
     event_type = models.CharField(max_length=300, choices=EVENT_TYPE_CHOICES, blank=True, null=True)
     registration_type = models.CharField(max_length=300, choices=REGISTRATION_TYPE_CHOICES, default='Drop-in',
                                          blank=True, null=True)
+    venue_type = models.CharField(max_length=300, choices=VENUE_TYPE_CHOICES, default='In-Person', blank=True, null=True)
+    event_url = models.CharField(max_length=300, blank=True, null=True)
     datetimes = models.CharField(max_length=100, blank=True, null=True)
     is_recurring = models.BooleanField(default=False, null=True)
     datetimes_monday = models.CharField(max_length=100, blank=True, null=True)

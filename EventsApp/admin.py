@@ -50,7 +50,7 @@ admin.site.register(Events_PositionInfo, Events_PositionInfoAdmin)
 
 
 class Secondary_SportsChoiceAdmin(admin.ModelAdmin):
-    list_display = ('profile', 'sport_type', 'position',)
+    list_display = ('profile', 'sport_type', 'position', 'skill')
 
 
 admin.site.register(Secondary_SportsChoice, Secondary_SportsChoiceAdmin)

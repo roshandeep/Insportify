@@ -66,13 +66,26 @@ def multistep(request):
             # Save data
             obj = form.save(commit=False)
             obj.created_by = profile
-            obj.sport_type = request.POST['sport_type']
-            obj.venue = request.POST['venue']
-            obj.street = request.POST['street']
-            obj.city = request.POST['city']
-            obj.country = request.POST['country']
-            obj.province = request.POST['province']
-            obj.zipcode = request.POST['zip_code']
+            obj.venue_type = request.POST['venueType']
+            if request.POST['venueType'] == 'Online':
+                obj.event_url = request.POST['event_url']
+            elif request.POST['venueType'] == 'Both':
+                obj.event_url = request.POST['event_url']
+                obj.sport_type = request.POST['sport_type']
+                obj.venue = request.POST['venue']
+                obj.street = request.POST['street']
+                obj.city = request.POST['city']
+                obj.country = request.POST['country']
+                obj.province = request.POST['province']
+                obj.zipcode = request.POST['zip_code']
+            elif request.POST['venueType'] == 'In-Person':
+                obj.sport_type = request.POST['sport_type']
+                obj.venue = request.POST['venue']
+                obj.street = request.POST['street']
+                obj.city = request.POST['city']
+                obj.country = request.POST['country']
+                obj.province = request.POST['province']
+                obj.zipcode = request.POST['zip_code']
             # obj.position = request.POST['position']
             obj.gender = ','.join(item for item in request.POST.getlist('gender'))
             obj.registration_type = request.POST.get('dropin') if request.POST.get('dropin') is not None else "Drop-in"
@@ -181,8 +194,14 @@ def ValidateFormValues(request):
     if not request.user.is_mvp and not request.user.is_organization and event_count >= 2:
         messages.error(request, "Cannot create event, maximum events possible by non-MVP member is 2")
         event_count_valid = False
-    if not request.POST.get('event_title') or not request.POST.get('venue') \
+    if not request.POST.get('event_title') or not request.POST.get('venueType')\
             or not request.POST.get('event_type') or not request.POST.get('sport_type'):
+        messages.error(request, "All fields are required, please enter valid information")
+        fields_valid = False
+    if request.POST.get('venueType') == 'Both' or request.POST.get('venueType') == 'In-Person' and not request.POST.get('venue'):
+        messages.error(request, "All fields are required, please enter valid information")
+        fields_valid = False
+    if request.POST.get('venueType') == 'Online' and not request.POST.get('event_url'):
         messages.error(request, "All fields are required, please enter valid information")
         fields_valid = False
     if not request.POST.get('recurring_event'):
@@ -860,18 +879,18 @@ def get_extra_position_info(request):
     if request.method == "POST":
         selected_sport = request.POST['selected_type_text']
         try:
-            same_events = master_table.objects.filter(sport_type=selected_sport)
+            sports_choices = Secondary_SportsChoice.objects.filter(sport_type=selected_sport)
             pos_dict = {}
-            for event in same_events:
-                event_pos = Events_PositionInfo.objects.filter(event__pk=event.pk).distinct('position_name')
-                # print(event_pos)
-                for each_pos in event_pos:
-                    if each_pos.position_name in pos_dict:
-                        pos_dict[each_pos.position_name] += each_pos.no_of_position
+            for item in sports_choices:
+                if item.position is not None:
+                    if item.position in pos_dict:
+                        pos_dict[item.position] = pos_dict.get(item.position) + 1
                     else:
-                        pos_dict[each_pos.position_name] = each_pos.no_of_position
+                        pos_dict[item.position] = 1
 
+            if len(pos_dict) > 0:
                 info_str = 'There are already events which have the following Positions :  \n'
+                print(pos_dict)
                 for key in pos_dict:
                     info_str = info_str + str(key) + ' ' + str(pos_dict[key]) + ' \n '
 
