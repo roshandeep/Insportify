@@ -381,7 +381,8 @@
     font-size: 15px;
     width: 20%;
     position: relative;
-    font-weight: 400
+    font-weight: 400;
+    cursor: pointer;
 }
 
 #progressbar #step1:before {
@@ -426,12 +427,33 @@
 <script type="text/javascript">
 
 $(document).ready(function(){
+  var tab1 = $("#tab-1");
   var tab2 = $("#tab-2");
   var tab3 = $("#tab-3");
-  // var tab4 = $("#tab-4");
   tab2.hide();
   tab3.hide();
-  // tab4.hide();
+
+  $("li#step1").click(function () {
+        tab1.show();
+        tab2.hide();
+        tab3.hide();
+        $("#step1").addClass("active");
+        $("#step2").removeClass("active");
+        $("#step3").removeClass("active");
+    });
+    $("li#step2").click(function () {
+        tab1.hide();
+        tab2.show();
+        tab3.hide();
+        $("#step2").addClass("active");
+        $("#step3").removeClass("active");
+    });
+    $("li#step3").click(function () {
+        tab1.hide();
+        tab2.hide();
+        tab3.show();
+        $("#step3").addClass("active");
+    });
 
   $("#next-tab-1").click(function(){
     var tab1 = $("#tab-1");
