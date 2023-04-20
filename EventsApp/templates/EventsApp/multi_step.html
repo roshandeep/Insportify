@@ -54,18 +54,22 @@
                             </div>
                         </div>
                         <hr>
-                        <div class="form-row p-2">
-                            <div class="d-flex justify-content-center p-2">
+                        <div class="row">
+                            <div class="col-sm-4 text-center">
                                 <label class="img-btn text-center">
                                     <input type="radio" id="online" name="venueType" onchange="venueTypeSelect();" value="Online" />
                                     <img src="/media/images/online.png" style="padding: 10px;">
                                     <p>Online</p>
                                 </label>
+                            </div>
+                            <div class="col-sm-4 text-center">
                                 <label class="img-btn text-center">
                                     <input type="radio" id="inperson" name="venueType" onchange="venueTypeSelect();" value="In-Person" />
                                     <img src="/media/images/inperson.jpg" style="padding: 10px;">
                                     <p>In Person</p>
                                 </label>
+                            </div>
+                            <div class="col-sm-4 text-center">
                                 <label class="img-btn text-center">
                                     <input type="radio" id="both" name="venueType" onchange="venueTypeSelect();" value="Both" />
                                     <img src="/media/images/both.png" style="padding: 10px;">
@@ -346,11 +350,6 @@
                                 {% endfor %}
                             </select>
                         </div>
-<!--                        <div class="form-row p-2">-->
-<!--                            <select name='position' class="form-select" id="position" aria-label=".form-select-lg example">-->
-<!--                                <option selected disabled>* Choose Position</option>-->
-<!--                            </select>-->
-<!--                        </div>-->
                         <div class="form-row p-2 text-center">
                             <div id="input_fields_wrap">
                             </div>
