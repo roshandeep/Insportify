@@ -1205,7 +1205,37 @@ $('#datetimes_monday_date').focusin(function() {
     locale: {
       format: 'MM/DD/YYYY'
     }
+  })
+  .on("change", function() {
+    var mon_value = $('.daterange-mon')[0].value;
+    if(mon_value && mon_value.trim().length > 0){
+        var date1 = mon_value.split("-")[0].trim();
+        var date2 = mon_value.split("-")[1].trim();
+        date1 = new Date(Date.parse(date1, "mm/dd/yyyy"));
+        date2 = new Date(Date.parse(date2, "mm/dd/yyyy"));
+        var millisBetween = date2.getTime() - date1.getTime();
+        var days = millisBetween / (1000 * 3600 * 24);
+        var total = (days/7) + 1;
+        var is_individual = "{{ user.is_individual }}";
+        if(total > 2 && is_individual == 'True'){
+            Toastify({
+                text: "The event is spanning beyond 2 days. If you are an Organization or a MVP continue or else register as one.",
+                duration: 3000,
+                destination: "https://github.com/apvarun/toastify-js",
+                newWindow: true,
+                close: true,
+                gravity: "top",
+                position: "center",
+                stopOnFocus: true,
+                style: {
+                background: "blue",
+            },
+            onClick: function(){}
+            }).showToast();
+        }
+    }
   });
+
   $('.daterange-tue').daterangepicker({
     timePicker: false,
     isInvalidDate: function(date) {
@@ -1213,6 +1243,34 @@ $('#datetimes_monday_date').focusin(function() {
     },
     locale: {
       format: 'MM/DD/YYYY'
+    }
+  }).on("change", function() {
+    var tue_value = $('.daterange-tue')[0].value;
+    if(tue_value && tue_value.trim().length > 0){
+        var date1 = tue_value.split("-")[0].trim();
+        var date2 = tue_value.split("-")[1].trim();
+        date1 = new Date(Date.parse(date1, "mm/dd/yyyy"));
+        date2 = new Date(Date.parse(date2, "mm/dd/yyyy"));
+        var millisBetween = date2.getTime() - date1.getTime();
+        var days = millisBetween / (1000 * 3600 * 24);
+        var total = (days/7) + 1;
+        var is_individual = "{{ user.is_individual }}";
+        if(total > 2 && is_individual == 'True'){
+            Toastify({
+                text: "The event is spanning beyond 2 days. If you are an Organization or a MVP continue or else register as one.",
+                duration: 3000,
+                destination: "https://github.com/apvarun/toastify-js",
+                newWindow: true,
+                close: true,
+                gravity: "top",
+                position: "center",
+                stopOnFocus: true,
+                style: {
+                background: "blue",
+            },
+            onClick: function(){}
+            }).showToast();
+        }
     }
   });
   $('.daterange-wed').daterangepicker({
@@ -1223,6 +1281,34 @@ $('#datetimes_monday_date').focusin(function() {
     locale: {
       format: 'MM/DD/YYYY'
     }
+  }).on("change", function() {
+    var wed_value = $('.daterange-wed')[0].value;
+    if(wed_value && wed_value.trim().length > 0){
+        var date1 = wed_value.split("-")[0].trim();
+        var date2 = wed_value.split("-")[1].trim();
+        date1 = new Date(Date.parse(date1, "mm/dd/yyyy"));
+        date2 = new Date(Date.parse(date2, "mm/dd/yyyy"));
+        var millisBetween = date2.getTime() - date1.getTime();
+        var days = millisBetween / (1000 * 3600 * 24);
+        var total = (days/7) + 1;
+        var is_individual = "{{ user.is_individual }}";
+        if(total > 2 && is_individual == 'True'){
+            Toastify({
+                text: "The event is spanning beyond 2 days. If you are an Organization or a MVP continue or else register as one.",
+                duration: 3000,
+                destination: "https://github.com/apvarun/toastify-js",
+                newWindow: true,
+                close: true,
+                gravity: "top",
+                position: "center",
+                stopOnFocus: true,
+                style: {
+                background: "blue",
+            },
+            onClick: function(){}
+            }).showToast();
+        }
+    }
   });
   $('.daterange-thu').daterangepicker({
     timePicker: false,
@@ -1231,6 +1317,34 @@ $('#datetimes_monday_date').focusin(function() {
     },
     locale: {
       format: 'MM/DD/YYYY'
+    }
+  }).on("change", function() {
+    var thu_value = $('.daterange-thu')[0].value;
+    if(thu_value && thu_value.trim().length > 0){
+        var date1 = thu_value.split("-")[0].trim();
+        var date2 = thu_value.split("-")[1].trim();
+        date1 = new Date(Date.parse(date1, "mm/dd/yyyy"));
+        date2 = new Date(Date.parse(date2, "mm/dd/yyyy"));
+        var millisBetween = date2.getTime() - date1.getTime();
+        var days = millisBetween / (1000 * 3600 * 24);
+        var total = (days/7) + 1;
+        var is_individual = "{{ user.is_individual }}";
+        if(total > 2 && is_individual == 'True'){
+            Toastify({
+                text: "The event is spanning beyond 2 days. If you are an Organization or a MVP continue or else register as one.",
+                duration: 3000,
+                destination: "https://github.com/apvarun/toastify-js",
+                newWindow: true,
+                close: true,
+                gravity: "top",
+                position: "center",
+                stopOnFocus: true,
+                style: {
+                background: "blue",
+            },
+            onClick: function(){}
+            }).showToast();
+        }
     }
   });
   $('.daterange-fri').daterangepicker({
@@ -1241,6 +1355,34 @@ $('#datetimes_monday_date').focusin(function() {
     locale: {
       format: 'MM/DD/YYYY'
     }
+  }).on("change", function() {
+    var fri_value = $('.daterange-fri')[0].value;
+    if(fri_value && fri_value.trim().length > 0){
+        var date1 = fri_value.split("-")[0].trim();
+        var date2 = fri_value.split("-")[1].trim();
+        date1 = new Date(Date.parse(date1, "mm/dd/yyyy"));
+        date2 = new Date(Date.parse(date2, "mm/dd/yyyy"));
+        var millisBetween = date2.getTime() - date1.getTime();
+        var days = millisBetween / (1000 * 3600 * 24);
+        var total = (days/7) + 1;
+        var is_individual = "{{ user.is_individual }}";
+        if(total > 2 && is_individual == 'True'){
+            Toastify({
+                text: "The event is spanning beyond 2 days. If you are an Organization or a MVP continue or else register as one.",
+                duration: 3000,
+                destination: "https://github.com/apvarun/toastify-js",
+                newWindow: true,
+                close: true,
+                gravity: "top",
+                position: "center",
+                stopOnFocus: true,
+                style: {
+                background: "blue",
+            },
+            onClick: function(){}
+            }).showToast();
+        }
+    }
   });
   $('.daterange-sat').daterangepicker({
     timePicker: false,
@@ -1249,6 +1391,34 @@ $('#datetimes_monday_date').focusin(function() {
     },
     locale: {
       format: 'MM/DD/YYYY'
+    }
+  }).on("change", function() {
+    var sat_value = $('.daterange-sat')[0].value;
+    if(sat_value && sat_value.trim().length > 0){
+        var date1 = sat_value.split("-")[0].trim();
+        var date2 = sat_value.split("-")[1].trim();
+        date1 = new Date(Date.parse(date1, "mm/dd/yyyy"));
+        date2 = new Date(Date.parse(date2, "mm/dd/yyyy"));
+        var millisBetween = date2.getTime() - date1.getTime();
+        var days = millisBetween / (1000 * 3600 * 24);
+        var total = (days/7) + 1;
+        var is_individual = "{{ user.is_individual }}";
+        if(total > 2 && is_individual == 'True'){
+            Toastify({
+                text: "The event is spanning beyond 2 days. If you are an Organization or a MVP continue or else register as one.",
+                duration: 3000,
+                destination: "https://github.com/apvarun/toastify-js",
+                newWindow: true,
+                close: true,
+                gravity: "top",
+                position: "center",
+                stopOnFocus: true,
+                style: {
+                background: "blue",
+            },
+            onClick: function(){}
+            }).showToast();
+        }
     }
   });
   $('.daterange-sun').daterangepicker({
@@ -1260,7 +1430,35 @@ $('#datetimes_monday_date').focusin(function() {
       format: 'MM/DD/YYYY'
     }
   });
-});
+}).on("change", function() {
+    var sun_value = $('.daterange-sun')[0].value;
+    if(sun_value && sun_value.trim().length > 0){
+        var date1 = sun_value.split("-")[0].trim();
+        var date2 = sun_value.split("-")[1].trim();
+        date1 = new Date(Date.parse(date1, "mm/dd/yyyy"));
+        date2 = new Date(Date.parse(date2, "mm/dd/yyyy"));
+        var millisBetween = date2.getTime() - date1.getTime();
+        var days = millisBetween / (1000 * 3600 * 24);
+        var total = (days/7) + 1;
+        var is_individual = "{{ user.is_individual }}";
+        if(total > 2 && is_individual == 'True'){
+            Toastify({
+                text: "The event is spanning beyond 2 days. If you are an Organization or a MVP continue or else register as one.",
+                duration: 3000,
+                destination: "https://github.com/apvarun/toastify-js",
+                newWindow: true,
+                close: true,
+                gravity: "top",
+                position: "center",
+                stopOnFocus: true,
+                style: {
+                background: "blue",
+            },
+            onClick: function(){}
+            }).showToast();
+        }
+    }
+  });
 
 $(function () {
         $("input[name='recurring_event']").click(function () {

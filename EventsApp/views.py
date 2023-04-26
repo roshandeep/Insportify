@@ -180,7 +180,7 @@ def multistep(request):
         form = MultiStepForm()
 
     return render(request, 'EventsApp/multi_step.html',
-                  {'form': form, 'sports_type': sports_type, 'venues': venues, "values": entered_values})
+                  {'form': form, 'sports_type': sports_type, 'venues': venues, "values": entered_values, "user": request.user})
 
 
 def ValidateFormValues(request):
@@ -1393,13 +1393,16 @@ def get_recommended_events(request):
     # If there is no user availability then add all events to recommended events
     if len(user_avaiability):
         for event in events:
-            event_date, event_start_time, event_end_time = extract_event_datetime(event)
-            for avail in user_avaiability:
-                if avail.day_of_week == (event_date.weekday() + 1):
-                    if event_start_time >= avail.start_time and event_end_time <= avail.end_time:
-                        recommended_events.append(event)
-                        # print("Added", event.event_title, event_date, event_start_time, event_end_time)
-                        break
+            if event.registration_type == 'Drop-In':
+                event_date, event_start_time, event_end_time = extract_event_datetime(event)
+                for avail in user_avaiability:
+                    if avail.day_of_week == (event_date.weekday() + 1):
+                        if event_start_time >= avail.start_time and event_end_time <= avail.end_time:
+                            recommended_events.append(event)
+                            # print("Added", event.event_title, event_date, event_start_time, event_end_time)
+                            break
+            elif event.registration_type == 'Registration':
+                recommended_events.append(event)
     else:
         recommended_events = [event for event in events]
 

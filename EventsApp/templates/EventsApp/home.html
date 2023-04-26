@@ -139,11 +139,13 @@
                             {{event.event_type}}
                             {% endif %}
                         </h6>
-                        <p class="card-text text-center">{{event.venue}}, {{event.city}}, {{event.province}}</p>
+                        {% if event.venue %}
+                            <p class="card-text text-center">{{event.venue}}, {{event.city}}, {{event.province}}</p>
+                        {% endif %}
                         {% if event.datetimes %}
-                        <p class="text-dark text-start eventdatetime">{{event.datetimes}}</p>
+                            <p class="text-dark text-start eventdatetime">{{event.datetimes}}</p>
                         {% elif event.current_datetimes %}
-                        <p class="text-dark text-start eventdatetime">{{event.current_datetimes}}</p>
+                            <p class="text-dark text-start eventdatetime">{{event.current_datetimes}}</p>
                         {% endif %}
                     </div>
                 </div>
@@ -214,7 +216,9 @@
                             {{event.event_type}}
                             {% endif %}
                         </h6>
-                        <p class="card-text text-center">{{event.venue}}, {{event.city}}, {{event.province}}</p>
+                        {% if event.venue %}
+                            <p class="card-text text-center">{{event.venue}}, {{event.city}}, {{event.province}}</p>
+                        {% endif %}
                         {% if event.datetimes %}
                         <p class="text-dark text-start eventdatetime">{{event.datetimes}}</p>
                         {% elif event.current_datetimes %}
