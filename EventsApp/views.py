@@ -889,7 +889,7 @@ def get_extra_position_info(request):
                         pos_dict[item.position] = 1
 
             if len(pos_dict) > 0:
-                info_str = 'There are already events which have the following Positions :  \n'
+                info_str = 'Hey, we already have the following positions available in your area :  \n'
                 print(pos_dict)
                 for key in pos_dict:
                     info_str = info_str + str(key) + ' ' + str(pos_dict[key]) + ' \n '
