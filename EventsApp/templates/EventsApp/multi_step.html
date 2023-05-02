@@ -531,15 +531,47 @@ function venueTypeSelect(){
       if(venueType_value == "Both" || venueType_value == "Online"){
         div_url.show();
         if(venueType_value == "Online"){
-            console.log('Checking');
-            console.log(venue)
             $("#venue").prop("disabled", true);
+
+            $("#datetimes_start_time").prop("disabled", true);
+            $("#datetimes_end_time").prop("disabled", true);
+            $("#datetimes_monday_start_time").prop("disabled", true);
+            $("#datetimes_monday_end_time").prop("disabled", true);
+            $("#datetimes_tuesday_start_time").prop("disabled", true);
+            $("#datetimes_tuesday_end_time").prop("disabled", true);
+            $("#datetimes_wednesday_start_time").prop("disabled", true);
+            $("#datetimes_wednesday_end_time").prop("disabled", true);
+            $("#datetimes_thursday_start_time").prop("disabled", true);
+            $("#datetimes_thursday_end_time").prop("disabled", true);
+            $("#datetimes_friday_start_time").prop("disabled", true);
+            $("#datetimes_friday_end_time").prop("disabled", true);
+            $("#datetimes_saturday_start_time").prop("disabled", true);
+            $("#datetimes_saturday_end_time").prop("disabled", true);
+            $("#datetimes_sunday_start_time").prop("disabled", true);
+            $("#datetimes_sunday_end_time").prop("disabled", true);
         }
       }
       else
       if(venueType_value == "In-Person"){
         div_url.hide();
         $("#venue").prop("disabled", false);
+
+        $("#datetimes_start_time").prop("disabled", false);
+        $("#datetimes_end_time").prop("disabled", false);
+        $("#datetimes_monday_start_time").prop("disabled", false);
+        $("#datetimes_monday_end_time").prop("disabled", false);
+        $("#datetimes_tuesday_start_time").prop("disabled", false);
+        $("#datetimes_tuesday_end_time").prop("disabled", false);
+        $("#datetimes_wednesday_start_time").prop("disabled", false);
+        $("#datetimes_wednesday_end_time").prop("disabled", false);
+        $("#datetimes_thursday_start_time").prop("disabled", false);
+        $("#datetimes_thursday_end_time").prop("disabled", false);
+        $("#datetimes_friday_start_time").prop("disabled", false);
+        $("#datetimes_friday_end_time").prop("disabled", false);
+        $("#datetimes_saturday_start_time").prop("disabled", false);
+        $("#datetimes_saturday_end_time").prop("disabled", false);
+        $("#datetimes_sunday_start_time").prop("disabled", false);
+        $("#datetimes_sunday_end_time").prop("disabled", false);
       }
     }
 }
@@ -816,6 +848,33 @@ function displayExtraInfo(){
 function eventTypeSelect() {
   document.getElementById("next-tab-1").disabled = false;
 
+  if ($('input[name=dropin]:checked').length > 0) {
+      dropin_value = $('input[name="dropin"]:checked').val();
+      if(dropin_value == "Drop-in"){
+        document.getElementById("chkYes").disabled = false;
+        document.getElementById("chkNo").disabled = false;
+        document.getElementById("chkYes").checked = false;
+        document.getElementById("chkNo").checked = false;
+        $("#single_dates").hide();
+      }
+      else if(dropin_value == "Registration"){
+        document.getElementById("chkYes").disabled = true;
+        document.getElementById("chkNo").checked = true;
+        $("#fields_recurring").hide();
+        $("#Monday_dates").hide();
+        $("#Tuesday_dates").hide();
+        $("#Wednesday_dates").hide();
+        $("#Thursday_dates").hide();
+        $("#Friday_dates").hide();
+        $("#Saturday_dates").hide();
+        $("#Sunday_dates").hide();
+        $("#Exception_dates").hide();
+        $("#single_dates").show();
+      }
+    }
+}
+
+function eventVenueSelect() {
   if ($('input[name=dropin]:checked').length > 0) {
       dropin_value = $('input[name="dropin"]:checked').val();
       if(dropin_value == "Drop-in"){
