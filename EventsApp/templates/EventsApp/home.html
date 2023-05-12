@@ -2,18 +2,22 @@
 
 {% load widget_tweaks %}
 {% load static %}
+
 {% block content %}
+
+<script src="{% static 'custom.js' %}"></script>
+
 <div class="col-11 mx-auto">
     <div class="slider">
 
         {% for advertisement in advertisements %}
-            <div class="col-md-4 col-sm-10">
-                   <img src="/media/{{advertisement.image}}" class="mx-auto d-bloc"
-                         alt="{{advertisement.header}}"
-                         onclick="check_ad_count({{advertisement.pk}}); location.href='show_advertisement/{{advertisement.header}}';"
-                         role="link" style="cursor:pointer; height: 140px; max-width: 100%;width: auto">
-            </div>
-                {% endfor %}
+        <div class="col-md-4 col-sm-10">
+            <img src="/media/{{advertisement.image}}" class="mx-auto d-bloc"
+                 alt="{{advertisement.header}}"
+                 onclick="check_ad_count({{advertisement.pk}}); location.href='show_advertisement/{{advertisement.header}}';"
+                 role="link" style="cursor:pointer; height: 140px; max-width: 100%;width: auto">
+        </div>
+        {% endfor %}
     </div>
 
     <div id="event-page" class="col-lg-9 col-md-12 mx-auto">
