@@ -80,6 +80,13 @@
                         <div class="form-row p-2" id="txt_url" style="display:none">
                             <input type="text" class="form-control" id="event_url" name="event_url" placeholder="* Event URL" value="{{values.event_url}}" />
                         </div>
+                        <div class="form-row p-2">
+                            <label>Is it a Third-party Event?</label>
+                            <div>
+                            <label><input type="radio" name="is_third_party" value="Yes" {% if values.is_third_party == 'Yes' %}checked{% endif %}> Yes </input></label>
+                            <label><input type="radio" name="is_third_party" value="No" {% if values.is_third_party == 'No' %}checked{% endif %}> No </input></label>
+                            </div>
+                        </div>
                     </div>
                 </div>
 

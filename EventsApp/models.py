@@ -101,6 +101,7 @@ class master_table(models.Model):
                           ('Registration', 'Registration'), ('Social', 'Social'), ('Tournament', 'Tournament'))
     REGISTRATION_TYPE_CHOICES = (('Drop-in', 'Drop-in'), ('Registration', 'Registration'))
     VENUE_TYPE_CHOICES = (('In-Person', 'In-Person'), ('Online', 'Online'), ('Both', 'Both'))
+    IS_THIRD_PARTY_CHOICES = (('Yes', 'Yes'), ('No', 'No'))
 
     event_title = models.CharField(max_length=300, blank=True, null=True)
     description = models.CharField(max_length=300, blank=True, null=True)
@@ -136,6 +137,7 @@ class master_table(models.Model):
     sport_logo = models.CharField(max_length=300, blank=True, null=True)
     created_by = models.ForeignKey(Profile, on_delete=models.CASCADE, blank=True, null=True)
     current_datetimes = models.CharField(max_length=500, blank=True, null=True)
+    is_third_party = models.CharField(max_length=300, choices=IS_THIRD_PARTY_CHOICES, blank=True, null=True)
 
     def __str__(self):
         return self.event_title

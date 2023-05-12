@@ -88,6 +88,7 @@ def multistep(request):
                 obj.zipcode = request.POST['zip_code']
             # obj.position = request.POST['position']
             obj.gender = ','.join(item for item in request.POST.getlist('gender'))
+            obj.is_third_party = request.POST.get('is_third_party') if request.POST.get('is_third_party') else 'No'
             obj.registration_type = request.POST.get('dropin') if request.POST.get('dropin') is not None else "Drop-in"
             obj.is_recurring = request.POST.get('recurring_event') == "Yes"
             selected_days = request.POST.getlist('recurring_days')
@@ -226,17 +227,19 @@ def ValidateFormValues(request):
         messages.error(request, "Cannot create event, maximum events possible by non-MVP member is 2")
         event_count_valid = False
     if not request.POST.get('event_title') or not request.POST.get('venueType')\
-            or not request.POST.get('event_type') or not request.POST.get('sport_type'):
-        messages.error(request, "All fields are required, please enter valid information")
+            or not request.POST.get('event_type') or not request.POST.get('sport_type') or not request.POST.get('is_third_party'):
+        messages.error(request, "All fields are required, please enter valid information. Either Event Title, Event Type, Sports Type, Venue Type or Is Third party Info missing.")
         fields_valid = False
     if request.POST.get('venueType') == 'Both' or request.POST.get('venueType') == 'In-Person' and not request.POST.get('venue'):
-        messages.error(request, "All fields are required, please enter valid information")
+        messages.error(request, "All fields are required, please enter valid information. Venue Info missing")
         fields_valid = False
     if request.POST.get('venueType') == 'Online' and not request.POST.get('event_url'):
-        messages.error(request, "All fields are required, please enter valid information")
+        messages.error(request, "All fields are required, please enter valid information. Event Url Info missing")
         fields_valid = False
+
+
     if not request.POST.get('recurring_event'):
-        messages.error(request, "Please select event recurrence")
+        messages.error(request, "Please select event recurrence.")
         date_valid = False
     else:
         if request.POST['recurring_event'] == "Yes":
@@ -322,13 +325,14 @@ def ValidateFormValues(request):
                         ((not request.POST.get('datetimes_end_time')) or request.POST['datetimes_end_time'] == ""):
                     messages.error(request, "No date times entered, please enter a date and time for the event")
                     date_valid = False
+
     for i in range(1, 10):
         if request.POST.get('no_of_position' + str(i)) != '' \
                 and (request.POST.get('type_of_skill' + str(i)) == ''
                      or request.POST.get('position_cost' + str(i)) == ''
                      or request.POST.get('min_age' + str(i)) == ''
                      or request.POST.get('max_age' + str(i)) == ''):
-            messages.error(request, "All position fields are required, please enter valid information")
+            messages.error(request, "All position fields are required, please enter valid information. Either No. of Positions, Type of Skill, Position Cost, Min. Age or Max. Age missing")
             fields_valid = False
 
     return date_valid and event_count_valid and fields_valid
@@ -440,12 +444,11 @@ def get_venue_details(request):
 def save_event_position_info(request, event):
     if event.datetimes:
         for i in range(1, 10):
-            if 'no_of_position' + str(i) in request.POST and request.POST['no_of_position' + str(i)].strip() != "" and \
-                'position_name' + str(i) in request.POST and request.POST['position_name' + str(i)].strip() != "" and \
-                'type_of_skill' + str(i) in request.POST and request.POST['type_of_skill' + str(i)].strip() != "" and \
-                'no_of_position' + str(i) in request.POST and request.POST['no_of_position' + str(i)].strip() != "" and \
-                'position_cost' + str(i) in request.POST and request.POST['position_cost' + str(i)].strip() != "" and \
-                'min_age' + str(i) in request.POST and request.POST['min_age' + str(i)].strip() != "":
+            if ('no_of_position' + str(i) in request.POST and request.POST['no_of_position' + str(i)].strip() != "") and \
+                    ('position_name' + str(i) in request.POST and request.POST['position_name' + str(i)].strip() != "") and \
+                    ('type_of_skill' + str(i) in request.POST and request.POST['type_of_skill' + str(i)].strip() != "") and \
+                    ('position_cost' + str(i) in request.POST and request.POST['position_cost' + str(i)].strip() != "") and \
+                    ('min_age' + str(i) in request.POST and request.POST['min_age' + str(i)].strip() != ""):
                 position_name = request.POST['position_name' + str(i)].strip()
                 position_type = request.POST['type_of_skill' + str(i)].strip()
                 no_of_position = request.POST['no_of_position' + str(i)].strip()
