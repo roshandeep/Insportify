@@ -440,7 +440,12 @@ def get_venue_details(request):
 def save_event_position_info(request, event):
     if event.datetimes:
         for i in range(1, 10):
-            if 'no_of_position' + str(i) in request.POST and request.POST['no_of_position' + str(i)].strip() != "":
+            if 'no_of_position' + str(i) in request.POST and request.POST['no_of_position' + str(i)].strip() != "" and \
+                'position_name' + str(i) in request.POST and request.POST['position_name' + str(i)].strip() != "" and \
+                'type_of_skill' + str(i) in request.POST and request.POST['type_of_skill' + str(i)].strip() != "" and \
+                'no_of_position' + str(i) in request.POST and request.POST['no_of_position' + str(i)].strip() != "" and \
+                'position_cost' + str(i) in request.POST and request.POST['position_cost' + str(i)].strip() != "" and \
+                'min_age' + str(i) in request.POST and request.POST['min_age' + str(i)].strip() != "":
                 position_name = request.POST['position_name' + str(i)].strip()
                 position_type = request.POST['type_of_skill' + str(i)].strip()
                 no_of_position = request.POST['no_of_position' + str(i)].strip()
@@ -902,34 +907,6 @@ def get_selected_sports_positions(request):
             data['error_message'] = 'error'
             return JsonResponse(data)
         return JsonResponse(list(selected_skills.values('pk', 'position_type')), safe=False)
-
-
-def get_extra_position_info(request):
-    data = {}
-    info_str = ""
-    if request.method == "POST":
-        selected_sport = request.POST['selected_type_text']
-        try:
-            sports_choices = Secondary_SportsChoice.objects.filter(sport_type=selected_sport)
-            pos_dict = {}
-            for item in sports_choices:
-                if item.position is not None:
-                    if item.position in pos_dict:
-                        pos_dict[item.position] = pos_dict.get(item.position) + 1
-                    else:
-                        pos_dict[item.position] = 1
-
-            if len(pos_dict) > 0:
-                info_str = 'Hey, we already have the following positions available in your area :  \n'
-                print(pos_dict)
-                for key in pos_dict:
-                    info_str = info_str + str(key) + ' ' + str(pos_dict[key]) + ' \n '
-
-        except Exception:
-            data['error_message'] = 'error'
-            return JsonResponse(data)
-
-        return JsonResponse(info_str, safe=False)
 
 
 @login_required
@@ -2163,6 +2140,7 @@ def delete_by_id(request, event_id, date):
 @login_required
 def invite_by_id(request, event_id, email=None):
     context = {}
+    event_pos_dict={}
     profile = get_profile_from_user(request.user)
     form = InviteForm(request.POST or None,
                       instance=Invite(),
@@ -2172,9 +2150,16 @@ def invite_by_id(request, event_id, email=None):
     else:
         user = Organization.objects.get(profile=profile)
     context['form'] = form
-    # user = User.objects.get(email=request.user.email)
     event = master_table.objects.get(pk=event_id)
+    event_positions = Events_PositionInfo.objects.filter(event=event)
+    print(event_positions)
+    for pos in event_positions:
+        event_pos_dict[pos.position_name] = pos.no_of_position
+
+    pos_info_msg = get_extra_position_info(request, event.sport_type, event_pos_dict)
+
     context["event"] = event
+    context["pos_info_msg"] = pos_info_msg
     context["invites"] = Invite.objects.all().filter(event=event).distinct('email')
 
     if email:
@@ -2208,6 +2193,41 @@ def invite_by_id(request, event_id, email=None):
             messages.error(request, form.errors)
 
     return render(request, "EventsApp/invite.html", context)
+
+
+def get_extra_position_info(request, sport_type, event_pos_dict):
+    info_str = ""
+    emoji = ""
+    sports_choices = Secondary_SportsChoice.objects.filter(sport_type=sport_type)
+    pos_dict = {}
+    print(sports_choices)
+    for item in sports_choices:
+        print(item.position)
+        if item.position is not None:
+            if item.position in pos_dict:
+                pos_dict[item.position] = pos_dict.get(item.position) + 1
+            else:
+                pos_dict[item.position] = 1
+
+    print(event_pos_dict, pos_dict)
+    if len(event_pos_dict) > 0:
+        info_str = 'Hey, availability status of the following ' + sport_type + ' positions are :  \n'
+        for key in event_pos_dict:
+            if key in pos_dict:
+                percent = int((event_pos_dict[key] - pos_dict[key] / pos_dict[key]) * 100)
+                if percent > 25:
+                    emoji = '\U0001F44D'
+                elif percent >= 10 and percent < 25:
+                    emoji = '\U0001F91E'
+                elif percent < 10:
+                    emoji = '\U0001F44E'
+
+                info_str = info_str + str(key) + ' ' + emoji + '\r\n'
+            else:
+                emoji = '\U0001F44E'
+                info_str = info_str + str(key) + ' ' + emoji + '\r\n'
+
+    return info_str
 
 
 @login_required

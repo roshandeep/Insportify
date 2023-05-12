@@ -25,6 +25,14 @@
         </div>
         {% endfor %}
         {% endif %}
+
+        {% if pos_info_msg %}
+            <div class="alert alert-info alert-dismissible fade show" role="alert">
+                {{ pos_info_msg }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endif %}
+
         <div class="form-group col-md-4">
             <label>{{ form.email.label }}</label>
             {% render_field form.email|add_required_class:"is-required" class="form-control" %}
