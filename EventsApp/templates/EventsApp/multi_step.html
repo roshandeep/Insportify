@@ -57,21 +57,21 @@
                         <div class="row">
                             <div class="col-sm-4 text-center">
                                 <label class="img-btn text-center">
-                                    <input type="radio" id="online" name="venueType" onchange="venueTypeSelect();" value="Online" />
+                                    <input type="radio" id="online" name="venueType" {% if values.venueType == 'Online' %}checked="checked" {% endif %} onchange="venueTypeSelect();" value="Online" />
                                     <img src="/media/images/online.png" style="padding: 10px;">
                                     <p>Online</p>
                                 </label>
                             </div>
                             <div class="col-sm-4 text-center">
                                 <label class="img-btn text-center">
-                                    <input type="radio" id="inperson" name="venueType" onchange="venueTypeSelect();" value="In-Person" />
+                                    <input type="radio" id="inperson" name="venueType" {% if values.venueType == 'In-Person' %}checked="checked" {% endif %} onchange="venueTypeSelect();" value="In-Person" />
                                     <img src="/media/images/inperson.jpg" style="padding: 10px;">
                                     <p>In Person</p>
                                 </label>
                             </div>
                             <div class="col-sm-4 text-center">
                                 <label class="img-btn text-center">
-                                    <input type="radio" id="both" name="venueType" onchange="venueTypeSelect();" value="Both" />
+                                    <input type="radio" id="both" name="venueType" {% if values.venueType == 'Both' %}checked="checked" {% endif %} onchange="venueTypeSelect();" value="Both" />
                                     <img src="/media/images/both.png" style="padding: 10px;">
                                     <p>Both</p>
                                 </label>
