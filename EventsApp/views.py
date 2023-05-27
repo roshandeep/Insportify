@@ -1,8 +1,15 @@
 import calendar
 import copy
 import operator
+import os
+import smtplib
 from datetime import datetime, timedelta, date
 import time
+from email.mime.base import MIMEBase
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.utils import formatdate
+
 import openpyxl
 import stripe
 from django.contrib import messages
@@ -15,9 +22,7 @@ from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.views.decorators.csrf import csrf_exempt
 from openpyxl import Workbook
-# from hitcount.models import HitCountMixin, HitCount
-# from django.contrib.contenttypes.fields import GenericRelation
-# from hitcount.views import HitCountDetailView
+from ics import Calendar, Event
 
 from Insportify import settings
 from .forms import MultiStepForm, AvailabilityForm, LogoForm, InviteForm, NewProfileForm
@@ -25,8 +30,8 @@ from .models import master_table, Individual, Organization, Venues, SportsCatego
     Availability, Logo, Extra_Loctaions, Events_PositionInfo, Secondary_SportsChoice, Invite, \
     PositionAndSkillType, SportsImage, Organization_Availability, OrderItems, Advertisement, Profile, Ad_HitCount
 import util
-from django.db.models import Q, Count
-from functools import lru_cache, reduce
+from django.db.models import Q
+from email import encoders
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -520,6 +525,7 @@ def all_events(request):
 
 @login_required
 def committed_events(request):
+    # send_calendar_invite()
     event_list = set()
     profile = get_profile_from_user(request.user)
     cart = OrderItems.objects.filter(profile=profile)
@@ -2143,7 +2149,8 @@ def delete_by_id(request, event_id, date):
 @login_required
 def invite_by_id(request, event_id, email=None):
     context = {}
-    event_pos_dict={}
+    event_pos_dict = {}
+
     profile = get_profile_from_user(request.user)
     form = InviteForm(request.POST or None,
                       instance=Invite(),
@@ -2155,12 +2162,12 @@ def invite_by_id(request, event_id, email=None):
     context['form'] = form
     event = master_table.objects.get(pk=event_id)
     event_positions = Events_PositionInfo.objects.filter(event=event)
-    print(event_positions)
     for pos in event_positions:
         event_pos_dict[pos.position_name] = pos.no_of_position
 
     pos_info_msg = get_extra_position_info(request, event.sport_type, event_pos_dict)
 
+    send_calendar_invite(event)
     context["event"] = event
     context["pos_info_msg"] = pos_info_msg
     context["invites"] = Invite.objects.all().filter(event=event).distinct('email')
@@ -2203,16 +2210,16 @@ def get_extra_position_info(request, sport_type, event_pos_dict):
     emoji = ""
     sports_choices = Secondary_SportsChoice.objects.filter(sport_type=sport_type)
     pos_dict = {}
-    print(sports_choices)
+    # print(sports_choices)
     for item in sports_choices:
-        print(item.position)
+        # print(item.position)
         if item.position is not None:
             if item.position in pos_dict:
                 pos_dict[item.position] = pos_dict.get(item.position) + 1
             else:
                 pos_dict[item.position] = 1
 
-    print(event_pos_dict, pos_dict)
+    # print(event_pos_dict, pos_dict)
     if len(event_pos_dict) > 0:
         info_str = 'Hey, availability status of the following ' + sport_type + ' positions are :  \n'
         for key in event_pos_dict:
@@ -2236,6 +2243,7 @@ def get_extra_position_info(request, sport_type, event_pos_dict):
 @login_required
 def invite(request):
     ## works only for individual
+
     context = {}
     profile = get_profile_from_user(request.user)
     form = InviteForm(request.POST or None,
@@ -2267,6 +2275,47 @@ def invite(request):
             print(form.errors)
 
     return render(request, "EventsApp/invite.html", context)
+
+
+def send_calendar_invite(event):
+    send_from = "roshandeep1995@gmail.com"
+    # send_from = settings.EMAIL_HOST_USER
+    send_to = "roshandeep810@gmail.com"
+    subject = 'Meeting Invite'
+
+    msg = MIMEMultipart('alternative')
+    msg['From'] = send_from
+    msg['To'] = send_to
+    msg['Date'] = formatdate(localtime=True)
+    msg['Subject'] = subject
+    msg.add_header('Content-class', 'urn:content-classes:calendarmessage')
+    msg.attach(MIMEText("See attachement for Meeting Invite."))
+
+    cal = Calendar()
+    evt = Event()
+    evt.name = event.event_title
+    evt.begin = '2014-01-01 00:00:00'
+
+    cal.events.add(evt)
+    cal.events
+
+    with open('meeting.ics', 'w') as my_file:
+        my_file.writelines(cal.serialize_iter())
+
+    icspart = MIMEBase('text', 'calendar', **{'method': 'REQUEST', 'name': 'meeting.ics'})
+    icspart.set_payload(open("meeting.ics", "rb").read())
+    icspart.add_header('Content-Transfer-Encoding', '8bit')
+    icspart.add_header('Content-class', 'urn:content-classes:calendarmessage')
+    msg.attach(icspart)
+
+    # print msg.as_string()
+    smtp = smtplib.SMTP('smtp.gmail.com', 587);
+    # smtp.sendmail(send_from, send_to, msg.as_string())
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp_server:
+        smtp_server.login('roshandeep1995@gmail.com', 'cbundgeqsnyfawmu')
+        smtp_server.sendmail(send_from, send_to, msg.as_string())
+    print("Message sent!")
+    smtp.close()
 
 
 @login_required
