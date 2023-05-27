@@ -12,6 +12,7 @@ from email.utils import formatdate
 
 import openpyxl
 import stripe
+from dateutil.parser import parser
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
@@ -2167,10 +2168,11 @@ def invite_by_id(request, event_id, email=None):
 
     pos_info_msg = get_extra_position_info(request, event.sport_type, event_pos_dict)
 
-    send_calendar_invite(event)
+
     context["event"] = event
     context["pos_info_msg"] = pos_info_msg
     context["invites"] = Invite.objects.all().filter(event=event).distinct('email')
+    send_calendar_invite(event, request.user.email)
 
     if email:
         if user.first_name:
@@ -2181,6 +2183,7 @@ def invite_by_id(request, event_id, email=None):
                    + " has invited you to the event: " + event.event_title
                    + ". Join Insportify now: " + request.get_host() + "/" + str(event_id),
                    [email])
+
         messages.success(request, "Another invitation email sent to " + email)
 
     if request.POST:
@@ -2277,10 +2280,11 @@ def invite(request):
     return render(request, "EventsApp/invite.html", context)
 
 
-def send_calendar_invite(event):
-    send_from = "roshandeep1995@gmail.com"
-    # send_from = settings.EMAIL_HOST_USER
-    send_to = "roshandeep810@gmail.com"
+def send_calendar_invite(event, email):
+    # send_from = "roshandeep1995@gmail.com"
+    send_from = settings.EMAIL_HOST_USER
+    # send_to = "roshandeep810@gmail.com"
+    send_to = email
     subject = 'Meeting Invite'
 
     msg = MIMEMultipart('alternative')
@@ -2291,10 +2295,46 @@ def send_calendar_invite(event):
     msg.add_header('Content-class', 'urn:content-classes:calendarmessage')
     msg.attach(MIMEText("See attachement for Meeting Invite."))
 
+    date_parser = parser()
+    if event.datetimes_monday:
+        time = event.datetimes_monday.split("-")
+        datetime_obj = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
+        date = date_parser.parse(datetime_obj.isoformat())
+    elif event.datetimes_tuesday:
+        time = event.datetimes_tuesday.split("-")
+        datetime_obj = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
+        date = date_parser.parse(datetime_obj.isoformat())
+    elif event.datetimes_wednesday:
+        time = event.datetimes_wednesday.split("-")
+        datetime_obj = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
+        date = date_parser.parse(datetime_obj.isoformat())
+    elif event.datetimes_thursday:
+        time = event.datetimes_thursday.split("-")
+        datetime_obj = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
+        date = date_parser.parse(datetime_obj.isoformat())
+    elif event.datetimes_friday:
+        time = event.datetimes_friday.split("-")
+        datetime_obj = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
+        date = date_parser.parse(datetime_obj.isoformat())
+    elif event.datetimes_saturday:
+        time = event.datetimes_saturday.split("-")
+        datetime_obj = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
+        date = date_parser.parse(datetime_obj.isoformat())
+    elif event.datetimes_sunday:
+        time = event.datetimes_monday.split("-")
+        datetime_obj = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
+        date = date_parser.parse(datetime_obj.isoformat())
+    elif event.datetimes:
+        time = event.datetimes.split("-")
+        datetime_obj = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
+        date = date_parser.parse(datetime_obj.isoformat())
+
+
+
     cal = Calendar()
     evt = Event()
     evt.name = event.event_title
-    evt.begin = '2014-01-01 00:00:00'
+    evt.begin = date
 
     cal.events.add(evt)
     cal.events
