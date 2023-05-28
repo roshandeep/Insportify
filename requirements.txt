@@ -9,6 +9,7 @@ EbookLib==0.17.1
 extract-msg==0.23.1
 flatbuffers==1.12
 grpcio==1.32.0
+ics==0.7.2
 IMAPClient==2.1.0
 isort==4.3.21
 lazy-object-proxy==1.4.3
@@ -22,12 +23,18 @@ PyQt5-sip==12.8.0
 python-dateutil==2.8.2
 python-pptx==0.6.18
 pytz==2021.3
+requests==2.27.1
+six==1.16.0
+SpeechRecognition==3.8.1
 sqlparse==0.4.2
 stripe==2.74.0
-typing-extensions==3.7.4.3
+TatSu==4.4.0
+tensorboard==2.4.1
+tensorflow==2.4.1
+tensorflow-gpu==2.1.0
+textract==1.6.3
+typing_extensions==4.6.2
 tzlocal==1.5.1
+urllib3==1.26.9
 wincertstore==0.2
-openpyxl
-six
-# ngnix
-gunicorn
+zipp==3.15.0
