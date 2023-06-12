@@ -38,7 +38,7 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
 def get_profile_from_user(user):
-    # print("check profile")
+    print("check profile")
     return Profile.objects.get(active_user=user)
 
 
@@ -541,8 +541,10 @@ def committed_events(request):
 @login_required
 def delete_profile(request):
     profile = get_profile_from_user(request.user)
+    print(profile.name, profile.active_user, profile.is_master, request.user)
     if profile.is_master:
-        User.objects.filter(pk=request.user.pk).delete()
+        print("is Master")
+        # User.objects.filter(pk=request.user.pk).delete()
         logout(request)
         return redirect('EventsApp:home')
     else:
@@ -642,11 +644,12 @@ def delete_current_profile(request):
     curr_prof = get_profile_from_user(request.user)
     master_prof = Profile.objects.get(user=request.user, is_master=True)
     _switch_profile(request.user, master_prof.name)
+    print(curr_prof)
     if not curr_prof.is_master:
-        curr_prof.delete()
+        print('delete')
+        # curr_prof.delete()
     else:
         print('Cannot delete master profile.')
-    get_profile_from_user.cache_clear()
     return home(request)
 
 
@@ -683,8 +686,6 @@ def create_profile(request):
             individual.save()
 
             _switch_profile(request.user, name)
-
-            # get_profile_from_user.cache_clear()
 
             request.user.refresh_from_db()
             # context = {'individual': individual, 'sports_type': [], 'sec_sport_choices': [], 'locations': [], 'user_avaiability': []}
@@ -724,8 +725,7 @@ def user_profile(request):
 
 @login_required
 def user_profile_submit(request):
-    print('GET request fields', request.GET.dict())
-    print('POST request fields', request.POST.dict())
+    print(request.POST.dict())
 
     if not ValidateUserProfileForm(request):
         print('Validation Failed')
@@ -1186,7 +1186,7 @@ def get_client_ip(request):
 
 
 def home(request):
-    # print("Home")
+    print("Home")
 
     if request.user.is_authenticated:
         if not request.user.profile_status:
@@ -1231,7 +1231,7 @@ def home(request):
         recommended_events = get_recommended_events(request)
         # recommended_events = master_table.objects.filter(pk__in=[event.pk for event in recommended_events])
 
-    selected_events_types=[]
+    selected_events_types = []
     if request.GET.get('events_types'):
         selected_events_types = request.GET.getlist('events_types')
         if request.user.is_authenticated:

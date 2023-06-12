@@ -80,6 +80,7 @@ class individual_register(CreateView):
             if is_localhost:
                 print(email.body)
             else:
+                print(email.body)
                 email.send()
             messages.success(self.request,
                              'Account created! A verification email has been sent to your email address. Please confirm your email address to complete the registration.')
@@ -204,6 +205,7 @@ class password_reset(generic.CreateView):
             user = form.save()
             user.is_active = False
             user.save()
+            is_localhost = get_current_site(self.request).domain == localhost
             if get_current_site(self.request).domain == localhost:
                 ssl = 'http://'
             else:
@@ -219,7 +221,10 @@ class password_reset(generic.CreateView):
                 }),
                 to=[form.cleaned_data.get('email').lower()]
             )
-            email.send()
+            if is_localhost:
+                print(email.body)
+            else:
+                email.send()
         # login(self.request, user)
         return redirect('/')
 
@@ -235,6 +240,7 @@ def password_reset_request(request):
             associated_users = User.objects.filter(Q(email=data))
             if associated_users.exists():
                 for user in associated_users:
+                    is_localhost = get_current_site(request).domain == localhost
                     if get_current_site(request).domain == localhost:
                         ssl = 'http://'
                     else:
@@ -251,7 +257,10 @@ def password_reset_request(request):
                         to=[password_reset_form.cleaned_data.get(
                             'email').lower()]
                     )
-                    email.send()
+                    if is_localhost:
+                        print(email.body)
+                    else:
+                        email.send()
                     return redirect("/users/password_reset/done/")
     password_reset_form = PasswordResetForm()
     return render(request=request, template_name="registration/password_reset.html",
