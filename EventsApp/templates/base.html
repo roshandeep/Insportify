@@ -72,9 +72,9 @@
             </li>
 
             <li class="nav-item dropdown" style="padding-right: 0.5em">
-                <a href="#" class=" text-white label-inline nav-link dropdown-toggle" data-bs-toggle="dropdown">Events
+                <label href="#" class=" text-white label-inline nav-link dropdown-toggle" data-bs-toggle="dropdown">Events
 
-                </a>
+                </label>
                 <div class="dropdown-menu">
                     <a href="{% url 'EventsApp:multistep' %}" class="dropdown-item">Create Events</a>
                     <a href="{% url 'EventsApp:list-events' %}" class="dropdown-item">My Events</a>
@@ -83,10 +83,6 @@
                 <div class="vr text-white" style="margin-left:20px"></div>
             </li>
 
-            <!--<a class="nav-link link-secondary text-white label-inline">
-                <div class="vr" style="margin-left:20px"></div>
-            </a>
--->
 
             <li class="nav-item">
                 <a class="nav-link link-secondary text-white label-inline" href="{% url 'EventsApp:cart_summary' %}"

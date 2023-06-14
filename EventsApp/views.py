@@ -1,7 +1,5 @@
 import calendar
 import copy
-import operator
-import os
 import smtplib
 from datetime import datetime, timedelta, date
 import time
@@ -32,13 +30,12 @@ from .models import master_table, Individual, Organization, Venues, SportsCatego
     PositionAndSkillType, SportsImage, Organization_Availability, OrderItems, Advertisement, Profile, Ad_HitCount
 import util
 from django.db.models import Q
-from email import encoders
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
 def get_profile_from_user(user):
-    print("check profile")
+    print("checkprofile")
     return Profile.objects.get(active_user=user)
 
 
@@ -1197,7 +1194,6 @@ def home(request):
 
     advertisements = get_advertisements(request)
     advertisements = list(advertisements)
-    # advertisements = [advertisements[i:i + 3] for i in range(0, len(advertisements), 3)]
 
     if request.user.is_authenticated:
         profile = get_profile_from_user(request.user)
@@ -1229,7 +1225,6 @@ def home(request):
     recommended_events = []
     if request.user.is_authenticated:
         recommended_events = get_recommended_events(request)
-        # recommended_events = master_table.objects.filter(pk__in=[event.pk for event in recommended_events])
 
     selected_events_types = []
     if request.GET.get('events_types'):
@@ -1314,10 +1309,6 @@ def home(request):
             elif event.registration_type == "Drop-in":
                 recommended_drop_in.append(event)
 
-        # recommended_registrationList = [recommended_registrationList[i:i + 3] for i in range(0, len(recommended_registrationList), 3)]
-        # recommended_drop_in = [recommended_drop_in[i:i + 3] for i in range(0, len(recommended_drop_in), 3)]
-        # recommended_events = [recommended_events[i:i + 3] for i in range(0, len(recommended_events), 3)]
-
     for event in events:
         sport_img = SportsImage.objects.filter(sport=event.sport_type).values("img")
         if len(sport_img):
@@ -1332,10 +1323,6 @@ def home(request):
             registrationList.append(event)
         elif event.registration_type == "Drop-in":
             drop_in_eventList.append(event)
-
-    # registrationList = [registrationList[i:i + 3] for i in range(0, len(registrationList), 3)]
-    # drop_in_eventList = [drop_in_eventList[i:i + 3] for i in range(0, len(drop_in_eventList), 3)]
-    # events = [events[i:i + 3] for i in range(0, len(events), 3)]
 
     context = {
         'sports_list': sports,
@@ -1352,8 +1339,6 @@ def home(request):
         'selected_date': str(selected_date),
         'selected_events_types': selected_events_types
     }
-    # html_template = loader.get_template('EventsApp/home.html')
-    # return HttpResponse(html_template.render(context, request))
 
     return render(request, 'EventsApp/home.html', context)
 
@@ -1424,7 +1409,7 @@ def get_recommended_events(request):
     else:
         recommended_events = [event for event in events]
 
-    print("Availability Filter", recommended_events)
+    # print("Availability Filter", recommended_events)
 
     # FILTER BY Location
     for event in recommended_events[:]:
@@ -1433,7 +1418,7 @@ def get_recommended_events(request):
                 recommended_events.remove(event)
 
     recommended_events = list(recommended_events)
-    print("Location Filter", recommended_events)
+    # print("Location Filter", recommended_events)
 
     if request.user.is_individual:
         individual = Individual.objects.get(profile=profile)
@@ -1455,7 +1440,7 @@ def get_recommended_events(request):
                 if age_fail_count == len(positions):
                     recommended_events.remove(event)
 
-    print("Age Filter", recommended_events)
+    # print("Age Filter", recommended_events)
 
     # FILTER BY Gender
     if request.user.is_individual:
@@ -1479,7 +1464,7 @@ def get_recommended_events(request):
                     # print(event.event_title, gender_list, individual_gender, flag)
                     recommended_events.remove(event)
 
-    print("Gender Filter", recommended_events)
+    # print("Gender Filter", recommended_events)
 
     # FILTER BY Sports
     sport_choices = Secondary_SportsChoice.objects.filter(profile=profile).order_by("sport_type")
@@ -1491,7 +1476,7 @@ def get_recommended_events(request):
         if event.sport_type not in sports_list:
             recommended_events.remove(event)
 
-    print("Sports Filter", recommended_events)
+    # print("Sports Filter", recommended_events)
 
     # FILTER BY Positions
     if request.user.is_individual:
@@ -1510,7 +1495,7 @@ def get_recommended_events(request):
             if flag > 0:
                 recommended_events.remove(event)
 
-    print("Positions Filter", recommended_events)
+    # print("Positions Filter", recommended_events)
 
     # FILTER BY Skills
     if request.user.is_individual:
@@ -1530,7 +1515,7 @@ def get_recommended_events(request):
             if flag > 0:
                 recommended_events.remove(event)
 
-    print("Skills Filter", recommended_events)
+    # print("Skills Filter", recommended_events)
 
     return recommended_events
 
