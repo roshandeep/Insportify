@@ -35,7 +35,6 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
 def get_profile_from_user(user):
-    print("checkprofile")
     return Profile.objects.get(active_user=user)
 
 
@@ -396,9 +395,6 @@ def ValidateOrgProfileForm(request):
     if not request.POST.get('registration') or request.POST['registration'].strip() == "":
         messages.error(request, "Please enter Registration Number")
         valid = False
-    # if not request.POST.get('email') or request.POST['email'].strip() == "":
-    #     messages.error(request, "Please enter Contact Email")
-    #     valid = False
     if not request.POST.get('phone') or request.POST['phone'].strip() == "":
         messages.error(request, "Please enter Contact Phone Number")
         valid = False
@@ -424,9 +420,6 @@ def ValidateOrgProfileForm(request):
     if not request.POST.get('age_group') or request.POST['age_group'].strip() == "":
         messages.error(request, "Please select Age Group")
         valid = False
-    # if not request.POST.get('sport_type') or request.POST['sport_type'].strip() == "":
-    #     messages.error(request, "Please select Sports you facilitate")
-    #     valid = False
 
     return valid
 
@@ -541,7 +534,7 @@ def delete_profile(request):
     print(profile.name, profile.active_user, profile.is_master, request.user)
     if profile.is_master:
         print("is Master")
-        # User.objects.filter(pk=request.user.pk).delete()
+        User.objects.filter(pk=request.user.pk).delete()
         logout(request)
         return redirect('EventsApp:home')
     else:
@@ -598,32 +591,34 @@ def modify_individual(response, individual):
 
 @login_required
 def display_profile(request):
+    profile = get_profile_from_user(request.user)
     profiles = Profile.objects.filter(user=request.user)
     context = {
-        'profiles_list': profiles
+        'profiles_list': profiles,
+        'profile': profile
     }
     return render(request, 'EventsApp/switch_profile.html', context)
 
 
 def _switch_profile(user, name):
     profile = Profile.objects.get(user=user, name=name)
+
     if not profile:
         print('Profile not found : ', name)
         return False
 
     curr_prof = get_profile_from_user(user)
+    # print('_switch_profile', curr_prof.name, curr_prof.active_user, curr_prof.is_master)
     if curr_prof.name == name:
         return True
 
     curr_prof.active_user = None
-    # request.user.profile = None
     curr_prof.save()
 
     # Assuming name is unique
     profile.active_user = user
     profile.save()
 
-    # user.active_profile_name = profile.name
     user.profile_status = profile.profile_status
     user.save()
 
@@ -633,6 +628,7 @@ def _switch_profile(user, name):
 @login_required
 def switch_profile(request, name):
     _switch_profile(request.user, name)
+    print('switch_profile', name)
     return home(request)
 
 
@@ -644,7 +640,7 @@ def delete_current_profile(request):
     print(curr_prof)
     if not curr_prof.is_master:
         print('delete')
-        # curr_prof.delete()
+        curr_prof.delete()
     else:
         print('Cannot delete master profile.')
     return home(request)
@@ -685,8 +681,6 @@ def create_profile(request):
             _switch_profile(request.user, name)
 
             request.user.refresh_from_db()
-            # context = {'individual': individual, 'sports_type': [], 'sec_sport_choices': [], 'locations': [], 'user_avaiability': []}
-            # return render(request, 'registration/individual_view.html', context)
 
             return redirect('EventsApp:user_profile')
         else:
@@ -1183,7 +1177,7 @@ def get_client_ip(request):
 
 
 def home(request):
-    print("Home")
+    # print("Home")
 
     if request.user.is_authenticated:
         if not request.user.profile_status:
@@ -1337,7 +1331,8 @@ def home(request):
         'selected_cities': selected_cities,
         'selected_venues': selected_venues,
         'selected_date': str(selected_date),
-        'selected_events_types': selected_events_types
+        'selected_events_types': selected_events_types,
+        'profile': profile
     }
 
     return render(request, 'EventsApp/home.html', context)
@@ -1370,12 +1365,6 @@ def get_events_by_time(events):
                 full_events_list.append(event_copy)
 
     full_events_list.sort(key=lambda event: (event.datetimes if event.datetimes else event.current_datetimes))
-
-    # for event in full_events_list:
-    #     if event.datetimes:
-    #         print("event.datetimes", event.event_title, event.datetimes)
-    #     else:
-    #         print("event.current_datetimes", event.event_title, event.current_datetimes)
 
     return full_events_list
 
