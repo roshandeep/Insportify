@@ -1184,6 +1184,9 @@ def home(request):
             print('Redirecting to user profile...')
             return redirect('EventsApp:user_profile')
 
+    if request.user.is_authenticated and request.user.is_organization:
+        return redirect('EventsApp:organization_profile')
+
     sports = SportsType.objects.values('pk', 'sports_type_text').order_by('sports_type_text')
 
     advertisements = get_advertisements(request)
@@ -1398,7 +1401,7 @@ def get_recommended_events(request):
     else:
         recommended_events = [event for event in events]
 
-    # print("Availability Filter", recommended_events)
+    print("Availability Filter", recommended_events)
 
     # FILTER BY Location
     for event in recommended_events[:]:
@@ -1407,7 +1410,7 @@ def get_recommended_events(request):
                 recommended_events.remove(event)
 
     recommended_events = list(recommended_events)
-    # print("Location Filter", recommended_events)
+    print("Location Filter", recommended_events)
 
     if request.user.is_individual:
         individual = Individual.objects.get(profile=profile)
@@ -1429,7 +1432,7 @@ def get_recommended_events(request):
                 if age_fail_count == len(positions):
                     recommended_events.remove(event)
 
-    # print("Age Filter", recommended_events)
+    print("Age Filter", recommended_events)
 
     # FILTER BY Gender
     if request.user.is_individual:
@@ -1453,7 +1456,7 @@ def get_recommended_events(request):
                     # print(event.event_title, gender_list, individual_gender, flag)
                     recommended_events.remove(event)
 
-    # print("Gender Filter", recommended_events)
+    print("Gender Filter", recommended_events)
 
     # FILTER BY Sports
     sport_choices = Secondary_SportsChoice.objects.filter(profile=profile).order_by("sport_type")
@@ -1465,7 +1468,7 @@ def get_recommended_events(request):
         if event.sport_type not in sports_list:
             recommended_events.remove(event)
 
-    # print("Sports Filter", recommended_events)
+    print("Sports Filter", recommended_events)
 
     # FILTER BY Positions
     if request.user.is_individual:
@@ -1484,7 +1487,7 @@ def get_recommended_events(request):
             if flag > 0:
                 recommended_events.remove(event)
 
-    # print("Positions Filter", recommended_events)
+    print("Positions Filter", recommended_events)
 
     # FILTER BY Skills
     if request.user.is_individual:
@@ -1504,7 +1507,7 @@ def get_recommended_events(request):
             if flag > 0:
                 recommended_events.remove(event)
 
-    # print("Skills Filter", recommended_events)
+    print("Skills Filter", recommended_events)
 
     return recommended_events
 
