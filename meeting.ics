@@ -1,9 +1,9 @@
-BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:ics.py - http://git.io/lLljaA
-BEGIN:VEVENT
-DTSTART:20230501T173000Z
-SUMMARY:Getting better Mondays
-UID:56ea24d2-f3e5-466d-8613-5fe6c04dc95b@56ea.org
-END:VEVENT
+BEGIN:VCALENDAR
+BEGIN:VEVENT
+DTSTART:20230509T000000
+DTEND:20230509T100000
+DESCRIPTION:World Wrestling Entertainment\, Inc.\, commonly shortened to i
+ ts trade name WWE\, is an American professional wrestling promotion.
+NAME:WWE
+END:VEVENT
 END:VCALENDAR

@@ -21,7 +21,8 @@ from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.views.decorators.csrf import csrf_exempt
 from openpyxl import Workbook
-from ics import Calendar, Event
+# from ics import Calendar, Event
+from icalendar import Calendar, Event, vCalAddress, vText
 
 from Insportify import settings
 from .forms import MultiStepForm, AvailabilityForm, LogoForm, InviteForm, NewProfileForm
@@ -2306,18 +2307,29 @@ def send_calendar_invite(event, email):
         datetime_obj = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
         date = date_parser.parse(datetime_obj.isoformat())
 
-
-
     cal = Calendar()
     evt = Event()
-    evt.name = event.event_title
-    evt.begin = date
+    evt.add('name', event.event_title)
+    evt.add('description', event.description)
+    evt.add('dtstart', date)
+    evt.add('dtend', date + timedelta(hours=10))
+    cal.add_component(evt)
+    f = open('meeting.ics', 'wb')
+    f.write(cal.to_ical())
+    f.close()
 
-    cal.events.add(evt)
-    cal.events
 
-    with open('meeting.ics', 'w') as my_file:
-        my_file.writelines(cal.serialize_iter())
+    # cal = Calendar()
+    # evt = Event()
+    # evt.name = event.event_title
+    # evt.begin = date
+    # evt.begin = date + timedelta(hours=10)
+    #
+    # cal.events.add(evt)
+    # cal.events
+
+    # with open('meeting.ics', 'w') as my_file:
+    #     my_file.writelines(cal.serialize_iter())
 
     icspart = MIMEBase('text', 'calendar', **{'method': 'REQUEST', 'name': 'meeting.ics'})
     icspart.set_payload(open("meeting.ics", "rb").read())
@@ -2325,9 +2337,7 @@ def send_calendar_invite(event, email):
     icspart.add_header('Content-class', 'urn:content-classes:calendarmessage')
     msg.attach(icspart)
 
-    # print msg.as_string()
     smtp = smtplib.SMTP('smtp.gmail.com', 587);
-    # smtp.sendmail(send_from, send_to, msg.as_string())
     with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp_server:
         smtp_server.login('roshandeep1995@gmail.com', 'cbundgeqsnyfawmu')
         smtp_server.sendmail(send_from, send_to, msg.as_string())
