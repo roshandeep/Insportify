@@ -9,7 +9,7 @@ EbookLib==0.17.1
 extract-msg==0.23.1
 flatbuffers==1.12
 grpcio==1.32.0
-ics==0.7.2
+icalendar==5.0.7
 IMAPClient==2.1.0
 isort==4.3.21
 lazy-object-proxy==1.4.3
@@ -27,6 +27,4 @@ sqlparse==0.4.2
 stripe==2.74.0
 tzlocal==1.5.1
 wincertstore==0.2
-openpyxl
-six
-gunicorn
+zipp==3.15.0
