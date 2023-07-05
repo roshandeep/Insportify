@@ -50,107 +50,107 @@
     
     <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top"
      style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%); box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);" id="navbar">
-    <div class="container-fluid" style="margin:10px;">
-        <a class="navbar-brand" href="{% url 'EventsApp:home' %}">
-            <img id="logo-image" src="/media/images/logo.PNG" alt="Logo"/>
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar" aria-label="menu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="collapsibleNavbar">
-        <ul class="navbar-nav me-auto" id="home_navbar">
-            {% if request.user.is_authenticated %}
+        <div class="container-fluid" style="margin:10px;">
+            <a class="navbar-brand" href="{% url 'EventsApp:home' %}">
+                <img id="logo-image" src="/media/images/logo.PNG" alt="Logo"/>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar" aria-label="menu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="collapsibleNavbar">
+            <ul class="navbar-nav me-auto" id="home_navbar">
+                {% if request.user.is_authenticated %}
 
-            {% if request.user.profile_status %}
-            <li class="nav-item">
-                <a class="nav-link link-secondary text-white label-inline" href="{% url 'EventsApp:home' %}"
-                   {% comment %} {% if request.path == '/' %} style="display:none" {% endif %} {% endcomment %}
-                   >
-                    My Calendar
-                    <div class="vr" style="margin-left:20px"></div>
-                </a>
-            </li>
+                {% if request.user.profile_status %}
+                <li class="nav-item">
+                    <a class="nav-link link-secondary text-white label-inline" href="{% url 'EventsApp:home' %}"
+                    {% comment %} {% if request.path == '/' %} style="display:none" {% endif %} {% endcomment %}
+                    >
+                        My Calendar
+                        <div class="vr" style="margin-left:20px"></div>
+                    </a>
+                </li>
 
-            <li class="nav-item dropdown" style="padding-right: 0.5em">
-                <label href="#" class=" text-white label-inline nav-link dropdown-toggle" data-bs-toggle="dropdown">Events
+                <li class="nav-item dropdown" style="padding-right: 0.5em">
+                    <label href="#" class=" text-white label-inline nav-link dropdown-toggle" data-bs-toggle="dropdown">Events
 
-                </label>
-                <div class="dropdown-menu">
-                    <a href="{% url 'EventsApp:multistep' %}" class="dropdown-item">Create Events</a>
-                    <a href="{% url 'EventsApp:list-events' %}" class="dropdown-item">My Events</a>
-                    <a href="{% url 'EventsApp:committed_events' %}" class="dropdown-item"> Committed Events</a>
-                </div>
-                <div class="vr text-white" style="margin-left:20px"></div>
-            </li>
+                    </label>
+                    <div class="dropdown-menu">
+                        <a href="{% url 'EventsApp:multistep' %}" class="dropdown-item">Create Events</a>
+                        <a href="{% url 'EventsApp:list-events' %}" class="dropdown-item">My Events</a>
+                        <a href="{% url 'EventsApp:committed_events' %}" class="dropdown-item"> Committed Events</a>
+                    </div>
+                    <div class="vr text-white" style="margin-left:20px"></div>
+                </li>
 
 
-            <li class="nav-item">
-                <a class="nav-link link-secondary text-white label-inline" href="{% url 'EventsApp:cart_summary' %}"
-                   {% comment %} {% if request.path == '/cart_summary/' %} style="display:none" {% endif %} {% endcomment %}
-                   >
-                    Cart
-                    <div class="vr" style="margin-left:20px"></div>
-                </a>
-            </li>
-            {% endif %}
-            {% endif %}
-        </ul>
-        <ul class="navbar-nav mb-lg-0" style="margin-right: 55px;">
-            {% if request.user.is_authenticated %}
-            <li class="nav-item pe-3 dropdown">
-                <a class="btn btn-primary rounded-pill label-inline" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    {% if profile.name %}
-                        {{ profile.name }}
-                    {% else %}
-                        {{ request.user.first_name }}
-                    {% endif %}
-                    <div class="vr"></div>
-                    <i class='fas fa-user-alt'></i>
-                </a>
-
-                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-
-                    <li>
-                        {% if request.user.is_organization == True %}
-                                <a class="dropdown-item" href="{% url 'EventsApp:organization_profile' %}">My Profile</a>
+                <li class="nav-item">
+                    <a class="nav-link link-secondary text-white label-inline" href="{% url 'EventsApp:cart_summary' %}"
+                    {% comment %} {% if request.path == '/cart_summary/' %} style="display:none" {% endif %} {% endcomment %}
+                    >
+                        Cart
+                        <div class="vr" style="margin-left:20px"></div>
+                    </a>
+                </li>
+                {% endif %}
+                {% endif %}
+            </ul>
+            <ul class="navbar-nav mb-lg-0" style="margin-right: 55px;">
+                {% if request.user.is_authenticated %}
+                <li class="nav-item pe-3 dropdown">
+                    <a class="btn btn-primary rounded-pill label-inline" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        {% if profile.name %}
+                            {{ profile.name }}
                         {% else %}
-                            {% if request.user.is_mvp == True %}
-                                <a class="dropdown-item" href="{% url 'EventsApp:user_profile' %}">My Profile</a>
-                            {% else %}
-                                <a class="dropdown-item" href="{% url 'EventsApp:user_profile' %}">My Profile</a>
-                            {% endif %}
-
-                            </li>
-
-                            <li>
-                                <a class="dropdown-item" href="{% url 'EventsApp:display_profile' %}">Switch Profile</a>
-                            </li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{% url 'EventsApp:create_profile' %}">Create New Profile</a></li>
-                            <li><hr class="dropdown-divider"></li>
+                            {{ request.user.first_name }}
                         {% endif %}
-                    <li><a class="dropdown-item"  href="{% url 'UserRegister:logout' %}">Logout</a></li>
-                </ul>
+                        <div class="vr"></div>
+                        <i class='fas fa-user-alt'></i>
+                    </a>
 
-            </li>
-        </ul>
-            <ul class="navbar-nav mb-lg-0">
-            {% else %}
-            {% if request.path != '/users/register/' and request.path != '/users/organization_register/' and request.path != '/users/individual_register/' and request.path != '/users/login/' %}
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
 
-            <li class="nav-item pe-3">
-                <a class="nav-link link-secondary" href="{% url 'UserRegister:register' %}">
-                    Register</a>
-            </li>
-            <li class="nav-item pe-3">
-                <a class="nav-link link-secondary" href="{% url 'UserRegister:login' %}">Login</a>
-            </li>
-            {% endif %}
-            {% endif %}
-        </ul>
+                        <li>
+                            {% if request.user.is_organization == True %}
+                                    <a class="dropdown-item" href="{% url 'EventsApp:organization_profile' %}">My Profile</a>
+                            {% else %}
+                                {% if request.user.is_mvp == True %}
+                                    <a class="dropdown-item" href="{% url 'EventsApp:user_profile' %}">My Profile</a>
+                                {% else %}
+                                    <a class="dropdown-item" href="{% url 'EventsApp:user_profile' %}">My Profile</a>
+                                {% endif %}
+
+                                </li>
+
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'EventsApp:display_profile' %}">Switch Profile</a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'EventsApp:create_profile' %}">Create New Profile</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                            {% endif %}
+                        <li><a class="dropdown-item"  href="{% url 'UserRegister:logout' %}">Logout</a></li>
+                    </ul>
+
+                </li>
+            </ul>
+                <ul class="navbar-nav mb-lg-0">
+                {% else %}
+                {% if request.path != '/users/register/' and request.path != '/users/organization_register/' and request.path != '/users/individual_register/' and request.path != '/users/login/' %}
+
+                <li class="nav-item pe-3">
+                    <a class="nav-link link-secondary" href="{% url 'UserRegister:register' %}">
+                        Register</a>
+                </li>
+                <li class="nav-item pe-3">
+                    <a class="nav-link link-secondary" href="{% url 'UserRegister:login' %}">Login</a>
+                </li>
+                {% endif %}
+                {% endif %}
+            </ul>
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
 <div class="bg-body" style="margin-top:100px;">
     <main class="content">
         <article>

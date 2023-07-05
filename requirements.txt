@@ -8,7 +8,6 @@ docx2txt==0.8
 EbookLib==0.17.1
 extract-msg==0.23.1
 flatbuffers==1.12
-grpcio==1.32.0
 icalendar==5.0.7
 IMAPClient==2.1.0
 isort==4.3.21
