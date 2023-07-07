@@ -1,5 +1,5 @@
 {
   "domain": "insportify.com",
-  "certUrl": "https://acme-v02.api.letsencrypt.org/acme/cert/04a52de01aab4dbec71e73519f24e529b7af",
-  "certStableUrl": "https://acme-v02.api.letsencrypt.org/acme/cert/04a52de01aab4dbec71e73519f24e529b7af"
+  "certUrl": "https://acme-v02.api.letsencrypt.org/acme/cert/03d706daca51b39cc940d05c61a5577b76e1",
+  "certStableUrl": "https://acme-v02.api.letsencrypt.org/acme/cert/03d706daca51b39cc940d05c61a5577b76e1"
 }
