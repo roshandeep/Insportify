@@ -4,76 +4,86 @@
 
 {% block content %}
 
-<div class="container-lg">   
+<div class="container">   
     <div class="card">
         <div class="card-header text-center text-white" style="background: linear-gradient(170deg, rgba(71,176,239,1) 35%, rgba(13,223,246,1) 100%);">
-            <h2>First time on Insportify....</h2>
+            <h2>Select your membership</h2>
         </div>
-        <div class="row justify-content-md-center">
-            <div class="col-md-4">
-                <div class="card h-100">
-                    <img class="card-img-top mx-auto" src="/media/images/individual.png" style="max-width: 60%;" alt="Logo"/>
-                    
-                    <div class="card-body">
-                        <h5 class="card-title">Free Member</h3>
-                        <p class="card-text">
-                            <ul>
-                                <li>Find places to play, whatever, wherever, whenever for free</li>
-                                <li>Create 2 events a week</li>
-                            </ul>
-                        </p>
-                        <a type="button" class="btn my-3 shadow rounded text-white" style="background: #ff6f3d;"
-                                href="{% url 'UserRegister:individual_register' %}">
-                                I am an Free Member
-                        </a>
+        <div class="card-body">
+            <div class="row">
+                <div class="card mb-3">
+                    <div class="row align-items-center">
+                        <div class="col-md-2">
+                            <img class="img-fluid rounded-start" src="/media/images/individual.png" alt="Logo"/>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card-body">
+                                <h5 class="card-title">Free Member</h3>
+                                <p class="card-text">
+                                    <ul>
+                                        <li>Find places to play, whatever, wherever, whenever for free</li>
+                                        <li>Create 2 events a week</li>
+                                    </ul>
+                                </p>
+                                <a type="button" class="btn my-3 shadow rounded text-white" style="background: #ff6f3d;"
+                                        href="{% url 'UserRegister:individual_register' %}">
+                                        I am a Free Member
+                                </a>
+                            </div>
+                        </div>
+                    </div> 
+                </div>
+                <div class="card mb-3">
+                    <div class="row align-items-center">
+                        <div class="col-md-2">
+                            <img class="img-fluid rounded-start" src="/media/images/mvp.png" alt="Logo" />
+                        </div>
+                        <div class="col-md-6">
+                        
+                        <div class="card-body">
+                            <h5 class="card-title">MVP Member</h3>
+                            <p class="card-text">
+                                <ul>
+                                    <li>Let your teammates know who you are and what you do.</li>
+                                    <li>Create 3 events a week.</li>
+                                </ul>
+                            </p>
+                            <p>
+                                $10/month or $100/year
+                            </p>
+                            <a type="button" class="btn my-3 shadow rounded text-white" style="background: #ff6f3d;"
+                                href="{% url 'UserRegister:mvp_register' %}">I am an
+                                    MVP Member</a>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card h-100">
-                    <img class="card-img-top mx-auto" src="/media/images/mvp.png" style="max-width: 60%;" alt="Logo" />
-                    
-                    <div class="card-body">
-                        <h5 class="card-title">MVP Member</h3>
-                        <p class="card-text">
-                            <ul>
-                                <li>Let your teammates know who you are and what you do</li>
-                                <li>Create 3 events a week</li>
-                            </ul>
-                        </p>
-                        <p>
-                            $10m/$100 yr.
-                        </p>
-                        <a type="button" class="btn my-3 shadow rounded text-white" style="background: #ff6f3d;"
-                            href="{% url 'UserRegister:mvp_register' %}">I am an
-                                MVP Member</a>
+                </div>
+                <div class="card mb-3">
+                    <div class="row align-items-center">
+                        <div class="col-md-2">
+                            <img class="img-fluid rounded-start" src="/media/images/organization.png" alt="Logo"/>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card-body">
+                                <h5 class="card-title">Organization</h3>
+                                <p class="card-text">
+                                    <ul>
+                                        <li>Create unlimited events.</li>
+                                        <li>Get added to personal directories.</li>
+                                        <li>Never be out of the conversation.</li>
+                                    </ul>
+                                </p>
+                                <p>
+                                    Join to get quote
+                                </p>
+                                <a type="button" class="btn my-3 shadow rounded text-white" style="background: #ff6f3d;"
+                                        href="{% url 'UserRegister:organization_register' %}">
+                                        I am an Organization
+                                        </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card h-100">
-                    <img class="card-img-top mx-auto" src="/media/images/organization.png" style="max-width: 60%;" alt="Logo"/>
-                
-                <div class="card-body">
-                    <h5 class="card-title">Organization</h3>
-                    <p class="card-text">
-                        <ul>
-                            <li>Create unlimited events</li>
-                            <li>Get added to personal directories</li>
-                            <li>Never be out of the conversation</li>
-                        </ul>
-                        
-                        
-                    </p>
-                    <p>
-                        Join to get quote
-                    </p>
-                    <a type="button" class="btn my-3 shadow rounded text-white" style="background: #ff6f3d;"
-                            href="{% url 'UserRegister:organization_register' %}">
-                            I am an Organization
-                            </a>
-                </div>
-            </div>
             </div>
         </div>
     </div>
