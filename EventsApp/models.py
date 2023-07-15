@@ -355,7 +355,7 @@ class Order(models.Model):
 class Advertisement(models.Model):
     GEOGRAPHICAL_SCOPE_CHOICES = (('Local', 'Local'), ('Provincial', 'Provincial'), ('National', 'National'))
 
-    created_by = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    created_by = models.ForeignKey(Profile, on_delete=models.DO_NOTHING)
     creation_time = models.DateTimeField()
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()

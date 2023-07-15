@@ -1,9 +1,9 @@
 BEGIN:VCALENDAR
 BEGIN:VEVENT
-DTSTART:20230509T000000
-DTEND:20230509T100000
-DESCRIPTION:World Wrestling Entertainment\, Inc.\, commonly shortened to i
- ts trade name WWE\, is an American professional wrestling promotion.
-NAME:WWE
+SUMMARY:Adult/Teen Skate
+DTSTART:20230708T183000
+DTEND:20230708T193000
+NAME:Saturday Showcase
+ORGANIZER;CN=don@insportify.com:MAILTO:don@insportify.com
 END:VEVENT
 END:VCALENDAR

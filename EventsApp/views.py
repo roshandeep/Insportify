@@ -2276,60 +2276,67 @@ def send_calendar_invite(event, email):
     date_parser = parser()
     if event.datetimes_monday:
         time = event.datetimes_monday.split("-")
-        datetime_obj = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
-        date = date_parser.parse(datetime_obj.isoformat())
+        start_datetime_obj = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
+        start_date = date_parser.parse(start_datetime_obj.isoformat())
+        end_datetime_obj = datetime.strptime(time[1].strip(), '%m/%d/%Y %I:%M %p')
+        end_date = date_parser.parse(end_datetime_obj.isoformat())
     elif event.datetimes_tuesday:
         time = event.datetimes_tuesday.split("-")
-        datetime_obj = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
-        date = date_parser.parse(datetime_obj.isoformat())
+        start_datetime_obj = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
+        start_date = date_parser.parse(start_datetime_obj.isoformat())
+        end_datetime_obj = datetime.strptime(time[1].strip(), '%m/%d/%Y %I:%M %p')
+        end_date = date_parser.parse(end_datetime_obj.isoformat())
     elif event.datetimes_wednesday:
         time = event.datetimes_wednesday.split("-")
-        datetime_obj = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
-        date = date_parser.parse(datetime_obj.isoformat())
+        start_datetime_obj = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
+        start_date = date_parser.parse(start_datetime_obj.isoformat())
+        end_datetime_obj = datetime.strptime(time[1].strip(), '%m/%d/%Y %I:%M %p')
+        end_date = date_parser.parse(end_datetime_obj.isoformat())
     elif event.datetimes_thursday:
         time = event.datetimes_thursday.split("-")
-        datetime_obj = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
-        date = date_parser.parse(datetime_obj.isoformat())
+        start_datetime_obj = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
+        start_date = date_parser.parse(start_datetime_obj.isoformat())
+        end_datetime_obj = datetime.strptime(time[1].strip(), '%m/%d/%Y %I:%M %p')
+        end_date = date_parser.parse(end_datetime_obj.isoformat())
     elif event.datetimes_friday:
         time = event.datetimes_friday.split("-")
-        datetime_obj = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
-        date = date_parser.parse(datetime_obj.isoformat())
+        start_datetime_obj = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
+        start_date = date_parser.parse(start_datetime_obj.isoformat())
+        end_datetime_obj = datetime.strptime(time[1].strip(), '%m/%d/%Y %I:%M %p')
+        end_date = date_parser.parse(end_datetime_obj.isoformat())
     elif event.datetimes_saturday:
         time = event.datetimes_saturday.split("-")
-        datetime_obj = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
-        date = date_parser.parse(datetime_obj.isoformat())
+        start_datetime_obj = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
+        start_date = date_parser.parse(start_datetime_obj.isoformat())
+        end_datetime_obj = datetime.strptime(time[1].strip(), '%m/%d/%Y %I:%M %p')
+        end_date = date_parser.parse(end_datetime_obj.isoformat())
     elif event.datetimes_sunday:
         time = event.datetimes_monday.split("-")
-        datetime_obj = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
-        date = date_parser.parse(datetime_obj.isoformat())
+        start_datetime_obj = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
+        start_date = date_parser.parse(start_datetime_obj.isoformat())
+        end_datetime_obj = datetime.strptime(time[1].strip(), '%m/%d/%Y %I:%M %p')
+        end_date = date_parser.parse(end_datetime_obj.isoformat())
     elif event.datetimes:
         time = event.datetimes.split("-")
-        datetime_obj = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
-        date = date_parser.parse(datetime_obj.isoformat())
+        start_datetime_obj = datetime.strptime(time[0].strip(), '%m/%d/%Y %I:%M %p')
+        start_date = date_parser.parse(start_datetime_obj.isoformat())
+        end_datetime_obj = datetime.strptime(time[1].strip(), '%m/%d/%Y %I:%M %p')
+        end_date = date_parser.parse(end_datetime_obj.isoformat())
 
+    organizer_email = event.created_by.active_user.email
     cal = Calendar()
     evt = Event()
+    organizer = vCalAddress('MAILTO:'+ organizer_email)
+    organizer.params['cn'] = vText(organizer_email)
+    evt['organizer'] = organizer
     evt.add('name', event.event_title)
-    evt.add('description', event.description)
-    evt.add('dtstart', date)
-    evt.add('dtend', date + timedelta(hours=10))
+    evt.add('summary', event.description)
+    evt.add('dtstart', start_date)
+    evt.add('dtend', end_date)
     cal.add_component(evt)
     f = open('meeting.ics', 'wb')
     f.write(cal.to_ical())
     f.close()
-
-
-    # cal = Calendar()
-    # evt = Event()
-    # evt.name = event.event_title
-    # evt.begin = date
-    # evt.begin = date + timedelta(hours=10)
-    #
-    # cal.events.add(evt)
-    # cal.events
-
-    # with open('meeting.ics', 'w') as my_file:
-    #     my_file.writelines(cal.serialize_iter())
 
     icspart = MIMEBase('text', 'calendar', **{'method': 'REQUEST', 'name': 'meeting.ics'})
     icspart.set_payload(open("meeting.ics", "rb").read())
