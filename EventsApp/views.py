@@ -2326,14 +2326,29 @@ def send_calendar_invite(event, email):
     organizer_email = event.created_by.active_user.email
     cal = Calendar()
     evt = Event()
-    organizer = vCalAddress('MAILTO:'+ organizer_email)
+
+    organizer = vCalAddress('MAILTO:' + organizer_email)
     organizer.params['cn'] = vText(organizer_email)
+
     evt['organizer'] = organizer
     evt.add('name', event.event_title)
     evt.add('summary', event.description)
     evt.add('dtstart', start_date)
     evt.add('dtend', end_date)
+    evt.add('RSVP', 1)
+
+
+    attendee = vCalAddress('MAILTO:' + send_to)
+    attendee.params['name'] = vText('John Smith')
+    attendee.params['role'] = vText('REQ-PARTICIPANT')
+    attendee.params['RSVP'] = vText('TRUE')
+    evt.add('attendee', attendee, encode=0)
+
     cal.add_component(evt)
+    cal.add('attendee', 'MAILTO:'+send_to)
+    cal.add('RSVP', 1)
+    cal.add('PARTSTAT', 'NEEDS-ACTION')
+    cal.add('method', "REQUEST")
     f = open('meeting.ics', 'wb')
     f.write(cal.to_ical())
     f.close()
@@ -2346,7 +2361,8 @@ def send_calendar_invite(event, email):
 
     smtp = smtplib.SMTP('smtp.gmail.com', 587);
     with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp_server:
-        smtp_server.login('roshandeep1995@gmail.com', 'cbundgeqsnyfawmu')
+        # smtp_server.login('roshandeep1995@gmail.com', 'cbundgeqsnyfawmu')
+        smtp_server.login(settings.EMAIL_HOST_USER, settings.EMAIL_HOST_PASSWORD)
         smtp_server.sendmail(send_from, send_to, msg.as_string())
     print("Message sent!")
     smtp.close()
