@@ -1389,10 +1389,12 @@ def get_recommended_events(request):
 
     # FILTER by DateTime
     # If there is no user availability then add all events to recommended events
+    # print(user_avaiability)
     if len(user_avaiability):
         for event in events:
-            if event.registration_type == 'Drop-In':
+            if event.registration_type == 'Drop-in':
                 event_date, event_start_time, event_end_time = extract_event_datetime(event)
+                print(event.event_title, event_date, event_start_time, event_end_time)
                 for avail in user_avaiability:
                     if avail.day_of_week == (event_date.weekday() + 1):
                         if event_start_time >= avail.start_time and event_end_time <= avail.end_time:
@@ -1487,7 +1489,7 @@ def get_recommended_events(request):
                 if item.position_name not in position_list:
                     flag = flag + 1
 
-            if flag > 0:
+            if flag == len(position_list):
                 recommended_events.remove(event)
 
     print("Positions Filter", recommended_events)
