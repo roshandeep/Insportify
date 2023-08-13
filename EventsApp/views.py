@@ -1222,6 +1222,14 @@ def home(request):
     events = master_table.objects.all()
     events = get_events_by_time(events)
 
+    today = date.today()
+    for event in events[:]:
+        datetimes = event.datetimes if event.datetimes else event.current_datetimes
+        date_split = datetimes.split(" ")
+        datetime_obj = datetime.strptime(date_split[0].strip(), '%m/%d/%Y').date()
+        if datetime_obj < today:
+            events.remove(event)
+
     recommended_events = []
     if request.user.is_authenticated:
         recommended_events = get_recommended_events(request)
