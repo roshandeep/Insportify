@@ -23,6 +23,7 @@ from django.views.decorators.csrf import csrf_exempt
 from openpyxl import Workbook
 # from ics import Calendar, Event
 from icalendar import Calendar, Event, vCalAddress, vText
+from openpyxl.utils import dataframe
 
 from Insportify import settings
 from .forms import MultiStepForm, AvailabilityForm, LogoForm, InviteForm, NewProfileForm
@@ -482,7 +483,7 @@ def save_event_position_info(request, event):
 @login_required
 def all_events(request):
     profile = get_profile_from_user(request.user)
-
+    # load_events_from_excel()
     expired_events = []
     event_list = list(master_table.objects.filter(created_by=profile))
     event_list = get_events_by_time(event_list)
@@ -1384,7 +1385,6 @@ def get_events_by_time(events):
 
 
 def get_recommended_events(request):
-    # print("Recommended")
     profile = get_profile_from_user(request.user)
     user_avaiability = Availability.objects.filter(profile=profile)
 
@@ -1397,7 +1397,7 @@ def get_recommended_events(request):
 
     # FILTER by DateTime
     # If there is no user availability then add all events to recommended events
-    # print(user_avaiability)
+    print(user_avaiability)
     if len(user_avaiability):
         for event in events:
             if event.registration_type == 'Drop-in':
@@ -2552,3 +2552,70 @@ def venue_excel():
         row = row + 1
 
     workbook.save(filename='ON_latest_venue.xlsx')
+
+
+def upload_events(request):
+    if request.method == 'POST' and request.FILES['excel_file']:
+        excel_file = request.FILES["excel_file"]
+        load_events_from_excel(excel_file)
+        messages.success(request, "events uploaded")
+
+    return render(request, "EventsApp/events_upload.html")
+
+
+def load_events_from_excel(excel_file):
+    # path = "./events load.xlsx"
+    wb_obj = openpyxl.load_workbook(excel_file)
+
+    # Read SheetOne - Events Info
+    sheetOne = wb_obj['Event Info']
+
+    # Iterate the loop to read the cell values
+    for row in range(2, sheetOne.max_row + 1):
+        obj = master_table()
+        obj.event_title = sheetOne.cell(row=row, column=1).value.strip()
+        obj.description = sheetOne.cell(row=row, column=2).value.strip()
+        obj.event_type = sheetOne.cell(row=row, column=3).value.strip()
+        obj.registration_type = sheetOne.cell(row=row, column=4).value.strip()
+        obj.venue_type = sheetOne.cell(row=row, column=5).value.strip()
+        obj.event_url = sheetOne.cell(row=row, column=6).value.strip() if sheetOne.cell(row=row, column=6).value else " "
+        obj.datetimes = sheetOne.cell(row=row, column=7).value.strip() if sheetOne.cell(row=row, column=7).value else " "
+        obj.is_recurring = sheetOne.cell(row=row, column=8).value
+        obj.datetimes_monday = sheetOne.cell(row=row, column=9).value.strip() if sheetOne.cell(row=row, column=9).value else " "
+        obj.datetimes_tuesday = sheetOne.cell(row=row, column=10).value.strip() if sheetOne.cell(row=row, column=10).value else " "
+        obj.datetimes_wednesday = sheetOne.cell(row=row, column=11).value.strip() if sheetOne.cell(row=row, column=11).value else " "
+        obj.datetimes_thursday = sheetOne.cell(row=row, column=12).value.strip() if sheetOne.cell(row=row, column=12).value else " "
+        obj.datetimes_friday = sheetOne.cell(row=row, column=13).value.strip() if sheetOne.cell(row=row, column=13).value else " "
+        obj.datetimes_saturday = sheetOne.cell(row=row, column=14).value.strip() if sheetOne.cell(row=row, column=14).value else " "
+        obj.datetimes_sunday = sheetOne.cell(row=row, column=15).value.strip() if sheetOne.cell(row=row, column=15).value else " "
+        obj.datetimes_all = sheetOne.cell(row=row, column=16).value.strip()
+        obj.datetimes_exceptions = sheetOne.cell(row=row, column=17).value.strip() if sheetOne.cell(row=row, column=17).value else " "
+        obj.gender = sheetOne.cell(row=row, column=18).value.strip()
+        obj.sport_type = sheetOne.cell(row=row, column=19).value.strip()
+        obj.city = sheetOne.cell(row=row, column=20).value.strip()
+        obj.venue = sheetOne.cell(row=row, column=21).value.strip()
+        obj.street = sheetOne.cell(row=row, column=22).value.strip()
+        obj.province = sheetOne.cell(row=row, column=23).value.strip()
+        obj.country = sheetOne.cell(row=row, column=24).value.strip()
+        obj.zipcode = sheetOne.cell(row=row, column=25).value.strip()
+        profile = Profile.objects.get(active_user__email=sheetOne.cell(row=row, column=26).value.strip())
+        obj.created_by = profile
+        obj.is_third_party = sheetOne.cell(row=row, column=27).value.strip()
+        obj.save()
+
+    # Read SheetTwo - Position Info
+    sheetTwo = wb_obj['Position Info']
+
+    for row in range(2, sheetTwo.max_row + 1):
+        event = master_table.objects.get(event_title=sheetTwo.cell(row=row, column=1).value.strip())
+        obj = Events_PositionInfo()
+        obj.event = event
+        obj.datetimes = sheetTwo.cell(row=row, column=2).value.strip()
+        obj.position_number = sheetTwo.cell(row=row, column=3).value
+        obj.position_name = sheetTwo.cell(row=row, column=4).value.strip()
+        obj.position_type = sheetTwo.cell(row=row, column=5).value.strip()
+        obj.max_age = sheetTwo.cell(row=row, column=6).value
+        obj.min_age = sheetTwo.cell(row=row, column=7).value
+        obj.no_of_position = sheetTwo.cell(row=row, column=8).value
+        obj.position_cost = sheetTwo.cell(row=row, column=9).value
+        obj.save()

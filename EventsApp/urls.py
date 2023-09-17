@@ -90,6 +90,7 @@ urlpatterns = [
     path('fetch_cart_items/', views.fetch_cart_items, name='fetch_cart_items'),
     path('show_advertisement/<str:header>/', views.show_advertisement, name='show_advertisement'),
     path('update_hit_count/', views.update_hit_count, name='update_hit_count'),
+    path('upload_events/', views.upload_events, name='upload_events'),
 
     # PAYMENT URL'S
     path('payment-success/', views.paymentSuccess, name='payment-success'),
