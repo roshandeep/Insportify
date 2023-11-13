@@ -484,6 +484,7 @@ def save_event_position_info(request, event):
 def all_events(request):
     profile = get_profile_from_user(request.user)
     # load_events_from_excel()
+
     expired_events = []
     event_list = list(master_table.objects.filter(created_by=profile))
     event_list = get_events_by_time(event_list)
@@ -1228,6 +1229,7 @@ def home(request):
         datetimes = event.datetimes if event.datetimes else event.current_datetimes
         date_split = datetimes.split(" ")
         datetime_obj = datetime.strptime(date_split[0].strip(), '%m/%d/%Y').date()
+        # print("date check", datetime_obj, today)
         if datetime_obj < today:
             events.remove(event)
 
@@ -1288,7 +1290,6 @@ def home(request):
         selected_date = request.GET.get('date_range')
         if selected_date != 'Select Date':
             selected_date = datetime.strptime(selected_date.strip(), '%Y-%m-%d').date()
-            # print(selected_date)
             if request.user.is_authenticated:
                 recommended_events = get_events_by_selected_date(recommended_events, selected_date)
             else:
@@ -1395,14 +1396,23 @@ def get_recommended_events(request):
     loc_list = [item.city.lower() for item in locations_saved]
     recommended_events = []
 
+    today = date.today()
+    for event in events[:]:
+        datetimes = event.datetimes if event.datetimes else event.current_datetimes
+        date_split = datetimes.split(" ")
+        datetime_obj = datetime.strptime(date_split[0].strip(), '%m/%d/%Y').date()
+        print("date check", datetime_obj, today)
+        if datetime_obj < today:
+            events.remove(event)
+
     # FILTER by DateTime
     # If there is no user availability then add all events to recommended events
-    print(user_avaiability)
+    # print(user_avaiability)
     if len(user_avaiability):
         for event in events:
             if event.registration_type == 'Drop-in':
                 event_date, event_start_time, event_end_time = extract_event_datetime(event)
-                print(event.event_title, event_date, event_start_time, event_end_time)
+                # print(event.event_title, event_date, event_start_time, event_end_time)
                 for avail in user_avaiability:
                     if avail.day_of_week == (event_date.weekday() + 1):
                         if event_start_time >= avail.start_time and event_end_time <= avail.end_time:
@@ -1414,7 +1424,7 @@ def get_recommended_events(request):
     else:
         recommended_events = [event for event in events]
 
-    print("Availability Filter", recommended_events)
+    # print("Availability Filter", recommended_events)
 
     # FILTER BY Location
     for event in recommended_events[:]:
@@ -1423,7 +1433,7 @@ def get_recommended_events(request):
                 recommended_events.remove(event)
 
     recommended_events = list(recommended_events)
-    print("Location Filter", recommended_events)
+    # print("Location Filter", recommended_events)
 
     if request.user.is_individual:
         individual = Individual.objects.get(profile=profile)
@@ -1445,7 +1455,7 @@ def get_recommended_events(request):
                 if age_fail_count == len(positions):
                     recommended_events.remove(event)
 
-    print("Age Filter", recommended_events)
+    # print("Age Filter", recommended_events)
 
     # FILTER BY Gender
     if request.user.is_individual:
@@ -1469,7 +1479,7 @@ def get_recommended_events(request):
                     # print(event.event_title, gender_list, individual_gender, flag)
                     recommended_events.remove(event)
 
-    print("Gender Filter", recommended_events)
+    # print("Gender Filter", recommended_events)
 
     # FILTER BY Sports
     sport_choices = Secondary_SportsChoice.objects.filter(profile=profile).order_by("sport_type")
@@ -1481,7 +1491,7 @@ def get_recommended_events(request):
         if event.sport_type not in sports_list:
             recommended_events.remove(event)
 
-    print("Sports Filter", recommended_events)
+    # print("Sports Filter", recommended_events)
 
     # FILTER BY Positions
     if request.user.is_individual:
@@ -1500,7 +1510,7 @@ def get_recommended_events(request):
             if flag == len(position_list):
                 recommended_events.remove(event)
 
-    print("Positions Filter", recommended_events)
+    # print("Positions Filter", recommended_events)
 
     # FILTER BY Skills
     if request.user.is_individual:
@@ -1520,7 +1530,7 @@ def get_recommended_events(request):
             if flag > 0:
                 recommended_events.remove(event)
 
-    print("Skills Filter", recommended_events)
+    # print("Skills Filter", recommended_events)
 
     return recommended_events
 
