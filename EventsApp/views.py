@@ -1229,7 +1229,6 @@ def home(request):
         datetimes = event.datetimes if event.datetimes else event.current_datetimes
         date_split = datetimes.split(" ")
         datetime_obj = datetime.strptime(date_split[0].strip(), '%m/%d/%Y').date()
-        # print("date check", datetime_obj, today)
         if datetime_obj < today:
             events.remove(event)
 
@@ -1401,7 +1400,6 @@ def get_recommended_events(request):
         datetimes = event.datetimes if event.datetimes else event.current_datetimes
         date_split = datetimes.split(" ")
         datetime_obj = datetime.strptime(date_split[0].strip(), '%m/%d/%Y').date()
-        print("date check", datetime_obj, today)
         if datetime_obj < today:
             events.remove(event)
 
@@ -2629,3 +2627,11 @@ def load_events_from_excel(excel_file):
         obj.no_of_position = sheetTwo.cell(row=row, column=8).value
         obj.position_cost = sheetTwo.cell(row=row, column=9).value
         obj.save()
+
+
+def error_404(request, exception):
+    return render(request, 'EventsApp/error_404.html', status=404)
+
+
+def error_500(request):
+    return render(request, 'EventsApp/error_505.html', status=500)
