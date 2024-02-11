@@ -27,3 +27,4 @@ urlpatterns = [
                                                                                          document_root=settings.STATIC_ROOT)
 
 handler404 = 'EventsApp.views.error_404'
+handler500 = 'EventsApp.views.error_500'

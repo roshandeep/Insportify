@@ -5,8 +5,6 @@
 
 {% block content %}
 
-<!--<script src="{% static 'custom.js' %}"></script>-->
-
 <div class="col-11 mx-auto">
     <div class="slider">
 
@@ -86,7 +84,7 @@
         <div class="row p-3">
             <h5>Drop In Events</h5>
             <hr class="my-2">
-            <div id="carousel_recommended_drop_in_eventList" class="slider">
+            <div id="carousel_recommended_drop_in_eventList" class="sliderNoScroll">
                 {% for event in recommended_drop_in %}
                 <div class="col-md-4 col-sm-12">
                 <div class="event-card card"
@@ -123,7 +121,7 @@
         <div class="row p-3">
             <h5>Leagues, Clinics & Camps</h5>
             <hr class="my-2">
-            <div id="carousel_recommended_registration_eventList" class="slider">
+            <div id="carousel_recommended_registration_eventList" class="sliderNoScroll">
 
                 {% for event in recommended_registrationList %}
                 <div class="col-md-4 col-sm-12">
@@ -163,7 +161,7 @@
         <div class="row p-3">
             <h5>Drop In Events</h5>
             <hr class="my-2">
-            <div id="carousel_drop_in_eventList" class="slider">
+            <div id="carousel_drop_in_eventList" class="sliderNoScroll">
                 {% for event in drop_in_eventList %}
                 <div class="col-md-4 col-sm-12">
                 <div class="event-card card"
@@ -199,7 +197,7 @@
         <div class="row p-3">
             <h5>Leagues, Clinics & Camps</h5>
             <hr class="my-2">
-            <div id="carousel_registration_eventList" class="slider">
+            <div id="carousel_registration_eventList" class="sliderNoScroll">
 
                 {% for event in registrationList %}
                 <div class="col-md-4 col-sm-12">
@@ -327,26 +325,37 @@
     })
 
 
-    function create(items) {
-       /* items.forEach((el) => {
-            const minPerSlide = 3
-            let next = el.nextElementSibling
-            for (var i = 1; i < minPerSlide; i++) {
-                if (!next) {
-                    // wrap carousel by using first child
-                    next = items[0]
-                }
-                let cloneChild = next.cloneNode(true)
-                el.appendChild(cloneChild.children[0])
-                next = next.nextElementSibling
-            }
-        })*/
-    }
 $(document).ready(function(){
   $('#adsCarousel').carousel({interval: false});
   $('#adsCarousel').carousel('pause');
 
   $('.slider').slick({
+        dots: false,
+        infinite: true,
+        speed: 500,
+        slidesToShow: 3,
+        slidesToScroll: 1,
+        autoplay: true,
+        autoplaySpeed: 2000,
+        arrows: true,
+
+        responsive: [{
+          breakpoint: 600,
+          settings: {
+            slidesToShow: 2,
+            slidesToScroll: 1
+          }
+        },
+        {
+           breakpoint: 480,
+           settings: {
+              slidesToShow: 1,
+              slidesToScroll: 1
+           }
+        }]
+    });
+
+    $('.sliderNoScroll').slick({
         dots: false,
         infinite: true,
         speed: 500,
