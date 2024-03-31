@@ -102,6 +102,8 @@
                             {% if event.event_type %}
                             {{event.event_type}}
                             {% endif %}
+
+                            {{event.created_by.user.first_name}}
                         </h6>
                         <p class="card-text text-center">{{event.venue}}, {{event.city}}, {{event.province}}</p>
                         {% if event.datetimes %}
@@ -140,6 +142,8 @@
                             {% if event.event_type %}
                             {{event.event_type}}
                             {% endif %}
+
+                            {{event.created_by.user.first_name}}
                         </h6>
                         {% if event.venue %}
                             <p class="card-text text-center">{{event.venue}}, {{event.city}}, {{event.province}}</p>
@@ -179,6 +183,8 @@
                             {% if event.event_type %}
                             {{event.event_type}}
                             {% endif %}
+
+                            {{event.created_by.user.first_name}}
                         </h6>
                         <p class="card-text text-center">{{event.venue}}, {{event.city}}, {{event.province}}</p>
                         {% if event.datetimes %}
@@ -216,6 +222,8 @@
                             {% if event.event_type %}
                             {{event.event_type}}
                             {% endif %}
+
+                            {{event.created_by.user.first_name}}
                         </h6>
                         {% if event.venue %}
                             <p class="card-text text-center">{{event.venue}}, {{event.city}}, {{event.province}}</p>
