@@ -10,6 +10,7 @@ from email.utils import formatdate
 
 import openpyxl
 import stripe
+from background_task.models import Task
 from dateutil.parser import parser
 from django.contrib import messages
 from django.contrib.auth import logout
@@ -21,9 +22,8 @@ from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.views.decorators.csrf import csrf_exempt
 from openpyxl import Workbook
-# from ics import Calendar, Event
 from icalendar import Calendar, Event, vCalAddress, vText
-from openpyxl.utils import dataframe
+from .tasks import delete_bots
 
 from Insportify import settings
 from .forms import MultiStepForm, AvailabilityForm, LogoForm, InviteForm, NewProfileForm
@@ -1568,11 +1568,6 @@ def extract_event_datetime(event):
 
 
 def format_time(events):
-    # for event in events:
-    #     if event.datetimes:
-    #         print("event.datetimes", event.event_title, event.datetimes)
-    #     else:
-    #         print("event.current_datetimes", event.event_title, event.current_datetimes)
 
     for event in events:
         if event.datetimes:
@@ -1581,8 +1576,7 @@ def format_time(events):
             event.datetimes = str_datetime
         elif event.current_datetimes:
             string_date = datetime.strptime(event.current_datetimes[0:10], '%m/%d/%Y').date()
-            str_datetime = string_date.strftime("%B %d") + " from " + event.current_datetimes[
-                                                                      10:len(event.current_datetimes)]
+            str_datetime = string_date.strftime("%B %d") + " from " + event.current_datetimes[10:len(event.current_datetimes)]
             event.current_datetimes = str_datetime
 
     return events
@@ -2627,6 +2621,58 @@ def load_events_from_excel(excel_file):
         obj.no_of_position = sheetTwo.cell(row=row, column=8).value
         obj.position_cost = sheetTwo.cell(row=row, column=9).value
         obj.save()
+
+
+def load_standard_events_endzone(excel_file):
+    # path = "./events load.xlsx"
+    wb_obj = openpyxl.load_workbook(excel_file)
+
+    # Read SheetOne - Events Info
+    sheetOne = wb_obj['Master A']
+
+    # Iterate the loop to read the cell values
+    for row in range(2, sheetOne.max_row + 1):
+        obj = master_table()
+        obj.sport_type = sheetOne.cell(row=row, column=1).value.strip()
+        obj.event_title = sheetOne.cell(row=row, column=2).value.strip()
+        obj.description = sheetOne.cell(row=row, column=2).value.strip()
+        obj.venue = sheetOne.cell(row=row, column=3).value.strip()
+        obj.event_type = sheetOne.cell(row=row, column=4).value.strip()
+        obj.registration_type = sheetOne.cell(row=row, column=5).value.strip()
+        obj.venue_type = sheetOne.cell(row=row, column=6).value.strip()
+        start_date_time = datetime.strptime(
+            sheetOne.cell(row=row, column=7).value.strip() + sheetOne.cell(row=row, column=8).value.strip(),
+            '%m/%d/%Y %I:%M %p')
+        end_date_time = datetime.strptime(
+            sheetOne.cell(row=row, column=9).value.strip() + sheetOne.cell(row=row, column=10).value.strip(),
+            '%m/%d/%Y %I:%M %p')
+        obj.datetimes = str(start_date_time) + str(end_date_time)
+        obj.gender = sheetOne.cell(row=row, column=11).value.strip()
+        profile = Profile.objects.get(active_user__email='don@insportify.com')
+        obj.created_by = profile
+
+        # obj.save()
+
+    # Read SheetTwo - Position Info
+    sheetTwo = wb_obj['Position Info']
+
+    for row in range(2, sheetTwo.max_row + 1):
+        event = master_table.objects.get(event_title=sheetTwo.cell(row=row, column=1).value.strip())
+        obj = Events_PositionInfo()
+        obj.event = event
+        obj.datetimes = sheetTwo.cell(row=row, column=2).value.strip()
+        obj.position_number = sheetTwo.cell(row=row, column=3).value
+        obj.position_name = sheetTwo.cell(row=row, column=4).value.strip()
+        obj.position_type = sheetTwo.cell(row=row, column=5).value.strip()
+        obj.max_age = sheetTwo.cell(row=row, column=6).value
+        obj.min_age = sheetTwo.cell(row=row, column=7).value
+        obj.no_of_position = sheetTwo.cell(row=row, column=8).value
+        obj.position_cost = sheetTwo.cell(row=row, column=9).value
+        obj.save()
+
+
+def register_task():
+    delete_bots.schedule(repeat=Task.DAILY, time=datetime.time(hour=16, minute=0))
 
 
 def error_404(request, exception):

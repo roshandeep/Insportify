@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'EventsApp',
     'UserRegister',
-    # 'hitcount',
+    'background_task',
 ]
 
 MIDDLEWARE = [
