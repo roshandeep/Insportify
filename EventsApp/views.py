@@ -10,7 +10,7 @@ from email.utils import formatdate
 
 import openpyxl
 import stripe
-from background_task.models import Task
+# from background_task.models import Task
 from dateutil.parser import parser
 from django.contrib import messages
 from django.contrib.auth import logout
@@ -23,7 +23,7 @@ from django.utils.crypto import get_random_string
 from django.views.decorators.csrf import csrf_exempt
 from openpyxl import Workbook
 from icalendar import Calendar, Event, vCalAddress, vText
-from .tasks import delete_bots
+# from .tasks import delete_bots
 
 from Insportify import settings
 from .forms import MultiStepForm, AvailabilityForm, LogoForm, InviteForm, NewProfileForm
@@ -1200,7 +1200,6 @@ def home(request):
     else:
         profile = None
 
-    # print(profile.user.email)
 
     if request.user.is_authenticated and request.user.is_individual:
 
@@ -2671,8 +2670,8 @@ def load_standard_events_endzone(excel_file):
         obj.save()
 
 
-def register_task():
-    delete_bots.schedule(repeat=Task.DAILY, time=datetime.time(hour=16, minute=0))
+# def register_task():
+#     delete_bots.schedule(repeat=Task.DAILY, time=datetime.time(hour=16, minute=0))
 
 
 def error_404(request, exception):

@@ -15,8 +15,8 @@ admin.site.register(SportsImage)
 
 
 class UserAdmin(admin.ModelAdmin):
-    list_filter = ('is_individual', 'is_organization',)
-
+    list_filter = ('is_individual', 'is_organization', 'profile_status',)
+    list_display = ('email', 'first_name', 'is_active', 'profile_status',)
 
 admin.site.register(User, UserAdmin)
 

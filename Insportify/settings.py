@@ -41,7 +41,13 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'EventsApp',
     'UserRegister',
-    'background_task',
+    # 'background_task',
+    'django_crontab',
+]
+
+
+CRONJOBS = [
+    ('*/5 * * * *', 'EventsApp.cron.cron_job_delete_unverified')
 ]
 
 MIDDLEWARE = [

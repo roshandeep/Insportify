@@ -317,8 +317,22 @@
         let para = document.getElementsByClassName("eventdatetime");
         for (let i = 0; i < para.length; i++) {
             let pval = para[i].innerHTML.split("from");
+            // console.log(para[i].innerHTML);
+
+            var dateParts = pval[0].split(" ");
+            var month = dateParts[0];
+            var day = parseInt(dateParts[1]);
+
+            var date = new Date(`${month} ${day}, ${new Date().getFullYear()}`);
+
+            var dayOfWeek = date.getDay();
+            var daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            var dayName = daysOfWeek[dayOfWeek];
+
+            // console.log(dayName);
+
             para[i].innerHTML = "";
-            para[i].innerHTML = pval[0] + "<br>" + pval[1];
+            para[i].innerHTML = dayName + ", " + pval[0] + "<br>" + pval[1];
         }
 
         $('.datesingle').datepicker({orientation: 'top', format: 'yyyy-mm-dd',});
