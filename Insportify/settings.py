@@ -42,13 +42,13 @@ INSTALLED_APPS = [
     'EventsApp',
     'UserRegister',
     # 'background_task',
-    'django_crontab',
+    # 'django_crontab',
 ]
 
 
-CRONJOBS = [
-    ('*/5 * * * *', 'EventsApp.cron.cron_job_delete_unverified')
-]
+# CRONJOBS = [
+#     ('*/5 * * * *', 'EventsApp.cron.cron_job_delete_unverified')
+# ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
